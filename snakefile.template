@@ -1,0 +1,18 @@
+import os
+
+configfile: "run.json"
+abc="a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z".split(",")
+BS=50
+
+samples=sorted(list(config['project']['units'].keys()))
+n=int(len(samples)/BS)
+if len(samples)%BS !=0:
+    n=n+1
+batches=abc[0:n]
+
+
+pairs=sorted(list(config['project']['pairs'].keys()))
+
+pfamily=config['project']['pfamily']
+
+

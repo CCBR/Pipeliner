@@ -1,0 +1,4 @@
+ext="bam"
+rule all_custom:
+    input:  expand("{s}.{e}",s=samples,e=ext)
+    output: 

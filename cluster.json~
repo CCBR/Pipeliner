@@ -1,0 +1,192 @@
+{
+    "__default__" :
+    {
+        "mem" : "32g",
+        "time" : "96:00:00",
+        "partition" : "ccr",
+        "threads": "1",
+        "gres":"lscratch:256"
+    },
+    "bicseq":
+    {
+        "threads": "1"
+    },
+    "bwa_pe":
+    {
+        "threads": "4"
+    },
+    "bwa.mem":
+    {
+        "mem": "128g",
+        "threads": "8"
+    },
+
+    "fastqc_fastq":
+    {
+        "threads": "8"
+    },
+    "fastqc_trimmed":
+    {
+        "threads": "8"
+    },
+    "gatk_apply_variant_recal":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "gatk_apply_vqsr":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "gatk_combine_gvcfs":
+    {
+        "threads": "1",
+        "time" : "48:00:00",
+        "mem": "96g"
+    },
+    "gatk_genotype_gvcfs":
+    {
+        "threads": "6",
+        "time" : "96:00:00",
+        "mem": "96g"
+    },
+    "gatk_genotyping":
+    {
+        "threads": "1",
+    },
+    "gatk_haplotype_caller":
+    {
+        "threads": "8",
+        "mem": "64g"
+    },
+    "gatk_realign":
+    {
+        "threads": "1",
+        "gres":"lscratch:500",
+        "mem": "64g"
+    },
+    "gatk_recal":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "gatk_variant_annnotator":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "gatk_variant_recal":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "ngsqc":
+    {
+        "threads": "1"
+    },
+    "novocraft_novoalign":
+    {
+        "threads": "16"
+    },
+    "novocraft_sort":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "novo_sort":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "picard_headers2":
+    {
+        "threads": "1"
+    },
+    "picard_index_bam":
+    {
+        "threads": "1",
+        "time": "01:00:00"
+    },
+    "picard_headers":
+    {
+        "threads": "1"
+    },
+    "picard_markdups":
+    {
+        "threads": "1"
+    },
+    "qualimap":
+    {
+        "threads": "8",
+        "mem": "96g"
+    },
+    "samtools_flagstats_dedup":
+    {
+        "threads": "1"
+    },
+    "samtools_flagstats":
+    {
+        "threads": "1"
+    },
+    "samtools_mpileup":
+    {
+        "threads": "1"
+    },
+    "samtools_sam2bam":
+    {
+        "threads": "1"
+    },
+    "samtools_sort":
+    {
+        "threads": "1"
+    },
+    "script_batchgvcf":
+    {
+        "threads": "1"
+    },
+    "script_bzip2":
+    {
+        "threads": "1"
+    },
+    "script_checkqc":
+    {
+        "threads": "1"
+    },
+    "script_coverage_qc":
+    {
+        "threads": "1"
+    },
+    "script_split_gvcfs":
+    {
+        "threads": "1"
+    },
+    "snpeff_dbnsfp":
+    {
+        "threads": "1"
+    },
+    "snpeff":
+    {
+        "threads": "1"
+    },
+    "star_align_2":
+    {
+        "threads": "8"
+    },
+    "star_align":
+    {
+        "threads": "8"
+    },
+    "star_generate":
+    {
+        "threads": "1"
+    },
+    "trimmomatic":
+    {
+        "threads": "4"
+    },
+    "varscan":
+    {
+        "threads": "1"
+    }
+}

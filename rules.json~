@@ -1,0 +1,57 @@
+ {
+    "rules": {
+        "avia": ["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
+        "ngsqc": ["initialqc","wgslow"],
+        "fastqc.fastq": ["initialqc","wgslow"],
+        "fastqc.trimmed": ["initialqc","wgslow"],
+        "trimmomatic": ["initialqc","wgslow"],
+	"samtools.flagstats": ["none"],
+	"samtools.flagstats.dedup": ["none"],
+        "qualimap": ["initialqc","wgslow"],
+        "bwa.mem":["wgslow","initialqc"],
+        "novocraft.novoalign":["none"],
+        "bwa.index.ref":["none"],
+        "annovar":["exomeseq-pairs"], 
+        "script.checkqc":["exomeseq-pairs","exomeseq-somatic","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
+        "samtools.sam2bam":["initialqc","wgslow"], 
+        "script.coverage.qc":["none"],
+        "script.bzip2":["none"],         
+        "picard.headers":["initialqc","bam2recal","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","wgslow"], 
+        "picard.index.bam":["none"],
+        "picard.markdups":["bam2recal","initialqc","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","wgslow"], 
+        "samtools.mpileup":["exomeseq-pairs"], 
+        "gatk.realign":["bam2recal","exomeseq-somatic","exomeseq-pairs","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"], 
+        "gatk.recal":["bam2recal","exomeseq-pairs","exomeseq-germline-recal","exomeseq-germline-partial"], 
+        "samtools.sort":["none"],
+        "novocraft.sort":["bam2recal","initialqc","exomeseq-germline-partial","wgslow"],         
+        "varscan":["exomeseq-pairs"],
+        "gatk.genotype.gvcfs":["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
+        "gatk.combine.gvcfs":["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
+        "script.batchgvcf":["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
+        "gatk.variant.annotator":["none"],
+        "gatk.apply.variant.recal":["none"],
+        "gatk.variant.recal":["none"],
+        "gatk.haplotype.caller":["exomeseq-germline"],
+        "gatk.haplotype.caller.recal":["exomeseq-germline-recal","exomeseq-germline-partial"],        
+        "snpeff": ["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
+        "snpeff.dbnsfp": ["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
+        "script.split.gvcfs": ["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
+        "mutect": ["none"],
+        "mutect2": ["exomeseq-somatic"],
+        "svdetect": ["none"],
+        "bicseq": ["none"]
+        },
+    "final": {
+        "exomeseq-pairs": "all-exomeseq-pairs.rl",
+        "wgslow": "all-wgslow.rl",
+        "exomeseq-somatic": "all-exomeseq-somatic.rl",
+	"exomeseq-germline": "all-exomeseq-germline.rl",
+        "exomeseq-germline-partial": "all-exomeseq-germline-partial.rl",
+	"initialqc": "all-initialqc.rl",
+        "bam2recal": "all-bam2recal.rl",
+        "custom": "all-custom.rl"        
+        }
+
+ }
+
+

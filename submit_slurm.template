@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+cd $SLURM_SUBMIT_DIR
+
+#. /usr/local/Modules/default/init/bash
+
+module load python/3.4.0
+D=/home/fake
+R=/home/fake
+
+rm $R/Reports/snakemake.log
+rm $R/Reports/makeasnake.log
+touch $R/Reports/makeasnake.log
+touch $R/Reports/snakemake.log
+
+sbatch --partition=ccr,norm --gres=lscratch:200 --time=120:00:00 $R/pipeline_ctrl.sh
+
+
+

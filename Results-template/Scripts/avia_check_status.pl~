@@ -1,0 +1,43 @@
+#!/usr/bin/perl -w
+use strict;
+use List::Util 'shuffle';
+
+my $id=shift;
+
+#INPUT
+
+my $status = 0;
+my $cmd = '';
+my $time = 300; #amount of time (seconds) to wait between pings to AVIA
+
+#sleep($time);
+open(LOG,">$id.avia.log");
+my $pings=0;			
+while ($status == 0) {
+	$cmd = "curl https://avia-abcc.ncifcrf.gov/apps/site/status/?id=$id > $id.avia_status.txt";
+	$pings++;
+	print LOG "$pings\n";
+	print STDERR "$pings\n";
+	system($cmd);
+	
+	my @line = ();
+
+	open G, "<$id.avia_status.txt";
+	while (<G>){
+		chomp;
+  		last if m/^$/;
+  		next if ($_ !~ m/INFO/);
+	  	if ($_ =~ m/must be completed or errored/) {
+			$status++;
+		}
+		else {
+			sleep($time);
+		}
+	}
+close G;
+}
+
+close OUT;
+
+$cmd = "wget -O $id.full_annot.txt.zip https://avia-abcc.ncifcrf.gov/apps/site/download/?file=$id/$id.full_annot.txt.zip";
+system($cmd);

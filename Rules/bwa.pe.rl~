@@ -1,0 +1,7 @@
+rule bwa_pe:
+    input:  "{x}.R1.trimmed.fastq.gz","{x}.R2.trimmed.fastq.gz"
+    output: "{x}.sam"
+    params: bwa=config['bin']['BWA'],ref=config['references']['BWAGENOME'],,rname="pl:bwape"
+    threads: 4
+    shell:  "{params.bwa} mem -t {threads} {params.ref} {input}  > {output}"
+

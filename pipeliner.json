@@ -1,0 +1,15 @@
+{
+    "colors":{
+        "base":["gray"],
+        "menu":["black","white"],
+        "widget":["black","white"],
+        "text":["blue","black"],
+        "entry":["black","white"],
+        "project":["blue","white"],
+        "status":["green","black"],
+        "dryrun":["yellow","gray30"],
+        "log":["green","gray30"],
+        "errors":["orange","black"],
+        "comments":["blue","white"]
+    }
+}

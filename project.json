@@ -1,0 +1,40 @@
+{
+    "project": {
+        "analyst": "",
+        "annotation": "hg19",
+        "batchsize": "20",
+        "binset": "standard-bin",
+        "cluster": "cluster_medium.json",
+        "contrasts": {
+            "rcontrasts": "na",
+            "rgroups": "na",
+            "rsamps": "na"
+        },
+        "custom": [],
+        "datapath": "",
+        "description": "Enter project Description and Notes here.\n",
+        "efiletype": "fastq",
+        "filetype": "fastq.gz",
+        "flowcellid": "",
+        "id": "",
+        "organism": "",
+        "pairs": {
+            "na": "na"
+        },
+        "pfamily": "rnaseq",
+        "pi": "",
+        "pipeline": "rnaseq3",
+        "platform": "Illumina",
+        "poc": "",
+        "rgid": {},
+        "samples": {
+            "na": "na"
+        },
+        "smparams": [],
+        "technique": "",
+        "units": {},
+        "username": "",
+        "version": "1.0",
+        "workpath": ""
+    }
+}

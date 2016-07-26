@@ -1,0 +1,28 @@
+ {"references": {
+    "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
+    "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
+    "INDELSITES": "/data/CCBR/projects/ccbr615/mm10/sorted.dict.repaired_mgp.v5.merged.indels.dbSNP142.normed.vcf", 
+    "NOVOINDEX": "/data/CCBR/projects/ccbr615/mm10/genome.nix", 
+    "SNPSITES": "/data/CCBR/projects/ccbr615/mm10/sorted.dict.repaired_mgp.v5.merged.snps_all.dbSNP142.vcf",
+    "adapter.file": "/data/CCBR/dev/Pipeline/Pipeliner/Data/TruSeq_and_nextera_adapters.ngsqc.dat",
+    "fastqc.adapters": "/data/CCBR/dev/Pipeline/Pipeliner/Data/fastqc.adapters",
+    "trimmomatic.adapters": "/data/CCBR/dev/Pipeline/Pipeliner/Data/adapters2.fa",
+    "ADAPTER1": "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC", 
+    "ADAPTER2": "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT",
+    "nextera1": "CTGTCTCTTATACACATCTCCGAGCCCACGAGAC",
+    "nextera2": "CTGTCTCTTATACACATCTGACGCTGCCGACGA",
+    "ORGANISM": "MOUSE",
+    "SNP138": "/data/CCBR/projects/ccbr615/mm10/sorted.dict.repaired_mgp.v5.merged.snps_all.dbSNP142.vcf",
+    "REFFLAT": "/data/CCBR/local/lib/SS_mouse_exome.bed",
+    "SNPEFF_CONFIG": "/usr/local/apps/snpEff/4.1c/snpEff.config",
+    "SNPEFF_GENOME": "GRCm38.78",
+    "FILTERSIFT": "( QUAL >= 20 )",
+    #below here is junk placeholders
+    "HAPMAP_DBNSFP": "/data/CCBR/local/lib/snpEff_db/hapmap.bed",
+    "SELECTDB": "SIFT_score,SIFT_pred,Polyphen2_HVAR_score,Polyphen2_HVAR_pred,LRT_score,LRT_pred,GERP++_RS,MutationAssessor_score,MutationAssessor_pred,1000Gp1_AF,1000Gp1_EUR_AF,ESP6500_EA_AF,ESP6500_AA_AF",
+    "DB29": "/data/CCBR/local/lib/snpEff_db/dbNSFP2.9.txt.gz",
+    "MUTECTCOSMIC": "",
+    "MUTECTSNP": "--dbsnp /data/CCBR/db/PipeDB/DBA_2J.mgp.v5.snps.dbSNP142.chr2.vcf --dbsnp /data/CCBR/db/PipeDB/C57BL_6NJ.mgp.v5.snps.dbSNP142.chr2.vcf",
+    "MUTECTGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa"
+     }
+ }

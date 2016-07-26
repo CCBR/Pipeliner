@@ -1,0 +1,33 @@
+Pipeliner Reference Manual
+
+Pipeliner resides on the NIH Biowulf cluster.  To use it, one must ssh into Biowulf2 and forward X11 packets so that the GUI displays locally.  To do this, type the following from a terminal windwow using your own name in place of <username>:
+
+ssh -Y <username>@biowulf2
+
+Biowulf2 is is not accessible directly from outside the NIH network, however one can reach it in two steps by first logging into helix.nih.gov. Remember to forward X11 packets in both cases using the "-Y" parameter.
+
+1)  ssh -Y <username>@helix.nih.gov
+
+Followed, on helix, by:
+
+2) ssh -Y <username>@biowulf2
+
+Once logged into biowulf2, run Pipeliner using either:
+
+1) module load ccbr
+2) module load pipeliner
+3) runpipe
+
+OR
+
+1) /data/CCBR/dev/Pipeline/Pipeliner/runpipe.sh
+
+The GUI should display either instntly with a fast internet connectin or in a few seconds on a slower connection.
+
+The GUI uses a tabbed interface.
+
+Set the Pipeline paameters using the leftmost two tabs labeled "Project Information" and "Pipeline Parameters" respectively.  Then optionally add any comments under the "Comments" tab.  Under the "Run" tab, a sequence of buttons will take you the rest of the way through the process.  Follow these steps in sequence:
+
+1) Initialize your Working Directory
+
+In this step a directory, which must already exist, will be initialized for Pipeliner.  Initializatin involves deleting all preexisting directory content and writing a few subdirectories containing a colletion of data files and scripts to be used locally diring the pipeline run.
