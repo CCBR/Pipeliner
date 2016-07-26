@@ -143,11 +143,12 @@ def pipelineget():
 
 def checklist(*args):
     p=pipelineget()
+    pairs=workpath.get()+"/pairs"
     if p=="exomeseq-somatic":
-        if os.popen("if [ -s 'pairs' ]; then echo 'ok';fi").read()=="ok":
+        if os.popen("if [ -s '{0}' ]; then echo 'ok';fi".format(pairs)).read()!="":
             return(0)
         else:
-            tkinter.messagebox.showinfo("ExomeSeq Somatic Error","Required ExomeSeq Somatic 'pairs' file is either empty or missing.")            
+            tkinter.messagebox.showinfo("ExomeSeq Somatic Error","Required ExomeSeq Somatic '{0}' file is either empty or missing.".format(pairs))            
             return(1)
 
 def writeheader(*args):
