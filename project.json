@@ -18,10 +18,12 @@
         "flowcellid": "",
         "id": "",
         "organism": "",
-        "pairs": {},
+        "pairs": {
+            "na": "na"
+        },
         "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "exomeseq-somatic",
+        "pipeline": "initialqc",
         "platform": "Illumina",
         "poc": "",
         "rgid": {},
@@ -33,6 +35,6 @@
         "units": {},
         "username": "",
         "version": "1.0",
-        "workpath": "/scratch/dwheeler/test2"
+        "workpath": ""
     }
 }
