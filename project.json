@@ -12,7 +12,7 @@
         },
         "custom": [],
         "datapath": "",
-        "description": "Enter project Description and Notes here.\n",
+        "description": "Enter CCBR project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
         "flowcellid": "",
@@ -21,9 +21,9 @@
         "pairs": {
             "na": "na"
         },
-        "pfamily": "exomeseq",
+        "pfamily": "rnaseq",
         "pi": "",
-        "pipeline": "initialqc",
+        "pipeline": "rnaseq",
         "platform": "Illumina",
         "poc": "",
         "rgid": {},
