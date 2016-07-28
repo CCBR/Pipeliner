@@ -11,12 +11,12 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/projects/ccbr737/reads",
+        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/germline_test_reads",
         "description": "Enter CCBR project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "macrogen",
-        "id": "ccbr737",
+        "flowcellid": "test",
+        "id": "germtest",
         "organism": "h. sapiens",
         "pairs": {},
         "pfamily": "exomeseq",
@@ -25,117 +25,26 @@
         "platform": "Illumina",
         "poc": "justin.lack",
         "rgid": {
-            "193247": {
+            "F22testA": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "193247"
+                "rgsm": "F22testA"
             },
-            "193686": {
+            "F22testB": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "193686"
+                "rgsm": "F22testB"
             },
-            "193690": {
+            "F22testC": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "193690"
-            },
-            "195577": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "195577"
-            },
-            "195578": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "195578"
-            },
-            "195580": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "195580"
-            },
-            "195581": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "195581"
-            },
-            "196084": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "196084"
-            },
-            "196521": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "196521"
-            },
-            "196524": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "196524"
-            },
-            "196528": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "196528"
-            },
-            "196733": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "196733"
-            },
-            "196785": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "196785"
-            },
-            "196787": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "196787"
-            },
-            "196788": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "196788"
-            },
-            "196789": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "196789"
+                "rgsm": "F22testC"
             }
         },
         "samples": {
@@ -144,25 +53,12 @@
         "smparams": [],
         "technique": "paired",
         "units": {
-            "193247": "193247",
-            "193686": "193686",
-            "193690": "193690",
-            "195577": "195577",
-            "195578": "195578",
-            "195580": "195580",
-            "195581": "195581",
-            "196084": "196084",
-            "196521": "196521",
-            "196524": "196524",
-            "196528": "196528",
-            "196733": "196733",
-            "196785": "196785",
-            "196787": "196787",
-            "196788": "196788",
-            "196789": "196789"
+            "F22testA": "F22testA",
+            "F22testB": "F22testB",
+            "F22testC": "F22testC"
         },
         "username": "",
         "version": "1.0",
-        "workpath": "/data/CCBR/projects/ccbr737/pipeline"
+        "workpath": "/data/CCBR/dev/Exome-seq-pipeline/germline_test3"
     }
 }

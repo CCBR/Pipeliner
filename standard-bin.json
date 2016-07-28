@@ -34,7 +34,7 @@
         "MUTECT": "module load java/1.7.0_25; java -Xmx16g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar /usr/local/apps/muTect/2014-12-15/muTect-1.1.7.jar",
         "SVDETECT": "/data/CCBR/local/apps",
         "BICSEQ": "/data/CCBR/local/apps/BIC-seq.pl",
-        "BWA": "/usr/local/apps/bwa/0.7.10/bwa",
+        "BWA": "/usr/local/apps/bwa/0.7.15/bwa",
         "FASTQ_SCREEN": "/data/CCBR/apps/fastq_screen_v0.6.3/fastq_screen"
     },
     "rnaseq": {

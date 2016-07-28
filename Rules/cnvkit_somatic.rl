@@ -1,6 +1,6 @@
 rule cnvkit_somatic:
-    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".realign.bam",
-           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".realign.bam"
+    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
+           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam"
     output: calls="cnvkit_out/{x}_calls.cns",
             gainloss="cnvkit_out/{x}_gainloss.tsv"
     params: tumorsample=lambda wildcards: config['project']['pairs'][wildcards.x][1], normalsample=lambda wildcards: config['project']['pairs'][wildcards.x][0], targets=config['references'][pfamily]['CNVKIT_TARGETS'], antitargets=config['references'][pfamily]['CNVKIT_ANTITARGETS'], genome=config['references'][pfamily]['CNVKITGENOME'],rname="pl:cnvkit_somatic"

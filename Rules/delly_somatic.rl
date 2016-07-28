@@ -1,6 +1,6 @@
 rule delly_somatic:
-    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".realign.bam",
-           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".realign.bam"
+    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
+           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam"
     output: deletion="delly_out/{x}_del.bcf",
             ins="delly_out/{x}_ins.bcf",
             dup="delly_out/{x}_dup.bcf",
