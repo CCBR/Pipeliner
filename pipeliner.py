@@ -1730,9 +1730,9 @@ rframe = LabelFrame(rnaseqframe,text="Pipeline",fg=textLightColor,bg=baseColor)
 rframe.pack( side = TOP,fill=X,padx=10,pady=10,expand=NO)
 
 
-rPipelines=['rnaseq','rnaseq2','rnaseq3']
+rPipelines=['rnaseq','initialqcrnaseq','rnaseq3']
 rPipeline = StringVar()
-rPipeline.set(rPipelines[0])
+rPipeline.set(rPipelines[1])
 om = OptionMenu(rframe, rPipeline, *rPipelines, command=makejson)
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
