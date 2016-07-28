@@ -1,6 +1,6 @@
 {
     "project": {
-        "analyst": "",
+        "analyst": "lackjb",
         "annotation": "hg19",
         "batchsize": "20",
         "binset": "standard-bin",
@@ -11,30 +11,158 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "",
-        "description": "Enter project Description and Notes here.\n",
+        "datapath": "/data/CCBR/projects/ccbr737/reads",
+        "description": "Enter CCBR project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "",
-        "id": "",
-        "organism": "",
-        "pairs": {
-            "na": "na"
-        },
+        "flowcellid": "macrogen",
+        "id": "ccbr737",
+        "organism": "h. sapiens",
+        "pairs": {},
         "pfamily": "exomeseq",
         "pi": "",
         "pipeline": "initialqc",
         "platform": "Illumina",
-        "poc": "",
-        "rgid": {},
+        "poc": "justin.lack",
+        "rgid": {
+            "193247": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "193247"
+            },
+            "193686": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "193686"
+            },
+            "193690": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "193690"
+            },
+            "195577": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "195577"
+            },
+            "195578": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "195578"
+            },
+            "195580": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "195580"
+            },
+            "195581": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "195581"
+            },
+            "196084": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "196084"
+            },
+            "196521": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "196521"
+            },
+            "196524": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "196524"
+            },
+            "196528": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "196528"
+            },
+            "196733": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "196733"
+            },
+            "196785": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "196785"
+            },
+            "196787": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "196787"
+            },
+            "196788": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "196788"
+            },
+            "196789": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "196789"
+            }
+        },
         "samples": {
             "na": "na"
         },
         "smparams": [],
-        "technique": "",
-        "units": {},
+        "technique": "paired",
+        "units": {
+            "193247": "193247",
+            "193686": "193686",
+            "193690": "193690",
+            "195577": "195577",
+            "195578": "195578",
+            "195580": "195580",
+            "195581": "195581",
+            "196084": "196084",
+            "196521": "196521",
+            "196524": "196524",
+            "196528": "196528",
+            "196733": "196733",
+            "196785": "196785",
+            "196787": "196787",
+            "196788": "196788",
+            "196789": "196789"
+        },
         "username": "",
         "version": "1.0",
-        "workpath": ""
+        "workpath": "/data/CCBR/projects/ccbr737/pipeline"
     }
 }
