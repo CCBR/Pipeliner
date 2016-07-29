@@ -11,20 +11,47 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/germline_test_reads",
+        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/somatic_test3",
         "description": "Enter CCBR project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "test",
-        "id": "germtest",
+        "flowcellid": "poop",
+        "id": "somatic_test",
         "organism": "h. sapiens",
-        "pairs": {},
+        "pairs": {
+            "F22testA+D115test": [
+                "F22testA",
+                "D115test"
+            ],
+            "F22testB+D115test": [
+                "F22testB",
+                "D115test"
+            ],
+            "F22testC+3435Ttest": [
+                "F22testC",
+                "3435Ttest"
+            ]
+        },
         "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "initialqc",
+        "pipeline": "exomeseq-somatic",
         "platform": "Illumina",
         "poc": "justin.lack",
         "rgid": {
+            "3435Ttest": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "3435Ttest"
+            },
+            "D115test": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "D115test"
+            },
             "F22testA": {
                 "rgcn": "na",
                 "rglb": "na",
@@ -53,12 +80,14 @@
         "smparams": [],
         "technique": "paired",
         "units": {
+            "3435Ttest": "3435Ttest",
+            "D115test": "D115test",
             "F22testA": "F22testA",
             "F22testB": "F22testB",
             "F22testC": "F22testC"
         },
-        "username": "",
+        "username": "poop",
         "version": "1.0",
-        "workpath": "/data/CCBR/dev/Exome-seq-pipeline/germline_test3"
+        "workpath": "/data/CCBR/dev/Exome-seq-pipeline/somatic_test3"
     }
 }

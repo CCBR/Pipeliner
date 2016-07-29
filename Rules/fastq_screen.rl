@@ -8,4 +8,4 @@ rule fastq_screen:
             outdir = "QC",
             config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG'],rname="pl:fastq_screen"
     threads: 8
-    shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 0 --aligner bowtie2 --force {input}"
+    shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"

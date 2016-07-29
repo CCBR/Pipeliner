@@ -25,7 +25,7 @@
         "bwa.index.ref": ["none"],
         "annovar": ["exomeseq-pairs"],
         "script.checkqc": ["exomeseq-pairs","exomeseq-somatic","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
-        "samtools.sam2bam": ["initialqc","wgslow","exomeseq-somatic","exomeseq-germline"],
+        "samtools.sam2bam": ["initialqc","wgslow"],
         "script.coverage.qc": ["none"],
         "script.bzip2": ["none"],
         "picard.headers": ["initialqc","bam2recal","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","wgslow"],
