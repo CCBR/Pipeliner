@@ -12,7 +12,7 @@
         },
         "custom": [],
         "datapath": "/data/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline",
-        "description": "Enter CCBR project Description and Notes here.\n",
+        "description": "Enter CCBR project Description and Notes here.Enter CCBR project Description and Notes here.\n\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
         "flowcellid": "",
@@ -21,7 +21,7 @@
         "pairs": {},
         "pfamily": "rnaseq",
         "pi": "",
-        "pipeline": "initialqcrnaseq",
+        "pipeline": "rnaseq",
         "platform": "Illumina",
         "poc": "",
         "rgid": {
