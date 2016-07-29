@@ -8,24 +8,77 @@ configfile: "run.json"
 if config['bin'][pfamily]['DEG'] == "yes" and config['bin'][pfamily]['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC","ebseq_completed.txt","salmonrun/sleuth_completed.txt",expand("{name}.RnaSeqMetrics.txt",name=samples),"postTrimQC","sampletable.txt","DEG_genes/deseq2_pca.png","DEG_genes/edgeR_prcomp.png","RawCountFile_genes_filtered.txt","DEG_genes/Limma_MDS.png","DEG_junctions/deseq2_pca.png","DEG_junctions/edgeR_prcomp.png","RawCountFile_junctions_filtered.txt","DEG_junctions/Limma_MDS.png","DEG_genejunctions/deseq2_pca.png","DEG_genejunctions/edgeR_prcomp.png","RawCountFile_genejunctions_filtered.txt","DEG_genejunctions/Limma_MDS.png",expand("{name}.star.count.overlap.txt",name=samples),"RawCountFileOverlap.txt","RawCountFileStar.txt",expand("{name}.rsem.genes.results",name=samples)
-     #input: "postTrimQC","files_to_rnaseqc.txt","STAR_QC","sampletable.txt","deseq2_pca.png","edgeR_prcomp.png","RawCountFile_filtered.txt","Limma_MDS.png"
+     input: "STAR_QC",
+            "ebseq_completed.txt",
+            "salmonrun/sleuth_completed.txt",
+            expand("{name}.RnaSeqMetrics.txt",name=samples),
+            "postTrimQC","sampletable.txt",
+            "DEG_genes/deseq2_pca.png",
+            "DEG_genes/edgeR_prcomp.png",
+            "RawCountFile_genes_filtered.txt",
+            "DEG_genes/Limma_MDS.png",
+            "DEG_junctions/deseq2_pca.png",
+            "DEG_junctions/edgeR_prcomp.png",
+            "RawCountFile_junctions_filtered.txt",
+            "DEG_junctions/Limma_MDS.png",
+            "DEG_genejunctions/deseq2_pca.png",
+            "DEG_genejunctions/edgeR_prcomp.png",
+            "RawCountFile_genejunctions_filtered.txt",
+            "DEG_genejunctions/Limma_MDS.png",
+            expand("{name}.star.count.overlap.txt",name=samples),
+            "RawCountFileOverlap.txt",
+            "RawCountFileStar.txt",expand("{name}.rsem.genes.results",name=samples)
 
 elif config['bin'][pfamily]['DEG'] == "no" and config['bin'][pfamily]['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC",expand("{name}.RnaSeqMetrics.txt",name=samples),"postTrimQC","RawCountFile_genes_filtered.txt","RawCountFile_junctions_filtered.txt","RawCountFile_genejunctions_filtered.txt",expand("{name}.star.count.overlap.txt",name=samples),"RawCountFileOverlap.txt","RawCountFileStar.txt",expand("{name}.rsem.genes.results",name=samples)
-     #input: "postTrimQC","files_to_rnaseqc.txt","STAR_QC","RawCountFile_filtered.txt"
+     input: "STAR_QC",
+            expand("{name}.RnaSeqMetrics.txt",name=samples),
+            "postTrimQC",
+            "RawCountFile_genes_filtered.txt",
+            "RawCountFile_junctions_filtered.txt",
+            "RawCountFile_genejunctions_filtered.txt",
+            expand("{name}.star.count.overlap.txt",name=samples),
+            "RawCountFileOverlap.txt","RawCountFileStar.txt",
+            expand("{name}.rsem.genes.results",name=samples)
+
 elif config['bin'][pfamily]['DEG'] == "yes" and config['bin'][pfamily]['TRIM'] == "no":
   rule all:
-     input: "STAR_QC","ebseq_completed.txt","salmonrun/sleuth_completed.txt",expand("{name}.RnaSeqMetrics.txt",name=samples),"sampletable.txt","DEG_genes/deseq2_pca.png","DEG_genes/edgeR_prcomp.png","RawCountFile_genes_filtered.txt","DEG_genes/Limma_MDS.png","DEG_junctions/deseq2_pca.png","DEG_junctions/edgeR_prcomp.png","RawCountFile_junctions_filtered.txt","DEG_junctions/Limma_MDS.png","DEG_genejunctions/deseq2_pca.png","DEG_genejunctions/edgeR_prcomp.png","RawCountFile_genejunctions_filtered.txt","DEG_genejunctions/Limma_MDS.png",expand("{name}.star.count.overlap.txt",name=samples),"RawCountFileOverlap.txt","RawCountFileStar.txt",expand("{name}.rsem.genes.results",name=samples)
+     input: "STAR_QC",
+            "ebseq_completed.txt",
+            "salmonrun/sleuth_completed.txt",
+            expand("{name}.RnaSeqMetrics.txt",name=samples),
+            "sampletable.txt",
+            "DEG_genes/deseq2_pca.png",
+            "DEG_genes/edgeR_prcomp.png",
+            "RawCountFile_genes_filtered.txt",
+            "DEG_genes/Limma_MDS.png",
+            "DEG_junctions/deseq2_pca.png",
+            "DEG_junctions/edgeR_prcomp.png",
+            "RawCountFile_junctions_filtered.txt",
+            "DEG_junctions/Limma_MDS.png",
+            "DEG_genejunctions/deseq2_pca.png",
+            "DEG_genejunctions/edgeR_prcomp.png",
+            "RawCountFile_genejunctions_filtered.txt",
+            "DEG_genejunctions/Limma_MDS.png",
+            expand("{name}.star.count.overlap.txt",name=samples),
+            "RawCountFileOverlap.txt","RawCountFileStar.txt",
+            expand("{name}.rsem.genes.results",name=samples)
+            
      params: batch='--time=168:00:00'
      #input: "files_to_rnaseqc.txt","STAR_QC","RawCountFile_filtered.txt","sampletable.txt","deseq2_pca.png","edgeR_prcomp.png","Limma_MDS.png"
 else:
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC",expand("{name}.RnaSeqMetrics.txt",name=samples),"RawCountFile_filtered.txt","RawCountFile_genes_junctions_filtered.txt","RawCountFile_genejunctions_filtered.txt",expand("{name}.star.count.overlap.txt",name=samples),"RawCountFileOverlap.txt","RawCountFileStar.txt",expand("{name}.rsem.genes.results",name=samples)
-     #input: "files_to_rnaseqc.txt","STAR_QC","RawCountFile_filtered.txt"
+     input: "STAR_QC",
+            expand("{name}.RnaSeqMetrics.txt",name=samples),
+            "RawCountFile_filtered.txt",
+            "RawCountFile_genes_junctions_filtered.txt",
+            "RawCountFile_genejunctions_filtered.txt",
+            expand("{name}.star.count.overlap.txt",name=samples),
+            "RawCountFileOverlap.txt","RawCountFileStar.txt",
+            expand("{name}.rsem.genes.results",name=samples)
+
 
 
 
