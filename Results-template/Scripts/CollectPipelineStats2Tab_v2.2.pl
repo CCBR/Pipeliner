@@ -51,8 +51,8 @@ my $usage = "\nUsage:\nCollectPipelineStats2Tab.pl -o [Output File Name Suffix] 
 my $dirbase = getcwd;
 my $cellname = $dirbase;
 my ($projectname,$outfile,$demultend);
-my $projectpath = '.';  #default path to project
-my $demultpath = './'; ####default partial path to nextseq demultiplex html report.
+my $projectpath = './';  #default path to project
+my $demultpath = 'laneBarcode.html'; ####default partial path to nextseq demultiplex html report.
 my $printmode = 1;     #output mode default=both
 my $pipeline = 3; #pipeline mode default=ExomeSeq
 my $paired = 2; #single or paired-end, see below, default = single-end
@@ -114,7 +114,7 @@ my @fields = ('Lane','Sample','Barcode Sequence','PF Clusters','Percent of Lane'
               );
 my %demultstats;
 if ($printmode == 1 or $printmode == 2) {
-  $demultpath .= 'laneBarcode.html';
+  $demultpath = 'laneBarcode.html';
   open(DMT,"<$demultpath") or die "Cannot open $demultpath: $!\n";
   while (my $line = <DMT>) {
     chomp $line;
