@@ -112,6 +112,7 @@
     "RRNALIST": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/Hg19.rRNA.interval_list_v3"
     },
 "mirseq": {
+"run_info":{    
     "TOOL": "miRNA",
     "VERSION": "1.1",
     "PI": "NA",
@@ -249,6 +250,7 @@
     "PAIRS": "Knockdown:Control:Knockdown:Control:Knockdown:Control:Knockdown:Control:Knockdown:Control:Knockdown:Control:Knockdown:Control:Knockdown:Control",
      }
      },
+    },
      "chipseq":{},
      
     }
