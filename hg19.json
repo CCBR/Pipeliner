@@ -106,12 +106,57 @@
     "GTFFILE": "/fdb/GENCODE/Gencode_human/release_19/gencode.v19.annotation.gtf",
     "ANNOTATE": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/Hg19_genes.txt",
     "REFFLAT": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/refFlatHg19.txt",
-    "RSEMREF": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/rsemref123/human_gencode.transcripts.fa",
+    "RSEMREF": "/data/CCBR/db/PipeDB/Rnaseq/human_gencode.transcripts.fa",
     "FASTAWITHADAPTERSETC": "/data/CCBR/dev/RNA-Seq-pipeline/ver2/TruSeq_and_nextera_adapters_new.fa",
     "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-125",
     "RRNALIST": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/Hg19.rRNA.interval_list_v3"
     },
+"mirseq": {
+"run_info":{    
+    "TOOL": "miRNA",
+    "VERSION": "1.1",
+    "PI": "NA",
+    "FLOWCELL": "external",
+    "GENOME_BUILD": "hg38",
+    "MIRBASE_VERSION": "21",
+    "EMAIL": "david.wheeler3@nih.gov",
+    "SAMPLENAMES": "dA549-KD-a-1_S4_R1_001:dA549-NCTR-a-1_S1_R1_001:dA549-KO-a-2_S5_R1_001:dA549-NCTR-a-2_S3_R1_001:dA549-KD-b-1_S8_R1_001:dA549-NCTR-b-1_S6_R1_001:dA549-KD-b-2_S2_R1_001:dA549-NCTR-b-2-2_S2_R1_001:dH460-KOa-1_S3_R1_001:dH460-NCTR-a-1_S1_R1_001:dH460-KOa-2_S4_R1_001:dH460-NCTR-a-2_S2_R1_001:dH460-KO-b-1_S6_R1_001:dH460-NCTR-b-1_S5_R1_001:dH460-KO-b-2_S8_R1_001:dH460-NCTR-b-2-2_S1_R1_001",
+    "LANEINDEX": "-:-:-:-",
+    "TRIM_ADAPTER": "YES",
+    "CALL_SNVS": "YES",
+    "DIFF_EXPRESSION": "YES",
+    "DIFF_EXPRESSION_ANALYSES": "mir_knockdown",
+    "INPUT_DIR": "/",
+    "OUTPUT_DIR": "out",
+    "TOOL_INFO": "/scratch/ryanb/captest/tool_info",
+    "SAMPLE_INFO": "/scratch/ryanb/captest/sample_info",
+    "DELIVERY_FOLDER": "/scratch/dwheeler/test5/out",
+    "USE_SGE": "0",
+    "USE_PORTAL": "0",
+    "PORTAL_PROJECT_NAME": "NA"
+},
+
+    "reference_files": {
+    "BOWTIE_REF": "/data/dwheeler/CAP-miRSEQ/References/genome",
+    "GENCODE_GTF": "/fdb/GENCODE/GRCh38/21/GTF/gencode.v21.annotation.gtf",
+    "MIRBASE_GFF": "/data/dwheeler/CAP-miRSEQ/References/hsa.gff3",
+    "MIRBASE_HAIRPIN": "/data/dwheeler/CAP-miRSEQ/References/hairpin.fa",
+    "MIRBASE_MATURE": "/data/dwheeler/CAP-miRSEQ/References/mature.fa",
+# For miRspring which uses its own set of files        
+    "MIRBASE_FILES": "/data/dwheeler/CAP-miRSEQ/References",
+#    "MIRBASE_GFF": "/data/dwheeler/miRspring/miRbase_Files/hsa.gff2",
+#    "MIRBASE_HAIRPIN": "/data/dwheeler/miRspring/miRbase_Files/hsa.nt35.fa",
+#    "MIRBASE_MATURE": "/data/dwheeler/miRspring/miRbase_Files/mature.fa",
+#    "MIRBASE_FILES": "/data/dwheeler/miRspring/miRbase_Files/",
+    "REF_GENOME": "/data/dwheeler/CAP-miRSEQ/References/genome.fa",
+    "REF_GENOME_IUPAC": "/data/dwheeler/CAP-miRSEQ/References/genome-iupac.fa",
+    "TARGET_DATA": "/data/dwheeler/CAP-miRSEQ/References",
+
+    },
+     
+     },
+
      "chipseq":{},
-     "mirseq":{},
+     
     }
 }
