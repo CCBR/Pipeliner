@@ -1,4 +1,5 @@
- {"references": {
+ {"references":{
+"exomeseq":{
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
     "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
     "CHROMS": "/data/CCBR/local/lib/mm10_chromosomes",
@@ -30,4 +31,16 @@
     "MUTECTCOSMIC": "",
     "MUTECTSNP": ""
      }
+},
+{"rnaseq":{
+"GTFFILE": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/genes.gtf",
+"STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/genes-125",
+"ANNOTATE": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/Mm10_genes.txt",
+"REFFLAT": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/refFlatMm10.txt",
+"RSEMREF": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/rsemref/mouse_gencode",
+"FASTAWITHADAPTERSETC": "/data/CCBR/dev/RNA-Seq-pipeline/ver2/TruSeq_and_nextera_adapters_new.fa",
+"RRNALIST": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/Mm10.rRNA.interval_list_v3"
+}
+},
+
  }

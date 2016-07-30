@@ -139,6 +139,8 @@ def pipelineget():
         pipeline_current=cPipeline.get()
     if pfamily.get()=="mirseq":
         pipeline_current=mPipeline.get()
+    if pfamily.get()=="genomeseq":
+        pipeline_current=gPipeline.get()
     return(pipeline_current)    
 
 def checklist(*args):
@@ -234,6 +236,7 @@ def load_project():
             jsonconf.insert(INSERT, J)
             customRules=PD['project']['custom']
             workpath.set(PD['project']['workpath'])
+            pfamily.set(PD['project']['pfamily'])            
             datapath.set(PD['project']['datapath'])
             annotation.set(PD['project']['annotation'])
             binset.set(PD['project']['binset'])
@@ -1205,6 +1208,7 @@ pastewriteframe = ttk.Frame(nbook)
 runframe=ttk.Frame(nbook)
 #manualframe=ttk.Frame(nbook)
 rnaseqframe=ttk.Frame(nbook)
+genomeseqframe=ttk.Frame(nbook)
 exomeseqframe=ttk.Frame(nbook)
 mirseqframe=ttk.Frame(nbook)
 chipseqframe=ttk.Frame(nbook)
@@ -1218,6 +1222,7 @@ nbook.add(runframe,text="Run Sequence")
 nbook.add(pastewriteframe, text='Paste/Write Files')
 #nbook.add(manualframe,text="Manual")
 nbook.add(rnaseqframe,text="RNASeq Options")
+nbook.add(genomeseqframe,text="GenomeSeq Options")
 nbook.add(exomeseqframe,text="ExomeSeq Options")
 nbook.add(mirseqframe,text="MirSeq Options")
 nbook.add(chipseqframe,text="ChIPSeq Options")
@@ -1554,6 +1559,7 @@ Dscrollbar = Scrollbar(projpanel2)
 Dscrollbar.grid(row=0,column=4,rowspan=40)
 description = Text(projpanel2,width=50,height=38,bg=commentBgColor,fg=commentFgColor,font=("nimbus mono bold","10"),yscrollcommand = Dscrollbar.set)
 Dscrollbar['command']=description.yview
+description.delete("1.0", END)
 description.insert(INSERT, "Enter CCBR project Description and Notes here.")
 description.bind('<FocusOut>',lambda _:makejson())
 description.grid(row=2,column=3,sticky="e",padx=10,pady=10)
@@ -1730,10 +1736,28 @@ rframe = LabelFrame(rnaseqframe,text="Pipeline",fg=textLightColor,bg=baseColor)
 rframe.pack( side = TOP,fill=X,padx=10,pady=10,expand=NO)
 
 
-rPipelines=['rnaseq','initialqcrnaseq','rnaseq3']
+rPipelines=['initialqcrnaseq','rnaseq']
 rPipeline = StringVar()
-rPipeline.set(rPipelines[1])
+rPipeline.set(rPipelines[0])
 om = OptionMenu(rframe, rPipeline, *rPipelines, command=makejson)
+om.config(bg = widgetBgColor,fg=widgetFgColor)
+om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
+#om.pack(side=LEFT,padx=20,pady=5)
+om.grid(row=2,column=1,sticky=W,padx=10,pady=10)
+
+
+#########################
+# The GenomeSeq Pane
+#########################
+
+gframe = LabelFrame(genomeseqframe,text="Pipeline",fg=textLightColor,bg=baseColor)
+gframe.pack( side = TOP,fill=X,padx=10,pady=10,expand=NO)
+
+
+gPipelines=['initialqcgenomeseq','wgslow']
+gPipeline = StringVar()
+gPipeline.set(gPipelines[0])
+om = OptionMenu(gframe, gPipeline, *gPipelines, command=makejson)
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 #om.pack(side=LEFT,padx=20,pady=5)
@@ -1781,7 +1805,7 @@ om.grid(row=2,column=1,sticky=W,padx=10,pady=10)
 # The Option Menus
 #########################
 
-pipeline=["initialqc","bam2recal","wgslow","exomeseq-somatic","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","custom"]
+pipeline=["initialqc","bam2recal","exomeseq-somatic","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","custom"]
 
 filetypes=['fastq','fastq.gz','R1.trimmed.fastq.gz','fastq.bz2','trimmed.fastq.bz2','sorted.bam','dedup.bam','fin.bam','recal.bam','realign.bam','bam','bai','sam','combined.gvcf','all.snp.dbnsfp.vcf','R1_fastqc.html','qualimapReport']
 filetype = StringVar()
@@ -1828,7 +1852,7 @@ om.grid(row=2,column=1,sticky=W,padx=10,pady=10)
 L=Label(opts2, text="Pipeline Group",fg=textLightColor,bg=baseColor)
 L.grid(row=3,column=0)
 
-pfamilys=['exomeseq','rnaseq','mirseq','chipseq','custom']
+pfamilys=['exomeseq','rnaseq','genomeseq','mirseq','chipseq','custom']
 pfamily = StringVar()
 pfamily.set(pfamilys[0])
 om = OptionMenu(opts2, pfamily, *pfamilys, command=makejson)
