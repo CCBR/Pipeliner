@@ -234,6 +234,7 @@ def load_project():
             jsonconf.insert(INSERT, J)
             customRules=PD['project']['custom']
             workpath.set(PD['project']['workpath'])
+            pfamily.set(PD['project']['pfamily'])            
             datapath.set(PD['project']['datapath'])
             annotation.set(PD['project']['annotation'])
             binset.set(PD['project']['binset'])
@@ -1554,6 +1555,7 @@ Dscrollbar = Scrollbar(projpanel2)
 Dscrollbar.grid(row=0,column=4,rowspan=40)
 description = Text(projpanel2,width=50,height=38,bg=commentBgColor,fg=commentFgColor,font=("nimbus mono bold","10"),yscrollcommand = Dscrollbar.set)
 Dscrollbar['command']=description.yview
+description.delete("1.0", END)
 description.insert(INSERT, "Enter CCBR project Description and Notes here.")
 description.bind('<FocusOut>',lambda _:makejson())
 description.grid(row=2,column=3,sticky="e",padx=10,pady=10)
