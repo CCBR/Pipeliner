@@ -126,62 +126,16 @@
     "CALL_SNVS": "YES",
     "DIFF_EXPRESSION": "YES",
     "DIFF_EXPRESSION_ANALYSES": "mir_knockdown",
-    "INPUT_DIR": "/data/ryanb/Fastqs",
+    "INPUT_DIR": "/",
     "OUTPUT_DIR": "out",
     "TOOL_INFO": "/scratch/ryanb/captest/tool_info",
     "SAMPLE_INFO": "/scratch/ryanb/captest/sample_info",
-    "DELIVERY_FOLDER": "/scratch/dwheeler/captest5/out",
+    "DELIVERY_FOLDER": "/scratch/dwheeler/test5/out",
     "USE_SGE": "0",
     "USE_PORTAL": "0",
     "PORTAL_PROJECT_NAME": "NA"
 },
 
- "tool_info": {
-    "tool_paths":{
-
-    "SCRIPT_PATH": "/data/dwheeler/CAP-miRSEQ/scripts",
-    "MIRDEEP2_PATH": "/usr/local/apps/mirdeep/2.0.0.7/bin",
-    "BOWTIE_PATH": "/usr/local/apps/bowtie/1.1.1",
-    "RANDFOLD_PATH": "/usr/local/apps/randfold/2.0/bin",
-    "SQUID_PATH": "/data/dwheeler/CAP-miRSEQ/bin",
-    "PDFAPI2_PM_PATH": "/usr/share/perl5",
-    "NGS_PORTAL_PATH": "/projects/bsi/bictools/apps/misc/ngs_dashboard/2.0",
-    "JAVA_PATH": "/usr/bin",
-    "VIENNA_PATH": "/usr/local/apps/viennarna/2.1.9/bin",
-    "PICARD_PATH": "/data/dwheeler/CAP-miRSEQ/bin/picard-tools-1.96",
-    "FASTQC_PATH": "/data/dwheeler/CAP-miRSEQ/bin",
-    "CUTADAPT_PATH": "/data/dwheeler/CAP-miRSEQ/bin",
-    "SAMTOOLS_PATH": "/usr/local/apps/samtools/samtools-0.1.19",
-    "BEDTOOLS_PATH": "/data/dwheeler/CAP-miRSEQ/bin",
-    "GATK_JAR": "/usr/local/apps/GATK/3.3-0/GenomeAnalysisTK.jar",
-    "VCFTOOLS_PATH": "/data/dwheeler/CAP-miRSEQ/bin",
-    "VCFTOOLS_PERLLIB": "/usr/local/apps/vcftools/0.1.12b/perl/",
-    "HTSEQ_PATH": "/usr/local/apps/htseq/0.6.1p1/bin",
-    "HTSEQ_LIB_PATH": "/home/dwheeler/.local/lib/python2.7/site-packages/HTSeq-0.5.4p5-py2.7-linux-x86_64.egg",
-    "PYTHON_PATH": "/usr/local/Anaconda/envs/py2.7.9/bin",
-    "RSCRIPT_PATH": "/usr/local/apps/R/gcc_4.9.1/3.2.2/bin", 
-    },
-
-     "tool_parameters": {
-#    "CUTADAPT_PARAMS": "-b AATCTCGTATGCCGTCTTCTGCTTGC -O 3 -m 17 -f fastq",
-#    "CUTADAPT_PARAMS": "-a  CAAGCAGAAGACGGCATACGAGAT  -O 3 -m 17 -f fastq",
-#    "CUTADAPT_PARAMS": "-b  CAAGCAGAAGACGGCATACGAGATNNNNNNGTGACTGGAGTTCCTTGGCACCCGAGAATTCCA -b TGGAATTCTCGGGTGCCAAGGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG  -O 3 -m 17 -f fastq",
-    "CUTADAPT_PARAMS": "-b  CAAGCAGAAGACGGCATACGAGAT -b TGGAATTCTCGGGTGCCAAGGAACTCCAGTCAC  -O 3 -m 17 -f fastq",
-    "TRIMMOMATIC": "java -Xmx8g -Djava.io.tmpdir=/scratch -jar /usr/local/apps/trimmomatic/Trimmomatic-0.33/trimmomatic-0.33.jar",
-    "TRIMMOMATIC.ADAPTERS": "/data/dwheeler/CAP-miRSEQ/References/adapters2.fa",
-    "MAPPER_PARAMS": "-e -h -q -m -r 5 -u -v -o 4",
-    "MIRDEEP2_PARAMS": "-P -t Human",
-    "MIRDEEP2_CLOSE_SPECIES": "none",
-    "QUANTIFIER_PARAMS": "-P -W",
-    "BOWTIE_PARAMS": "-p 4 -S -q -n 1 -e 80 -l 30 -a -m 5 --best --strata",
-    "ADDORREPLACEREADGROUPS_PARAMS": "MAX_RECORDS_IN_RAM=100000 VALIDATION_STRINGENCY=SILENT RGLB=GRCh38 RGCN=NCI RGPL=Illumina ",
-    "SORTSAM_PARAMS": "MAX_RECORDS_IN_RAM=1800000 VALIDATION_STRINGENCY=SILENT",
-    "PRINTREADS_PARAMS": "-rf ReassignOneMappingQuality -RMQF 255 -RMQT 60",
-    "UNIFIEDGENOTYPER_PARAMS": "-glm SNP -dcov 1000",
-    "HTSEQ_PARAMS": "-m intersection-nonempty -q -t exon -s no",
-    "QUEUE": "1-day",
-     },
-     
     "reference_files": {
     "BOWTIE_REF": "/data/dwheeler/CAP-miRSEQ/References/genome",
     "GENCODE_GTF": "/fdb/GENCODE/GRCh38/21/GTF/gencode.v21.annotation.gtf",
@@ -200,57 +154,8 @@
 
     },
      
-    "memory_parameters": {
-    "REFERENCE_INDEXES_MEM": "-l h_vmem=3G -l h_stack=10M",
-    "CUTADAPT_MEM": "-l h_vmem=8G -l h_stack=100M",
-    "FASTQC_MEM": "-l h_vmem=8G -l h_stack=500M",
-    "BAMS_MEM": "-l h_vmem=750M -l h_stack=10M",
-    "MIRDEEP2_MAPPER_MEM": "-l h_vmem=512M -l h_stack=10M",
-    "MIRDEEP2_MEM": "-l h_vmem=2G -l h_stack=10M",
-    "VARIANTS_MEM": "-l h_vmem=3G -l h_stack=10M",
-    "EXPRESSION_REPORTS_MEM": "-l h_vmem=1G -l h_stack=10M",
-    "DIFF_EXPRESSION_MEM": "-l h_vmem=2G -l h_stack=10M",
-    "GENCODE_CLASSIFICATION_MEM": "-l h_vmem=3G -l h_stack=10M",
-    "SAMPLE_SUMMARY_MEM": "-l h_vmem=1G -l h_stack=10M",
-    "MAIN_DOC_MEM": "-l h_vmem=1G -l h_stack=10M",
-        },
-     
-    "java_parameters": {
-    "CREATEDICTIONARY_JVM_MEM": "-Xmx1g -Xms1g -Djava.io.tmpdir=/scratch",
-    "ADDORREPLACEREADGROUPS_JVM_MEM": "-Xmx1g -Xms1g -Djava.io.tmpdir=/scratch",
-    "SORTSAM_JVM_MEM": "-Xmx8g -Xms1g -Djava.io.tmpdir=/scratch",
-    "UNIFIEDGENOTYPER_JVM_MEM": "-Xmx1g -Xms1g -Djava.io.tmpdir=/scratch",
-    },
-
      },
 
- "sample_info": {
-     "units":{
-"dA549-KD-a-1_S4_R1_001" : "dA549-KD-a-1_S4_R1_001.fastq.gz",
-"dA549-NCTR-a-1_S1_R1_001" : "dA549-NCTR-a-1_S1_R1_001.fastq.gz",
-"dA549-KO-a-2_S5_R1_001" : "dA549-KO-a-2_S5_R1_001.fastq.gz",
-"dA549-NCTR-a-2_S3_R1_001" : "dA549-NCTR-a-2_S3_R1_001.fastq.gz",
-"dA549-KD-b-1_S8_R1_001" : "dA549-KD-b-1_S8_R1_001.fastq.gz",
-"dA549-NCTR-b-1_S6_R1_001" : "dA549-NCTR-b-1_S6_R1_001.fastq.gz",
-"dA549-KD-b-2_S2_R1_001" : "dA549-KD-b-2_S2_R1_001.fastq.gz",
-"dA549-NCTR-b-2-2_S2_R1_001" : "dA549-NCTR-b-2-2_S2_R1_001.fastq.gz",
-"dH460-KOa-1_S3_R1_001" : "dH460-KOa-1_S3_R1_001.fastq.gz",
-"dH460-NCTR-a-1_S1_R1_001" : "dH460-NCTR-a-1_S1_R1_001.fastq.gz",
-"dH460-KOa-2_S4_R1_001" : "dH460-KOa-2_S4_R1_001.fastq.gz",
-"dH460-NCTR-a-2_S2_R1_001" : "dH460-NCTR-a-2_S2_R1_001.fastq.gz",
-"dH460-KO-b-1_S6_R1_001" : "dH460-KO-b-1_S6_R1_001.fastq.gz",
-"dH460-NCTR-b-1_S5_R1_001" : "dH460-NCTR-b-1_S5_R1_001.fastq.gz",
-"dH460-KO-b-2_S8_R1_001" : "dH460-KO-b-2_S8_R1_001.fastq.gz",
-"dH460-NCTR-b-2-2_S1_R1_001" : "dH460-NCTR-b-2-2_S1_R1_001.fastq.gz",
-         },
-
-    "groups":{
-    "SAMPLES": "dA549-KD-a-1_S4_R1_001:dA549-NCTR-a-1_S1_R1_001:dA549-KO-a-2_S5_R1_001:dA549-NCTR-a-2_S3_R1_001:dA549-KD-b-1_S8_R1_001:dA549-NCTR-b-1_S6_R1_001:dA549-KD-b-2_S2_R1_001:dA549-NCTR-b-2-2_S2_R1_001:dH460-KOa-1_S3_R1_001:dH460-NCTR-a-1_S1_R1_001:dH460-KOa-2_S4_R1_001:dH460-NCTR-a-2_S2_R1_001:dH460-KO-b-1_S6_R1_001:dH460-NCTR-b-1_S5_R1_001:dH460-KO-b-2_S8_R1_001:dH460-NCTR-b-2-2_S1_R1_001",
-    "GROUPS": "d549:d549:d549:d549:d549:d549:d549:d549:d460:d460:d460:d460:d460:d460:d460:d460",
-    "PAIRS": "Knockdown:Control:Knockdown:Control:Knockdown:Control:Knockdown:Control:Knockdown:Control:Knockdown:Control:Knockdown:Control:Knockdown:Control",
-     }
-     },
-    },
      "chipseq":{},
      
     }
