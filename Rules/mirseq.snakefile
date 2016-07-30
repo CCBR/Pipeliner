@@ -3,36 +3,37 @@ import os
 configfile: "run.json"
 
 #l=list(config['sample_info']['units'].values())
-l=list(config['project']['samples'].values())
+#l=list(config['project']['samples'].values())
 #samples=list(config['units'].values())
-samples=[i[0].split('.fastq')[0] for i in l]
+#samples=[i[0].split('.fastq')[0] for i in l]
 
 SAMPLES=":".join(config['project']['contrasts']['rsamps'])
 GROUPS=":".join(config['project']['contrasts']['rgroups'])
 PAIRS=":".join(config['project']['contrasts']['rcontrasts'])
+samples=config['project']['contrasts']['rsamps']
 
 rule mirseq_final:
-    input: expand("{out}/init.done",out=config['references'][pfamily]['run_info']['OUTPUT_DIR']),
-           expand("{out}/fastqs/{x}.cutadapt.fastq",x=samples,out=config['references'][pfamily]['run_info']['OUTPUT_DIR']),
-           expand("{out}/qc/fastqc_pretrim/{x}/{x}_fastqc.zip",x=samples,out=config['references'][pfamily]['run_info']['OUTPUT_DIR']),
-           expand("{out}/qc/fastqc_posttrim/{x}/{x}.cutadapt_fastqc.zip",x=samples,out=config['references'][pfamily]['run_info']['OUTPUT_DIR']),
-#            expand("{out}/bams-bwa/{x}.bam",x=samples,out=config['references'][pfamily]['run_info']['OUTPUT_DIR']),
-            expand("{out}/bams/{x}.bam",x=samples,out=config['references'][pfamily]['run_info']['OUTPUT_DIR']),
-            expand("{out}/mirdeep2/{x}/{x}.reads.fa",x=samples,out=config['references'][pfamily]['run_info']['OUTPUT_DIR']),
-            expand("{out}/mirdeep2/{x}/mirdeep2.log",x=samples,out=config['references'][pfamily]['run_info']['OUTPUT_DIR']),
-            config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/variants/mirna_variants.vcf",
-            expand("{p}/qc/other_rna/{x}_gencode_genecount.txt",x=samples,p=config['references'][pfamily]['run_info']['OUTPUT_DIR']),
-            config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/expression/mature_miRNA_expression.xls",
-            config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/differential_expression/expression_boxplots.pdf",
-            config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/SampleSummary.xls",
-            config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/MainDocument.html",
-            expand("{out}/mirspring/{x}.html",x=samples,out=config['references'][pfamily]['run_info']['OUTPUT_DIR']),
-            expand("{out}/mirspring/{x}_bwa.html",x=samples,out=config['references'][pfamily]['run_info']['OUTPUT_DIR']),            
+    input: expand("{out}/init.done",out=config['project']['workpath']),
+           expand("{out}/fastqs/{x}.cutadapt.fastq",x=samples,out=config['project']['workpath']),
+           expand("{out}/qc/fastqc_pretrim/{x}/{x}_fastqc.zip",x=samples,out=config['project']['workpath']),
+           expand("{out}/qc/fastqc_posttrim/{x}/{x}.cutadapt_fastqc.zip",x=samples,out=config['project']['workpath']),
+            expand("{out}/bams-bwa/{x}.bam",x=samples,out=config['project']['workpath']),
+            expand("{out}/bams/{x}.bam",x=samples,out=config['project']['workpath']),
+            expand("{out}/mirdeep2/{x}/{x}.reads.fa",x=samples,out=config['project']['workpath']),
+            expand("{out}/mirdeep2/{x}/mirdeep2.log",x=samples,out=config['project']['workpath']),
+            config['project']['workpath']+"/variants/mirna_variants.vcf",
+            expand("{p}/qc/other_rna/{x}_gencode_genecount.txt",x=samples,p=config['project']['workpath']),
+            config['project']['workpath']+"/expression/mature_miRNA_expression.xls",
+            config['project']['workpath']+"/differential_expression/expression_boxplots.pdf",
+            config['project']['workpath']+"/SampleSummary.xls",
+            config['project']['workpath']+"/MainDocument.html",
+            expand("{out}/mirspring/{x}.html",x=samples,out=config['project']['workpath']),
+            expand("{out}/mirspring/{x}_bwa.html",x=samples,out=config['project']['workpath']),            
 
 rule mirseq_init:
     input:
-    output: expand("{p}/init.done",p=config['references'][pfamily]['run_info']['OUTPUT_DIR'])
-    params: out=config['references'][pfamily]['run_info']['OUTPUT_DIR'],mem="16G",time="4:00:00",partition="ccr",name="mir:init"
+    output: expand("{p}/init.done",p=config['project']['workpath'])
+    params: out=config['project']['workpath'],mem="16G",time="4:00:00",partition="ccr",rname="mir:init"
     priority: 50
     shell: """
 	mkdir -p {params.out}
@@ -64,8 +65,8 @@ rule mirseq_init:
 ## 
 rule mirseq_cutadapt:
        input: config['project']['workpath']+"/{x}.fastq.gz"
-       output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/fastqs/{x}.cutadapt.fastq",config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/fastqs/{x}.tooshort.fastq",config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/fastqs/{x}.cutadapt.log",
-       params: cpath=config['bin'][pfamily]['tool_paths']['CUTADAPT_PATH'],cparams=config['bin'][pfamily]['tool_parameters']['CUTADAPT_PARAMS'],qtrim='20',indir=config['project']['workpath'],out=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/fastqs",mem="32G",time="4:00:00",partition="ccr",rname="mir:cutadapt"
+       output: config['project']['workpath']+"/fastqs/{x}.cutadapt.fastq",config['project']['workpath']+"/fastqs/{x}.tooshort.fastq",config['project']['workpath']+"/fastqs/{x}.cutadapt.log",
+       params: cpath=config['bin'][pfamily]['tool_paths']['CUTADAPT_PATH'],cparams=config['bin'][pfamily]['tool_parameters']['CUTADAPT_PARAMS'],qtrim='20',indir=config['project']['workpath'],out=config['project']['workpath']+"/fastqs",mem="32G",time="4:00:00",partition="ccr",rname="mir:cutadapt"
        threads: 1
        shell: """
    	{params.cpath}/cutadapt {params.cparams} -q {params.qtrim} {input} -o {output[0]} --too-short-output={output[1]} > {output[2]}
@@ -73,8 +74,8 @@ rule mirseq_cutadapt:
 
 rule mirseq_fastqc_pretrim:
     input: config['project']['workpath']+"/{x}.fastq.gz"
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/qc/fastqc_pretrim/{x}/{x}_fastqc.zip"
-    params: fastqc=config['bin'][pfamily]['tool_paths']['FASTQC_PATH'],indir=config['project']['workpath'],out=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/qc/fastqc_pretrim",mem="16G",time="4:00:00",partition="ccr",rname="mir:pretrim"
+    output: config['project']['workpath']+"/qc/fastqc_pretrim/{x}/{x}_fastqc.zip"
+    params: fastqc=config['bin'][pfamily]['tool_paths']['FASTQC_PATH'],indir=config['project']['workpath'],out=config['project']['workpath']+"/qc/fastqc_pretrim",mem="16G",time="4:00:00",partition="ccr",rname="mir:pretrim"
     threads: 1    
     shell: """
 	mkdir -p {params.out}/{wildcards.x}
@@ -82,9 +83,9 @@ rule mirseq_fastqc_pretrim:
            """
 
 rule mirseq_fastqc_posttrim:
-    input: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/fastqs/{x}.cutadapt.fastq"
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/qc/fastqc_posttrim/{x}/{x}.cutadapt_fastqc.zip"
-    params: fastqc=config['bin'][pfamily]['tool_paths']['FASTQC_PATH'],indir=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/fastqs",out=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/qc/fastqc_posttrim",mem="16G",time="4:00:00",partition="ccr",rname="mir:posttrim"
+    input: config['project']['workpath']+"/fastqs/{x}.cutadapt.fastq"
+    output: config['project']['workpath']+"/qc/fastqc_posttrim/{x}/{x}.cutadapt_fastqc.zip"
+    params: fastqc=config['bin'][pfamily]['tool_paths']['FASTQC_PATH'],indir=config['project']['workpath']+"/fastqs",out=config['project']['workpath']+"/qc/fastqc_posttrim",mem="16G",time="4:00:00",partition="ccr",rname="mir:posttrim"
     threads: 1    
     shell: """
 	mkdir -p {params.out}/{wildcards.x}
@@ -93,9 +94,9 @@ rule mirseq_fastqc_posttrim:
 
 
 rule mirseq_mirdeep2_mapper:
-    input: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/fastqs/{x}.cutadapt.fastq"
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/mirdeep2/{x}/{x}.reads.fa",config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/mirdeep2/{x}/{x}.reads_vs_genome.arf"
-    params: mirdeep=config['bin'][pfamily]['tool_paths']['MIRDEEP2_PATH'],indir=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/fastqs",out=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/mirdeep2",mapper_params=config['bin'][pfamily]['tool_parameters']['MAPPER_PARAMS'],bowtie_ref=config['references'][pfamily]['reference_files']['BOWTIE_REF'],mem="16G",time="4:00:00",partition="ccr",rname="mir:mapper"
+    input: config['project']['workpath']+"/fastqs/{x}.cutadapt.fastq"
+    output: config['project']['workpath']+"/mirdeep2/{x}/{x}.reads.fa",config['project']['workpath']+"/mirdeep2/{x}/{x}.reads_vs_genome.arf"
+    params: mirdeep=config['bin'][pfamily]['tool_paths']['MIRDEEP2_PATH'],indir=config['project']['workpath']+"/fastqs",out=config['project']['workpath']+"/mirdeep2",mapper_params=config['bin'][pfamily]['tool_parameters']['MAPPER_PARAMS'],bowtie_ref=config['references'][pfamily]['reference_files']['BOWTIE_REF'],mem="16G",time="4:00:00",partition="ccr",rname="mir:mapper"
     threads: 1
     shell: """
         export PATH=/data/dwheeler/CAP-miRSEQ/bin:$PATH
@@ -104,9 +105,9 @@ rule mirseq_mirdeep2_mapper:
            """
 
 rule mirseq_make_bams:
-    input: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/fastqs/{x}.cutadapt.fastq"
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/bams/{x}.bam",config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/bams/{x}.bowtie.log"
-    params: out=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/bams",bowtie=config['bin'][pfamily]['tool_paths']['BOWTIE_PATH'],bowtie_ref=config['references'][pfamily]['reference_files']['BOWTIE_REF'],bowtie_params=config['bin'][pfamily]['tool_parameters']['BOWTIE_PARAMS'],quals="--phred33-quals",samtools=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],addorreplacereadgroups_params=config['bin'][pfamily]['tool_parameters']['ADDORREPLACEREADGROUPS_PARAMS'],java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],picard_path=config['bin'][pfamily]['tool_paths']['PICARD_PATH'],addorreplacereadgroups_jvm_mem=config['bin'][pfamily]['java_parameters']['ADDORREPLACEREADGROUPS_JVM_MEM'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],mem="32G",time="4:00:00",partition="ccr",rname="mir:bowtie"
+    input: config['project']['workpath']+"/fastqs/{x}.cutadapt.fastq"
+    output: config['project']['workpath']+"/bams/{x}.bam",config['project']['workpath']+"/bams/{x}.bowtie.log"
+    params: out=config['project']['workpath']+"/bams",bowtie=config['bin'][pfamily]['tool_paths']['BOWTIE_PATH'],bowtie_ref=config['references'][pfamily]['reference_files']['BOWTIE_REF'],bowtie_params=config['bin'][pfamily]['tool_parameters']['BOWTIE_PARAMS'],quals="--phred33-quals",samtools=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],addorreplacereadgroups_params=config['bin'][pfamily]['tool_parameters']['ADDORREPLACEREADGROUPS_PARAMS'],java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],picard_path=config['bin'][pfamily]['tool_paths']['PICARD_PATH'],addorreplacereadgroups_jvm_mem=config['bin'][pfamily]['java_parameters']['ADDORREPLACEREADGROUPS_JVM_MEM'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],mem="32G",time="4:00:00",partition="ccr",rname="mir:bowtie"
     threads: 1    
     shell: """
 	{params.bowtie}/bowtie {params.quals} {params.bowtie_params} --sam-RG ID:{wildcards.x} --sam-RG SM:{wildcards.x} {params.bowtie_ref} {input} {params.out}/{wildcards.x}.aligned.sam 2> {params.out}/{wildcards.x}.bowtie.log
@@ -126,9 +127,9 @@ rule mirseq_make_bams:
 
 rule mirseq_make_bams_bwa:
 #    input: config['project']['workpath']+"/{x}.fastq.gz"
-    input: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/fastqs/{x}.cutadapt.fastq"
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/bams-bwa/{x}.bam"
-    params: out=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/bams-bwa",samtools=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],genome=config['references'][pfamily]['reference_files']['REF_GENOME'],mem="32G",time="4:00:00",partition="ccr",rname="mir:bwa"
+    input: config['project']['workpath']+"/fastqs/{x}.cutadapt.fastq"
+    output: config['project']['workpath']+"/bams-bwa/{x}.bam"
+    params: out=config['project']['workpath']+"/bams-bwa",samtools=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],genome=config['references'][pfamily]['reference_files']['REF_GENOME'],mem="32G",time="4:00:00",partition="ccr",rname="mir:bwa"
     threads: 4    
     shell: """
     /usr/local/apps/bwa/0.7.10/bwa mem -t {threads} {params.genome} {input} > {params.out}/{wildcards.x}.sam
@@ -141,9 +142,9 @@ rule mirseq_make_bams_bwa:
 
 
 rule mirseq_mirdeep2:
-    input: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/mirdeep2/{x}/{x}.reads.fa",config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/mirdeep2/{x}/{x}.reads_vs_genome.arf"
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/mirdeep2/{x}/mirdeep2.log"
-    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],mature=config['references'][pfamily]['reference_files']['MIRBASE_MATURE'],precursor=config['references'][pfamily]['reference_files']['MIRBASE_HAIRPIN'],mirdeep2_params=config['bin'][pfamily]['tool_parameters']['MIRDEEP2_PARAMS'],mirdeep2_close_species=config['bin'][pfamily]['tool_parameters']['MIRDEEP2_CLOSE_SPECIES'],genome=config['references'][pfamily]['reference_files']['REF_GENOME'],out=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/mirdeep2",mirdeep2_path=config['bin'][pfamily]['tool_paths']['MIRDEEP2_PATH'],bowtie_path=config['bin'][pfamily]['tool_paths']['BOWTIE_PATH'],squid_path=config['bin'][pfamily]['tool_paths']['SQUID_PATH'],vienna_path=config['bin'][pfamily]['tool_paths']['VIENNA_PATH'],randfold_path=config['bin'][pfamily]['tool_paths']['RANDFOLD_PATH'],mem="16G",time="8:00:00",partition="ccr",rname="mir:mdeep"
+    input: config['project']['workpath']+"/mirdeep2/{x}/{x}.reads.fa",config['project']['workpath']+"/mirdeep2/{x}/{x}.reads_vs_genome.arf"
+    output: config['project']['workpath']+"/mirdeep2/{x}/mirdeep2.log"
+    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],mature=config['references'][pfamily]['reference_files']['MIRBASE_MATURE'],precursor=config['references'][pfamily]['reference_files']['MIRBASE_HAIRPIN'],mirdeep2_params=config['bin'][pfamily]['tool_parameters']['MIRDEEP2_PARAMS'],mirdeep2_close_species=config['bin'][pfamily]['tool_parameters']['MIRDEEP2_CLOSE_SPECIES'],genome=config['references'][pfamily]['reference_files']['REF_GENOME'],out=config['project']['workpath']+"/mirdeep2",mirdeep2_path=config['bin'][pfamily]['tool_paths']['MIRDEEP2_PATH'],bowtie_path=config['bin'][pfamily]['tool_paths']['BOWTIE_PATH'],squid_path=config['bin'][pfamily]['tool_paths']['SQUID_PATH'],vienna_path=config['bin'][pfamily]['tool_paths']['VIENNA_PATH'],randfold_path=config['bin'][pfamily]['tool_paths']['RANDFOLD_PATH'],mem="16G",time="8:00:00",partition="ccr",rname="mir:mdeep"
     threads: 1    
     shell: """
 
@@ -163,9 +164,9 @@ cd {params.out}/{wildcards.x} && {params.script_path}/miRDeep2.pl {wildcards.x}.
            """
 
 rule mirseq_variants:
-    input: expand("{p}/bams/{x}.bam",x=samples,p=config['references'][pfamily]['run_info']['OUTPUT_DIR'])
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/variants/mirna_variants.vcf"
-    params: genome=config['references'][pfamily]['reference_files']['REF_GENOME_IUPAC'],out=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/variants",script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],mirgff=config['references'][pfamily]['reference_files']['MIRBASE_GFF'],bedpath=config['bin'][pfamily]['tool_paths']['BEDTOOLS_PATH'],gatkjar=config['bin'][pfamily]['tool_paths']['GATK_JAR'],unifiedgenotyper_params=config['bin'][pfamily]['tool_parameters']['UNIFIEDGENOTYPER_PARAMS'],vcftools_path=config['bin'][pfamily]['tool_paths']['VCFTOOLS_PATH'],units=expand("{s}",s=samples),java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],unifiedgenotyper_jvm_mem=config['bin'][pfamily]['java_parameters']['UNIFIEDGENOTYPER_JVM_MEM'],vcftools_perllib=config['bin'][pfamily]['tool_paths']['VCFTOOLS_PERLLIB'],mem="16G",time="4:00:00",partition="ccr",rname="mir:variants"
+    input: expand("{p}/bams/{x}.bam",x=samples,p=config['project']['workpath'])
+    output: config['project']['workpath']+"/variants/mirna_variants.vcf"
+    params: genome=config['references'][pfamily]['reference_files']['REF_GENOME_IUPAC'],out=config['project']['workpath']+"/variants",script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],mirgff=config['references'][pfamily]['reference_files']['MIRBASE_GFF'],bedpath=config['bin'][pfamily]['tool_paths']['BEDTOOLS_PATH'],gatkjar=config['bin'][pfamily]['tool_paths']['GATK_JAR'],unifiedgenotyper_params=config['bin'][pfamily]['tool_parameters']['UNIFIEDGENOTYPER_PARAMS'],vcftools_path=config['bin'][pfamily]['tool_paths']['VCFTOOLS_PATH'],units=expand("{s}",s=samples),java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],unifiedgenotyper_jvm_mem=config['bin'][pfamily]['java_parameters']['UNIFIEDGENOTYPER_JVM_MEM'],vcftools_perllib=config['bin'][pfamily]['tool_paths']['VCFTOOLS_PERLLIB'],mem="16G",time="4:00:00",partition="ccr",rname="mir:variants"
     threads: 1    
     run: 
         I=" -I "+" -I ".join(input)
@@ -193,9 +194,9 @@ rule mirseq_variants:
         shell(cmd)     
 
 rule mirseq_gencode_classification:
-    input: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/bams/{x}.bam"
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/qc/other_rna/{x}_gencode_genecount.txt"
-    params: java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],sortsam_jvm_mem=config['bin'][pfamily]['java_parameters']['SORTSAM_JVM_MEM'],picard_path=config['bin'][pfamily]['tool_paths']['PICARD_PATH'],input_dir=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/bams",out=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/qc/other_rna",sortsam_params=config['bin'][pfamily]['tool_parameters']['SORTSAM_PARAMS'],htseq_path=config['bin'][pfamily]['tool_paths']['HTSEQ_PATH'],htseq_params=config['bin'][pfamily]['tool_parameters']['HTSEQ_PARAMS'],gencode_gtf=config['references'][pfamily]['reference_files']['GENCODE_GTF'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],python_path=config['bin'][pfamily]['tool_paths']['PYTHON_PATH'],htseq_lib_path=config['bin'][pfamily]['tool_paths']['HTSEQ_LIB_PATH'],samtools_path=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],rscript_path=config['bin'][pfamily]['tool_paths']['RSCRIPT_PATH'],mem="16G",time="4:00:00",partition="ccr",rname="mir:classify"
+    input: config['project']['workpath']+"/bams/{x}.bam"
+    output: config['project']['workpath']+"/qc/other_rna/{x}_gencode_genecount.txt"
+    params: java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],sortsam_jvm_mem=config['bin'][pfamily]['java_parameters']['SORTSAM_JVM_MEM'],picard_path=config['bin'][pfamily]['tool_paths']['PICARD_PATH'],input_dir=config['project']['workpath']+"/bams",out=config['project']['workpath']+"/qc/other_rna",sortsam_params=config['bin'][pfamily]['tool_parameters']['SORTSAM_PARAMS'],htseq_path=config['bin'][pfamily]['tool_paths']['HTSEQ_PATH'],htseq_params=config['bin'][pfamily]['tool_parameters']['HTSEQ_PARAMS'],gencode_gtf=config['references'][pfamily]['reference_files']['GENCODE_GTF'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],python_path=config['bin'][pfamily]['tool_paths']['PYTHON_PATH'],htseq_lib_path=config['bin'][pfamily]['tool_paths']['HTSEQ_LIB_PATH'],samtools_path=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],rscript_path=config['bin'][pfamily]['tool_paths']['RSCRIPT_PATH'],mem="16G",time="4:00:00",partition="ccr",rname="mir:classify"
     threads: 1    
     shell: """
 
@@ -208,19 +209,19 @@ rule mirseq_gencode_classification:
            """
 
 rule mirseq_expression_reports:
-    input: expand("{out}/mirdeep2/{x}/mirdeep2.log",x=samples,out=config['references'][pfamily]['run_info']['OUTPUT_DIR'])
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/expression/mature_miRNA_expression.xls",config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/expression/miRNA_expression_raw.xls"
+    input: expand("{out}/mirdeep2/{x}/mirdeep2.log",x=samples,out=config['project']['workpath'])
+    output: config['project']['workpath']+"/expression/mature_miRNA_expression.xls",config['project']['workpath']+"/expression/miRNA_expression_raw.xls"
 
-    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],input_dir=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/mirdeep2",out=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/expression",samples=SAMPLES,mem="16G",time="4:00:00",partition="ccr",rname="mir:expression"
+    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],input_dir=config['project']['workpath']+"/mirdeep2",out=config['project']['workpath']+"/expression",samples=SAMPLES,mem="16G",time="4:00:00",partition="ccr",rname="mir:expression"
     threads: 1    
     run: 
        shell("{params.script_path}/dw_expression_reports.sh {params.input_dir} {params.out} {params.samples} {params.script_path}")
 
         
 rule mirseq_differential_expression:
-    input: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/expression/mature_miRNA_expression.xls"
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/differential_expression/expression_boxplots.pdf"
-    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],out=config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/differential_expression",diff_expression=config['references'][pfamily]['run_info']['DIFF_EXPRESSION'],diff_expression_analyses=config['references'][pfamily]['run_info']['DIFF_EXPRESSION_ANALYSES'],samples=SAMPLES,groups=GROUPS,pairs=PAIRS,mem="16G",time="4:00:00",partition="ccr",rname="mir:diffexp"
+    input: config['project']['workpath']+"/expression/mature_miRNA_expression.xls"
+    output: config['project']['workpath']+"/differential_expression/expression_boxplots.pdf"
+    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],out=config['project']['workpath']+"/differential_expression",diff_expression=config['references'][pfamily]['run_info']['DIFF_EXPRESSION'],diff_expression_analyses=config['references'][pfamily]['run_info']['DIFF_EXPRESSION_ANALYSES'],samples=SAMPLES,groups=GROUPS,pairs=PAIRS,mem="16G",time="4:00:00",partition="ccr",rname="mir:diffexp"
     threads: 1    
     shell: """
 #       units=":".join(samples)
@@ -229,10 +230,10 @@ rule mirseq_differential_expression:
 
            """
 rule mirseq_summarize:
-    input: expand("{p}/fastqs/{x}.cutadapt.log",x=samples,p=config['references'][pfamily]['run_info']['OUTPUT_DIR']),expand("{p}/bams/{x}.bowtie.log",x=samples,p=config['references'][pfamily]['run_info']['OUTPUT_DIR']),expand("{p}/expression/miRNA_expression_raw.xls",p=config['references'][pfamily]['run_info']['OUTPUT_DIR']),
-#expand("{p}/mirdeep2/{x}/expression_*.html",x=samples,p=config['references'][pfamily]['run_info']['OUTPUT_DIR']),expand("{p}/{x}.precursor.reads.txt",x=samples,p=config['references'][pfamily]['run_info']['OUTPUT_DIR'])
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/SampleSummary.xls"
-    params: out=config['references'][pfamily]['run_info']['OUTPUT_DIR'],trim_adapter=config['references'][pfamily]['run_info']['TRIM_ADAPTER'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],samples=SAMPLES,mem="16G",time="4:00:00",partition="ccr",rname="mir:summarize"
+    input: expand("{p}/fastqs/{x}.cutadapt.log",x=samples,p=config['project']['workpath']),expand("{p}/bams/{x}.bowtie.log",x=samples,p=config['project']['workpath']),expand("{p}/expression/miRNA_expression_raw.xls",p=config['project']['workpath']),
+#expand("{p}/mirdeep2/{x}/expression_*.html",x=samples,p=config['project']['workpath']),expand("{p}/{x}.precursor.reads.txt",x=samples,p=config['project']['workpath'])
+    output: config['project']['workpath']+"/SampleSummary.xls"
+    params: out=config['project']['workpath'],trim_adapter=config['references'][pfamily]['run_info']['TRIM_ADAPTER'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],samples=SAMPLES,mem="16G",time="4:00:00",partition="ccr",rname="mir:summarize"
     threads: 1    
     run: 
        units=":".join(samples)
@@ -240,9 +241,9 @@ rule mirseq_summarize:
 
            
 rule mirseq_main_document:
-    input: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/SampleSummary.xls"
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/MainDocument.html"
-    params: out=config['references'][pfamily]['run_info']['OUTPUT_DIR'],trim_adapter=config['references'][pfamily]['run_info']['TRIM_ADAPTER'],flowcell=config['references'][pfamily]['run_info']['FLOWCELL'],tool=config['references'][pfamily]['run_info']['TOOL'],call_snvs=config['references'][pfamily]['run_info']['CALL_SNVS'],diff_expression=config['references'][pfamily]['run_info']['DIFF_EXPRESSION'],diff_expression_analyses=config['references'][pfamily]['run_info']['DIFF_EXPRESSION_ANALYSES'],email=config['references'][pfamily]['run_info']['EMAIL'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],delivery_folder=config['references'][pfamily]['run_info']['DELIVERY_FOLDER'],tool_info=config['references'][pfamily]['run_info']['TOOL_INFO'],genome_build=config['references'][pfamily]['run_info']['GENOME_BUILD'],server="",samples=SAMPLES,mem="4G",time="4:00:00",partition="ccr",rname="mir:main"
+    input: config['project']['workpath']+"/SampleSummary.xls"
+    output: config['project']['workpath']+"/MainDocument.html"
+    params: out=config['project']['workpath'],trim_adapter=config['references'][pfamily]['run_info']['TRIM_ADAPTER'],flowcell=config['references'][pfamily]['run_info']['FLOWCELL'],tool=config['references'][pfamily]['run_info']['TOOL'],call_snvs=config['references'][pfamily]['run_info']['CALL_SNVS'],diff_expression=config['references'][pfamily]['run_info']['DIFF_EXPRESSION'],diff_expression_analyses=config['references'][pfamily]['run_info']['DIFF_EXPRESSION_ANALYSES'],email=config['references'][pfamily]['run_info']['EMAIL'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],delivery_folder=config['project']['workpath'],tool_info=config['references'][pfamily]['run_info']['TOOL_INFO'],genome_build=config['references'][pfamily]['run_info']['GENOME_BUILD'],server="",samples=SAMPLES,mem="4G",time="4:00:00",partition="ccr",rname="mir:main"
     threads: 1    
     run: 
        units=":".join(samples)
@@ -253,7 +254,7 @@ rule mirseq_main_document:
            trim=1
        if (config['references'][pfamily]['DIFF_EXPRESSION'] == "YES" ):
            diff=config['references'][pfamily]['DIFF_EXPRESSION_ANALYSES']
-       O=open(config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/pfamily.tmp","w")
+       O=open(config['project']['workpath']+"/pfamily.tmp","w")
        I=eval(open("pfamily.json","r").read())
        for k in I['references'][pfamily].keys():
            O.write("{0}={1}\n".format(k,I['references'][pfamily][k]))
@@ -263,9 +264,9 @@ rule mirseq_main_document:
 
 
 rule mirseq_miRspring_bowtie:
-    input: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/bams/{x}.bam"
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/mirspring/{x}.html"
-    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['references'][pfamily]['run_info']['DELIVERY_FOLDER'],mirbase_files=config['references'][pfamily]['reference_files']['MIRBASE_FILES'],mem="16G",time="4:00:00",partition="ccr",rname="mir:mirspring"
+    input: config['project']['workpath']+"/bams/{x}.bam"
+    output: config['project']['workpath']+"/mirspring/{x}.html"
+    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['project']['workpath'],mirbase_files=config['references'][pfamily]['reference_files']['MIRBASE_FILES'],mem="16G",time="4:00:00",partition="ccr",rname="mir:mirspring"
     shell: """
            if [ ! -d {params.output}/mirspring ]
            then
@@ -278,9 +279,9 @@ rule mirseq_miRspring_bowtie:
            """
 
 rule mirseq_miRspring_bwa:
-    input: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/bams-bwa/{x}.bam"
-    output: config['references'][pfamily]['run_info']['OUTPUT_DIR']+"/mirspring/{x}_bwa.html"
-    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['references'][pfamily]['run_info']['DELIVERY_FOLDER'],mirbase_files=config['references'][pfamily]['reference_files']['MIRBASE_FILES'],mem="16G",time="4:00:00",partition="ccr",rname="mir:mirspring"
+    input: config['project']['workpath']+"/bams-bwa/{x}.bam"
+    output: config['project']['workpath']+"/mirspring/{x}_bwa.html"
+    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['project']['workpath'],mirbase_files=config['references'][pfamily]['reference_files']['MIRBASE_FILES'],mem="16G",time="4:00:00",partition="ccr",rname="mir:mirspring"
     shell: """
            if [ ! -d {params.output}/mirspring ]
            then
@@ -294,7 +295,7 @@ rule mirseq_miRspring_bwa:
 rule mirseq_targetscan:
     input:
     output:
-    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['references'][pfamily]['run_info']['DELIVERY_FOLDER'],target_data=config['references'][pfamily]['reference_files']['TARGET_DATA'],mem="4G",time="4:00:00",partition="ccr",rname="mir:tscan"
+    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['project']['workpath'],target_data=config['references'][pfamily]['reference_files']['TARGET_DATA'],mem="4G",time="4:00:00",partition="ccr",rname="mir:tscan"
     shell: """
 
            {params.script_path}/targetscan_70.pl {params.target_data}/miR_Family_info_sample.txt {params.target_data}/UTR_sequences_all.txt {params.output}/targetscan_70_output.txt
