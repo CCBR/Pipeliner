@@ -31,7 +31,8 @@
     "MUTECTCOSMIC": "",
     "MUTECTSNP": ""
 },
-"rnaseq":{
+     "rnaseq":{
+"GENOMEFILE": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/ref.fa",	 
 "GTFFILE": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/genes.gtf",
 "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/genes-125",
 "ANNOTATE": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/Mm10_genes.txt",
