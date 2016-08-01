@@ -13,5 +13,5 @@ rule all_initialqc:
             "multiqc_report.html",
             expand("QC/{s}_run_trimmomatic.err",s=samples),
             expand("QC/{s}.qualimapReport/genome_results.txt",s=samples),
-#            config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
-    output: 
+            config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
+    output:

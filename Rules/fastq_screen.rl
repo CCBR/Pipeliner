@@ -1,5 +1,5 @@
 rule fastq_screen:
-    input:  "{x}.R1."+config['project']['filetype'],"{x}.R2."+config['project']['filetype']
+    input:  "{x}.R1.trimmed.fastq.gz","{x}.R2.trimmed.fastq.gz"
     output: "QC/{x}.R1_screen.txt",
             "QC/{x}.R1_screen.png",
             "QC/{x}.R2_screen.txt",

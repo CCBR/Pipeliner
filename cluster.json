@@ -31,7 +31,7 @@
     "bwa.mem":
     {
         "mem": "128g",
-        "threads": "8"
+        "threads": "24"
     },
     "fastqc_fastq":
     {

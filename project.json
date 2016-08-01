@@ -11,67 +11,2889 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/somatic_test3",
+        "datapath": "/data/CCBR/projects/ccbr604/data/pipeline",
         "description": "Enter CCBR project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "poop",
-        "id": "somatic_test",
+        "flowcellid": "tcga",
+        "id": "ccbr604",
         "organism": "h. sapiens",
-        "pairs": {
-            "F22testA+D115test": [
-                "F22testA",
-                "D115test"
-            ],
-            "F22testB+D115test": [
-                "F22testB",
-                "D115test"
-            ],
-            "F22testC+3435Ttest": [
-                "F22testC",
-                "3435Ttest"
-            ]
-        },
+        "pairs": {},
         "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "exomeseq-somatic",
+        "pipeline": "exomeseq-germline",
         "platform": "Illumina",
         "poc": "justin.lack",
         "rgid": {
-            "3435Ttest": {
+            "2K-A9WE-10A-01D-A385-10": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "3435Ttest"
+                "rgsm": "2K-A9WE-10A-01D-A385-10"
             },
-            "D115test": {
+            "2Z-A9J1-10A-01D-A385-10": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "D115test"
+                "rgsm": "2Z-A9J1-10A-01D-A385-10"
             },
-            "F22testA": {
+            "2Z-A9J2-10A-01D-A385-10": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22testA"
+                "rgsm": "2Z-A9J2-10A-01D-A385-10"
             },
-            "F22testB": {
+            "2Z-A9J3-10A-01D-A385-10": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22testB"
+                "rgsm": "2Z-A9J3-10A-01D-A385-10"
             },
-            "F22testC": {
+            "2Z-A9J5-10A-01D-A385-10": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22testC"
+                "rgsm": "2Z-A9J5-10A-01D-A385-10"
+            },
+            "2Z-A9J6-10A-01D-A385-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9J6-10A-01D-A385-10"
+            },
+            "2Z-A9J7-10A-01D-A385-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9J7-10A-01D-A385-10"
+            },
+            "2Z-A9J8-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9J8-10A-01D-A42M-10"
+            },
+            "2Z-A9J9-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9J9-10A-01D-A42M-10"
+            },
+            "2Z-A9JD-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JD-10A-01D-A42M-10"
+            },
+            "2Z-A9JE-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JE-10A-01D-A42M-10"
+            },
+            "2Z-A9JG-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JG-10A-01D-A42M-10"
+            },
+            "2Z-A9JI-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JI-10A-01D-A42M-10"
+            },
+            "2Z-A9JJ-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JJ-10A-01D-A42M-10"
+            },
+            "2Z-A9JK-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JK-10A-01D-A42M-10"
+            },
+            "2Z-A9JL-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JL-10A-01D-A42M-10"
+            },
+            "2Z-A9JM-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JM-10A-01D-A42M-10"
+            },
+            "2Z-A9JN-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JN-10A-01D-A42M-10"
+            },
+            "2Z-A9JO-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JO-10A-01D-A42M-10"
+            },
+            "2Z-A9JP-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JP-10A-01D-A42M-10"
+            },
+            "2Z-A9JQ-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JQ-10A-01D-A42M-10"
+            },
+            "2Z-A9JR-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JR-10A-01D-A42M-10"
+            },
+            "2Z-A9JS-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JS-10A-01D-A42M-10"
+            },
+            "2Z-A9JT-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "2Z-A9JT-10A-01D-A42M-10"
+            },
+            "3Z-A93Z-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "3Z-A93Z-10A-01D-A370-10"
+            },
+            "4A-A93W-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "4A-A93W-10A-01D-A370-10"
+            },
+            "4A-A93X-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "4A-A93X-10A-01D-A370-10"
+            },
+            "4A-A93Y-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "4A-A93Y-10A-01D-A370-10"
+            },
+            "5P-A9JU-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9JU-10A-01D-A42M-10"
+            },
+            "5P-A9JV-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9JV-10A-01D-A42M-10"
+            },
+            "5P-A9JW-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9JW-10A-01D-A42M-10"
+            },
+            "5P-A9JY-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9JY-10A-01D-A42M-10"
+            },
+            "5P-A9JZ-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9JZ-10A-01D-A42M-10"
+            },
+            "5P-A9K0-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9K0-10A-01D-A42M-10"
+            },
+            "5P-A9K2-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9K2-10A-01D-A42M-10"
+            },
+            "5P-A9K3-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9K3-10A-01D-A42M-10"
+            },
+            "5P-A9K4-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9K4-10A-01D-A42M-10"
+            },
+            "5P-A9K6-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9K6-10A-01D-A42M-10"
+            },
+            "5P-A9K8-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9K8-10A-01D-A42M-10"
+            },
+            "5P-A9K9-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9K9-10A-01D-A42M-10"
+            },
+            "5P-A9KA-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9KA-10A-01D-A42M-10"
+            },
+            "5P-A9KC-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9KC-10A-01D-A42M-10"
+            },
+            "5P-A9KE-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9KE-10A-01D-A42M-10"
+            },
+            "5P-A9KF-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9KF-10A-01D-A42M-10"
+            },
+            "5P-A9KH-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "5P-A9KH-10A-01D-A42M-10"
+            },
+            "6D-AA2E-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "6D-AA2E-10A-01D-A370-10"
+            },
+            "A3-3347-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-3347-11A-01D-1251-10"
+            },
+            "A3-3349-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-3349-11A-01D-1251-10"
+            },
+            "A3-3351-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-3351-11A-01D-1251-10"
+            },
+            "A3-3358-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-3358-11A-01D-1534-10"
+            },
+            "A3-3362-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-3362-11A-01D-1251-10"
+            },
+            "A3-3387-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-3387-11A-01D-1534-10"
+            },
+            "A3-A6NI-10A-01D-A33K-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-A6NI-10A-01D-A33K-10"
+            },
+            "A3-A6NJ-10A-01D-A33K-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-A6NJ-10A-01D-A33K-10"
+            },
+            "A3-A6NL-10A-01D-A33K-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-A6NL-10A-01D-A33K-10"
+            },
+            "A3-A6NN-10A-01D-A33K-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-A6NN-10A-01D-A33K-10"
+            },
+            "A3-A8CQ-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-A8CQ-10A-01D-A370-10"
+            },
+            "A3-A8OU-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-A8OU-10A-01D-A370-10"
+            },
+            "A3-A8OV-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-A8OV-10A-01D-A370-10"
+            },
+            "A3-A8OW-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-A8OW-10A-01D-A370-10"
+            },
+            "A3-A8OX-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A3-A8OX-10A-01D-A370-10"
+            },
+            "A4-A48D-10A-01D-A25F-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A4-A48D-10A-01D-A25F-10"
+            },
+            "A4-A4ZT-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A4-A4ZT-10A-01D-A26P-10"
+            },
+            "A4-A57E-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A4-A57E-10A-01D-A26P-10"
+            },
+            "A4-A5DU-10A-01D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A4-A5DU-10A-01D-A28G-10"
+            },
+            "A4-A5XZ-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A4-A5XZ-10A-01D-A31X-10"
+            },
+            "A4-A5Y0-11A-11D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A4-A5Y0-11A-11D-A31X-10"
+            },
+            "A4-A5Y1-11A-11D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A4-A5Y1-11A-11D-A28G-10"
+            },
+            "A4-A6HP-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A4-A6HP-10A-01D-A31X-10"
+            },
+            "A4-A772-10A-01D-A33Q-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A4-A772-10A-01D-A33Q-10"
+            },
+            "A4-A7UZ-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "A4-A7UZ-10A-01D-A34Z-10"
+            },
+            "AK-3426-10A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "AK-3426-10A-01D-1251-10"
+            },
+            "AK-3429-10A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "AK-3429-10A-01D-1251-10"
+            },
+            "AK-3430-10A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "AK-3430-10A-01D-1251-10"
+            },
+            "AK-3436-10A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "AK-3436-10A-01D-1251-10"
+            },
+            "AK-3451-10A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "AK-3451-10A-01D-1251-10"
+            },
+            "AK-3456-10A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "AK-3456-10A-01D-1251-10"
+            },
+            "AK-3458-10A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "AK-3458-10A-01D-1501-10"
+            },
+            "AL-A5DJ-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "AL-A5DJ-10A-01D-A26P-10"
+            },
+            "AT-A5NU-10A-01D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "AT-A5NU-10A-01D-A28G-10"
+            },
+            "B0-4698-11A-02D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4698-11A-02D-1501-10"
+            },
+            "B0-4700-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4700-11A-01D-1534-10"
+            },
+            "B0-4706-11A-02D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4706-11A-02D-1501-10"
+            },
+            "B0-4710-11A-02D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4710-11A-02D-1501-10"
+            },
+            "B0-4712-11A-02D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4712-11A-02D-1501-10"
+            },
+            "B0-4810-11A-02D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4810-11A-02D-1501-10"
+            },
+            "B0-4811-11A-02D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4811-11A-02D-1501-10"
+            },
+            "B0-4815-11A-02D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4815-11A-02D-1501-10"
+            },
+            "B0-4816-11A-02D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4816-11A-02D-1501-10"
+            },
+            "B0-4818-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4818-11A-01D-1501-10"
+            },
+            "B0-4821-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4821-11A-01D-1501-10"
+            },
+            "B0-4852-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-4852-11A-01D-1501-10"
+            },
+            "B0-5080-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5080-11A-01D-1501-10"
+            },
+            "B0-5399-10A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5399-10A-01D-1501-10"
+            },
+            "B0-5400-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5400-11A-01D-1501-10"
+            },
+            "B0-5402-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5402-11A-01D-1501-10"
+            },
+            "B0-5690-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5690-11A-01D-1534-10"
+            },
+            "B0-5691-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5691-11A-01D-1534-10"
+            },
+            "B0-5692-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5692-11A-01D-1534-10"
+            },
+            "B0-5693-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5693-11A-01D-1534-10"
+            },
+            "B0-5694-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5694-11A-01D-1534-10"
+            },
+            "B0-5695-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5695-11A-01D-1534-10"
+            },
+            "B0-5696-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5696-11A-01D-1534-10"
+            },
+            "B0-5697-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5697-11A-01D-1534-10"
+            },
+            "B0-5699-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5699-11A-01D-1534-10"
+            },
+            "B0-5700-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5700-11A-01D-1534-10"
+            },
+            "B0-5701-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5701-11A-01D-1534-10"
+            },
+            "B0-5702-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5702-11A-01D-1534-10"
+            },
+            "B0-5703-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5703-11A-01D-1534-10"
+            },
+            "B0-5705-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5705-11A-01D-1534-10"
+            },
+            "B0-5706-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5706-11A-01D-1534-10"
+            },
+            "B0-5707-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5707-11A-01D-1534-10"
+            },
+            "B0-5709-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B0-5709-11A-01D-1534-10"
+            },
+            "B1-A47M-10A-01D-A25F-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B1-A47M-10A-01D-A25F-10"
+            },
+            "B1-A47N-10A-01D-A25F-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B1-A47N-10A-01D-A25F-10"
+            },
+            "B1-A47O-10A-01D-A25F-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B1-A47O-10A-01D-A25F-10"
+            },
+            "B1-A654-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B1-A654-10A-01D-A31X-10"
+            },
+            "B1-A655-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B1-A655-10A-01D-A31X-10"
+            },
+            "B1-A656-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B1-A656-10A-01D-A31X-10"
+            },
+            "B1-A657-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B1-A657-10A-01D-A31X-10"
+            },
+            "B2-3923-10A-01D-A270-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-3923-10A-01D-A270-10"
+            },
+            "B2-3924-10A-01D-A270-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-3924-10A-01D-A270-10"
+            },
+            "B2-4098-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-4098-11A-01D-1251-10"
+            },
+            "B2-4099-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-4099-11A-01D-1251-10"
+            },
+            "B2-4102-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-4102-11A-01D-1251-10"
+            },
+            "B2-5633-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-5633-10A-01D-1535-10"
+            },
+            "B2-5633-10A-01D-A270-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-5633-10A-01D-A270-10"
+            },
+            "B2-5635-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-5635-10A-01D-1535-10"
+            },
+            "B2-5635-10A-01D-A270-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-5635-10A-01D-A270-10"
+            },
+            "B2-5636-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-5636-10A-01D-1535-10"
+            },
+            "B2-5639-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-5639-10A-01D-1535-10"
+            },
+            "B2-5641-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-5641-10A-01D-1535-10"
+            },
+            "B2-A4SR-10A-01D-A25V-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B2-A4SR-10A-01D-A25V-10"
+            },
+            "B3-A6W5-10A-01D-A33Q-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B3-A6W5-10A-01D-A33Q-10"
+            },
+            "B4-5377-10A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B4-5377-10A-01D-1501-10"
+            },
+            "B4-5378-10A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B4-5378-10A-01D-1501-10"
+            },
+            "B8-4143-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-4143-11A-01D-1251-10"
+            },
+            "B8-4148-10A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-4148-10A-01D-1251-10"
+            },
+            "B8-4151-10A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-4151-10A-01D-1251-10"
+            },
+            "B8-4154-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-4154-11A-01D-1251-10"
+            },
+            "B8-4619-10A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-4619-10A-01D-1251-10"
+            },
+            "B8-4620-10A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-4620-10A-01D-1251-10"
+            },
+            "B8-4621-10A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-4621-10A-01D-1501-10"
+            },
+            "B8-5546-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-5546-10A-01D-1535-10"
+            },
+            "B8-5549-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-5549-10A-01D-1535-10"
+            },
+            "B8-5550-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-5550-10A-01D-1535-10"
+            },
+            "B8-5551-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-5551-10A-01D-1535-10"
+            },
+            "B8-5553-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-5553-10A-01D-1535-10"
+            },
+            "B8-A54D-10A-01D-A25V-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-A54D-10A-01D-A25V-10"
+            },
+            "B8-A54E-10A-01D-A25V-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-A54E-10A-01D-A25V-10"
+            },
+            "B8-A54F-10A-01D-A25V-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-A54F-10A-01D-A25V-10"
+            },
+            "B8-A54G-10A-01D-A25V-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-A54G-10A-01D-A25V-10"
+            },
+            "B8-A54H-10A-01D-A33K-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-A54H-10A-01D-A33K-10"
+            },
+            "B8-A54I-10A-01D-A33K-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-A54I-10A-01D-A33K-10"
+            },
+            "B8-A54J-10A-01D-A33K-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-A54J-10A-01D-A33K-10"
+            },
+            "B8-A54K-10A-01D-A33K-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-A54K-10A-01D-A33K-10"
+            },
+            "B8-A7U6-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-A7U6-10A-01D-A370-10"
+            },
+            "B8-A8YJ-10A-01D-A38X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B8-A8YJ-10A-01D-A38X-10"
+            },
+            "B9-A44B-10A-01D-A25F-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B9-A44B-10A-01D-A25F-10"
+            },
+            "B9-A5W7-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B9-A5W7-10A-01D-A31X-10"
+            },
+            "B9-A5W8-10A-01D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B9-A5W8-10A-01D-A28G-10"
+            },
+            "B9-A5W9-10A-01D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B9-A5W9-10A-01D-A28G-10"
+            },
+            "B9-A69E-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B9-A69E-10A-01D-A31X-10"
+            },
+            "B9-A8YH-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B9-A8YH-10A-01D-A370-10"
+            },
+            "B9-A8YI-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "B9-A8YI-10A-01D-A370-10"
+            },
+            "BP-4161-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "BP-4161-11A-01D-1251-10"
+            },
+            "BP-4162-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "BP-4162-11A-01D-1251-10"
+            },
+            "BP-4163-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "BP-4163-11A-01D-1251-10"
+            },
+            "BP-4164-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "BP-4164-11A-01D-1251-10"
+            },
+            "BP-4167-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "BP-4167-11A-01D-1251-10"
+            },
+            "BP-4770-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "BP-4770-11A-01D-1501-10"
+            },
+            "CJ-4634-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-4634-11A-01D-1251-10"
+            },
+            "CJ-4636-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-4636-11A-01D-1251-10"
+            },
+            "CJ-4637-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-4637-11A-01D-1251-10"
+            },
+            "CJ-4638-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-4638-11A-01D-1251-10"
+            },
+            "CJ-4639-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-4639-11A-01D-1251-10"
+            },
+            "CJ-4640-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-4640-11A-01D-1251-10"
+            },
+            "CJ-4641-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-4641-11A-01D-1251-10"
+            },
+            "CJ-4643-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-4643-11A-01D-1251-10"
+            },
+            "CJ-4644-11A-01D-1251-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-4644-11A-01D-1251-10"
+            },
+            "CJ-5671-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5671-11A-01D-1534-10"
+            },
+            "CJ-5672-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5672-11A-01D-1534-10"
+            },
+            "CJ-5675-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5675-11A-01D-1534-10"
+            },
+            "CJ-5676-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5676-11A-01D-1534-10"
+            },
+            "CJ-5677-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5677-11A-01D-1534-10"
+            },
+            "CJ-5678-11A-01D-1534-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5678-11A-01D-1534-10"
+            },
+            "CJ-5679-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5679-11A-01D-1535-10"
+            },
+            "CJ-5680-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5680-11A-01D-1535-10"
+            },
+            "CJ-5681-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5681-11A-01D-1535-10"
+            },
+            "CJ-5682-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5682-11A-01D-1535-10"
+            },
+            "CJ-5683-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5683-11A-01D-1535-10"
+            },
+            "CJ-5684-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5684-11A-01D-1535-10"
+            },
+            "CJ-5689-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CJ-5689-11A-01D-1535-10"
+            },
+            "CW-5581-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CW-5581-11A-01D-1535-10"
+            },
+            "CW-5583-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CW-5583-11A-01D-1535-10"
+            },
+            "CW-5584-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CW-5584-11A-01D-1535-10"
+            },
+            "CW-5585-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CW-5585-11A-01D-1535-10"
+            },
+            "CW-5587-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CW-5587-11A-01D-1535-10"
+            },
+            "CW-5590-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CW-5590-11A-01D-1535-10"
+            },
+            "CW-5591-11A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CW-5591-11A-01D-1535-10"
+            },
+            "CZ-4863-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-4863-11A-01D-1501-10"
+            },
+            "CZ-4864-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-4864-11A-01D-1501-10"
+            },
+            "CZ-4865-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-4865-11A-01D-1501-10"
+            },
+            "CZ-4866-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-4866-11A-01D-1501-10"
+            },
+            "CZ-5451-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5451-11A-01D-1501-10"
+            },
+            "CZ-5452-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5452-11A-01D-1501-10"
+            },
+            "CZ-5453-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5453-11A-01D-1501-10"
+            },
+            "CZ-5454-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5454-11A-01D-1501-10"
+            },
+            "CZ-5455-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5455-11A-01D-1501-10"
+            },
+            "CZ-5456-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5456-11A-01D-1501-10"
+            },
+            "CZ-5457-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5457-11A-01D-1501-10"
+            },
+            "CZ-5458-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5458-11A-01D-1501-10"
+            },
+            "CZ-5459-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5459-11A-01D-1501-10"
+            },
+            "CZ-5460-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5460-11A-01D-1501-10"
+            },
+            "CZ-5461-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5461-11A-01D-1501-10"
+            },
+            "CZ-5462-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5462-11A-01D-1501-10"
+            },
+            "CZ-5463-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5463-11A-01D-1501-10"
+            },
+            "CZ-5464-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5464-11A-01D-1501-10"
+            },
+            "CZ-5465-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5465-11A-01D-1501-10"
+            },
+            "CZ-5466-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5466-11A-01D-1501-10"
+            },
+            "CZ-5467-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5467-11A-01D-1501-10"
+            },
+            "CZ-5468-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5468-11A-01D-1501-10"
+            },
+            "CZ-5469-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5469-11A-01D-1501-10"
+            },
+            "CZ-5470-11A-01D-1501-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "CZ-5470-11A-01D-1501-10"
+            },
+            "DV-5565-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "DV-5565-10A-01D-1535-10"
+            },
+            "DV-5566-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "DV-5566-10A-01D-1535-10"
+            },
+            "DV-5567-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "DV-5567-10A-01D-1535-10"
+            },
+            "DV-5568-10A-01D-1535-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "DV-5568-10A-01D-1535-10"
+            },
+            "DV-A4VX-10A-01D-A25V-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "DV-A4VX-10A-01D-A25V-10"
+            },
+            "DV-A4VZ-10A-01D-A25V-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "DV-A4VZ-10A-01D-A25V-10"
+            },
+            "DV-A4W0-10A-01D-A25V-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "DV-A4W0-10A-01D-A25V-10"
+            },
+            "DW-7963-10C-01D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "DW-7963-10C-01D-A28G-10"
+            },
+            "F9-A4JJ-10A-01D-A25F-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F9-A4JJ-10A-01D-A25F-10"
+            },
+            "F9-A7Q0-10B-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F9-A7Q0-10B-01D-A35Z-10"
+            },
+            "F9-A7VF-10A-01D-A33Q-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F9-A7VF-10A-01D-A33Q-10"
+            },
+            "F9-A8NY-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F9-A8NY-10A-01D-A35Z-10"
+            },
+            "F9-A97G-10A-01D-A385-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F9-A97G-10A-01D-A385-10"
+            },
+            "G6-A5PC-10A-01D-A33K-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "G6-A5PC-10A-01D-A33K-10"
+            },
+            "G6-A8L6-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "G6-A8L6-10A-01D-A370-10"
+            },
+            "G6-A8L7-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "G6-A8L7-10A-01D-A370-10"
+            },
+            "G6-A8L8-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "G6-A8L8-10A-01D-A370-10"
+            },
+            "G7-A4TM-10B-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "G7-A4TM-10B-01D-A31X-10"
+            },
+            "G7-A8LB-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "G7-A8LB-10A-01D-A35Z-10"
+            },
+            "G7-A8LC-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "G7-A8LC-10A-01D-A35Z-10"
+            },
+            "G7-A8LD-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "G7-A8LD-10A-01D-A35Z-10"
+            },
+            "G7-A8LE-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "G7-A8LE-10A-01D-A35Z-10"
+            },
+            "GK-A6C7-10B-01D-A33K-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "GK-A6C7-10B-01D-A33K-10"
+            },
+            "GL-A4EM-10A-01D-A25F-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "GL-A4EM-10A-01D-A25F-10"
+            },
+            "GL-A59R-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "GL-A59R-10A-01D-A26P-10"
+            },
+            "GL-A59T-10A-01D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "GL-A59T-10A-01D-A28G-10"
+            },
+            "GL-A9DC-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "GL-A9DC-10A-01D-A370-10"
+            },
+            "GL-A9DD-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "GL-A9DD-10A-01D-A370-10"
+            },
+            "GL-A9DE-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "GL-A9DE-10A-01D-A370-10"
+            },
+            "HE-A5NF-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "HE-A5NF-10A-01D-A26P-10"
+            },
+            "HE-A5NH-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "HE-A5NH-10A-01D-A26P-10"
+            },
+            "HE-A5NI-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "HE-A5NI-10A-01D-A26P-10"
+            },
+            "HE-A5NJ-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "HE-A5NJ-10A-01D-A26P-10"
+            },
+            "HE-A5NK-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "HE-A5NK-10A-01D-A26P-10"
+            },
+            "HE-A5NL-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "HE-A5NL-10A-01D-A26P-10"
+            },
+            "IA-A40U-10A-01D-A25F-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "IA-A40U-10A-01D-A25F-10"
+            },
+            "IA-A40X-10A-01D-A25F-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "IA-A40X-10A-01D-A25F-10"
+            },
+            "IA-A40Y-10A-01D-A25F-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "IA-A40Y-10A-01D-A25F-10"
+            },
+            "IA-A83S-11A-11D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "IA-A83S-11A-11D-A34Z-10"
+            },
+            "IA-A83T-11A-11D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "IA-A83T-11A-11D-A34Z-10"
+            },
+            "IA-A83V-11A-11D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "IA-A83V-11A-11D-A34Z-10"
+            },
+            "IA-A83W-11A-11D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "IA-A83W-11A-11D-A34Z-10"
+            },
+            "IZ-A6M8-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "IZ-A6M8-10A-01D-A31X-10"
+            },
+            "IZ-A6M9-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "IZ-A6M9-10A-01D-A31X-10"
+            },
+            "J7-A8I2-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "J7-A8I2-10A-01D-A35Z-10"
+            },
+            "KL-8323-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8323-11A-01D-2310-10"
+            },
+            "KL-8324-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8324-11A-01D-2310-10"
+            },
+            "KL-8325-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8325-11A-01D-2310-10"
+            },
+            "KL-8326-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8326-11A-01D-2310-10"
+            },
+            "KL-8327-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8327-11A-01D-2310-10"
+            },
+            "KL-8328-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8328-11A-01D-2310-10"
+            },
+            "KL-8329-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8329-11A-01D-2310-10"
+            },
+            "KL-8330-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8330-11A-01D-2310-10"
+            },
+            "KL-8331-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8331-11A-01D-2310-10"
+            },
+            "KL-8332-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8332-11A-01D-2310-10"
+            },
+            "KL-8333-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8333-11A-01D-2310-10"
+            },
+            "KL-8334-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8334-11A-01D-2310-10"
+            },
+            "KL-8335-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8335-11A-01D-2310-10"
+            },
+            "KL-8336-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8336-11A-01D-2310-10"
+            },
+            "KL-8337-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8337-11A-01D-2310-10"
+            },
+            "KL-8338-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8338-11A-01D-2310-10"
+            },
+            "KL-8339-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8339-11A-01D-2310-10"
+            },
+            "KL-8340-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8340-11A-01D-2310-10"
+            },
+            "KL-8341-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8341-11A-01D-2310-10"
+            },
+            "KL-8342-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8342-11A-01D-2310-10"
+            },
+            "KL-8343-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8343-11A-01D-2310-10"
+            },
+            "KL-8344-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8344-11A-01D-2310-10"
+            },
+            "KL-8345-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8345-11A-01D-2310-10"
+            },
+            "KL-8346-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KL-8346-11A-01D-2310-10"
+            },
+            "KM-8438-10A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KM-8438-10A-01D-2311-10"
+            },
+            "KM-8439-10A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KM-8439-10A-01D-2311-10"
+            },
+            "KM-8440-10A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KM-8440-10A-01D-2311-10"
+            },
+            "KM-8441-10A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KM-8441-10A-01D-2311-10"
+            },
+            "KM-8442-10A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KM-8442-10A-01D-2311-10"
+            },
+            "KM-8443-10A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KM-8443-10A-01D-2311-10"
+            },
+            "KM-8476-10A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KM-8476-10A-01D-2311-10"
+            },
+            "KM-8477-10A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KM-8477-10A-01D-2311-10"
+            },
+            "KM-8639-10A-01D-2397-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KM-8639-10A-01D-2397-10"
+            },
+            "KN-8418-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8418-11A-01D-2310-10"
+            },
+            "KN-8419-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8419-11A-01D-2310-10"
+            },
+            "KN-8421-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8421-11A-01D-2310-10"
+            },
+            "KN-8422-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8422-11A-01D-2310-10"
+            },
+            "KN-8423-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8423-11A-01D-2310-10"
+            },
+            "KN-8424-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8424-11A-01D-2310-10"
+            },
+            "KN-8425-11A-01D-2310-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8425-11A-01D-2310-10"
+            },
+            "KN-8426-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8426-11A-01D-2311-10"
+            },
+            "KN-8427-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8427-11A-01D-2311-10"
+            },
+            "KN-8428-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8428-11A-01D-2311-10"
+            },
+            "KN-8429-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8429-11A-01D-2311-10"
+            },
+            "KN-8430-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8430-11A-01D-2311-10"
+            },
+            "KN-8431-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8431-11A-01D-2311-10"
+            },
+            "KN-8432-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8432-11A-01D-2311-10"
+            },
+            "KN-8433-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8433-11A-01D-2311-10"
+            },
+            "KN-8434-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8434-11A-01D-2311-10"
+            },
+            "KN-8435-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8435-11A-01D-2311-10"
+            },
+            "KN-8436-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8436-11A-01D-2311-10"
+            },
+            "KN-8437-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KN-8437-11A-01D-2311-10"
+            },
+            "KO-8403-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8403-11A-01D-2311-10"
+            },
+            "KO-8404-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8404-11A-01D-2311-10"
+            },
+            "KO-8405-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8405-11A-01D-2311-10"
+            },
+            "KO-8406-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8406-11A-01D-2311-10"
+            },
+            "KO-8407-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8407-11A-01D-2311-10"
+            },
+            "KO-8408-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8408-11A-01D-2311-10"
+            },
+            "KO-8409-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8409-11A-01D-2311-10"
+            },
+            "KO-8410-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8410-11A-01D-2311-10"
+            },
+            "KO-8411-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8411-11A-01D-2311-10"
+            },
+            "KO-8413-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8413-11A-01D-2311-10"
+            },
+            "KO-8414-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8414-11A-01D-2311-10"
+            },
+            "KO-8415-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8415-11A-01D-2311-10"
+            },
+            "KO-8416-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8416-11A-01D-2311-10"
+            },
+            "KO-8417-11A-01D-2311-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KO-8417-11A-01D-2311-10"
+            },
+            "KV-A6GD-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KV-A6GD-10A-01D-A31X-10"
+            },
+            "KV-A6GE-10A-01D-A31X-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KV-A6GE-10A-01D-A31X-10"
+            },
+            "KV-A74V-10A-01D-A33Q-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "KV-A74V-10A-01D-A33Q-10"
+            },
+            "MH-A55W-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MH-A55W-10A-01D-A26P-10"
+            },
+            "MH-A55Z-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MH-A55Z-10A-01D-A26P-10"
+            },
+            "MH-A560-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MH-A560-10A-01D-A26P-10"
+            },
+            "MH-A561-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MH-A561-10A-01D-A26P-10"
+            },
+            "MH-A562-10A-01D-A26P-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MH-A562-10A-01D-A26P-10"
+            },
+            "MH-A854-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MH-A854-10A-01D-A34Z-10"
+            },
+            "MH-A855-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MH-A855-10A-01D-A34Z-10"
+            },
+            "MH-A856-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MH-A856-10A-01D-A34Z-10"
+            },
+            "MH-A857-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MH-A857-10A-01D-A34Z-10"
+            },
+            "MM-A563-10A-01D-A25V-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MM-A563-10A-01D-A25V-10"
+            },
+            "MM-A564-10A-01D-A25V-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MM-A564-10A-01D-A25V-10"
+            },
+            "MM-A84U-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MM-A84U-10A-01D-A370-10"
+            },
+            "MW-A4EC-10A-01D-A25V-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "MW-A4EC-10A-01D-A25V-10"
+            },
+            "O9-A75Z-10A-01D-A33Q-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "O9-A75Z-10A-01D-A33Q-10"
+            },
+            "P4-A5E6-11A-22D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "P4-A5E6-11A-22D-A28G-10"
+            },
+            "P4-A5E7-11A-11D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "P4-A5E7-11A-11D-A28G-10"
+            },
+            "P4-A5E8-11A-12D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "P4-A5E8-11A-12D-A28G-10"
+            },
+            "P4-A5EA-11A-11D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "P4-A5EA-11A-11D-A28G-10"
+            },
+            "P4-A5EB-11A-11D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "P4-A5EB-11A-11D-A28G-10"
+            },
+            "P4-A5ED-11A-11D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "P4-A5ED-11A-11D-A28G-10"
+            },
+            "P4-AAVK-11A-11D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "P4-AAVK-11A-11D-A42M-10"
+            },
+            "P4-AAVL-11A-11D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "P4-AAVL-11A-11D-A42M-10"
+            },
+            "P4-AAVM-11A-11D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "P4-AAVM-11A-11D-A42M-10"
+            },
+            "P4-AAVO-11A-11D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "P4-AAVO-11A-11D-A42M-10"
+            },
+            "PJ-A5Z8-10A-01D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "PJ-A5Z8-10A-01D-A28G-10"
+            },
+            "PJ-A5Z9-10A-01D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "PJ-A5Z9-10A-01D-A28G-10"
+            },
+            "PJ-A8JU-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "PJ-A8JU-10A-01D-A35Z-10"
+            },
+            "Q2-A5QZ-10A-01D-A28G-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Q2-A5QZ-10A-01D-A28G-10"
+            },
+            "SX-A71R-10A-01D-A33Q-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A71R-10A-01D-A33Q-10"
+            },
+            "SX-A71S-10A-01D-A33Q-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A71S-10A-01D-A33Q-10"
+            },
+            "SX-A71U-10A-01D-A33Q-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A71U-10A-01D-A33Q-10"
+            },
+            "SX-A71V-10A-01D-A33Q-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A71V-10A-01D-A33Q-10"
+            },
+            "SX-A71W-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A71W-10A-01D-A34Z-10"
+            },
+            "SX-A7SL-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A7SL-10A-01D-A34Z-10"
+            },
+            "SX-A7SM-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A7SM-10A-01D-A34Z-10"
+            },
+            "SX-A7SN-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A7SN-10A-01D-A34Z-10"
+            },
+            "SX-A7SO-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A7SO-10A-01D-A34Z-10"
+            },
+            "SX-A7SP-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A7SP-10A-01D-A34Z-10"
+            },
+            "SX-A7SQ-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A7SQ-10A-01D-A35Z-10"
+            },
+            "SX-A7SR-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A7SR-10A-01D-A35Z-10"
+            },
+            "SX-A7SS-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A7SS-10A-01D-A35Z-10"
+            },
+            "SX-A7SU-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SX-A7SU-10A-01D-A35Z-10"
+            },
+            "T7-A92I-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "T7-A92I-10A-01D-A370-10"
+            },
+            "UN-AAZ9-10A-01D-A385-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UN-AAZ9-10A-01D-A385-10"
+            },
+            "UZ-A9PJ-10A-01D-A385-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PJ-10A-01D-A385-10"
+            },
+            "UZ-A9PK-10A-01D-A385-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PK-10A-01D-A385-10"
+            },
+            "UZ-A9PL-10A-01D-A385-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PL-10A-01D-A385-10"
+            },
+            "UZ-A9PM-10A-01D-A385-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PM-10A-01D-A385-10"
+            },
+            "UZ-A9PN-10A-01D-A385-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PN-10A-01D-A385-10"
+            },
+            "UZ-A9PO-10A-01D-A385-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PO-10A-01D-A385-10"
+            },
+            "UZ-A9PP-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PP-10A-01D-A42M-10"
+            },
+            "UZ-A9PQ-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PQ-10A-01D-A42M-10"
+            },
+            "UZ-A9PR-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PR-10A-01D-A42M-10"
+            },
+            "UZ-A9PS-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PS-10A-01D-A42M-10"
+            },
+            "UZ-A9PU-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PU-10A-01D-A42M-10"
+            },
+            "UZ-A9PV-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PV-10A-01D-A42M-10"
+            },
+            "UZ-A9PX-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PX-10A-01D-A42M-10"
+            },
+            "UZ-A9PZ-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9PZ-10A-01D-A42M-10"
+            },
+            "UZ-A9Q0-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9Q0-10A-01D-A42M-10"
+            },
+            "UZ-A9Q1-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "UZ-A9Q1-10A-01D-A42M-10"
+            },
+            "V9-A7HT-10A-01D-A33Q-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "V9-A7HT-10A-01D-A33Q-10"
+            },
+            "WN-A9G9-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "WN-A9G9-10A-01D-A370-10"
+            },
+            "WN-AB4C-10A-01D-A42M-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "WN-AB4C-10A-01D-A42M-10"
+            },
+            "Y8-A894-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Y8-A894-10A-01D-A35Z-10"
+            },
+            "Y8-A895-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Y8-A895-10A-01D-A35Z-10"
+            },
+            "Y8-A896-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Y8-A896-10A-01D-A35Z-10"
+            },
+            "Y8-A897-10A-01D-A35Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Y8-A897-10A-01D-A35Z-10"
+            },
+            "Y8-A898-10A-01D-A34Z-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Y8-A898-10A-01D-A34Z-10"
+            },
+            "Y8-A8RY-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Y8-A8RY-10A-01D-A370-10"
+            },
+            "Y8-A8RZ-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Y8-A8RZ-10A-01D-A370-10"
+            },
+            "Y8-A8S0-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Y8-A8S0-10A-01D-A370-10"
+            },
+            "Y8-A8S1-10A-01D-A370-10": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Y8-A8S1-10A-01D-A370-10"
             }
         },
         "samples": {
@@ -80,14 +2902,419 @@
         "smparams": [],
         "technique": "paired",
         "units": {
-            "3435Ttest": "3435Ttest",
-            "D115test": "D115test",
-            "F22testA": "F22testA",
-            "F22testB": "F22testB",
-            "F22testC": "F22testC"
+            "2K-A9WE-10A-01D-A385-10": "2K-A9WE-10A-01D-A385-10",
+            "2Z-A9J1-10A-01D-A385-10": "2Z-A9J1-10A-01D-A385-10",
+            "2Z-A9J2-10A-01D-A385-10": "2Z-A9J2-10A-01D-A385-10",
+            "2Z-A9J3-10A-01D-A385-10": "2Z-A9J3-10A-01D-A385-10",
+            "2Z-A9J5-10A-01D-A385-10": "2Z-A9J5-10A-01D-A385-10",
+            "2Z-A9J6-10A-01D-A385-10": "2Z-A9J6-10A-01D-A385-10",
+            "2Z-A9J7-10A-01D-A385-10": "2Z-A9J7-10A-01D-A385-10",
+            "2Z-A9J8-10A-01D-A42M-10": "2Z-A9J8-10A-01D-A42M-10",
+            "2Z-A9J9-10A-01D-A42M-10": "2Z-A9J9-10A-01D-A42M-10",
+            "2Z-A9JD-10A-01D-A42M-10": "2Z-A9JD-10A-01D-A42M-10",
+            "2Z-A9JE-10A-01D-A42M-10": "2Z-A9JE-10A-01D-A42M-10",
+            "2Z-A9JG-10A-01D-A42M-10": "2Z-A9JG-10A-01D-A42M-10",
+            "2Z-A9JI-10A-01D-A42M-10": "2Z-A9JI-10A-01D-A42M-10",
+            "2Z-A9JJ-10A-01D-A42M-10": "2Z-A9JJ-10A-01D-A42M-10",
+            "2Z-A9JK-10A-01D-A42M-10": "2Z-A9JK-10A-01D-A42M-10",
+            "2Z-A9JL-10A-01D-A42M-10": "2Z-A9JL-10A-01D-A42M-10",
+            "2Z-A9JM-10A-01D-A42M-10": "2Z-A9JM-10A-01D-A42M-10",
+            "2Z-A9JN-10A-01D-A42M-10": "2Z-A9JN-10A-01D-A42M-10",
+            "2Z-A9JO-10A-01D-A42M-10": "2Z-A9JO-10A-01D-A42M-10",
+            "2Z-A9JP-10A-01D-A42M-10": "2Z-A9JP-10A-01D-A42M-10",
+            "2Z-A9JQ-10A-01D-A42M-10": "2Z-A9JQ-10A-01D-A42M-10",
+            "2Z-A9JR-10A-01D-A42M-10": "2Z-A9JR-10A-01D-A42M-10",
+            "2Z-A9JS-10A-01D-A42M-10": "2Z-A9JS-10A-01D-A42M-10",
+            "2Z-A9JT-10A-01D-A42M-10": "2Z-A9JT-10A-01D-A42M-10",
+            "3Z-A93Z-10A-01D-A370-10": "3Z-A93Z-10A-01D-A370-10",
+            "4A-A93W-10A-01D-A370-10": "4A-A93W-10A-01D-A370-10",
+            "4A-A93X-10A-01D-A370-10": "4A-A93X-10A-01D-A370-10",
+            "4A-A93Y-10A-01D-A370-10": "4A-A93Y-10A-01D-A370-10",
+            "5P-A9JU-10A-01D-A42M-10": "5P-A9JU-10A-01D-A42M-10",
+            "5P-A9JV-10A-01D-A42M-10": "5P-A9JV-10A-01D-A42M-10",
+            "5P-A9JW-10A-01D-A42M-10": "5P-A9JW-10A-01D-A42M-10",
+            "5P-A9JY-10A-01D-A42M-10": "5P-A9JY-10A-01D-A42M-10",
+            "5P-A9JZ-10A-01D-A42M-10": "5P-A9JZ-10A-01D-A42M-10",
+            "5P-A9K0-10A-01D-A42M-10": "5P-A9K0-10A-01D-A42M-10",
+            "5P-A9K2-10A-01D-A42M-10": "5P-A9K2-10A-01D-A42M-10",
+            "5P-A9K3-10A-01D-A42M-10": "5P-A9K3-10A-01D-A42M-10",
+            "5P-A9K4-10A-01D-A42M-10": "5P-A9K4-10A-01D-A42M-10",
+            "5P-A9K6-10A-01D-A42M-10": "5P-A9K6-10A-01D-A42M-10",
+            "5P-A9K8-10A-01D-A42M-10": "5P-A9K8-10A-01D-A42M-10",
+            "5P-A9K9-10A-01D-A42M-10": "5P-A9K9-10A-01D-A42M-10",
+            "5P-A9KA-10A-01D-A42M-10": "5P-A9KA-10A-01D-A42M-10",
+            "5P-A9KC-10A-01D-A42M-10": "5P-A9KC-10A-01D-A42M-10",
+            "5P-A9KE-10A-01D-A42M-10": "5P-A9KE-10A-01D-A42M-10",
+            "5P-A9KF-10A-01D-A42M-10": "5P-A9KF-10A-01D-A42M-10",
+            "5P-A9KH-10A-01D-A42M-10": "5P-A9KH-10A-01D-A42M-10",
+            "6D-AA2E-10A-01D-A370-10": "6D-AA2E-10A-01D-A370-10",
+            "A3-3347-11A-01D-1251-10": "A3-3347-11A-01D-1251-10",
+            "A3-3349-11A-01D-1251-10": "A3-3349-11A-01D-1251-10",
+            "A3-3351-11A-01D-1251-10": "A3-3351-11A-01D-1251-10",
+            "A3-3358-11A-01D-1534-10": "A3-3358-11A-01D-1534-10",
+            "A3-3362-11A-01D-1251-10": "A3-3362-11A-01D-1251-10",
+            "A3-3387-11A-01D-1534-10": "A3-3387-11A-01D-1534-10",
+            "A3-A6NI-10A-01D-A33K-10": "A3-A6NI-10A-01D-A33K-10",
+            "A3-A6NJ-10A-01D-A33K-10": "A3-A6NJ-10A-01D-A33K-10",
+            "A3-A6NL-10A-01D-A33K-10": "A3-A6NL-10A-01D-A33K-10",
+            "A3-A6NN-10A-01D-A33K-10": "A3-A6NN-10A-01D-A33K-10",
+            "A3-A8CQ-10A-01D-A370-10": "A3-A8CQ-10A-01D-A370-10",
+            "A3-A8OU-10A-01D-A370-10": "A3-A8OU-10A-01D-A370-10",
+            "A3-A8OV-10A-01D-A370-10": "A3-A8OV-10A-01D-A370-10",
+            "A3-A8OW-10A-01D-A370-10": "A3-A8OW-10A-01D-A370-10",
+            "A3-A8OX-10A-01D-A370-10": "A3-A8OX-10A-01D-A370-10",
+            "A4-A48D-10A-01D-A25F-10": "A4-A48D-10A-01D-A25F-10",
+            "A4-A4ZT-10A-01D-A26P-10": "A4-A4ZT-10A-01D-A26P-10",
+            "A4-A57E-10A-01D-A26P-10": "A4-A57E-10A-01D-A26P-10",
+            "A4-A5DU-10A-01D-A28G-10": "A4-A5DU-10A-01D-A28G-10",
+            "A4-A5XZ-10A-01D-A31X-10": "A4-A5XZ-10A-01D-A31X-10",
+            "A4-A5Y0-11A-11D-A31X-10": "A4-A5Y0-11A-11D-A31X-10",
+            "A4-A5Y1-11A-11D-A28G-10": "A4-A5Y1-11A-11D-A28G-10",
+            "A4-A6HP-10A-01D-A31X-10": "A4-A6HP-10A-01D-A31X-10",
+            "A4-A772-10A-01D-A33Q-10": "A4-A772-10A-01D-A33Q-10",
+            "A4-A7UZ-10A-01D-A34Z-10": "A4-A7UZ-10A-01D-A34Z-10",
+            "AK-3426-10A-01D-1251-10": "AK-3426-10A-01D-1251-10",
+            "AK-3429-10A-01D-1251-10": "AK-3429-10A-01D-1251-10",
+            "AK-3430-10A-01D-1251-10": "AK-3430-10A-01D-1251-10",
+            "AK-3436-10A-01D-1251-10": "AK-3436-10A-01D-1251-10",
+            "AK-3451-10A-01D-1251-10": "AK-3451-10A-01D-1251-10",
+            "AK-3456-10A-01D-1251-10": "AK-3456-10A-01D-1251-10",
+            "AK-3458-10A-01D-1501-10": "AK-3458-10A-01D-1501-10",
+            "AL-A5DJ-10A-01D-A26P-10": "AL-A5DJ-10A-01D-A26P-10",
+            "AT-A5NU-10A-01D-A28G-10": "AT-A5NU-10A-01D-A28G-10",
+            "B0-4698-11A-02D-1501-10": "B0-4698-11A-02D-1501-10",
+            "B0-4700-11A-01D-1534-10": "B0-4700-11A-01D-1534-10",
+            "B0-4706-11A-02D-1501-10": "B0-4706-11A-02D-1501-10",
+            "B0-4710-11A-02D-1501-10": "B0-4710-11A-02D-1501-10",
+            "B0-4712-11A-02D-1501-10": "B0-4712-11A-02D-1501-10",
+            "B0-4810-11A-02D-1501-10": "B0-4810-11A-02D-1501-10",
+            "B0-4811-11A-02D-1501-10": "B0-4811-11A-02D-1501-10",
+            "B0-4815-11A-02D-1501-10": "B0-4815-11A-02D-1501-10",
+            "B0-4816-11A-02D-1501-10": "B0-4816-11A-02D-1501-10",
+            "B0-4818-11A-01D-1501-10": "B0-4818-11A-01D-1501-10",
+            "B0-4821-11A-01D-1501-10": "B0-4821-11A-01D-1501-10",
+            "B0-4852-11A-01D-1501-10": "B0-4852-11A-01D-1501-10",
+            "B0-5080-11A-01D-1501-10": "B0-5080-11A-01D-1501-10",
+            "B0-5399-10A-01D-1501-10": "B0-5399-10A-01D-1501-10",
+            "B0-5400-11A-01D-1501-10": "B0-5400-11A-01D-1501-10",
+            "B0-5402-11A-01D-1501-10": "B0-5402-11A-01D-1501-10",
+            "B0-5690-11A-01D-1534-10": "B0-5690-11A-01D-1534-10",
+            "B0-5691-11A-01D-1534-10": "B0-5691-11A-01D-1534-10",
+            "B0-5692-11A-01D-1534-10": "B0-5692-11A-01D-1534-10",
+            "B0-5693-11A-01D-1534-10": "B0-5693-11A-01D-1534-10",
+            "B0-5694-11A-01D-1534-10": "B0-5694-11A-01D-1534-10",
+            "B0-5695-11A-01D-1534-10": "B0-5695-11A-01D-1534-10",
+            "B0-5696-11A-01D-1534-10": "B0-5696-11A-01D-1534-10",
+            "B0-5697-11A-01D-1534-10": "B0-5697-11A-01D-1534-10",
+            "B0-5699-11A-01D-1534-10": "B0-5699-11A-01D-1534-10",
+            "B0-5700-11A-01D-1534-10": "B0-5700-11A-01D-1534-10",
+            "B0-5701-11A-01D-1534-10": "B0-5701-11A-01D-1534-10",
+            "B0-5702-11A-01D-1534-10": "B0-5702-11A-01D-1534-10",
+            "B0-5703-11A-01D-1534-10": "B0-5703-11A-01D-1534-10",
+            "B0-5705-11A-01D-1534-10": "B0-5705-11A-01D-1534-10",
+            "B0-5706-11A-01D-1534-10": "B0-5706-11A-01D-1534-10",
+            "B0-5707-11A-01D-1534-10": "B0-5707-11A-01D-1534-10",
+            "B0-5709-11A-01D-1534-10": "B0-5709-11A-01D-1534-10",
+            "B1-A47M-10A-01D-A25F-10": "B1-A47M-10A-01D-A25F-10",
+            "B1-A47N-10A-01D-A25F-10": "B1-A47N-10A-01D-A25F-10",
+            "B1-A47O-10A-01D-A25F-10": "B1-A47O-10A-01D-A25F-10",
+            "B1-A654-10A-01D-A31X-10": "B1-A654-10A-01D-A31X-10",
+            "B1-A655-10A-01D-A31X-10": "B1-A655-10A-01D-A31X-10",
+            "B1-A656-10A-01D-A31X-10": "B1-A656-10A-01D-A31X-10",
+            "B1-A657-10A-01D-A31X-10": "B1-A657-10A-01D-A31X-10",
+            "B2-3923-10A-01D-A270-10": "B2-3923-10A-01D-A270-10",
+            "B2-3924-10A-01D-A270-10": "B2-3924-10A-01D-A270-10",
+            "B2-4098-11A-01D-1251-10": "B2-4098-11A-01D-1251-10",
+            "B2-4099-11A-01D-1251-10": "B2-4099-11A-01D-1251-10",
+            "B2-4102-11A-01D-1251-10": "B2-4102-11A-01D-1251-10",
+            "B2-5633-10A-01D-1535-10": "B2-5633-10A-01D-1535-10",
+            "B2-5633-10A-01D-A270-10": "B2-5633-10A-01D-A270-10",
+            "B2-5635-10A-01D-1535-10": "B2-5635-10A-01D-1535-10",
+            "B2-5635-10A-01D-A270-10": "B2-5635-10A-01D-A270-10",
+            "B2-5636-10A-01D-1535-10": "B2-5636-10A-01D-1535-10",
+            "B2-5639-10A-01D-1535-10": "B2-5639-10A-01D-1535-10",
+            "B2-5641-10A-01D-1535-10": "B2-5641-10A-01D-1535-10",
+            "B2-A4SR-10A-01D-A25V-10": "B2-A4SR-10A-01D-A25V-10",
+            "B3-A6W5-10A-01D-A33Q-10": "B3-A6W5-10A-01D-A33Q-10",
+            "B4-5377-10A-01D-1501-10": "B4-5377-10A-01D-1501-10",
+            "B4-5378-10A-01D-1501-10": "B4-5378-10A-01D-1501-10",
+            "B8-4143-11A-01D-1251-10": "B8-4143-11A-01D-1251-10",
+            "B8-4148-10A-01D-1251-10": "B8-4148-10A-01D-1251-10",
+            "B8-4151-10A-01D-1251-10": "B8-4151-10A-01D-1251-10",
+            "B8-4154-11A-01D-1251-10": "B8-4154-11A-01D-1251-10",
+            "B8-4619-10A-01D-1251-10": "B8-4619-10A-01D-1251-10",
+            "B8-4620-10A-01D-1251-10": "B8-4620-10A-01D-1251-10",
+            "B8-4621-10A-01D-1501-10": "B8-4621-10A-01D-1501-10",
+            "B8-5546-10A-01D-1535-10": "B8-5546-10A-01D-1535-10",
+            "B8-5549-10A-01D-1535-10": "B8-5549-10A-01D-1535-10",
+            "B8-5550-10A-01D-1535-10": "B8-5550-10A-01D-1535-10",
+            "B8-5551-10A-01D-1535-10": "B8-5551-10A-01D-1535-10",
+            "B8-5553-10A-01D-1535-10": "B8-5553-10A-01D-1535-10",
+            "B8-A54D-10A-01D-A25V-10": "B8-A54D-10A-01D-A25V-10",
+            "B8-A54E-10A-01D-A25V-10": "B8-A54E-10A-01D-A25V-10",
+            "B8-A54F-10A-01D-A25V-10": "B8-A54F-10A-01D-A25V-10",
+            "B8-A54G-10A-01D-A25V-10": "B8-A54G-10A-01D-A25V-10",
+            "B8-A54H-10A-01D-A33K-10": "B8-A54H-10A-01D-A33K-10",
+            "B8-A54I-10A-01D-A33K-10": "B8-A54I-10A-01D-A33K-10",
+            "B8-A54J-10A-01D-A33K-10": "B8-A54J-10A-01D-A33K-10",
+            "B8-A54K-10A-01D-A33K-10": "B8-A54K-10A-01D-A33K-10",
+            "B8-A7U6-10A-01D-A370-10": "B8-A7U6-10A-01D-A370-10",
+            "B8-A8YJ-10A-01D-A38X-10": "B8-A8YJ-10A-01D-A38X-10",
+            "B9-A44B-10A-01D-A25F-10": "B9-A44B-10A-01D-A25F-10",
+            "B9-A5W7-10A-01D-A31X-10": "B9-A5W7-10A-01D-A31X-10",
+            "B9-A5W8-10A-01D-A28G-10": "B9-A5W8-10A-01D-A28G-10",
+            "B9-A5W9-10A-01D-A28G-10": "B9-A5W9-10A-01D-A28G-10",
+            "B9-A69E-10A-01D-A31X-10": "B9-A69E-10A-01D-A31X-10",
+            "B9-A8YH-10A-01D-A370-10": "B9-A8YH-10A-01D-A370-10",
+            "B9-A8YI-10A-01D-A370-10": "B9-A8YI-10A-01D-A370-10",
+            "BP-4161-11A-01D-1251-10": "BP-4161-11A-01D-1251-10",
+            "BP-4162-11A-01D-1251-10": "BP-4162-11A-01D-1251-10",
+            "BP-4163-11A-01D-1251-10": "BP-4163-11A-01D-1251-10",
+            "BP-4164-11A-01D-1251-10": "BP-4164-11A-01D-1251-10",
+            "BP-4167-11A-01D-1251-10": "BP-4167-11A-01D-1251-10",
+            "BP-4770-11A-01D-1501-10": "BP-4770-11A-01D-1501-10",
+            "CJ-4634-11A-01D-1251-10": "CJ-4634-11A-01D-1251-10",
+            "CJ-4636-11A-01D-1251-10": "CJ-4636-11A-01D-1251-10",
+            "CJ-4637-11A-01D-1251-10": "CJ-4637-11A-01D-1251-10",
+            "CJ-4638-11A-01D-1251-10": "CJ-4638-11A-01D-1251-10",
+            "CJ-4639-11A-01D-1251-10": "CJ-4639-11A-01D-1251-10",
+            "CJ-4640-11A-01D-1251-10": "CJ-4640-11A-01D-1251-10",
+            "CJ-4641-11A-01D-1251-10": "CJ-4641-11A-01D-1251-10",
+            "CJ-4643-11A-01D-1251-10": "CJ-4643-11A-01D-1251-10",
+            "CJ-4644-11A-01D-1251-10": "CJ-4644-11A-01D-1251-10",
+            "CJ-5671-11A-01D-1534-10": "CJ-5671-11A-01D-1534-10",
+            "CJ-5672-11A-01D-1534-10": "CJ-5672-11A-01D-1534-10",
+            "CJ-5675-11A-01D-1534-10": "CJ-5675-11A-01D-1534-10",
+            "CJ-5676-11A-01D-1534-10": "CJ-5676-11A-01D-1534-10",
+            "CJ-5677-11A-01D-1534-10": "CJ-5677-11A-01D-1534-10",
+            "CJ-5678-11A-01D-1534-10": "CJ-5678-11A-01D-1534-10",
+            "CJ-5679-11A-01D-1535-10": "CJ-5679-11A-01D-1535-10",
+            "CJ-5680-11A-01D-1535-10": "CJ-5680-11A-01D-1535-10",
+            "CJ-5681-11A-01D-1535-10": "CJ-5681-11A-01D-1535-10",
+            "CJ-5682-11A-01D-1535-10": "CJ-5682-11A-01D-1535-10",
+            "CJ-5683-11A-01D-1535-10": "CJ-5683-11A-01D-1535-10",
+            "CJ-5684-11A-01D-1535-10": "CJ-5684-11A-01D-1535-10",
+            "CJ-5689-11A-01D-1535-10": "CJ-5689-11A-01D-1535-10",
+            "CW-5581-11A-01D-1535-10": "CW-5581-11A-01D-1535-10",
+            "CW-5583-11A-01D-1535-10": "CW-5583-11A-01D-1535-10",
+            "CW-5584-11A-01D-1535-10": "CW-5584-11A-01D-1535-10",
+            "CW-5585-11A-01D-1535-10": "CW-5585-11A-01D-1535-10",
+            "CW-5587-11A-01D-1535-10": "CW-5587-11A-01D-1535-10",
+            "CW-5590-11A-01D-1535-10": "CW-5590-11A-01D-1535-10",
+            "CW-5591-11A-01D-1535-10": "CW-5591-11A-01D-1535-10",
+            "CZ-4863-11A-01D-1501-10": "CZ-4863-11A-01D-1501-10",
+            "CZ-4864-11A-01D-1501-10": "CZ-4864-11A-01D-1501-10",
+            "CZ-4865-11A-01D-1501-10": "CZ-4865-11A-01D-1501-10",
+            "CZ-4866-11A-01D-1501-10": "CZ-4866-11A-01D-1501-10",
+            "CZ-5451-11A-01D-1501-10": "CZ-5451-11A-01D-1501-10",
+            "CZ-5452-11A-01D-1501-10": "CZ-5452-11A-01D-1501-10",
+            "CZ-5453-11A-01D-1501-10": "CZ-5453-11A-01D-1501-10",
+            "CZ-5454-11A-01D-1501-10": "CZ-5454-11A-01D-1501-10",
+            "CZ-5455-11A-01D-1501-10": "CZ-5455-11A-01D-1501-10",
+            "CZ-5456-11A-01D-1501-10": "CZ-5456-11A-01D-1501-10",
+            "CZ-5457-11A-01D-1501-10": "CZ-5457-11A-01D-1501-10",
+            "CZ-5458-11A-01D-1501-10": "CZ-5458-11A-01D-1501-10",
+            "CZ-5459-11A-01D-1501-10": "CZ-5459-11A-01D-1501-10",
+            "CZ-5460-11A-01D-1501-10": "CZ-5460-11A-01D-1501-10",
+            "CZ-5461-11A-01D-1501-10": "CZ-5461-11A-01D-1501-10",
+            "CZ-5462-11A-01D-1501-10": "CZ-5462-11A-01D-1501-10",
+            "CZ-5463-11A-01D-1501-10": "CZ-5463-11A-01D-1501-10",
+            "CZ-5464-11A-01D-1501-10": "CZ-5464-11A-01D-1501-10",
+            "CZ-5465-11A-01D-1501-10": "CZ-5465-11A-01D-1501-10",
+            "CZ-5466-11A-01D-1501-10": "CZ-5466-11A-01D-1501-10",
+            "CZ-5467-11A-01D-1501-10": "CZ-5467-11A-01D-1501-10",
+            "CZ-5468-11A-01D-1501-10": "CZ-5468-11A-01D-1501-10",
+            "CZ-5469-11A-01D-1501-10": "CZ-5469-11A-01D-1501-10",
+            "CZ-5470-11A-01D-1501-10": "CZ-5470-11A-01D-1501-10",
+            "DV-5565-10A-01D-1535-10": "DV-5565-10A-01D-1535-10",
+            "DV-5566-10A-01D-1535-10": "DV-5566-10A-01D-1535-10",
+            "DV-5567-10A-01D-1535-10": "DV-5567-10A-01D-1535-10",
+            "DV-5568-10A-01D-1535-10": "DV-5568-10A-01D-1535-10",
+            "DV-A4VX-10A-01D-A25V-10": "DV-A4VX-10A-01D-A25V-10",
+            "DV-A4VZ-10A-01D-A25V-10": "DV-A4VZ-10A-01D-A25V-10",
+            "DV-A4W0-10A-01D-A25V-10": "DV-A4W0-10A-01D-A25V-10",
+            "DW-7963-10C-01D-A28G-10": "DW-7963-10C-01D-A28G-10",
+            "F9-A4JJ-10A-01D-A25F-10": "F9-A4JJ-10A-01D-A25F-10",
+            "F9-A7Q0-10B-01D-A35Z-10": "F9-A7Q0-10B-01D-A35Z-10",
+            "F9-A7VF-10A-01D-A33Q-10": "F9-A7VF-10A-01D-A33Q-10",
+            "F9-A8NY-10A-01D-A35Z-10": "F9-A8NY-10A-01D-A35Z-10",
+            "F9-A97G-10A-01D-A385-10": "F9-A97G-10A-01D-A385-10",
+            "G6-A5PC-10A-01D-A33K-10": "G6-A5PC-10A-01D-A33K-10",
+            "G6-A8L6-10A-01D-A370-10": "G6-A8L6-10A-01D-A370-10",
+            "G6-A8L7-10A-01D-A370-10": "G6-A8L7-10A-01D-A370-10",
+            "G6-A8L8-10A-01D-A370-10": "G6-A8L8-10A-01D-A370-10",
+            "G7-A4TM-10B-01D-A31X-10": "G7-A4TM-10B-01D-A31X-10",
+            "G7-A8LB-10A-01D-A35Z-10": "G7-A8LB-10A-01D-A35Z-10",
+            "G7-A8LC-10A-01D-A35Z-10": "G7-A8LC-10A-01D-A35Z-10",
+            "G7-A8LD-10A-01D-A35Z-10": "G7-A8LD-10A-01D-A35Z-10",
+            "G7-A8LE-10A-01D-A35Z-10": "G7-A8LE-10A-01D-A35Z-10",
+            "GK-A6C7-10B-01D-A33K-10": "GK-A6C7-10B-01D-A33K-10",
+            "GL-A4EM-10A-01D-A25F-10": "GL-A4EM-10A-01D-A25F-10",
+            "GL-A59R-10A-01D-A26P-10": "GL-A59R-10A-01D-A26P-10",
+            "GL-A59T-10A-01D-A28G-10": "GL-A59T-10A-01D-A28G-10",
+            "GL-A9DC-10A-01D-A370-10": "GL-A9DC-10A-01D-A370-10",
+            "GL-A9DD-10A-01D-A370-10": "GL-A9DD-10A-01D-A370-10",
+            "GL-A9DE-10A-01D-A370-10": "GL-A9DE-10A-01D-A370-10",
+            "HE-A5NF-10A-01D-A26P-10": "HE-A5NF-10A-01D-A26P-10",
+            "HE-A5NH-10A-01D-A26P-10": "HE-A5NH-10A-01D-A26P-10",
+            "HE-A5NI-10A-01D-A26P-10": "HE-A5NI-10A-01D-A26P-10",
+            "HE-A5NJ-10A-01D-A26P-10": "HE-A5NJ-10A-01D-A26P-10",
+            "HE-A5NK-10A-01D-A26P-10": "HE-A5NK-10A-01D-A26P-10",
+            "HE-A5NL-10A-01D-A26P-10": "HE-A5NL-10A-01D-A26P-10",
+            "IA-A40U-10A-01D-A25F-10": "IA-A40U-10A-01D-A25F-10",
+            "IA-A40X-10A-01D-A25F-10": "IA-A40X-10A-01D-A25F-10",
+            "IA-A40Y-10A-01D-A25F-10": "IA-A40Y-10A-01D-A25F-10",
+            "IA-A83S-11A-11D-A34Z-10": "IA-A83S-11A-11D-A34Z-10",
+            "IA-A83T-11A-11D-A34Z-10": "IA-A83T-11A-11D-A34Z-10",
+            "IA-A83V-11A-11D-A34Z-10": "IA-A83V-11A-11D-A34Z-10",
+            "IA-A83W-11A-11D-A34Z-10": "IA-A83W-11A-11D-A34Z-10",
+            "IZ-A6M8-10A-01D-A31X-10": "IZ-A6M8-10A-01D-A31X-10",
+            "IZ-A6M9-10A-01D-A31X-10": "IZ-A6M9-10A-01D-A31X-10",
+            "J7-A8I2-10A-01D-A35Z-10": "J7-A8I2-10A-01D-A35Z-10",
+            "KL-8323-11A-01D-2310-10": "KL-8323-11A-01D-2310-10",
+            "KL-8324-11A-01D-2310-10": "KL-8324-11A-01D-2310-10",
+            "KL-8325-11A-01D-2310-10": "KL-8325-11A-01D-2310-10",
+            "KL-8326-11A-01D-2310-10": "KL-8326-11A-01D-2310-10",
+            "KL-8327-11A-01D-2310-10": "KL-8327-11A-01D-2310-10",
+            "KL-8328-11A-01D-2310-10": "KL-8328-11A-01D-2310-10",
+            "KL-8329-11A-01D-2310-10": "KL-8329-11A-01D-2310-10",
+            "KL-8330-11A-01D-2310-10": "KL-8330-11A-01D-2310-10",
+            "KL-8331-11A-01D-2310-10": "KL-8331-11A-01D-2310-10",
+            "KL-8332-11A-01D-2310-10": "KL-8332-11A-01D-2310-10",
+            "KL-8333-11A-01D-2310-10": "KL-8333-11A-01D-2310-10",
+            "KL-8334-11A-01D-2310-10": "KL-8334-11A-01D-2310-10",
+            "KL-8335-11A-01D-2310-10": "KL-8335-11A-01D-2310-10",
+            "KL-8336-11A-01D-2310-10": "KL-8336-11A-01D-2310-10",
+            "KL-8337-11A-01D-2310-10": "KL-8337-11A-01D-2310-10",
+            "KL-8338-11A-01D-2310-10": "KL-8338-11A-01D-2310-10",
+            "KL-8339-11A-01D-2310-10": "KL-8339-11A-01D-2310-10",
+            "KL-8340-11A-01D-2310-10": "KL-8340-11A-01D-2310-10",
+            "KL-8341-11A-01D-2310-10": "KL-8341-11A-01D-2310-10",
+            "KL-8342-11A-01D-2310-10": "KL-8342-11A-01D-2310-10",
+            "KL-8343-11A-01D-2310-10": "KL-8343-11A-01D-2310-10",
+            "KL-8344-11A-01D-2310-10": "KL-8344-11A-01D-2310-10",
+            "KL-8345-11A-01D-2310-10": "KL-8345-11A-01D-2310-10",
+            "KL-8346-11A-01D-2310-10": "KL-8346-11A-01D-2310-10",
+            "KM-8438-10A-01D-2311-10": "KM-8438-10A-01D-2311-10",
+            "KM-8439-10A-01D-2311-10": "KM-8439-10A-01D-2311-10",
+            "KM-8440-10A-01D-2311-10": "KM-8440-10A-01D-2311-10",
+            "KM-8441-10A-01D-2311-10": "KM-8441-10A-01D-2311-10",
+            "KM-8442-10A-01D-2311-10": "KM-8442-10A-01D-2311-10",
+            "KM-8443-10A-01D-2311-10": "KM-8443-10A-01D-2311-10",
+            "KM-8476-10A-01D-2311-10": "KM-8476-10A-01D-2311-10",
+            "KM-8477-10A-01D-2311-10": "KM-8477-10A-01D-2311-10",
+            "KM-8639-10A-01D-2397-10": "KM-8639-10A-01D-2397-10",
+            "KN-8418-11A-01D-2310-10": "KN-8418-11A-01D-2310-10",
+            "KN-8419-11A-01D-2310-10": "KN-8419-11A-01D-2310-10",
+            "KN-8421-11A-01D-2310-10": "KN-8421-11A-01D-2310-10",
+            "KN-8422-11A-01D-2310-10": "KN-8422-11A-01D-2310-10",
+            "KN-8423-11A-01D-2310-10": "KN-8423-11A-01D-2310-10",
+            "KN-8424-11A-01D-2310-10": "KN-8424-11A-01D-2310-10",
+            "KN-8425-11A-01D-2310-10": "KN-8425-11A-01D-2310-10",
+            "KN-8426-11A-01D-2311-10": "KN-8426-11A-01D-2311-10",
+            "KN-8427-11A-01D-2311-10": "KN-8427-11A-01D-2311-10",
+            "KN-8428-11A-01D-2311-10": "KN-8428-11A-01D-2311-10",
+            "KN-8429-11A-01D-2311-10": "KN-8429-11A-01D-2311-10",
+            "KN-8430-11A-01D-2311-10": "KN-8430-11A-01D-2311-10",
+            "KN-8431-11A-01D-2311-10": "KN-8431-11A-01D-2311-10",
+            "KN-8432-11A-01D-2311-10": "KN-8432-11A-01D-2311-10",
+            "KN-8433-11A-01D-2311-10": "KN-8433-11A-01D-2311-10",
+            "KN-8434-11A-01D-2311-10": "KN-8434-11A-01D-2311-10",
+            "KN-8435-11A-01D-2311-10": "KN-8435-11A-01D-2311-10",
+            "KN-8436-11A-01D-2311-10": "KN-8436-11A-01D-2311-10",
+            "KN-8437-11A-01D-2311-10": "KN-8437-11A-01D-2311-10",
+            "KO-8403-11A-01D-2311-10": "KO-8403-11A-01D-2311-10",
+            "KO-8404-11A-01D-2311-10": "KO-8404-11A-01D-2311-10",
+            "KO-8405-11A-01D-2311-10": "KO-8405-11A-01D-2311-10",
+            "KO-8406-11A-01D-2311-10": "KO-8406-11A-01D-2311-10",
+            "KO-8407-11A-01D-2311-10": "KO-8407-11A-01D-2311-10",
+            "KO-8408-11A-01D-2311-10": "KO-8408-11A-01D-2311-10",
+            "KO-8409-11A-01D-2311-10": "KO-8409-11A-01D-2311-10",
+            "KO-8410-11A-01D-2311-10": "KO-8410-11A-01D-2311-10",
+            "KO-8411-11A-01D-2311-10": "KO-8411-11A-01D-2311-10",
+            "KO-8413-11A-01D-2311-10": "KO-8413-11A-01D-2311-10",
+            "KO-8414-11A-01D-2311-10": "KO-8414-11A-01D-2311-10",
+            "KO-8415-11A-01D-2311-10": "KO-8415-11A-01D-2311-10",
+            "KO-8416-11A-01D-2311-10": "KO-8416-11A-01D-2311-10",
+            "KO-8417-11A-01D-2311-10": "KO-8417-11A-01D-2311-10",
+            "KV-A6GD-10A-01D-A31X-10": "KV-A6GD-10A-01D-A31X-10",
+            "KV-A6GE-10A-01D-A31X-10": "KV-A6GE-10A-01D-A31X-10",
+            "KV-A74V-10A-01D-A33Q-10": "KV-A74V-10A-01D-A33Q-10",
+            "MH-A55W-10A-01D-A26P-10": "MH-A55W-10A-01D-A26P-10",
+            "MH-A55Z-10A-01D-A26P-10": "MH-A55Z-10A-01D-A26P-10",
+            "MH-A560-10A-01D-A26P-10": "MH-A560-10A-01D-A26P-10",
+            "MH-A561-10A-01D-A26P-10": "MH-A561-10A-01D-A26P-10",
+            "MH-A562-10A-01D-A26P-10": "MH-A562-10A-01D-A26P-10",
+            "MH-A854-10A-01D-A34Z-10": "MH-A854-10A-01D-A34Z-10",
+            "MH-A855-10A-01D-A34Z-10": "MH-A855-10A-01D-A34Z-10",
+            "MH-A856-10A-01D-A34Z-10": "MH-A856-10A-01D-A34Z-10",
+            "MH-A857-10A-01D-A34Z-10": "MH-A857-10A-01D-A34Z-10",
+            "MM-A563-10A-01D-A25V-10": "MM-A563-10A-01D-A25V-10",
+            "MM-A564-10A-01D-A25V-10": "MM-A564-10A-01D-A25V-10",
+            "MM-A84U-10A-01D-A370-10": "MM-A84U-10A-01D-A370-10",
+            "MW-A4EC-10A-01D-A25V-10": "MW-A4EC-10A-01D-A25V-10",
+            "O9-A75Z-10A-01D-A33Q-10": "O9-A75Z-10A-01D-A33Q-10",
+            "P4-A5E6-11A-22D-A28G-10": "P4-A5E6-11A-22D-A28G-10",
+            "P4-A5E7-11A-11D-A28G-10": "P4-A5E7-11A-11D-A28G-10",
+            "P4-A5E8-11A-12D-A28G-10": "P4-A5E8-11A-12D-A28G-10",
+            "P4-A5EA-11A-11D-A28G-10": "P4-A5EA-11A-11D-A28G-10",
+            "P4-A5EB-11A-11D-A28G-10": "P4-A5EB-11A-11D-A28G-10",
+            "P4-A5ED-11A-11D-A28G-10": "P4-A5ED-11A-11D-A28G-10",
+            "P4-AAVK-11A-11D-A42M-10": "P4-AAVK-11A-11D-A42M-10",
+            "P4-AAVL-11A-11D-A42M-10": "P4-AAVL-11A-11D-A42M-10",
+            "P4-AAVM-11A-11D-A42M-10": "P4-AAVM-11A-11D-A42M-10",
+            "P4-AAVO-11A-11D-A42M-10": "P4-AAVO-11A-11D-A42M-10",
+            "PJ-A5Z8-10A-01D-A28G-10": "PJ-A5Z8-10A-01D-A28G-10",
+            "PJ-A5Z9-10A-01D-A28G-10": "PJ-A5Z9-10A-01D-A28G-10",
+            "PJ-A8JU-10A-01D-A35Z-10": "PJ-A8JU-10A-01D-A35Z-10",
+            "Q2-A5QZ-10A-01D-A28G-10": "Q2-A5QZ-10A-01D-A28G-10",
+            "SX-A71R-10A-01D-A33Q-10": "SX-A71R-10A-01D-A33Q-10",
+            "SX-A71S-10A-01D-A33Q-10": "SX-A71S-10A-01D-A33Q-10",
+            "SX-A71U-10A-01D-A33Q-10": "SX-A71U-10A-01D-A33Q-10",
+            "SX-A71V-10A-01D-A33Q-10": "SX-A71V-10A-01D-A33Q-10",
+            "SX-A71W-10A-01D-A34Z-10": "SX-A71W-10A-01D-A34Z-10",
+            "SX-A7SL-10A-01D-A34Z-10": "SX-A7SL-10A-01D-A34Z-10",
+            "SX-A7SM-10A-01D-A34Z-10": "SX-A7SM-10A-01D-A34Z-10",
+            "SX-A7SN-10A-01D-A34Z-10": "SX-A7SN-10A-01D-A34Z-10",
+            "SX-A7SO-10A-01D-A34Z-10": "SX-A7SO-10A-01D-A34Z-10",
+            "SX-A7SP-10A-01D-A34Z-10": "SX-A7SP-10A-01D-A34Z-10",
+            "SX-A7SQ-10A-01D-A35Z-10": "SX-A7SQ-10A-01D-A35Z-10",
+            "SX-A7SR-10A-01D-A35Z-10": "SX-A7SR-10A-01D-A35Z-10",
+            "SX-A7SS-10A-01D-A35Z-10": "SX-A7SS-10A-01D-A35Z-10",
+            "SX-A7SU-10A-01D-A35Z-10": "SX-A7SU-10A-01D-A35Z-10",
+            "T7-A92I-10A-01D-A370-10": "T7-A92I-10A-01D-A370-10",
+            "UN-AAZ9-10A-01D-A385-10": "UN-AAZ9-10A-01D-A385-10",
+            "UZ-A9PJ-10A-01D-A385-10": "UZ-A9PJ-10A-01D-A385-10",
+            "UZ-A9PK-10A-01D-A385-10": "UZ-A9PK-10A-01D-A385-10",
+            "UZ-A9PL-10A-01D-A385-10": "UZ-A9PL-10A-01D-A385-10",
+            "UZ-A9PM-10A-01D-A385-10": "UZ-A9PM-10A-01D-A385-10",
+            "UZ-A9PN-10A-01D-A385-10": "UZ-A9PN-10A-01D-A385-10",
+            "UZ-A9PO-10A-01D-A385-10": "UZ-A9PO-10A-01D-A385-10",
+            "UZ-A9PP-10A-01D-A42M-10": "UZ-A9PP-10A-01D-A42M-10",
+            "UZ-A9PQ-10A-01D-A42M-10": "UZ-A9PQ-10A-01D-A42M-10",
+            "UZ-A9PR-10A-01D-A42M-10": "UZ-A9PR-10A-01D-A42M-10",
+            "UZ-A9PS-10A-01D-A42M-10": "UZ-A9PS-10A-01D-A42M-10",
+            "UZ-A9PU-10A-01D-A42M-10": "UZ-A9PU-10A-01D-A42M-10",
+            "UZ-A9PV-10A-01D-A42M-10": "UZ-A9PV-10A-01D-A42M-10",
+            "UZ-A9PX-10A-01D-A42M-10": "UZ-A9PX-10A-01D-A42M-10",
+            "UZ-A9PZ-10A-01D-A42M-10": "UZ-A9PZ-10A-01D-A42M-10",
+            "UZ-A9Q0-10A-01D-A42M-10": "UZ-A9Q0-10A-01D-A42M-10",
+            "UZ-A9Q1-10A-01D-A42M-10": "UZ-A9Q1-10A-01D-A42M-10",
+            "V9-A7HT-10A-01D-A33Q-10": "V9-A7HT-10A-01D-A33Q-10",
+            "WN-A9G9-10A-01D-A370-10": "WN-A9G9-10A-01D-A370-10",
+            "WN-AB4C-10A-01D-A42M-10": "WN-AB4C-10A-01D-A42M-10",
+            "Y8-A894-10A-01D-A35Z-10": "Y8-A894-10A-01D-A35Z-10",
+            "Y8-A895-10A-01D-A35Z-10": "Y8-A895-10A-01D-A35Z-10",
+            "Y8-A896-10A-01D-A35Z-10": "Y8-A896-10A-01D-A35Z-10",
+            "Y8-A897-10A-01D-A35Z-10": "Y8-A897-10A-01D-A35Z-10",
+            "Y8-A898-10A-01D-A34Z-10": "Y8-A898-10A-01D-A34Z-10",
+            "Y8-A8RY-10A-01D-A370-10": "Y8-A8RY-10A-01D-A370-10",
+            "Y8-A8RZ-10A-01D-A370-10": "Y8-A8RZ-10A-01D-A370-10",
+            "Y8-A8S0-10A-01D-A370-10": "Y8-A8S0-10A-01D-A370-10",
+            "Y8-A8S1-10A-01D-A370-10": "Y8-A8S1-10A-01D-A370-10"
         },
-        "username": "poop",
+        "username": "",
         "version": "1.0",
-        "workpath": "/data/CCBR/dev/Exome-seq-pipeline/somatic_test3"
+        "workpath": "/data/CCBR/projects/ccbr604/data/pipeline"
     }
 }
