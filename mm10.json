@@ -30,7 +30,6 @@
     "DB29": "/data/CCBR/local/lib/snpEff_db/dbNSFP2.9.txt.gz",
     "MUTECTCOSMIC": "",
     "MUTECTSNP": ""
-     }
 },
 "rnaseq":{
 "GTFFILE": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/genes.gtf",
@@ -42,5 +41,6 @@
 "RRNALIST": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/Mm10.rRNA.interval_list_v3"
 
 },
+ }
 
  }
