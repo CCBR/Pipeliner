@@ -1,5 +1,5 @@
 rule cnvkit_germ:
-    input: lambda wildcards: config['project']['units'][wildcards.x]+".realign.bam"
+    input: lambda wildcards: config['project']['units'][wildcards.x]+".recal.bam"
     output: cnr="cnvkit/"+lambda wildcards: config['project']['units'][wildcards.x]+".cnr",
             cns="cnvkit/"+lambda wildcards: config['project']['units'][wildcards.x]+".cns",
             heatmap="cnvkit/germline_cnvkit.heatmap"

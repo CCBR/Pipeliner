@@ -1,5 +1,5 @@
 rule fastq_screen:
-    input:  "{x}.R1."+config['project']['filetype'],"{x}.R2."+config['project']['filetype']
+    input:  "{x}.R1.trimmed.fastq.gz","{x}.R2.trimmed.fastq.gz"
     output: "QC/{x}.R1_screen.txt",
             "QC/{x}.R1_screen.png",
             "QC/{x}.R2_screen.txt",
@@ -8,4 +8,4 @@ rule fastq_screen:
             outdir = "QC",
             config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG'],rname="pl:fastq_screen"
     threads: 8
-    shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 0 --aligner bowtie2 --force {input}"
+    shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"

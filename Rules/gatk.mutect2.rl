@@ -1,6 +1,6 @@
 rule gatk_mutect2:
-    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".realign.bam",
-           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".realign.bam"
+    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
+           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam"
     output: vcf="mutect2_out/{x}.paired.vcf",
 #            vcfFilter="mutect2_out/{x}.PASS.vcf",
             vcfRename="mutect2_out/{x}.FINAL.vcf"

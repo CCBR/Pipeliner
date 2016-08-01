@@ -1,6 +1,6 @@
 {
     "project": {
-        "analyst": "",
+        "analyst": "lackjb",
         "annotation": "hg19",
         "batchsize": "20",
         "binset": "standard-bin",

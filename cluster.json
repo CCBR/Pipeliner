@@ -28,10 +28,10 @@
     {
         "threads": "4"
     },
-    "bwa.mem":
+    "bwa_mem":
     {
         "mem": "128g",
-        "threads": "8"
+        "threads": "24"
     },
     "fastqc_fastq":
     {
