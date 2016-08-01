@@ -79,7 +79,7 @@ Snakemake, in turn, accepts a configuration file formatted in JSON (Javascript O
 
 - ExomeSeqPairs
 - ExomeSeqGermline
-- RNASeq
+- RNASeq(counts-based)
 
 ## Pipelines Planned for Inclusion
 

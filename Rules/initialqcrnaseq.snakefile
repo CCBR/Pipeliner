@@ -9,25 +9,9 @@ if config['bin'][pfamily]['DEG'] == "yes" and config['bin'][pfamily]['TRIM'] == 
   rule all:
      params: batch='--time=168:00:00'
      input: "STAR_QC",
-            "ebseq_completed.txt",
-            "salmonrun/sleuth_completed.txt",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "postTrimQC","sampletable.txt",
-            "DEG_genes/deseq2_pca.png",
-            "DEG_genes/edgeR_prcomp.png",
-            "RawCountFile_genes_filtered.txt",
-            "DEG_genes/Limma_MDS.png",
-            "DEG_junctions/deseq2_pca.png",
-            "DEG_junctions/edgeR_prcomp.png",
-            "RawCountFile_junctions_filtered.txt",
-            "DEG_junctions/Limma_MDS.png",
-            "DEG_genejunctions/deseq2_pca.png",
-            "DEG_genejunctions/edgeR_prcomp.png",
-            "RawCountFile_genejunctions_filtered.txt",
-            "DEG_genejunctions/Limma_MDS.png",
-            expand("{name}.star.count.overlap.txt",name=samples),
-            "RawCountFileOverlap.txt",
-            "RawCountFileStar.txt",expand("{name}.rsem.genes.results",name=samples)
+            "postTrimQC",
+
 
 elif config['bin'][pfamily]['DEG'] == "no" and config['bin'][pfamily]['TRIM'] == "yes":
   rule all:
@@ -35,35 +19,13 @@ elif config['bin'][pfamily]['DEG'] == "no" and config['bin'][pfamily]['TRIM'] ==
      input: "STAR_QC",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
             "postTrimQC",
-            "RawCountFile_genes_filtered.txt",
-            "RawCountFile_junctions_filtered.txt",
-            "RawCountFile_genejunctions_filtered.txt",
-            expand("{name}.star.count.overlap.txt",name=samples),
-            "RawCountFileOverlap.txt","RawCountFileStar.txt",
-            expand("{name}.rsem.genes.results",name=samples)
+
 
 elif config['bin'][pfamily]['DEG'] == "yes" and config['bin'][pfamily]['TRIM'] == "no":
   rule all:
      input: "STAR_QC",
-            "ebseq_completed.txt",
-            "salmonrun/sleuth_completed.txt",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "sampletable.txt",
-            "DEG_genes/deseq2_pca.png",
-            "DEG_genes/edgeR_prcomp.png",
-            "RawCountFile_genes_filtered.txt",
-            "DEG_genes/Limma_MDS.png",
-            "DEG_junctions/deseq2_pca.png",
-            "DEG_junctions/edgeR_prcomp.png",
-            "RawCountFile_junctions_filtered.txt",
-            "DEG_junctions/Limma_MDS.png",
-            "DEG_genejunctions/deseq2_pca.png",
-            "DEG_genejunctions/edgeR_prcomp.png",
-            "RawCountFile_genejunctions_filtered.txt",
-            "DEG_genejunctions/Limma_MDS.png",
-            expand("{name}.star.count.overlap.txt",name=samples),
-            "RawCountFileOverlap.txt","RawCountFileStar.txt",
-            expand("{name}.rsem.genes.results",name=samples)
+
             
      params: batch='--time=168:00:00'
      #input: "files_to_rnaseqc.txt","STAR_QC","RawCountFile_filtered.txt","sampletable.txt","deseq2_pca.png","edgeR_prcomp.png","Limma_MDS.png"
@@ -72,15 +34,6 @@ else:
      params: batch='--time=168:00:00'
      input: "STAR_QC",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "RawCountFile_filtered.txt",
-            "RawCountFile_genes_junctions_filtered.txt",
-            "RawCountFile_genejunctions_filtered.txt",
-            expand("{name}.star.count.overlap.txt",name=samples),
-            "RawCountFileOverlap.txt","RawCountFileStar.txt",
-            expand("{name}.rsem.genes.results",name=samples)
-
-
-
 
 if config['bin'][pfamily]['TRIM'] == "yes":
    rule trimmomatic_pe:
@@ -222,91 +175,3 @@ rule rnaseqc:
          fi
          """
 
-rule subread:
-   input:  "{name}.star_rg_added.sorted.dmark.bam"
-   output: out="{name}.star.count.info.txt", res="{name}.star.count.txt"
-   params: rname='pl:subread',batch='--time=4:00:00',subreadver=config['bin'][pfamily]['SUBREADVER'],stranded=config['bin'][pfamily]['STRANDED'],gtffile=config['references'][pfamily]['GTFFILE']
-   shell: "module load {params.subreadver}; featureCounts -T 16 -s {params.stranded} -p -t exon -R -g gene_id -a {params.gtffile} -o {output.out}  {input}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
-
-rule subreadoverlap:
-   input:  "{name}.star_rg_added.sorted.dmark.bam"
-   output: out="{name}.star.count.info.overlap.txt", res="{name}.star.count.overlap.txt"
-   params: rname='pl:subreadoverlap',batch='--cpus-per-task=16 --mem=24g --time=48:00:00',subreadver=config['bin'][pfamily]['SUBREADVER'],stranded=config['bin'][pfamily]['STRANDED'],gtffile=config['references'][pfamily]['GTFFILE']
-   shell: "module load {params.subreadver}; featureCounts -T 16 -s {params.stranded} -p -t exon -R -O -g gene_id -a {params.gtffile} -o {output.out}  {input}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
-
-
-rule genecounts: 
-   input: files=expand("{name}.star.count.txt", name=samples)
-   output: "RawCountFile_genes_filtered.txt"
-   params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['bin'][pfamily]['MINCOUNTGENES'],minsamples=config['bin'][pfamily]['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
-   shell: "module load R; Rscript Scripts/genecounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
-
-rule junctioncounts: 
-   input: files=expand("{name}.p2.SJ.out.tab", name=samples)
-   output: "RawCountFile_junctions_filtered.txt"
-   params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['bin'][pfamily]['MINCOUNTJUNCTIONS'],minsamples=config['bin'][pfamily]['MINSAMPLES']
-   shell: "module load R; Rscript Scripts/junctioncounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}'"
-
-rule genejunctioncounts: 
-   input: files=expand("{name}.p2.SJ.out.tab", name=samples)
-   output: "RawCountFile_genejunctions_filtered.txt"
-   params: rname='pl:genejunctions',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],gtffile=config['references'][pfamily]['GTFFILE'],mincount=config['bin'][pfamily]['MINCOUNTGENEJUNCTIONS'],minsamples=config['bin'][pfamily]['MINSAMPLES']
-   shell: "module load R; Rscript Scripts/genejunctioncounts.R '{params.dir}' '{input.files}' '{params.gtffile}' '{params.mincount}' '{params.minsamples}'"
-
-rule joincounts:
-   input: files=expand("{name}.star.count.overlap.txt", name=samples),files2=expand("{name}.p2.ReadsPerGene.out.tab", name=samples)
-   output: "RawCountFileOverlap.txt","RawCountFileStar.txt"
-   params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],starstrandcol=config['bin'][pfamily]['STARSTRANDCOL']
-   shell: "module load R; Rscript Scripts/joincounts.R '{params.dir}' '{input.files}' '{input.files2}' '{params.starstrandcol}'"
-
-rule samplecondition:
-   input: files=expand("{name}.star.count.txt", name=samples)
-   output: out1= "sampletable.txt"
-   params: rname='pl:samplecondition',batch='--mem=4g --time=10:00:00', groups=config['project']['contrasts']['rgroups']
-   run:
-        with open(output.out1, "w") as out:
-            out.write("sampleName\tfileName\tcondition\n")
-            i=0
-            for f in input.files:
-                out.write("%s\t"  % f)
-                out.write("%s\t"  % f)
-                out.write("%s\n" % params.groups[i])
-                i=i+1
-            out.close()
-
-rule deseq2:
-  input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
-  ## input: "sampletable.txt"
-  output: "DEG{dtype}/deseq2_pca.png"
-  params: rname='pl:deseq2',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}"
-  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/deseq2.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.annotate}' '{params.contrasts}'"
-
-rule edgeR:
-  input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
-  output: "DEG{dtype}/edgeR_prcomp.png"
-  params: rname='pl:edgeR',batch='--mem=24g --time=10:00:00', dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}"
-  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/edgeR.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.annotate}' '{params.contrasts}'"
-
-rule limmavoom:
-  input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
-  output: "DEG{dtype}/Limma_MDS.png"
-  params: rname='pl:limmavoom',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}"
-  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/limmavoom.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}'"
-
-rule salmon:
-  input: bam="{name}.p2.Aligned.toTranscriptome.out.bam"
-  output: "salmonrun/{name}/quant.sf"
-  params: sname="{name}",rname='pl:salmon',batch='--mem=128g --cpus-perptask=8 --time=10:00:00',dir=config['project']['workpath'],rsemref=config['references'][pfamily]['RSEMREF'],libtype={0:'U',1:'SF',2:'SR'}.get(config['bin'][pfamily]['STRANDED'])
-  shell: "mkdir -p {params.dir}/salmonrun; module load salmon/0.6.0; salmon quant -t {params.rsemref} -l I{params.libtype} -a {input.bam} -o {params.dir}/salmonrun/{params.sname} --numBootstraps 30;"
-
-rule sleuth:
-  input: samtab = "sampletable.txt", bam=expand("salmonrun/{name}/quant.sf", name=samples)
-  output: "salmonrun/sleuth_completed.txt"
-  params: rname='pl:sleuth',batch='--mem=128g --cpus-per-task=8 --time=10:00:00',dir=config['project']['workpath'],pipeRlib=config['bin'][pfamily]['PIPERLIB'],contrasts=" ".join(config['project']['contrasts']['rcontrasts'])
-  shell: "module load R; Rscript Scripts/sleuth.R '{params.dir}' '{params.pipeRlib}' '{input.samtab}' '{params.contrasts}'"
-
-rule EBSeq:
-  input: samtab = "sampletable.txt", isoforms=expand("{name}.rsem.isoforms.results", name=samples)
-  output: "ebseq_completed.txt"
-  params: rname='pl:EBSeq',batch='--mem=128g --cpus-per-task=8 --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']),rsemref=config['references'][pfamily]['RSEMREF'],rsem=config['bin'][pfamily]['RSEM']
-  shell: "module load R; Rscript Scripts/ebseq.R '{params.dir}' '{input.isoforms}' '{input.samtab}' '{params.contrasts}' '{params.rsemref}' '{params.rsem}'"

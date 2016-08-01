@@ -76,7 +76,9 @@
         "initialqc": "all-initialqc.rl",
         "bam2recal": "all-bam2recal.rl",
         "custom": "all-custom.rl",
-	"rnaseq": "rnaseq.snakefile"        
+	"rnaseq": "rnaseq.snakefile",
+	"initialqcrnaseq": "initialqcrnaseq.snakefile",
+	"mirseq": "mirseq.snakefile",	
         }
 
  }

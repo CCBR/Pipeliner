@@ -28,7 +28,7 @@
     {
         "threads": "4"
     },
-    "bwa.mem":
+    "bwa_mem":
     {
         "mem": "128g",
         "threads": "24"
@@ -245,5 +245,93 @@
     {
         "threads": "4",
         "mem": "110g"
-    }
+    },
+    "mirseq_init":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "cutadapt":
+    {
+        "threads": "1",
+        "mem": "32g"
+    },
+    "fastqc_pretrim":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "fastqc_posttrim":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirdeep2_mapper":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_make_bams":
+    {
+        "threads": "1",
+        "mem": "32g"
+    },
+    "mirseq_make_bams_bwa":
+    {
+        "threads": "1",
+        "mem": "32g"
+    },
+    "mirdeep2":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_variants":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_gencode_classification":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "expression_reports":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "differential_expression":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_summarize":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_main_document":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_miRspring_bowtie":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_miRspring_bwa":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+
+    "mirseq_targetscan":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    
+
 }

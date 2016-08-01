@@ -11,6 +11,7 @@
             "rsamps": "na"
         },
         "custom": [],
+<<<<<<< HEAD
         "datapath": "/data/CCBR/projects/ccbr604/data/pipeline",
         "description": "Enter CCBR project Description and Notes here.\n",
         "efiletype": "fastq",
@@ -26,17 +27,41 @@
         "poc": "justin.lack",
         "rgid": {
             "2K-A9WE-10A-01D-A385-10": {
+=======
+        "datapath": "/data/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline",
+        "description": "Enter CCBR project Description and Notes here.Enter CCBR project Description and Notes here.\n\n",
+        "efiletype": "fastq",
+        "filetype": "fastq.gz",
+        "flowcellid": "",
+        "id": "",
+        "organism": "",
+        "pairs": {},
+        "pfamily": "rnaseq",
+        "pi": "",
+        "pipeline": "rnaseq",
+        "platform": "Illumina",
+        "poc": "",
+        "rgid": {
+            "F22_10000": {
+>>>>>>> upstream/master
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
+<<<<<<< HEAD
                 "rgsm": "2K-A9WE-10A-01D-A385-10"
             },
             "2Z-A9J1-10A-01D-A385-10": {
+=======
+                "rgsm": "F22_10000"
+            },
+            "F23_10000": {
+>>>>>>> upstream/master
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
+<<<<<<< HEAD
                 "rgsm": "2Z-A9J1-10A-01D-A385-10"
             },
             "2Z-A9J2-10A-01D-A385-10": {
@@ -2894,12 +2919,16 @@
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
                 "rgsm": "Y8-A8S1-10A-01D-A370-10"
+=======
+                "rgsm": "F23_10000"
+>>>>>>> upstream/master
             }
         },
         "samples": {
             "na": "na"
         },
         "smparams": [],
+<<<<<<< HEAD
         "technique": "paired",
         "units": {
             "2K-A9WE-10A-01D-A385-10": "2K-A9WE-10A-01D-A385-10",
@@ -3316,5 +3345,15 @@
         "username": "",
         "version": "1.0",
         "workpath": "/data/CCBR/projects/ccbr604/data/pipeline"
+=======
+        "technique": "",
+        "units": {
+            "F22_10000": "F22_10000",
+            "F23_10000": "F23_10000"
+        },
+        "username": "",
+        "version": "1.0",
+        "workpath": "/scratch/dwheeler/test4"
+>>>>>>> upstream/master
     }
 }
