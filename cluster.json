@@ -30,7 +30,7 @@
     },
     "bwa_mem":
     {
-        "mem": "128g",
+        "mem": "48g",
         "threads": "24"
     },
     "fastqc_fastq":
@@ -196,7 +196,7 @@
     },
     "trimmomatic":
     {
-        "threads": "4"
+        "threads": "8"
     },
     "varscan":
     {

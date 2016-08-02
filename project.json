@@ -11,46 +11,70 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline",
-        "description": "Enter CCBR project Description and Notes here.Enter CCBR project Description and Notes here.\n\n",
+        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/germline_test3",
+        "description": "Enter CCBR project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "",
-        "id": "",
-        "organism": "",
+        "flowcellid": "test",
+        "id": "test",
+        "organism": "human",
         "pairs": {},
-        "pfamily": "rnaseq",
+        "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "rnaseq",
+        "pipeline": "initialqc",
         "platform": "Illumina",
-        "poc": "",
+        "poc": "justin.lack",
         "rgid": {
-            "F22_10000": {
+            "3435Ttest": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22_10000"
+                "rgsm": "3435Ttest"
             },
-            "F23_10000": {
+            "D115test": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F23_10000"
+                "rgsm": "D115test"
+            },
+            "F22testA": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F22testA"
+            },
+            "F22testB": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F22testB"
+            },
+            "F22testC": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F22testC"
             }
         },
         "samples": {
             "na": "na"
         },
         "smparams": [],
-        "technique": "",
+        "technique": "paired",
         "units": {
-            "F22_10000": "F22_10000",
-            "F23_10000": "F23_10000"
+            "3435Ttest": "3435Ttest",
+            "D115test": "D115test",
+            "F22testA": "F22testA",
+            "F22testB": "F22testB",
+            "F22testC": "F22testC"
         },
-        "username": "",
+        "username": "test",
         "version": "1.0",
-        "workpath": "/scratch/dwheeler/test4"
+        "workpath": "/data/CCBR/dev/Exome-seq-pipeline/germline_test3"
     }
 }
