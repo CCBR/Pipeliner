@@ -202,7 +202,7 @@ rule mirseq_gencode_classification:
 
 {params.java_path}/java {params.sortsam_jvm_mem} -jar {params.picard_path}/SortSam.jar INPUT={params.input_dir}/{wildcards.x}.bam OUTPUT={params.out}/{wildcards.x}.queryname.bam SORT_ORDER=queryname TMP_DIR={params.out}/ {params.sortsam_params}
 
-{params.samtools_path}/samtools view {params.out}/{wildcards.x}.queryname.bam | {params.htseq_path}/htseq-count {params.htseq_params} - {params.gencode_gtf} > {params.out}/{wildcards.x}.gencode.genecount.txt
+{params.samtools_path}/samtools view {params.out}/{wildcards.x}.queryname.bam | {params.htseq_path}/htseq-count {params.htseq_params} - {params.gencode_gtf} > {params.out}/{wildcards.x}_gencode_genecount.txt
 
 {params.script_path}/dw_gencode.sh {params.python_path} {params.htseq_lib_path} {params.gencode_gtf} {params.out} {wildcards.x} {params.script_path} {params.rscript_path}
 
