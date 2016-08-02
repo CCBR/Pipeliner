@@ -1,80 +1,85 @@
 {
     "project": {
-        "analyst": "lackjb",
+        "analyst": "",
         "annotation": "hg19",
         "batchsize": "20",
         "binset": "standard-bin",
         "cluster": "cluster_medium.json",
         "contrasts": {
-            "rcontrasts": "na",
-            "rgroups": "na",
-            "rsamps": "na"
+            "rcontrasts": [
+                "a",
+                "b"
+            ],
+            "rgroups": [
+                "a",
+                "a",
+                "b",
+                "b"
+            ],
+            "rsamps": [
+                "SRR326279.R1",
+                "SRR326280.R1",
+                "SRR326281.R1",
+                "SRR326282.R1"
+            ]
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/germline_test3",
+        "datapath": "/data/CCBR/dev/PipelineTestSeqs/mirseq",
         "description": "Enter CCBR project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "test",
-        "id": "test",
-        "organism": "human",
+        "flowcellid": "",
+        "id": "",
+        "organism": "",
         "pairs": {},
-        "pfamily": "exomeseq",
+        "pfamily": "mirseq",
         "pi": "",
-        "pipeline": "initialqc",
+        "pipeline": "mirseq",
         "platform": "Illumina",
-        "poc": "justin.lack",
+        "poc": "",
         "rgid": {
-            "3435Ttest": {
+            "SRR326279": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "3435Ttest"
+                "rgsm": "SRR326279"
             },
-            "D115test": {
+            "SRR326280": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "D115test"
+                "rgsm": "SRR326280"
             },
-            "F22testA": {
+            "SRR326281": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22testA"
+                "rgsm": "SRR326281"
             },
-            "F22testB": {
+            "SRR326282": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22testB"
-            },
-            "F22testC": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "F22testC"
+                "rgsm": "SRR326282"
             }
         },
         "samples": {
             "na": "na"
         },
         "smparams": [],
-        "technique": "paired",
+        "technique": "",
         "units": {
-            "3435Ttest": "3435Ttest",
-            "D115test": "D115test",
-            "F22testA": "F22testA",
-            "F22testB": "F22testB",
-            "F22testC": "F22testC"
+            "SRR326279": "SRR326279",
+            "SRR326280": "SRR326280",
+            "SRR326281": "SRR326281",
+            "SRR326282": "SRR326282"
         },
-        "username": "test",
+        "username": "",
         "version": "1.0",
-        "workpath": "/data/CCBR/dev/Exome-seq-pipeline/germline_test3"
+        "workpath": "/scratch/dwheeler/test5"
     }
 }

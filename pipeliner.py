@@ -251,7 +251,7 @@ def load_project():
             eprojectid.set(PD['project']['id'])
             eorganism.set(PD['project']['organism'])
             technique.set(PD['project']['technique'])
-            description.insert(INSERT, PD['project']['description'])
+
             
             
 #            tkinter.messagebox.showinfo(fname,customRules)            
