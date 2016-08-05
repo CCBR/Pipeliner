@@ -1,30 +1,52 @@
 {
     "project": {
         "analyst": "",
-        "annotation": "hg19",
+        "annotation": "mm10",
         "batchsize": "20",
         "binset": "standard-bin",
         "cluster": "cluster_medium.json",
         "contrasts": {
             "rcontrasts": [
-                "a",
-                "b"
+                "LM_MFP",
+                "PT_MFP",
+                "LM_TVI",
+                "PT_MFP",
+                "LM_TVI",
+                "LM_MFP",
+                "PT_MFP",
+                "Nico_4T1",
+                "LM_TVI",
+                "Nico_4T1",
+                "LM_MFP",
+                "Nico_4T1"
             ],
             "rgroups": [
-                "a",
-                "a",
-                "b",
-                "b"
+                "PT_MFP",
+                "PT_MFP",
+                "LM_MFP",
+                "LM_MFP",
+                "LM_MFP",
+                "LM_TVI",
+                "LM_TVI",
+                "LM_TVI",
+                "Nico_4T1",
+                "Nico_4T1"
             ],
             "rsamps": [
-                "SRR326279.R1",
-                "SRR326280.R1",
-                "SRR326281.R1",
-                "SRR326282.R1"
+                "Sample_A-1RNA_JY_3",
+                "Sample_A-2RNA_JY_3",
+                "Sample_B-1RNA_JY_3",
+                "Sample_B-2RNA_JY_3",
+                "Sample_B-3RNA_JY_3",
+                "Sample_C-1RNA_JY_3",
+                "Sample_C-2RNA_JY_3",
+                "Sample_C-3RNA_JY_3",
+                "Sample_4T1a_2",
+                "Sample_4T1b_2"
             ]
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/PipelineTestSeqs/mirseq",
+        "datapath": "/data/CCBR/projects/ccbr667/data",
         "description": "Enter CCBR project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
@@ -32,39 +54,81 @@
         "id": "",
         "organism": "",
         "pairs": {},
-        "pfamily": "mirseq",
+        "pfamily": "rnaseq",
         "pi": "",
-        "pipeline": "mirseq",
+        "pipeline": "rnaseq",
         "platform": "Illumina",
         "poc": "",
         "rgid": {
-            "SRR326279": {
+            "Sample_4T1a_2": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "SRR326279"
+                "rgsm": "Sample_4T1a_2"
             },
-            "SRR326280": {
+            "Sample_4T1b_2": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "SRR326280"
+                "rgsm": "Sample_4T1b_2"
             },
-            "SRR326281": {
+            "Sample_A-1RNA_JY_3": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "SRR326281"
+                "rgsm": "Sample_A-1RNA_JY_3"
             },
-            "SRR326282": {
+            "Sample_A-2RNA_JY_3": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "SRR326282"
+                "rgsm": "Sample_A-2RNA_JY_3"
+            },
+            "Sample_B-1RNA_JY_3": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Sample_B-1RNA_JY_3"
+            },
+            "Sample_B-2RNA_JY_3": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Sample_B-2RNA_JY_3"
+            },
+            "Sample_B-3RNA_JY_3": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Sample_B-3RNA_JY_3"
+            },
+            "Sample_C-1RNA_JY_3": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Sample_C-1RNA_JY_3"
+            },
+            "Sample_C-2RNA_JY_3": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Sample_C-2RNA_JY_3"
+            },
+            "Sample_C-3RNA_JY_3": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "Sample_C-3RNA_JY_3"
             }
         },
         "samples": {
@@ -73,13 +137,19 @@
         "smparams": [],
         "technique": "",
         "units": {
-            "SRR326279": "SRR326279",
-            "SRR326280": "SRR326280",
-            "SRR326281": "SRR326281",
-            "SRR326282": "SRR326282"
+            "Sample_4T1a_2": "Sample_4T1a_2",
+            "Sample_4T1b_2": "Sample_4T1b_2",
+            "Sample_A-1RNA_JY_3": "Sample_A-1RNA_JY_3",
+            "Sample_A-2RNA_JY_3": "Sample_A-2RNA_JY_3",
+            "Sample_B-1RNA_JY_3": "Sample_B-1RNA_JY_3",
+            "Sample_B-2RNA_JY_3": "Sample_B-2RNA_JY_3",
+            "Sample_B-3RNA_JY_3": "Sample_B-3RNA_JY_3",
+            "Sample_C-1RNA_JY_3": "Sample_C-1RNA_JY_3",
+            "Sample_C-2RNA_JY_3": "Sample_C-2RNA_JY_3",
+            "Sample_C-3RNA_JY_3": "Sample_C-3RNA_JY_3"
         },
         "username": "",
         "version": "1.0",
-        "workpath": "/scratch/dwheeler/test5"
+        "workpath": "/scratch/dwheeler/ccbr667"
     }
 }

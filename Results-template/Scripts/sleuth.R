@@ -7,7 +7,8 @@ CONTRASTS <- args[4]
 setwd(paste(DIR,"/salmonrun",sep=""))
 
 library(sleuth)
-library("wasabi", lib.loc=PIPERLIB)
+#library("wasabi", lib.loc=PIPERLIB)
+library("wasabi")
 library(biomaRt)
 
 s2c<-read.table(file.path(paste(DIR,"/",SAMTAB,sep="")), header=TRUE, stringsAsFactors = FALSE)
