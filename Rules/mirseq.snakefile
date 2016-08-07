@@ -22,7 +22,7 @@ rule mirseq_final:
             expand("{out}/mirdeep2/{x}/{x}.reads.fa",x=samples,out=config['project']['workpath']),
             expand("{out}/mirdeep2/{x}/mirdeep2.log",x=samples,out=config['project']['workpath']),
             config['project']['workpath']+"/variants/mirna_variants.vcf",
-            expand("{p}/qc/other_rna/{x}_gencode_genecount.txt",x=samples,p=config['project']['workpath']),
+            expand("{p}/qc/other_rna/{x}.gencode.genecount.txt",x=samples,p=config['project']['workpath']),
             config['project']['workpath']+"/expression/mature_miRNA_expression.xls",
             config['project']['workpath']+"/differential_expression/expression_boxplots.pdf",
             config['project']['workpath']+"/SampleSummary.xls",
@@ -195,14 +195,14 @@ rule mirseq_variants:
 
 rule mirseq_gencode_classification:
     input: config['project']['workpath']+"/bams/{x}.bam"
-    output: config['project']['workpath']+"/qc/other_rna/{x}_gencode_genecount.txt"
+    output: config['project']['workpath']+"/qc/other_rna/{x}.gencode.genecount.txt"
     params: java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],sortsam_jvm_mem=config['bin'][pfamily]['java_parameters']['SORTSAM_JVM_MEM'],picard_path=config['bin'][pfamily]['tool_paths']['PICARD_PATH'],input_dir=config['project']['workpath']+"/bams",out=config['project']['workpath']+"/qc/other_rna",sortsam_params=config['bin'][pfamily]['tool_parameters']['SORTSAM_PARAMS'],htseq_path=config['bin'][pfamily]['tool_paths']['HTSEQ_PATH'],htseq_params=config['bin'][pfamily]['tool_parameters']['HTSEQ_PARAMS'],gencode_gtf=config['references'][pfamily]['reference_files']['GENCODE_GTF'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],python_path=config['bin'][pfamily]['tool_paths']['PYTHON_PATH'],htseq_lib_path=config['bin'][pfamily]['tool_paths']['HTSEQ_LIB_PATH'],samtools_path=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],rscript_path=config['bin'][pfamily]['tool_paths']['RSCRIPT_PATH'],mem="16G",time="4:00:00",partition="ccr",rname="mir:classify"
     threads: 1    
     shell: """
 
 {params.java_path}/java {params.sortsam_jvm_mem} -jar {params.picard_path}/SortSam.jar INPUT={params.input_dir}/{wildcards.x}.bam OUTPUT={params.out}/{wildcards.x}.queryname.bam SORT_ORDER=queryname TMP_DIR={params.out}/ {params.sortsam_params}
 
-{params.samtools_path}/samtools view {params.out}/{wildcards.x}.queryname.bam | {params.htseq_path}/htseq-count {params.htseq_params} - {params.gencode_gtf} > {params.out}/{wildcards.x}_gencode_genecount.txt
+{params.samtools_path}/samtools view {params.out}/{wildcards.x}.queryname.bam | {params.htseq_path}/htseq-count {params.htseq_params} - {params.gencode_gtf} > {params.out}/{wildcards.x}.gencode.genecount.txt
 
 {params.script_path}/dw_gencode.sh {params.python_path} {params.htseq_lib_path} {params.gencode_gtf} {params.out} {wildcards.x} {params.script_path} {params.rscript_path}
 
