@@ -1,0 +1,31 @@
+.TH Exomeseq Family Details
+
+
+.SH Initialqc
+.TP
+.BR Input: *.fastq, *.fastq.gz
+.TP
+.BR Output: aligned reads, QC reports
+
+.SH Exomeseq Germline
+.TP
+.BR Input: BAMs from Initialqc
+.TP
+.BR Output: VCFs, Reports, Graphics
+
+.SH Exomeseq Somatic
+.TP
+.BRInput: BAMs from Initialqc
+.TP
+.BR Output: VCFs, Reports, Graphics
+.TP
+.BR Configuration: <pairs> file
+
+Create a file called <pairs> with the sample ids of the pairs to compare, one pair to a line.
+
+e.g. to compare Sample1 to Sample2 and Sample3 to Sample4, use
+
+Sample1 Sample2
+Sample3 Sample4
+
+Tumor is considerted to be the sample in the first column, normal in second.  You can create and save the <pairs> file from the 'paste/write' tab.

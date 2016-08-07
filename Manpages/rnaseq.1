@@ -1,0 +1,33 @@
+.TH RNAseq Family Details
+.SH Pipeline initialqcrnaseq
+.TP
+.IP Input::
+Paired fastq files
+
+The files may be either compressed with gzip or uncompressed
+.IP Output::
+BAM files
+
+aligned, deduplicated, indel-realigned reads (BAM), STAR QC reports, FastQC reports
+
+.SH Pipeline rnaseq
+.TP
+.IP Input::
+BAMs from Initialqc
+.IP Output::
+Expression, Differential expression, Reports, Graphics
+.TP
+.IP Configuration::
+<contrasts.tab> file
+
+Create a file called <contrasts.tab> with the sample ids on the first line, group identifiers, one per sample id, on the second line, and pairs of groups to compare on the third line.  e.g.
+
+.PP
+Sample1 Sample2 Sample3 Sample4 Sample5 Sample6
+.PP
+groupA groupA groupB groupB groupC groupC
+.PP
+A B A C B C
+
+In this case, 6 samples are divided into three groups and all pairs of group comparisons will be performed. You can create and save the <contrasts.tab> file from the 'paste/write' tab.
+

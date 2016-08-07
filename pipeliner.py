@@ -489,9 +489,13 @@ def makejson(*args):
     
     J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=TRUE)
     jsonconf.delete("1.0", END)    
-
     jsonconf.insert(INSERT, J)
     saveproject(jsonconf.get("1.0",END))
+    
+    manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,pfamily.get())).read()
+    mandisplay.delete("1.0", END)        
+    mandisplay.insert(INSERT, manpage)
+#    tkinter.messagebox.showerror("o",manpage)
     #MkaS=os.popen("./makeasnake.py 2>&1 | tee -a "+workpath.get()+"/Reports/makeasnake.log").read()
 #    tkinter.messagebox.showinfo("Project Json Build","Project Json Built.")    
 
@@ -1708,23 +1712,87 @@ jsonconf.bind('<FocusOut>',lambda _:makejson())
 datapath=StringVar()
 workpath=StringVar()
 
-datapathL = Label(opts2, text="Full Path to Data Directory",fg=textLightColor,bg=baseColor)
-#datapathL.pack(side=LEFT,padx=5)
-datapathL.grid(row=5,column=0,sticky=W,padx=10,pady=10)
+##########################
+# The Global Options Panel
+##########################
 
-datapathE = Entry(opts2, bd =2, width=60, bg=entryBgColor,fg=entryFgColor,textvariable=datapath)
+optspanel1 = LabelFrame(opts2,text="Global Options",fg=textLightColor,bg=baseColor)
+optspanel1.grid(row=0,column=0,sticky=W,padx=10,pady=10)
+optspanel2 = LabelFrame(opts2,text="Pipeline Details",fg=textLightColor,bg=baseColor)
+optspanel2.grid(row=0,column=2,sticky=W,padx=10,pady=10)
+
+manscrollbar = Scrollbar(optspanel2)
+manscrollbar.grid(row=1,column=3,sticky=W,padx=10,pady=10)
+ 
+mandisplay = Text(optspanel2,width=80,height=38,bg="white",fg="black",font=("nimbus mono","9"),yscrollcommand = manscrollbar.set)
+manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/exomeseq.1|groff  -t -e -man -Tascii|col -bx".format(whereiam)).read()
+#photo=PhotoImage(file='./pipeliner-logo.gif')
+#mandisplay.insert(END,'\n')
+#mandisplay.image_create(END, image=photo)
+ 
+mandisplay.insert(INSERT, manpage)
+
+#mandisplay.insert(END, "link", ("a", "href"+"http://hpc.nih.gov"))
+mandisplay.mark_set("insert", "1.0")
+mandisplay.grid(row=1,column=2,sticky=W,padx=10,pady=10)
+manscrollbar['command']=mandisplay.yview
+
+label=Label(optspanel1,text="Software Set",fg=textLightColor,bg=baseColor)
+#label.pack(side=LEFT,padx=5,pady=5)
+label.grid(row=0,column=0,sticky=W,padx=10,pady=10)
+
+binsets=['standard-bin']
+binset = StringVar()
+binset.set(binsets[0])
+om = OptionMenu(optspanel1, binset, *binsets, command=makejson)
+om.config(bg = widgetBgColor,fg=widgetFgColor)
+om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
+#om.pack(side=LEFT,padx=20,pady=5)
+om.grid(row=0,column=1,sticky=W,padx=10,pady=10)
+
+label=Label(optspanel1,text="Annotation Set",fg=textLightColor,bg=baseColor)
+#label.pack(side=LEFT,padx=5,pady=5)
+label.grid(row=1,column=0,sticky=W,padx=10,pady=10)
+
+annotations=['hg19','mm10']
+annotation = StringVar()
+annotation.set(annotations[0])
+om = OptionMenu(optspanel1, annotation, *annotations, command=makejson)
+om.config(bg = widgetBgColor,fg=widgetFgColor)
+om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
+#om.pack(side=LEFT,padx=20,pady=5)
+om.grid(row=1,column=1,sticky=W,padx=10,pady=10)
+
+L=Label(optspanel1, text="Pipeline Family",fg=textLightColor,bg=baseColor)
+L.grid(row=2,column=0)
+
+pfamilys=['exomeseq','rnaseq','genomeseq','mirseq','chipseq','custom']
+pfamily = StringVar()
+pfamily.set(pfamilys[0])
+om = OptionMenu(optspanel1, pfamily, *pfamilys, command=makejson)
+om.config(bg = widgetBgColor,fg=widgetFgColor)
+om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
+#om.pack(side=LEFT,padx=20,pady=5)
+om.grid(row=2,column=1,sticky=W,padx=10,pady=10)
+
+
+datapathL = Label(optspanel1, text="Full Path to Data Directory",fg=textLightColor,bg=baseColor)
+#datapathL.pack(side=LEFT,padx=5)
+datapathL.grid(row=3,column=0,sticky=W,padx=10,pady=10)
+
+datapathE = Entry(optspanel1, bd =2, width=60, bg=entryBgColor,fg=entryFgColor,textvariable=datapath)
 #datapathE.pack(side=LEFT)
-datapathE.grid(row=5,column=1,sticky=W,padx=10,pady=10)
+datapathE.grid(row=3,column=1,sticky=W,padx=10,pady=10)
 datapath.trace('w', makejson)
 
-workL = Label(opts2, text="Full Path to Working Directory",fg=textLightColor,bg=baseColor)
+workL = Label(optspanel1, text="Full Path to Working Directory",fg=textLightColor,bg=baseColor)
 #workL.pack(side=LEFT,padx=5,pady=5)
-workL.grid(row=6,column=0,sticky=W,padx=10,pady=10)
+workL.grid(row=4,column=0,sticky=W,padx=10,pady=10)
 
-workE = Entry(opts2, bd =2, width=60, bg=entryBgColor, fg=entryFgColor,textvariable=workpath)
+workE = Entry(optspanel1, bd =2, width=60, bg=entryBgColor, fg=entryFgColor,textvariable=workpath)
 workE.pack(side=LEFT,pady=5)
 #workpath.set(defaultwork)
-workE.grid(row=6,column=1,sticky=W,padx=10,pady=10)
+workE.grid(row=4,column=1,sticky=W,padx=10,pady=10)
 workpath.trace('w', makejson)
 
 ########################
@@ -1803,7 +1871,7 @@ om.grid(row=2,column=1,sticky=W,padx=10,pady=10)
 mframe = LabelFrame(mirseqframe,text="Pipeline",fg=textLightColor,bg=baseColor)
 mframe.pack( side = TOP,fill=X,padx=10,pady=10,expand=NO)
 
-mPipelines=['mirseq','mirseq2']
+mPipelines=['CAPmirseq-plus','mirseq2']
 mPipeline = StringVar()
 mPipeline.set(mPipelines[0])
 om = OptionMenu(mframe, mPipeline, *mPipelines, command=makejson)
@@ -1838,43 +1906,6 @@ om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=0,column=1,sticky=W,padx=10,pady=10)
 
 
-label=Label(opts2,text="Software Set",fg=textLightColor,bg=baseColor)
-#label.pack(side=LEFT,padx=5,pady=5)
-label.grid(row=1,column=0,sticky=W,padx=10,pady=10)
-
-binsets=['standard-bin']
-binset = StringVar()
-binset.set(binsets[0])
-om = OptionMenu(opts2, binset, *binsets, command=makejson)
-om.config(bg = widgetBgColor,fg=widgetFgColor)
-om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
-#om.pack(side=LEFT,padx=20,pady=5)
-om.grid(row=1,column=1,sticky=W,padx=10,pady=10)
-
-label=Label(opts2,text="Annotation Set",fg=textLightColor,bg=baseColor)
-#label.pack(side=LEFT,padx=5,pady=5)
-label.grid(row=2,column=0,sticky=W,padx=10,pady=10)
-
-annotations=['hg19','mm10']
-annotation = StringVar()
-annotation.set(annotations[0])
-om = OptionMenu(opts2, annotation, *annotations, command=makejson)
-om.config(bg = widgetBgColor,fg=widgetFgColor)
-om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
-#om.pack(side=LEFT,padx=20,pady=5)
-om.grid(row=2,column=1,sticky=W,padx=10,pady=10)
-
-L=Label(opts2, text="Pipeline Group",fg=textLightColor,bg=baseColor)
-L.grid(row=3,column=0)
-
-pfamilys=['exomeseq','rnaseq','genomeseq','mirseq','chipseq','custom']
-pfamily = StringVar()
-pfamily.set(pfamilys[0])
-om = OptionMenu(opts2, pfamily, *pfamilys, command=makejson)
-om.config(bg = widgetBgColor,fg=widgetFgColor)
-om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
-#om.pack(side=LEFT,padx=20,pady=5)
-om.grid(row=3,column=1,sticky=W,padx=10,pady=10)
 
 # label=Label(opts2,text="Resource Use",fg=textLightColor,bg=baseColor)
 # label.pack(side=LEFT,padx=5,pady=5)
