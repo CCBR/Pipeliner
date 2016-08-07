@@ -248,16 +248,16 @@ rule mirseq_main_document:
     run: 
        units=":".join(samples)
 
-       if (config['references'][pfamily]['CALL_SNVS'] == "YES" ):
+       if (config['references'][pfamily]['run_info']['CALL_SNVS'] == "YES" ):
            snvs=1
-       if (config['references'][pfamily]['TRIM_ADAPTER'] == "YES" ):
+       if (config['references'][pfamily]['run_info']['TRIM_ADAPTER'] == "YES" ):
            trim=1
-       if (config['references'][pfamily]['DIFF_EXPRESSION'] == "YES" ):
-           diff=config['references'][pfamily]['DIFF_EXPRESSION_ANALYSES']
+       if (config['references'][pfamily]['run_info']['DIFF_EXPRESSION'] == "YES" ):
+           diff=config['references'][pfamily]['run_info']['DIFF_EXPRESSION_ANALYSES']
        O=open(config['project']['workpath']+"/pfamily.tmp","w")
-       I=eval(open("pfamily.json","r").read())
-       for k in I['references'][pfamily].keys():
-           O.write("{0}={1}\n".format(k,I['references'][pfamily][k]))
+       I=eval(open("run.json","r").read())
+       for k in I['references'][pfamily]['run_info'].keys():
+           O.write("{0}={1}\n".format(k,I['references'][pfamily]['run_info'][k]))
        O.close()
 
        shell("{params.script_path}/dw_main_document.sh {params.out} {params.script_path} {params.flowcell} {params.tool} {params.call_snvs} {params.trim_adapter} {params.diff_expression} {params.diff_expression_analyses} {params.email};perl {params.script_path}/dw_create_igv.pl {params.out}/igv {params.samples} {params.delivery_folder} {params.tool_info} {params.server} {params.genome_build};cp {params.script_path}/IGV_Setup.doc {params.out}/igv;perl {params.script_path}/dw_main_document.pl {params.out}/pfamily.tmp {params.out}/MainDocument.html {params.out}/SampleSummary.xls {snvs} {trim} {diff};cp {params.script_path}/CAP-miRSeq_workflow.png {params.out}")
