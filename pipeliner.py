@@ -179,6 +179,19 @@ def writepaste():
     makejson()
     return
 
+def readpaste():
+    try:
+        fname=workpath.get()+"/"+ftype.get()    
+        F=open(fname,"r")
+        comments.delete("1.0", END)    
+        comments.insert(INSERT, F.read())
+        F.close()
+        tkinter.messagebox.showinfo("Success","Read file "+fname)
+    except:
+        tkinter.messagebox.showinfo("Error","Did not read file "+fname+"\nIs working directory set?")
+    makejson()
+    return
+
 def load_configuration():
     fname = askopenfilename(filetypes=(("json files", "*.json"),
                                        ("All files", "*.*") ))
@@ -1677,7 +1690,9 @@ om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=11,column=2,sticky="e",padx=10,pady=10)
 
 but1 = Button(pastewriteframe, text="Save", width=12, fg=widgetFgColor,bg=widgetBgColor,command=writepaste)
+but2 = Button(pastewriteframe, text="Read", width=12, fg=widgetFgColor,bg=widgetBgColor,command=readpaste)
 but1.grid(row=11,column=3)
+but2.grid(row=11,column=4)
 
 
 Projscrollbar = Scrollbar(projframe)
