@@ -11,6 +11,7 @@ rule gatk_recal:
       threads: 8
       shell:  """
               {params.gatk} -T BaseRecalibrator -I {input} -R {params.genome} -knownSites {params.snpsites} -knownSites {params.indelsites} -nct {threads} -o {output.re};
-              {params.gatk} -T PrintReads -R {params.genome} -I {input} -BQSR {output.re} -o {output.bam}
+              {params.gatk} -T PrintReads -R {params.genome} -I {input} -BQSR {output.re} -o {output.bam};
+#              {params.gatk} -T BaseRecalibrator -I {output.bam} -R {params.genome} -knownSites {params.snpsites} -knownSites {params.indelsites} -BQSR {output.re} -nct {threads} -o {output.re2}
               """
 # -plots {output.plots}
