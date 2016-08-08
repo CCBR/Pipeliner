@@ -5,11 +5,11 @@
         "widget":["black","white"],
         "text":["blue","black"],
         "entry":["black","white"],
-        "project":["blue","white"],
+        "project":["black","white"],
         "status":["green","black"],
         "dryrun":["yellow","gray30"],
         "log":["green","gray30"],
         "errors":["orange","black"],
-        "comments":["blue","white"]
+        "comments":["black","white"]
     }
 }

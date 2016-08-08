@@ -305,6 +305,7 @@ def save_project():
 
 def progress():
     o=os.popen("cd {0} && snakemake --dryrun --rerun-incomplete > {0}/Reports/checkpoint".format(workpath.get()))
+    o.close()
     F=open("{0}/Reports/checkpoint".format(workpath.get()),"r").read()
     rules2={}
     rules=re.findall(r'rule .+:',F)

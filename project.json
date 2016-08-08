@@ -6,12 +6,27 @@
         "binset": "standard-bin",
         "cluster": "cluster_medium.json",
         "contrasts": {
-            "rcontrasts": "na",
-            "rgroups": "na",
-            "rsamps": "na"
+            "rcontrasts": [
+                "n",
+                "c",
+                "n",
+                "c"
+            ],
+            "rgroups": [
+                "a",
+                "a",
+                "b",
+                "b"
+            ],
+            "rsamps": [
+                "SRR326279a.R1",
+                "SRR326280a.R1",
+                "SRR326281a.R1",
+                "SRR326282a.R1"
+            ]
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline",
+        "datapath": "/data/CCBR/dev/PipelineTestSeqs/mirseq.small",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
@@ -19,25 +34,39 @@
         "id": "",
         "organism": "",
         "pairs": {},
-        "pfamily": "exomeseq",
+        "pfamily": "mirseq",
         "pi": "",
-        "pipeline": "initialqc",
+        "pipeline": "CAPmirseq-plus",
         "platform": "Illumina",
         "poc": "",
         "rgid": {
-            "F22_10000": {
+            "SRR326279a": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22_10000"
+                "rgsm": "SRR326279a"
             },
-            "F23_10000": {
+            "SRR326280a": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F23_10000"
+                "rgsm": "SRR326280a"
+            },
+            "SRR326281a": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SRR326281a"
+            },
+            "SRR326282a": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "SRR326282a"
             }
         },
         "samples": {
@@ -46,11 +75,13 @@
         "smparams": [],
         "technique": "",
         "units": {
-            "F22_10000": "F22_10000",
-            "F23_10000": "F23_10000"
+            "SRR326279a": "SRR326279a",
+            "SRR326280a": "SRR326280a",
+            "SRR326281a": "SRR326281a",
+            "SRR326282a": "SRR326282a"
         },
         "username": "",
         "version": "1.0",
-        "workpath": "/scratch/dwheeler/exome1"
+        "workpath": "/scratch/dwheeler/mirseq2"
     }
 }
