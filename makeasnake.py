@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-import sys,os,re
+import sys,os,re,subprocess
 import json
-from subprocess import Popen, PIPE, STDOUT
+#from subprocess import call,Popen, PIPE, STDOUT
 
 whereiam=os.popen("pwd").read().strip()
 
@@ -70,8 +70,8 @@ config=dict(list(C.items())+list(D.items())+list(E.items())+list(F.items()))
 
 PipelineType=config['project']['pipeline']
 
-cluster= config['project']['cluster']
-p = os.popen("cp {0}/cluster_{1}.json {2}/cluster.json".format(whereiam,cluster,WP))
+#cluster= config['project']['cluster']
+p = os.popen("cp {0}/cluster.json {1}/cluster.json".format(whereiam,WP))
 
 
 with open(C['project']['workpath']+'/run.json', 'w') as F:
@@ -99,12 +99,16 @@ for R in sorted(config['rules'].keys()):
 
 F.close()
 
-os.popen("cd "+workpath+"/ && snakemake  --rulegraph|dot -Tpng -o "+workpath+"/Reports/"+PipelineType+".png")
-os.popen("cd "+workpath+"/ && convert "+workpath+"/Reports/"+PipelineType+".png "+workpath+"/Reports/"+PipelineType+".gif")
+z=os.popen("cd "+workpath+"/ && snakemake  --rulegraph|dot -Tpng -o "+workpath+"/Reports/"+PipelineType+".png")
+z.close()
+
+z=os.popen("cd "+workpath+"/ && convert "+workpath+"/Reports/"+PipelineType+".png "+workpath+"/Reports/"+PipelineType+".gif")
+z.close()
 
 #Make clickable SVG
 
-os.popen("cd "+workpath+"/ && snakemake  --rulegraph > "+workpath+"/Reports/"+PipelineType+".dot")
+z=os.popen("cd "+workpath+"/ && snakemake  --rulegraph > "+workpath+"/Reports/"+PipelineType+".dot")
+z.close()
 
 F=open(workpath+"/Reports/"+PipelineType+".dot","r")
 f=F.read()
@@ -132,7 +136,7 @@ F=open(workpath+"/Reports/"+PipelineType+".dot2","w")
 F.write(f2)
 F.close()
 
-os.popen("cd "+workpath+"/Reports && dot -Tsvg "+PipelineType+".dot2 > "+PipelineType+".svg")
-
-os.popen("cd "+workpath+"/ && snakemake --detailed-summary > Reports/"+PipelineType+".summary")
-
+z=os.popen("cd "+workpath+"/Reports && dot -Tsvg "+PipelineType+".dot2 > "+PipelineType+".svg")
+z.close()
+z=os.popen("cd "+workpath+"/ && snakemake --detailed-summary > Reports/"+PipelineType+".summary")
+z.close()

@@ -1,0 +1,31 @@
+.TH mirseq Family Details
+.SH Pipeline mirseq
+.TP
+.IP Input::
+unpaired fastq files, either compressed using gzip or uncompressed
+.IP Output::
+Expression, Differential expression, MirSpring documents, isomiR reports, FastQC Reports, Sample QC reports,Graphics
+.TP
+.IP Configuration::
+<contrasts.tab> file
+
+Create a file called <contrasts.tab> with the sample ids on the first line, group identifiers, one per sample id, on the second line, and as second series of group identifiers on the third line.  e.g.
+
+.PP
+Sample1 Sample2 Sample3 Sample4
+.PP
+Knockdown Knockdown Control Control
+.PP
+nuclear cytoplasmic nuclear cytoplasmic
+
+In this case, 4 samples are divided into 2 experimental groups and two biological groups. All comparisons will be performed between both biological and experimental groups.  Both sets of groups bust be fully specified.  Use dummy specifiers if you do not have two sets of groups. You can create and save the <contrasts.tab> file from the 'paste/write' tab.
+.TP
+.SH Sample Data
+.IP Project_file
+/data/CCBR/dev/PipelineTestSeqs/mirseq.small/mirseq-test.json
+.PP
+Runtime is 10 minutes.
+.IP Project_file
+/data/CCBR/dev/PipelineTestSeqs/mirseq/mirseq-test.json
+.PP
+Runtime is several hours.

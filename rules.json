@@ -78,7 +78,7 @@
         "custom": "all-custom.rl",
 	"rnaseq": "rnaseq.snakefile",
 	"initialqcrnaseq": "initialqcrnaseq.snakefile",
-	"mirseq": "mirseq.snakefile",	
+	"CAPmirseq-plus": "CAPmirseq-plus.snakefile",	
         }
 
  }

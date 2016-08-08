@@ -1,134 +1,43 @@
 {
     "project": {
         "analyst": "",
-        "annotation": "mm10",
+        "annotation": "hg19",
         "batchsize": "20",
         "binset": "standard-bin",
         "cluster": "cluster_medium.json",
         "contrasts": {
-            "rcontrasts": [
-                "LM_MFP",
-                "PT_MFP",
-                "LM_TVI",
-                "PT_MFP",
-                "LM_TVI",
-                "LM_MFP",
-                "PT_MFP",
-                "Nico_4T1",
-                "LM_TVI",
-                "Nico_4T1",
-                "LM_MFP",
-                "Nico_4T1"
-            ],
-            "rgroups": [
-                "PT_MFP",
-                "PT_MFP",
-                "LM_MFP",
-                "LM_MFP",
-                "LM_MFP",
-                "LM_TVI",
-                "LM_TVI",
-                "LM_TVI",
-                "Nico_4T1",
-                "Nico_4T1"
-            ],
-            "rsamps": [
-                "Sample_A-1RNA_JY_3",
-                "Sample_A-2RNA_JY_3",
-                "Sample_B-1RNA_JY_3",
-                "Sample_B-2RNA_JY_3",
-                "Sample_B-3RNA_JY_3",
-                "Sample_C-1RNA_JY_3",
-                "Sample_C-2RNA_JY_3",
-                "Sample_C-3RNA_JY_3",
-                "Sample_4T1a_2",
-                "Sample_4T1b_2"
-            ]
+            "rcontrasts": "na",
+            "rgroups": "na",
+            "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/projects/ccbr667/data",
-        "description": "Enter CCBR project Description and Notes here.\n",
+        "datapath": "/data/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline",
+        "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
         "flowcellid": "",
         "id": "",
         "organism": "",
         "pairs": {},
-        "pfamily": "rnaseq",
+        "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "rnaseq",
+        "pipeline": "initialqc",
         "platform": "Illumina",
         "poc": "",
         "rgid": {
-            "Sample_4T1a_2": {
+            "F22_10000": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "Sample_4T1a_2"
+                "rgsm": "F22_10000"
             },
-            "Sample_4T1b_2": {
+            "F23_10000": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "Sample_4T1b_2"
-            },
-            "Sample_A-1RNA_JY_3": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "Sample_A-1RNA_JY_3"
-            },
-            "Sample_A-2RNA_JY_3": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "Sample_A-2RNA_JY_3"
-            },
-            "Sample_B-1RNA_JY_3": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "Sample_B-1RNA_JY_3"
-            },
-            "Sample_B-2RNA_JY_3": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "Sample_B-2RNA_JY_3"
-            },
-            "Sample_B-3RNA_JY_3": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "Sample_B-3RNA_JY_3"
-            },
-            "Sample_C-1RNA_JY_3": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "Sample_C-1RNA_JY_3"
-            },
-            "Sample_C-2RNA_JY_3": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "Sample_C-2RNA_JY_3"
-            },
-            "Sample_C-3RNA_JY_3": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "Sample_C-3RNA_JY_3"
+                "rgsm": "F23_10000"
             }
         },
         "samples": {
@@ -137,19 +46,11 @@
         "smparams": [],
         "technique": "",
         "units": {
-            "Sample_4T1a_2": "Sample_4T1a_2",
-            "Sample_4T1b_2": "Sample_4T1b_2",
-            "Sample_A-1RNA_JY_3": "Sample_A-1RNA_JY_3",
-            "Sample_A-2RNA_JY_3": "Sample_A-2RNA_JY_3",
-            "Sample_B-1RNA_JY_3": "Sample_B-1RNA_JY_3",
-            "Sample_B-2RNA_JY_3": "Sample_B-2RNA_JY_3",
-            "Sample_B-3RNA_JY_3": "Sample_B-3RNA_JY_3",
-            "Sample_C-1RNA_JY_3": "Sample_C-1RNA_JY_3",
-            "Sample_C-2RNA_JY_3": "Sample_C-2RNA_JY_3",
-            "Sample_C-3RNA_JY_3": "Sample_C-3RNA_JY_3"
+            "F22_10000": "F22_10000",
+            "F23_10000": "F23_10000"
         },
         "username": "",
         "version": "1.0",
-        "workpath": "/scratch/dwheeler/ccbr667"
+        "workpath": "/scratch/dwheeler/exome1"
     }
 }

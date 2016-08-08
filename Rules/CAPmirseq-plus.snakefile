@@ -22,7 +22,7 @@ rule mirseq_final:
             expand("{out}/mirdeep2/{x}/{x}.reads.fa",x=samples,out=config['project']['workpath']),
             expand("{out}/mirdeep2/{x}/mirdeep2.log",x=samples,out=config['project']['workpath']),
             config['project']['workpath']+"/variants/mirna_variants.vcf",
-            expand("{p}/qc/other_rna/{x}_gencode_genecount.txt",x=samples,p=config['project']['workpath']),
+            expand("{p}/qc/other_rna/{x}.gencode.genecount.txt",x=samples,p=config['project']['workpath']),
             config['project']['workpath']+"/expression/mature_miRNA_expression.xls",
             config['project']['workpath']+"/differential_expression/expression_boxplots.pdf",
             config['project']['workpath']+"/SampleSummary.xls",
@@ -195,14 +195,14 @@ rule mirseq_variants:
 
 rule mirseq_gencode_classification:
     input: config['project']['workpath']+"/bams/{x}.bam"
-    output: config['project']['workpath']+"/qc/other_rna/{x}_gencode_genecount.txt"
+    output: config['project']['workpath']+"/qc/other_rna/{x}.gencode.genecount.txt"
     params: java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],sortsam_jvm_mem=config['bin'][pfamily]['java_parameters']['SORTSAM_JVM_MEM'],picard_path=config['bin'][pfamily]['tool_paths']['PICARD_PATH'],input_dir=config['project']['workpath']+"/bams",out=config['project']['workpath']+"/qc/other_rna",sortsam_params=config['bin'][pfamily]['tool_parameters']['SORTSAM_PARAMS'],htseq_path=config['bin'][pfamily]['tool_paths']['HTSEQ_PATH'],htseq_params=config['bin'][pfamily]['tool_parameters']['HTSEQ_PARAMS'],gencode_gtf=config['references'][pfamily]['reference_files']['GENCODE_GTF'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],python_path=config['bin'][pfamily]['tool_paths']['PYTHON_PATH'],htseq_lib_path=config['bin'][pfamily]['tool_paths']['HTSEQ_LIB_PATH'],samtools_path=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],rscript_path=config['bin'][pfamily]['tool_paths']['RSCRIPT_PATH'],mem="16G",time="4:00:00",partition="ccr",rname="mir:classify"
     threads: 1    
     shell: """
 
 {params.java_path}/java {params.sortsam_jvm_mem} -jar {params.picard_path}/SortSam.jar INPUT={params.input_dir}/{wildcards.x}.bam OUTPUT={params.out}/{wildcards.x}.queryname.bam SORT_ORDER=queryname TMP_DIR={params.out}/ {params.sortsam_params}
 
-{params.samtools_path}/samtools view {params.out}/{wildcards.x}.queryname.bam | {params.htseq_path}/htseq-count {params.htseq_params} - {params.gencode_gtf} > {params.out}/{wildcards.x}_gencode_genecount.txt
+{params.samtools_path}/samtools view {params.out}/{wildcards.x}.queryname.bam | {params.htseq_path}/htseq-count {params.htseq_params} - {params.gencode_gtf} > {params.out}/{wildcards.x}.gencode.genecount.txt
 
 {params.script_path}/dw_gencode.sh {params.python_path} {params.htseq_lib_path} {params.gencode_gtf} {params.out} {wildcards.x} {params.script_path} {params.rscript_path}
 
@@ -248,16 +248,16 @@ rule mirseq_main_document:
     run: 
        units=":".join(samples)
 
-       if (config['references'][pfamily]['CALL_SNVS'] == "YES" ):
+       if (config['references'][pfamily]['run_info']['CALL_SNVS'] == "YES" ):
            snvs=1
-       if (config['references'][pfamily]['TRIM_ADAPTER'] == "YES" ):
+       if (config['references'][pfamily]['run_info']['TRIM_ADAPTER'] == "YES" ):
            trim=1
-       if (config['references'][pfamily]['DIFF_EXPRESSION'] == "YES" ):
-           diff=config['references'][pfamily]['DIFF_EXPRESSION_ANALYSES']
+       if (config['references'][pfamily]['run_info']['DIFF_EXPRESSION'] == "YES" ):
+           diff=config['references'][pfamily]['run_info']['DIFF_EXPRESSION_ANALYSES']
        O=open(config['project']['workpath']+"/pfamily.tmp","w")
-       I=eval(open("pfamily.json","r").read())
-       for k in I['references'][pfamily].keys():
-           O.write("{0}={1}\n".format(k,I['references'][pfamily][k]))
+       I=eval(open("run.json","r").read())
+       for k in I['references'][pfamily]['run_info'].keys():
+           O.write("{0}={1}\n".format(k,I['references'][pfamily]['run_info'][k]))
        O.close()
 
        shell("{params.script_path}/dw_main_document.sh {params.out} {params.script_path} {params.flowcell} {params.tool} {params.call_snvs} {params.trim_adapter} {params.diff_expression} {params.diff_expression_analyses} {params.email};perl {params.script_path}/dw_create_igv.pl {params.out}/igv {params.samples} {params.delivery_folder} {params.tool_info} {params.server} {params.genome_build};cp {params.script_path}/IGV_Setup.doc {params.out}/igv;perl {params.script_path}/dw_main_document.pl {params.out}/pfamily.tmp {params.out}/MainDocument.html {params.out}/SampleSummary.xls {snvs} {trim} {diff};cp {params.script_path}/CAP-miRSeq_workflow.png {params.out}")
