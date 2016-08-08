@@ -54,7 +54,7 @@
     "gatk_combine_gvcfs":
     {
         "threads": "1",
-        "time" : "48:00:00",
+        "time" : "5-00:00:00",
         "mem": "96g"
     },
     "gatk_genotype_gvcfs":
