@@ -1326,13 +1326,13 @@ nbook.pack( side = LEFT,fill=BOTH,padx=10,pady=10,expand=YES )
 #The Run Frame
 #####################
 
-button = Button(runframe, text="Initialize Working Directory", fg="white",bg="red",command=initialize_results)
+button = Button(runframe, text="Initialize Working Directory", fg="white",bg="firebrick",command=initialize_results)
 button.grid(row=0,column=0,padx=10,pady=10,sticky="w")
-L=Label(runframe,text="The Working Directory must exist. Any data within it will be deleted.",anchor="ne",bg="red",fg="white")
+L=Label(runframe,text="The Working Directory must exist. Any data within it will be deleted.",anchor="ne",bg="firebrick",fg="white")
 L.grid(row=0,column=1,padx=10,pady=10,sticky="w")
 
 initLock=StringVar()
-initlock = Checkbutton(runframe, text="Unlock",variable=initLock,bg="red",fg="white",offvalue="locked",onvalue="unlocked",state="active")
+initlock = Checkbutton(runframe, text="Unlock",variable=initLock,bg="firebrick",fg="white",offvalue="locked",onvalue="unlocked",state="active")
 initLock.set("locked")
 #initlock.grid(row=0,column=2,padx=10,pady=10,sticky="w")
 
@@ -1803,9 +1803,10 @@ workpath.trace('w', makejson)
 eframe = LabelFrame(exomeseqframe,text="Pipeline",fg=textLightColor,bg=baseColor)
 eframe.pack( side = TOP,fill=X,padx=10,pady=10,expand=NO )
 
+Pipelines=["initialqc","bam2recal","wgslow","exomeseq-somatic","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"]
 Pipeline = StringVar()
-Pipeline.set(pipeline[0])
-om = OptionMenu(eframe, Pipeline, *pipeline, command=makejson)
+Pipeline.set(Pipelines[0])
+om = OptionMenu(eframe, Pipeline, *Pipelines, command=makejson)
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 #om.pack(side=LEFT,padx=20,pady=5)

@@ -15,7 +15,7 @@
     "CNVKIT_TARGETS": "/data/CCBR/local/lib/human_SSv5_cnvkit_targets.bed",
     "CNVKIT_ANTITARGETS": "/data/CCBR/local/lib/human_SSv5_cnvkit_antitargets.bed",
     "DELLY_EXCLUSIONS": "/data/CCBR/local/lib/delly.human.hg19.excl.tsv",
-    "FASTQ_SCREEN_CONFIG": "/data/CCBR/local/lib/fastq_screen.conf",
+    "FASTQ_SCREEN_CONFIG": "/data/CCBR/db/PipeDB/fastq_screen/fastq_screen.conf",
     "tg_GS_INDELS": "/fdb/GATK_resource_bundle/hg19-2.8/Mills_and_1000G_gold_standard.indels.hg19.vcf.gz",
     "tg_PHASE_INDELS": "/fdb/GATK_resource_bundle/hg19-2.8/1000G_phase1.indels.hg19.vcf.gz",
     "SNP138": "/fdb/GATK_resource_bundle/hg19-2.8/dbsnp_138.hg19.vcf.gz",
