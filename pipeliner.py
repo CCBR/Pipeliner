@@ -704,7 +704,7 @@ def getworkflow():
     cgf.config(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
     cgf.config(width=600,height=600)
     cgf.pack(expand=1,fill=BOTH,side=RIGHT)
-    cgf.config(scrollregion=(0,0,1000,5000))
+    cgf.config(scrollregion=(0,0,5000,20000))
     img = PhotoImage(file=workpath.get()+"/Reports/"+PL+".gif")
     cgf.create_image(0,0,image=img, anchor="nw")
     cgf.image=img
