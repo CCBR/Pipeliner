@@ -127,7 +127,7 @@
     },
     "picard_markdups":
     {
-        "threads": "1"
+        "threads": "24"
     },
     "qualimap":
     {
