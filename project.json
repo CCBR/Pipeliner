@@ -1,17 +1,26 @@
 {
     "project": {
         "analyst": "",
-        "annotation": "hg19",
+        "annotation": "mm10",
         "batchsize": "20",
         "binset": "standard-bin",
         "cluster": "cluster_medium.json",
         "contrasts": {
-            "rcontrasts": "na",
-            "rgroups": "na",
-            "rsamps": "na"
+            "rcontrasts": [
+                "A",
+                "B"
+            ],
+            "rgroups": [
+                "A",
+                "B"
+            ],
+            "rsamps": [
+                "Sample_YS_10",
+                "Sample_YS_11"
+            ]
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline",
+        "datapath": "/data/CCBR/projects/ccbr499/datadir_pipeliner",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
@@ -19,25 +28,25 @@
         "id": "",
         "organism": "",
         "pairs": {},
-        "pfamily": "exomeseq",
+        "pfamily": "rnaseq",
         "pi": "",
-        "pipeline": "initialqc",
+        "pipeline": "rnaseq",
         "platform": "Illumina",
         "poc": "",
         "rgid": {
-            "F22_10000": {
+            "Sample_YS_10": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22_10000"
+                "rgsm": "Sample_YS_10"
             },
-            "F23_10000": {
+            "Sample_YS_11": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F23_10000"
+                "rgsm": "Sample_YS_11"
             }
         },
         "samples": {
@@ -46,11 +55,11 @@
         "smparams": [],
         "technique": "",
         "units": {
-            "F22_10000": "F22_10000",
-            "F23_10000": "F23_10000"
+            "Sample_YS_10": "Sample_YS_10",
+            "Sample_YS_11": "Sample_YS_11"
         },
         "username": "",
         "version": "1.0",
-        "workpath": "/scratch/dwheeler/exome1"
+        "workpath": "/scratch/dwheeler/rnaseq3"
     }
 }
