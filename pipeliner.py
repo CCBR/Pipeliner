@@ -485,7 +485,7 @@ def makejson(*args):
     PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,
                    'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),
                    'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",
-                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"trim":rTrim.get(),"readlen":rReadlen.get(),"strand":rStrand.get(),"deg":rDeg.get()}}
+                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":rStrandcol.get().split(",")[0]}}
 
     
     J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=TRUE)
@@ -1844,7 +1844,7 @@ om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 #om.pack(side=LEFT,padx=20,pady=5)
 om.grid(row=0,column=1,sticky=NW,padx=10,pady=10)
 
-rTrims=['Do not Trim the Reads','Trim the Reads']
+rTrims=['No, Do not Trim the Reads','Yes, Trim the Reads']
 rTrim = StringVar()
 rTrim.set(rTrims[0])
 om = OptionMenu(rframe, rTrim, *rTrims, command=makejson)
@@ -1860,7 +1860,7 @@ om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=4,column=1,sticky=W,padx=10,pady=10)
 
-rStrands=['Reads are Unstranded','Reads are from Sense Strand','Reads are from Anti-Sense Strand']
+rStrands=['0, Reads are Unstranded','1, Reads are from Sense Strand','2, Reads are from Anti-Sense Strand']
 rStrand = StringVar()
 rStrand.set(rStrands[0])
 om = OptionMenu(rframe, rStrand, *rStrands, command=makejson)
@@ -1868,13 +1868,24 @@ om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=5,column=1,sticky=W,padx=10,pady=10)
 
-rDegs=["Do not Report Differentially Expressed Genes","Report Differentially Expressed Genes"]
+rDegs=["No, Do not Report Differentially Expressed Genes","Yes, Report Differentially Expressed Genes"]
 rDeg = StringVar()
 rDeg.set(rDegs[0])
 om = OptionMenu(rframe, rDeg, *rDegs, command=makejson)
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=6,column=1,sticky=W,padx=10,pady=10)
+
+
+rStrandcols=["2, Strand Column 2","3, Strand Column 3","4, Strand Column 4"]
+rStrandcol = StringVar()
+rStrandcol.set(rStrandcols[0])
+om = OptionMenu(rframe, rStrandcol, *rStrandcols, command=makejson)
+om.config(bg = widgetBgColor,fg=widgetFgColor)
+om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
+om.grid(row=7,column=1,sticky=W,padx=10,pady=10)
+
+
 
 #########################
 # The GenomeSeq Pane
