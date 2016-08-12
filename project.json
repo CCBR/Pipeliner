@@ -1,5 +1,10 @@
 {
     "project": {
+        "DEG": "no",
+        "SJDBOVERHANG": "75",
+        "STARSTRANDCOL": "2",
+        "STRANDED": "0",
+        "TRIM": "yes",
         "analyst": "",
         "annotation": "hg19",
         "batchsize": "20",
@@ -12,7 +17,6 @@
         },
         "custom": [],
         "datapath": "",
-        "deg": "Do not Report Differentially Expressed Genes",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
@@ -22,20 +26,17 @@
         "pairs": {
             "na": "na"
         },
-        "pfamily": "exomeseq",
+        "pfamily": "rnaseq",
         "pi": "",
-        "pipeline": "initialqc",
+        "pipeline": "initialqcrnaseq",
         "platform": "Illumina",
         "poc": "",
-        "readlen": "Read Length is 100",
         "rgid": {},
         "samples": {
             "na": "na"
         },
         "smparams": [],
-        "strand": "Reads are Unstranded",
         "technique": "",
-        "trim": "Do not Trim the Reads",
         "units": {},
         "username": "",
         "version": "1.0",
