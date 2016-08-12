@@ -485,8 +485,8 @@ def makejson(*args):
     PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,
                    'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),
                    'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",
-                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":rStrandcol.get().split(",")[0],"MINCOUNTS":rMincount.get(),"MINSAMPLES":rMinsamples.get()}}
-
+                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":rStrandcol.get().split(",")[0],"MINSAMPLES":rMinsamples.get()"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get()}}
+    
     J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=TRUE)
     jsonconf.delete("1.0", END)    
     jsonconf.insert(INSERT, J)

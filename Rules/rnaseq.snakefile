@@ -238,19 +238,19 @@ rule subreadoverlap:
 rule genecounts: 
    input: files=expand("{name}.star.count.txt", name=samples)
    output: "RawCountFile_genes_filtered.txt"
-   params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['bin'][pfamily]['MINCOUNTGENES'],minsamples=config['bin'][pfamily]['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
+   params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
    shell: "module load R; Rscript Scripts/genecounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
 
 rule junctioncounts: 
    input: files=expand("{name}.p2.SJ.out.tab", name=samples)
    output: "RawCountFile_junctions_filtered.txt"
-   params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['bin'][pfamily]['MINCOUNTJUNCTIONS'],minsamples=config['bin'][pfamily]['MINSAMPLES']
+   params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
    shell: "module load R; Rscript Scripts/junctioncounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}'"
 
 rule genejunctioncounts: 
    input: files=expand("{name}.p2.SJ.out.tab", name=samples)
    output: "RawCountFile_genejunctions_filtered.txt"
-   params: rname='pl:genejunctions',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],gtffile=config['references'][pfamily]['GTFFILE'],mincount=config['bin'][pfamily]['MINCOUNTGENEJUNCTIONS'],minsamples=config['bin'][pfamily]['MINSAMPLES']
+   params: rname='pl:genejunctions',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],gtffile=config['references'][pfamily]['GTFFILE'],mincount=config['project']['MINCOUNTGENEJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
    shell: "module load R; Rscript Scripts/genejunctioncounts.R '{params.dir}' '{input.files}' '{params.gtffile}' '{params.mincount}' '{params.minsamples}'"
 
 rule joincounts:
