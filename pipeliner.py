@@ -176,7 +176,7 @@ def writepaste():
         tkinter.messagebox.showinfo("Success","Wrote file "+fname)
     except:
         tkinter.messagebox.showinfo("Error","Did not write file "+fname+"\nIs working directory set?")
-    makejson()
+    makejson("none")
     return
 
 def readpaste():
@@ -189,7 +189,7 @@ def readpaste():
         tkinter.messagebox.showinfo("Success","Read file "+fname)
     except:
         tkinter.messagebox.showinfo("Error","Did not read file "+fname+"\nIs working directory set?")
-    makejson()
+    makejson("none")
     return
 
 def load_configuration():
@@ -271,7 +271,7 @@ def load_project():
             F.close()
         except:                     # <- naked except is a bad idea
             showerror("Open Source File", "Failed to read file\n'%s'" % fname)
-    makejson()
+    makejson("none")
     #MkaS=os.popen("./makeasnake.py 2>&1 | tee -a "+workpath.get()+"/Reports/makeasnake.log").read()
     return
 
@@ -377,7 +377,7 @@ def unbuffered(proc, stream='stdout'):
             yield out
 
 
-def makejson(*args):
+def makejson(caller):
     global PD
     global UnitsBak
     global RGbak
@@ -485,14 +485,16 @@ def makejson(*args):
     PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,
                    'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),
                    'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",
-                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":rStrandcol.get().split(",")[0],"MINSAMPLES":rMinsamples.get()"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get()}}
+                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":rStrandcol.get().split(",")[0],"MINSAMPLES":rMinsamples.get(),"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get()}}
     
     J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=TRUE)
     jsonconf.delete("1.0", END)    
     jsonconf.insert(INSERT, J)
     saveproject(jsonconf.get("1.0",END))
-    
-    manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,pfamily.get())).read()
+
+    topic=caller
+#    manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,pfamily.get())).read()
+    manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,topic)).read()    
     mandisplay.delete("1.0", END)        
     mandisplay.insert(INSERT, manpage)
 #    tkinter.messagebox.showerror("o",manpage)
@@ -569,7 +571,7 @@ def symlink(data):
 
 
 
-    makejson()
+    makejson("none")
     
 def show(x,y,fg,bg,height,width):
     sm=Toplevel()
@@ -711,7 +713,7 @@ def getworkflow():
 def cmd(smcommand):
     global img
     PL=pipelineget()
-#    makejson()
+#    makejson("none")
     if checklist()==1:
         return
     saveproject(jsonconf.get("1.0",END))
@@ -751,12 +753,12 @@ def setrules(*args):
         if cb[i].var.get()=="1":
 #                tkinter.messagebox.showinfo(str(i),cb[i].var.get())
             customRules.append(rules[i])
-    makejson()
+    makejson("none")
     
 def updateParams(*args):
     global batchsize
     batchsize=BS.get()    
-    makejson()
+    makejson("none")
     
 def setparameters():
     global batchsize
@@ -1189,7 +1191,7 @@ top.config(menu=menubar)
 
 ########## Dev ##############
 devmenu = Menu(menubar, tearoff=0)
-devmenu.add_command(label="Build Project Json", command=lambda:makejson())
+devmenu.add_command(label="Build Project Json", command=lambda:makejson("none"))
 devmenu.add_command(label="Save Project Json", command=lambda:saveproject(jsonconf.get("1.0",END)))
 devmenu.add_command(label="Two Column Names to Pairs", command=twocol2pairs)
 devmenu.add_command(label="Table to Samples", command=tab2samples)
@@ -1578,7 +1580,7 @@ description = Text(projpanel2,width=50,height=38,bg=commentBgColor,fg=commentFgC
 Dscrollbar['command']=description.yview
 description.delete("1.0", END)
 description.insert(INSERT, "Enter CCBR Project Description and Notes here.")
-description.bind('<FocusOut>',lambda _:makejson())
+description.bind('<FocusOut>',lambda _:makejson("none"))
 description.grid(row=2,column=3,sticky="e",padx=10,pady=10)
 
 
@@ -1707,7 +1709,7 @@ jsonconf.insert(INSERT, projectjson)
 #jsonconf.pack(side=RIGHT,expand=YES)
 jsonconf.grid(row=3,column=0,sticky="e",padx=10,pady=10)
 #jsonconf.bind('<FocusOut>',lambda _:saveproject(jsonconf.get("1.0",END)))
-jsonconf.bind('<FocusOut>',lambda _:makejson())
+jsonconf.bind('<FocusOut>',lambda _:makejson("none"))
 
 datapath=StringVar()
 workpath=StringVar()
@@ -1744,7 +1746,7 @@ label.grid(row=0,column=0,sticky=W,padx=10,pady=10)
 binsets=['standard-bin']
 binset = StringVar()
 binset.set(binsets[0])
-om = OptionMenu(optspanel1, binset, *binsets, command=makejson)
+om = OptionMenu(optspanel1, binset, *binsets, command=lambda _:makejson("binsets"))
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 #om.pack(side=LEFT,padx=20,pady=5)
@@ -1757,7 +1759,7 @@ label.grid(row=1,column=0,sticky=W,padx=10,pady=10)
 annotations=['hg19','mm10']
 annotation = StringVar()
 annotation.set(annotations[0])
-om = OptionMenu(optspanel1, annotation, *annotations, command=makejson)
+om = OptionMenu(optspanel1, annotation, *annotations, command=lambda _:makejson("refsets"))
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 #om.pack(side=LEFT,padx=20,pady=5)
@@ -1769,7 +1771,7 @@ L.grid(row=2,column=0)
 pfamilys=['exomeseq','rnaseq','genomeseq','mirseq','chipseq','custom']
 pfamily = StringVar()
 pfamily.set(pfamilys[0])
-om = OptionMenu(optspanel1, pfamily, *pfamilys, command=makejson)
+om = OptionMenu(optspanel1, pfamily, *pfamilys, command=lambda _:makejson(pfamily.get()))
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 #om.pack(side=LEFT,padx=20,pady=5)
@@ -1783,7 +1785,7 @@ datapathL.grid(row=3,column=0,sticky=W,padx=10,pady=10)
 datapathE = Entry(optspanel1, bd =2, width=60, bg=entryBgColor,fg=entryFgColor,textvariable=datapath)
 #datapathE.pack(side=LEFT)
 datapathE.grid(row=3,column=1,sticky=W,padx=10,pady=10)
-datapath.trace('w', makejson)
+datapath.trace('w', lambda _:makejson("datapath"))
 
 workL = Label(optspanel1, text="Full Path to Working Directory",fg=textLightColor,bg=baseColor)
 #workL.pack(side=LEFT,padx=5,pady=5)
@@ -1793,7 +1795,7 @@ workE = Entry(optspanel1, bd =2, width=60, bg=entryBgColor, fg=entryFgColor,text
 workE.pack(side=LEFT,pady=5)
 #workpath.set(defaultwork)
 workE.grid(row=4,column=1,sticky=W,padx=10,pady=10)
-workpath.trace('w', makejson)
+workpath.trace('w', lambda _:makejson("workpath"))
 
 ########################
 # The Exomeseq Pane
@@ -2024,7 +2026,7 @@ om.grid(row=4,column=1,sticky=W,padx=10,pady=10)
 # bysample.set("no")
 # bysample.trace('w', makejson)
 
-makejson()
+makejson("none")
 top.mainloop()
 
 

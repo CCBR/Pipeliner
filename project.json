@@ -1,8 +1,10 @@
 {
     "project": {
         "DEG": "no",
-        "MINCOUNTS": "5",
-        "MINSAMPLES": "1",
+        "MINCOUNTGENEJUNCTIONS": "",
+        "MINCOUNTGENES": "",
+        "MINCOUNTJUNCTIONS": "",
+        "MINSAMPLES": "",
         "SJDBOVERHANG": "100",
         "STARSTRANDCOL": "2",
         "STRANDED": "0",
