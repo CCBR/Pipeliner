@@ -485,7 +485,7 @@ def makejson(*args):
     PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,
                    'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),
                    'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",
-                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts}}
+                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"trim":rTrim.get(),"readlen":rReadlen.get(),"strand":rStrand.get(),"deg":rDeg.get()}}
 
     
     J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=TRUE)
@@ -1817,8 +1817,22 @@ om.grid(row=3,column=1,sticky=W,padx=10,pady=10)
 # The RNASeq Pane
 #########################
 
-rframe = LabelFrame(rnaseqframe,text="Pipeline",fg=textLightColor,bg=baseColor)
-rframe.pack( side = TOP,fill=X,padx=10,pady=10,expand=NO)
+rframe = LabelFrame(rnaseqframe,text="Rnaseq Pipeline Options",fg=textLightColor,bg=baseColor)
+rframe.grid(row=0,column=0,sticky=W,padx=10,pady=10)
+
+rframe2 = LabelFrame(rnaseqframe,text="Rnaseq Pipeline Details",fg=textLightColor,bg=baseColor)
+rframe2.grid(row=0,column=3,sticky=W,padx=10,pady=10)
+
+
+rmanscrollbar = Scrollbar(rframe2)
+rmanscrollbar.grid(row=1,column=3,sticky=W,padx=10,pady=10)
+ 
+rmandisplay = Text(rframe2,width=80,height=38,bg="white",fg="black",font=("nimbus mono","9"),yscrollcommand = rmanscrollbar.set)
+rmanpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/exomeseq.1|groff  -t -e -man -Tascii|col -bx".format(whereiam)).read()
+rmandisplay.insert(INSERT, manpage)
+rmandisplay.mark_set("insert", "1.0")
+rmandisplay.grid(row=1,column=2,sticky=W,padx=10,pady=10)
+rmanscrollbar['command']=rmandisplay.yview
 
 
 rPipelines=['initialqcrnaseq','rnaseq']
@@ -1828,8 +1842,39 @@ om = OptionMenu(rframe, rPipeline, *rPipelines, command=makejson)
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 #om.pack(side=LEFT,padx=20,pady=5)
-om.grid(row=2,column=1,sticky=W,padx=10,pady=10)
+om.grid(row=0,column=1,sticky=NW,padx=10,pady=10)
 
+rTrims=['Do not Trim the Reads','Trim the Reads']
+rTrim = StringVar()
+rTrim.set(rTrims[0])
+om = OptionMenu(rframe, rTrim, *rTrims, command=makejson)
+om.config(bg = widgetBgColor,fg=widgetFgColor)
+om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
+om.grid(row=3,column=1,sticky=W,padx=10,pady=10)
+
+rReadlens=['Read Length is 100','Read Length is 125','Read Length is 75','Read Length is 50','Read Length is 150']
+rReadlen = StringVar()
+rReadlen.set(rReadlens[0])
+om = OptionMenu(rframe, rReadlen, *rReadlens, command=makejson)
+om.config(bg = widgetBgColor,fg=widgetFgColor)
+om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
+om.grid(row=4,column=1,sticky=W,padx=10,pady=10)
+
+rStrands=['Reads are Unstranded','Reads are from Sense Strand','Reads are from Anti-Sense Strand']
+rStrand = StringVar()
+rStrand.set(rStrands[0])
+om = OptionMenu(rframe, rStrand, *rStrands, command=makejson)
+om.config(bg = widgetBgColor,fg=widgetFgColor)
+om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
+om.grid(row=5,column=1,sticky=W,padx=10,pady=10)
+
+rDegs=["Do not Report Differentially Expressed Genes","Report Differentially Expressed Genes"]
+rDeg = StringVar()
+rDeg.set(rDegs[0])
+om = OptionMenu(rframe, rDeg, *rDegs, command=makejson)
+om.config(bg = widgetBgColor,fg=widgetFgColor)
+om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
+om.grid(row=6,column=1,sticky=W,padx=10,pady=10)
 
 #########################
 # The GenomeSeq Pane

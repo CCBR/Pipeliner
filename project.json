@@ -1,65 +1,44 @@
 {
     "project": {
         "analyst": "",
-        "annotation": "mm10",
+        "annotation": "hg19",
         "batchsize": "20",
         "binset": "standard-bin",
         "cluster": "cluster_medium.json",
         "contrasts": {
-            "rcontrasts": [
-                "A",
-                "B"
-            ],
-            "rgroups": [
-                "A",
-                "B"
-            ],
-            "rsamps": [
-                "Sample_YS_10",
-                "Sample_YS_11"
-            ]
+            "rcontrasts": "na",
+            "rgroups": "na",
+            "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/projects/ccbr499/datadir_pipeliner",
+        "datapath": "",
+        "deg": "Do not Report Differentially Expressed Genes",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
         "flowcellid": "",
         "id": "",
         "organism": "",
-        "pairs": {},
-        "pfamily": "rnaseq",
+        "pairs": {
+            "na": "na"
+        },
+        "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "rnaseq",
+        "pipeline": "initialqc",
         "platform": "Illumina",
         "poc": "",
-        "rgid": {
-            "Sample_YS_10": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "Sample_YS_10"
-            },
-            "Sample_YS_11": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "Sample_YS_11"
-            }
-        },
+        "readlen": "Read Length is 100",
+        "rgid": {},
         "samples": {
             "na": "na"
         },
         "smparams": [],
+        "strand": "Reads are Unstranded",
         "technique": "",
-        "units": {
-            "Sample_YS_10": "Sample_YS_10",
-            "Sample_YS_11": "Sample_YS_11"
-        },
+        "trim": "Do not Trim the Reads",
+        "units": {},
         "username": "",
         "version": "1.0",
-        "workpath": "/scratch/dwheeler/rnaseq3"
+        "workpath": ""
     }
 }
