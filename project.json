@@ -1,10 +1,12 @@
 {
     "project": {
         "DEG": "no",
-        "SJDBOVERHANG": "75",
+        "MINCOUNTS": "5",
+        "MINSAMPLES": "1",
+        "SJDBOVERHANG": "100",
         "STARSTRANDCOL": "2",
         "STRANDED": "0",
-        "TRIM": "yes",
+        "TRIM": "no",
         "analyst": "",
         "annotation": "hg19",
         "batchsize": "20",
@@ -26,9 +28,9 @@
         "pairs": {
             "na": "na"
         },
-        "pfamily": "rnaseq",
+        "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "initialqcrnaseq",
+        "pipeline": "initialqc",
         "platform": "Illumina",
         "poc": "",
         "rgid": {},
