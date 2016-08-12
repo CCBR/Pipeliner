@@ -1,0 +1,49 @@
+.TH Exomeseq Family Details
+.SH Pipeline Initialqc
+.TP
+.IP Input::
+Paired fastq files
+
+The files may be either compressed with gzip or uncompressed
+.IP Output::
+BAM files
+
+aligned, deduplicated, indel-realigned reads (BAM), QC reports
+
+.SH Pipeline Exomeseq Germline
+.TP
+.IP Input::
+BAMs from Initialqc
+.IP Output::
+VCFs, Reports, Graphics
+.TP
+
+.SH Pipeline Exomeseq Somatic
+.TP
+.IP Input::
+BAMs from Initialqc
+.IP Output::
+VCFs, Reports, Graphics
+.IP Configuration::
+<pairs> file
+
+Create a file called <pairs> with the sample ids of the pairs to compare, one pair to a line. e.g. to compare Sample1 to Sample2 and Sample3 to Sample4, use
+
+Sample1 Sample2
+Sample3 Sample4
+
+Tumor is considerted to be the sample in the first column, normal in second.  You can create and save the <pairs> file from the 'paste/write' tab.
+
+.TP
+.SH  Sample_names
+Sample names are taken from the fastq file names and consist of the unique portion of the name ending in the dot prior to the read specifier, e.g.
+.IP filename 
+Sample_YS_11.R2.fastq.gz
+.IP Sample_id 
+Sample_YS_11
+
+.SH Sample Data
+.IP Project_file
+/data/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline/exomeseq.json
+.PP
+Runtime is 30 minutes.
