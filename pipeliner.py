@@ -485,9 +485,8 @@ def makejson(*args):
     PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,
                    'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),
                    'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",
-                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":rStrandcol.get().split(",")[0]}}
+                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":rStrandcol.get().split(",")[0],"MINCOUNTS":rMincount.get(),"MINSAMPLES":rMinsamples.get()}}
 
-    
     J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=TRUE)
     jsonconf.delete("1.0", END)    
     jsonconf.insert(INSERT, J)
@@ -1852,9 +1851,9 @@ om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=3,column=1,sticky=W,padx=10,pady=10)
 
-rReadlens=['Read Length is 100','Read Length is 125','Read Length is 75','Read Length is 50','Read Length is 150']
+rReadlens=['Read Length is 50','Read Length is 75','Read Length is 100','Read Length is 125','Read Length is 150', 'Read Length is 250']
 rReadlen = StringVar()
-rReadlen.set(rReadlens[0])
+rReadlen.set(rReadlens[2])
 om = OptionMenu(rframe, rReadlen, *rReadlens, command=makejson)
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
@@ -1877,13 +1876,31 @@ om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=6,column=1,sticky=W,padx=10,pady=10)
 
 
-rStrandcols=["2, Strand Column 2","3, Strand Column 3","4, Strand Column 4"]
+rStrandcols=["2, Counts for Unstranded RNASeq, Column 2","3, Counts for the 1st Read Strand Aligned with RNA, Column 3 ","4, Counts for the Second Read Strand Aligned with RNA, Column 4"]
 rStrandcol = StringVar()
 rStrandcol.set(rStrandcols[0])
 om = OptionMenu(rframe, rStrandcol, *rStrandcols, command=makejson)
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=7,column=1,sticky=W,padx=10,pady=10)
+
+
+rMincount = StringVar()
+rmincountL = Label(rframe, text="Threshold  Number of Counts in a Sample",fg=textLightColor,bg=baseColor)
+rmincountL.grid(row=8,column=1,sticky=W,padx=10,pady=10)
+rmincountE = Entry(rframe, bd =2, width=10, bg=entryBgColor,fg=entryFgColor,textvariable=rMincount)
+rmincountE.grid(row=8,column=2,sticky=W,padx=10,pady=10)
+rMincount.trace('w', makejson)
+
+
+rMinsamples = StringVar()
+rminsamplesL = Label(rframe, text="Minimun Number of Samples that Must Pass Count Threshold",fg=textLightColor,bg=baseColor)
+rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=10)
+rminsamplesE = Entry(rframe, bd =2, width=10, bg=entryBgColor,fg=entryFgColor,textvariable=rMinsamples)
+rminsamplesE.grid(row=9,column=2,sticky=W,padx=10,pady=10)
+rMinsamples.trace('w', makejson)
+
+
 
 
 
