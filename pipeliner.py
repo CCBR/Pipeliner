@@ -1782,7 +1782,7 @@ datapathL = Label(optspanel1, text="Full Path to Data Directory",fg=textLightCol
 #datapathL.pack(side=LEFT,padx=5)
 datapathL.grid(row=3,column=0,sticky=W,padx=10,pady=10)
 
-datapathE = Entry(optspanel1, bd =2, width=60, bg=entryBgColor,fg=entryFgColor,textvariable=datapath)
+datapathE = Entry(optspanel1, bd =2, width=40, bg=entryBgColor,fg=entryFgColor,textvariable=datapath)
 #datapathE.pack(side=LEFT)
 datapathE.grid(row=3,column=1,sticky=W,padx=10,pady=10)
 datapath.trace('w', lambda _:makejson("datapath"))
@@ -1791,7 +1791,7 @@ workL = Label(optspanel1, text="Full Path to Working Directory",fg=textLightColo
 #workL.pack(side=LEFT,padx=5,pady=5)
 workL.grid(row=4,column=0,sticky=W,padx=10,pady=10)
 
-workE = Entry(optspanel1, bd =2, width=60, bg=entryBgColor, fg=entryFgColor,textvariable=workpath)
+workE = Entry(optspanel1, bd =2, width=40, bg=entryBgColor, fg=entryFgColor,textvariable=workpath)
 workE.pack(side=LEFT,pady=5)
 #workpath.set(defaultwork)
 workE.grid(row=4,column=1,sticky=W,padx=10,pady=10)
