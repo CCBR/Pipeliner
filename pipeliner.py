@@ -377,7 +377,9 @@ def unbuffered(proc, stream='stdout'):
             yield out
 
 
-def makejson(caller):
+def makejson(*args):
+#    print(args[0])
+    caller=args[0]
     global PD
     global UnitsBak
     global RGbak
@@ -482,24 +484,23 @@ def makejson(caller):
             smparams.append(parameters[i])
         
     
-    PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,
-                   'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),
-                   'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",
-                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":rStrandcol.get().split(",")[0],"MINSAMPLES":rMinsamples.get(),"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get()}}
-    
+    PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":rStrandcol.get().split(",")[0],"MINSAMPLES":rMinsamples.get(),"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get(),"STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-"+rReadlen.get().split(" ")[3]}}
+
     J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=TRUE)
     jsonconf.delete("1.0", END)    
     jsonconf.insert(INSERT, J)
     saveproject(jsonconf.get("1.0",END))
 
     topic=caller
-#    manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,pfamily.get())).read()
-    manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,topic)).read()    
-    mandisplay.delete("1.0", END)        
-    mandisplay.insert(INSERT, manpage)
-#    tkinter.messagebox.showerror("o",manpage)
-    #MkaS=os.popen("./makeasnake.py 2>&1 | tee -a "+workpath.get()+"/Reports/makeasnake.log").read()
-#    tkinter.messagebox.showinfo("Project Json Build","Project Json Built.")    
+    
+    if re.match(re.compile(".*"+topic+".*"),"refsets,binsets,workpath,datapath,exomeseq,rnaseq,genomeseq,mirseq,custom,chipseq"):
+        manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,topic)).read()    
+        mandisplay.delete("1.0", END)        
+        mandisplay.insert(INSERT, manpage)
+    if re.match(re.compile(".*"+topic+".*"),"rnaseq,rtrim,rreadlength,rstrand,rdeg,rcol,rthresh,rmincount"):
+        manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,topic)).read()    
+        rmandisplay.delete("1.0", END)        
+        rmandisplay.insert(INSERT, manpage)
 
 def initialize():  
     global initLock  
@@ -1723,21 +1724,18 @@ optspanel1.grid(row=0,column=0,sticky=W,padx=10,pady=10)
 optspanel2 = LabelFrame(opts2,text="Pipeline Details",fg=textLightColor,bg=baseColor)
 optspanel2.grid(row=0,column=2,sticky=W,padx=10,pady=10)
 
+# Manpage area
 manscrollbar = Scrollbar(optspanel2)
 manscrollbar.grid(row=1,column=3,sticky=W,padx=10,pady=10)
- 
-mandisplay = Text(optspanel2,width=80,height=38,bg="white",fg="black",font=("nimbus mono","9"),yscrollcommand = manscrollbar.set)
+mandisplay = Text(optspanel2,width=60,height=26,bg="white",fg="black",font=("nimbus mono","14"),yscrollcommand = manscrollbar.set)
 manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/exomeseq.1|groff  -t -e -man -Tascii|col -bx".format(whereiam)).read()
-#photo=PhotoImage(file='./pipeliner-logo.gif')
-#mandisplay.insert(END,'\n')
-#mandisplay.image_create(END, image=photo)
- 
 mandisplay.insert(INSERT, manpage)
-
-#mandisplay.insert(END, "link", ("a", "href"+"http://hpc.nih.gov"))
 mandisplay.mark_set("insert", "1.0")
 mandisplay.grid(row=1,column=2,sticky=W,padx=10,pady=10)
 manscrollbar['command']=mandisplay.yview
+# end Manpage area
+
+
 
 label=Label(optspanel1,text="Software Set",fg=textLightColor,bg=baseColor)
 #label.pack(side=LEFT,padx=5,pady=5)
@@ -1782,20 +1780,20 @@ datapathL = Label(optspanel1, text="Full Path to Data Directory",fg=textLightCol
 #datapathL.pack(side=LEFT,padx=5)
 datapathL.grid(row=3,column=0,sticky=W,padx=10,pady=10)
 
-datapathE = Entry(optspanel1, bd =2, width=60, bg=entryBgColor,fg=entryFgColor,textvariable=datapath)
+datapathE = Entry(optspanel1, bd =2, width=40, bg=entryBgColor,fg=entryFgColor,textvariable=datapath)
 #datapathE.pack(side=LEFT)
 datapathE.grid(row=3,column=1,sticky=W,padx=10,pady=10)
-datapath.trace('w', lambda _:makejson("datapath"))
+datapath.trace('w', lambda a,b,c,x="datapath":makejson(x))
 
 workL = Label(optspanel1, text="Full Path to Working Directory",fg=textLightColor,bg=baseColor)
 #workL.pack(side=LEFT,padx=5,pady=5)
 workL.grid(row=4,column=0,sticky=W,padx=10,pady=10)
 
-workE = Entry(optspanel1, bd =2, width=60, bg=entryBgColor, fg=entryFgColor,textvariable=workpath)
+workE = Entry(optspanel1, bd =2, width=40, bg=entryBgColor, fg=entryFgColor,textvariable=workpath)
 workE.pack(side=LEFT,pady=5)
 #workpath.set(defaultwork)
 workE.grid(row=4,column=1,sticky=W,padx=10,pady=10)
-workpath.trace('w', lambda _:makejson("workpath"))
+workpath.trace('w', lambda a,b,c,x="workpath":makejson(x))
 
 ########################
 # The Exomeseq Pane
@@ -1828,7 +1826,7 @@ rframe2.grid(row=0,column=3,sticky=W,padx=10,pady=10)
 rmanscrollbar = Scrollbar(rframe2)
 rmanscrollbar.grid(row=1,column=3,sticky=W,padx=10,pady=10)
  
-rmandisplay = Text(rframe2,width=80,height=38,bg="white",fg="black",font=("nimbus mono","9"),yscrollcommand = rmanscrollbar.set)
+rmandisplay = Text(rframe2,width=60,height=26,bg="white",fg="black",font=("nimbus mono","14"),yscrollcommand = rmanscrollbar.set)
 rmanpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/exomeseq.1|groff  -t -e -man -Tascii|col -bx".format(whereiam)).read()
 rmandisplay.insert(INSERT, manpage)
 rmandisplay.mark_set("insert", "1.0")
@@ -1839,7 +1837,7 @@ rmanscrollbar['command']=rmandisplay.yview
 rPipelines=['initialqcrnaseq','rnaseq']
 rPipeline = StringVar()
 rPipeline.set(rPipelines[0])
-om = OptionMenu(rframe, rPipeline, *rPipelines, command=makejson)
+om = OptionMenu(rframe, rPipeline, *rPipelines, command=lambda _:makejson("rnaseq"))
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 #om.pack(side=LEFT,padx=20,pady=5)
@@ -1848,7 +1846,7 @@ om.grid(row=0,column=1,sticky=NW,padx=10,pady=10)
 rTrims=['No, Do not Trim the Reads','Yes, Trim the Reads']
 rTrim = StringVar()
 rTrim.set(rTrims[0])
-om = OptionMenu(rframe, rTrim, *rTrims, command=makejson)
+om = OptionMenu(rframe, rTrim, *rTrims, command=lambda _:makejson("rtrim"))
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=3,column=1,sticky=W,padx=10,pady=10)
@@ -1856,7 +1854,7 @@ om.grid(row=3,column=1,sticky=W,padx=10,pady=10)
 rReadlens=['Read Length is 50','Read Length is 75','Read Length is 100','Read Length is 125','Read Length is 150', 'Read Length is 250']
 rReadlen = StringVar()
 rReadlen.set(rReadlens[2])
-om = OptionMenu(rframe, rReadlen, *rReadlens, command=makejson)
+om = OptionMenu(rframe, rReadlen, *rReadlens, command=lambda _:makejson("rreadlength"))
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=4,column=1,sticky=W,padx=10,pady=10)
@@ -1864,7 +1862,7 @@ om.grid(row=4,column=1,sticky=W,padx=10,pady=10)
 rStrands=['0, Reads are Unstranded','1, Reads are from Sense Strand','2, Reads are from Anti-Sense Strand']
 rStrand = StringVar()
 rStrand.set(rStrands[0])
-om = OptionMenu(rframe, rStrand, *rStrands, command=makejson)
+om = OptionMenu(rframe, rStrand, *rStrands, command=lambda _:makejson("rstrand"))
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=5,column=1,sticky=W,padx=10,pady=10)
@@ -1872,7 +1870,7 @@ om.grid(row=5,column=1,sticky=W,padx=10,pady=10)
 rDegs=["No, Do not Report Differentially Expressed Genes","Yes, Report Differentially Expressed Genes"]
 rDeg = StringVar()
 rDeg.set(rDegs[0])
-om = OptionMenu(rframe, rDeg, *rDegs, command=makejson)
+om = OptionMenu(rframe, rDeg, *rDegs, command=lambda _:makejson("rdeg"))
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=6,column=1,sticky=W,padx=10,pady=10)
@@ -1881,7 +1879,7 @@ om.grid(row=6,column=1,sticky=W,padx=10,pady=10)
 rStrandcols=["2, Counts for Unstranded RNASeq, Column 2","3, Counts for the 1st Read Strand Aligned with RNA, Column 3 ","4, Counts for the Second Read Strand Aligned with RNA, Column 4"]
 rStrandcol = StringVar()
 rStrandcol.set(rStrandcols[0])
-om = OptionMenu(rframe, rStrandcol, *rStrandcols, command=makejson)
+om = OptionMenu(rframe, rStrandcol, *rStrandcols, command=lambda _:makejson("rcol"))
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=7,column=1,sticky=W,padx=10,pady=10)
@@ -1892,7 +1890,7 @@ rmincountL = Label(rframe, text="Threshold  Number of Counts in a Sample",fg=tex
 rmincountL.grid(row=8,column=1,sticky=W,padx=10,pady=10)
 rmincountE = Entry(rframe, bd =2, width=10, bg=entryBgColor,fg=entryFgColor,textvariable=rMincount)
 rmincountE.grid(row=8,column=2,sticky=W,padx=10,pady=10)
-rMincount.trace('w', makejson)
+rMincount.trace('w', lambda a,b,c,x="rthresh": makejson(x))
 
 
 rMinsamples = StringVar()
@@ -1900,7 +1898,7 @@ rminsamplesL = Label(rframe, text="Minimun Number of Samples that Must Pass Coun
 rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=10)
 rminsamplesE = Entry(rframe, bd =2, width=10, bg=entryBgColor,fg=entryFgColor,textvariable=rMinsamples)
 rminsamplesE.grid(row=9,column=2,sticky=W,padx=10,pady=10)
-rMinsamples.trace('w', makejson)
+rMinsamples.trace('w', lambda a,b,c,x="rmincount": makejson(x))
 
 
 

@@ -1,49 +1,38 @@
-.TH Exomeseq Family Details
-.SH Pipeline Initialqc
-.TP
-.IP Input::
-Paired fastq files
-
-The files may be either compressed with gzip or uncompressed
-.IP Output::
-BAM files
-
-aligned, deduplicated, indel-realigned reads (BAM), QC reports
-
-.SH Pipeline Exomeseq Germline
-.TP
-.IP Input::
-BAMs from Initialqc
-.IP Output::
-VCFs, Reports, Graphics
-.TP
-
-.SH Pipeline Exomeseq Somatic
-.TP
-.IP Input::
-BAMs from Initialqc
-.IP Output::
-VCFs, Reports, Graphics
-.IP Configuration::
-<pairs> file
-
-Create a file called <pairs> with the sample ids of the pairs to compare, one pair to a line. e.g. to compare Sample1 to Sample2 and Sample3 to Sample4, use
-
-Sample1 Sample2
-Sample3 Sample4
-
-Tumor is considerted to be the sample in the first column, normal in second.  You can create and save the <pairs> file from the 'paste/write' tab.
-
-.TP
-.SH  Sample_names
-Sample names are taken from the fastq file names and consist of the unique portion of the name ending in the dot prior to the read specifier, e.g.
-.IP filename 
-Sample_YS_11.R2.fastq.gz
-.IP Sample_id 
-Sample_YS_11
-
-.SH Sample Data
-.IP Project_file
-/data/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline/exomeseq.json
+.ll 6.4i
+.TH Software Sets
 .PP
-Runtime is 30 minutes.
+Software sets are collections of programs used in the pipelines with their complete paths and sets of standard parameters.
+.SH Standard Bin
+.TP
+Standard Bin is the default set of programs and is used by all the pipelines.  The programs in Standard Bin are specified in a JSON (Javascript Object Notation) configuration file.
+.TP
+.IP Config_file::
+standardbin.json
+.TP
+.IP Pipelines_included::
+exomeseq,rnaseq,mirseq
+.TP
+.IP Structure::
+{
+     "bin": {
+    "exomeseq": {
+        "NOVOALIGN": "/usr/local/apps/novocraft/3.04.04/novoalign",
+        "NOVOSORT": "/usr/local/apps/novocraft/3.04.04/novosort",
+        "ANNOVAR1": "/usr/local/apps/ANNOVAR/2015-03-22/convert2annovar.pl",
+        "ANNOVAR2": "/usr/local/apps/ANNOVAR/2015-03-22/table_annovar.pl",
+        "INDEXBAM": "java -jar /usr/local/apps/picard/1.129/picard.jar BuildBamIndex", ...
+
+.TP
+.IP Programs_included:
+
+exomeseq::
+ANNOVAR, BAMTOOLS, BEDTOOLS, BICSEQ, BWA, COVCALC, COVFREQ, FASTQC, FASTQ_SCREEN, FIRSTANNO, GATK, INDEXBAM, MARKDUPS, MUTECT, NGSQCTOOLKIT, NOVOALIGN, NOVOSORT, PICARDTOOLS, PICHIST, QCAL, QUALIMAP, READDIST, SAMTOOLS, SNPEFF, SNPSIFT, STAR, SVDETECT, TRIMMOMATIC, VARSCAN
+
+genomeseq::
+ANNOVAR1, ANNOVAR2, BAMTOOLS, BEDTOOLS, BICSEQ, BWA, COVCALC, COVFREQ, FASTQC, FASTQ_SCREEN, FIRSTANNO, GATK, INDEXBAM, MARKDUPS, MUTECT, NGSQCTOOLKIT, NOVOALIGN, NOVOSORT, PICARD1, PICARD2, PICARD3, PICHIST, QCAL, QUALIMAP, READDIST, SAMTOOLS, SNPEFF, SNPSIFT, STAR, SVDETECT, TRIMMOMATIC, VARSCAN
+
+rnaseq::
+BWA, CHKQC, FASTQC, PICARD, RNASEQC, STAR, SUBREAD, TRIMMOMATIC
+
+mirseq::
+BEDTOOLS, BOWTIE, CUTADAPT, FASTQC, GATK_JAR, HTSEQ, JAVA, MIRDEEP2, NGS_PORTAL, PDFAPI2_PM, PICARD, PYTHON, RANDFOLD, RSCRIPT, SAMTOOLS, SCRIPT, SQUID, VCFTOOLS, VCFTOOLS_PERLLIB, VIENNA
