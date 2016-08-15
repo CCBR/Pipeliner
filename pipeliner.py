@@ -377,7 +377,9 @@ def unbuffered(proc, stream='stdout'):
             yield out
 
 
-def makejson(caller):
+def makejson(*args):
+#    print(args[0])
+    caller=args[0]
     global PD
     global UnitsBak
     global RGbak
@@ -482,11 +484,8 @@ def makejson(caller):
             smparams.append(parameters[i])
         
     
-    PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,
-                   'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),
-                   'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",
-                   'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":rStrandcol.get().split(",")[0],"MINSAMPLES":rMinsamples.get(),"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get()}}
-    
+    PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":rStrandcol.get().split(",")[0],"MINSAMPLES":rMinsamples.get(),"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get(),"STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-"+rReadlen.get().split(" ")[3]}}
+
     J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=TRUE)
     jsonconf.delete("1.0", END)    
     jsonconf.insert(INSERT, J)
@@ -1784,7 +1783,7 @@ datapathL.grid(row=3,column=0,sticky=W,padx=10,pady=10)
 datapathE = Entry(optspanel1, bd =2, width=40, bg=entryBgColor,fg=entryFgColor,textvariable=datapath)
 #datapathE.pack(side=LEFT)
 datapathE.grid(row=3,column=1,sticky=W,padx=10,pady=10)
-datapath.trace('w', lambda _:makejson("datapath"))
+datapath.trace('w', lambda a,b,c,x="datapath":makejson(x))
 
 workL = Label(optspanel1, text="Full Path to Working Directory",fg=textLightColor,bg=baseColor)
 #workL.pack(side=LEFT,padx=5,pady=5)
@@ -1794,7 +1793,7 @@ workE = Entry(optspanel1, bd =2, width=40, bg=entryBgColor, fg=entryFgColor,text
 workE.pack(side=LEFT,pady=5)
 #workpath.set(defaultwork)
 workE.grid(row=4,column=1,sticky=W,padx=10,pady=10)
-workpath.trace('w', lambda _:makejson("workpath"))
+workpath.trace('w', lambda a,b,c,x="workpath":makejson(x))
 
 ########################
 # The Exomeseq Pane
@@ -1891,7 +1890,7 @@ rmincountL = Label(rframe, text="Threshold  Number of Counts in a Sample",fg=tex
 rmincountL.grid(row=8,column=1,sticky=W,padx=10,pady=10)
 rmincountE = Entry(rframe, bd =2, width=10, bg=entryBgColor,fg=entryFgColor,textvariable=rMincount)
 rmincountE.grid(row=8,column=2,sticky=W,padx=10,pady=10)
-rMincount.trace('w', lambda _:makejson("rthresh"))
+rMincount.trace('w', lambda a,b,c,x="rthresh": makejson(x))
 
 
 rMinsamples = StringVar()
@@ -1899,7 +1898,7 @@ rminsamplesL = Label(rframe, text="Minimun Number of Samples that Must Pass Coun
 rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=10)
 rminsamplesE = Entry(rframe, bd =2, width=10, bg=entryBgColor,fg=entryFgColor,textvariable=rMinsamples)
 rminsamplesE.grid(row=9,column=2,sticky=W,padx=10,pady=10)
-rMinsamples.trace('w', lambda _:makejson("rmincount"))
+rMinsamples.trace('w', lambda a,b,c,x="rmincount": makejson(x))
 
 
 
