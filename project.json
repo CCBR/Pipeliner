@@ -7,7 +7,7 @@
         "MINSAMPLES": "",
         "SJDBOVERHANG": "100",
         "STARSTRANDCOL": "2",
-        "STRANDED": "0",
+        "STRANDED": "1",
         "TRIM": "no",
         "analyst": "",
         "annotation": "hg19",
