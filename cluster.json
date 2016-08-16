@@ -31,7 +31,7 @@
     "bwa_mem":
     {
         "mem": "48g",
-        "threads": "24"
+        "threads": "32"
     },
     "fastqc_fastq":
     {
@@ -54,7 +54,7 @@
     "gatk_combine_gvcfs":
     {
         "threads": "1",
-        "time" : "48:00:00",
+        "time" : "5-00:00:00",
         "mem": "96g"
     },
     "gatk_genotype_gvcfs":
@@ -80,7 +80,7 @@
     },
     "gatk_recal":
     {
-        "threads": "8",
+        "threads": "24",
         "mem": "64g"
     },
     "gatk_variant_annnotator":
@@ -127,7 +127,7 @@
     },
     "picard_markdups":
     {
-        "threads": "1"
+        "threads": "12"
     },
     "qualimap":
     {

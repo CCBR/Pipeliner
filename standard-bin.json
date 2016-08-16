@@ -11,7 +11,7 @@
         "COVCALC": "QC/Coverage_calc4.pl", 
         "COVFREQ": "/data/CCBR/local/lib/Cov_Frequency_targeted.R",
         "GATK": "java -Xmx64g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar /usr/local/apps/GATK/3.5-0/GenomeAnalysisTK.jar", 
-        "MARKDUPS": "module load picard/2.1.1; java -Xmx16g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $PICARDJARPATH/picard.jar MarkDuplicates",
+        "MARKDUPS": "module load picard/2.1.1; java -Xmx16g -XX:ParallelGCThreads=12 -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $PICARDJARPATH/picard.jar MarkDuplicates",
         "PICARD1": "module load picard/2.1.1; java -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $PICARDJARPATH/picard.jar AddOrReplaceReadGroups",
         "PICARD2": "module load picard/2.1.1; java -Xmx4G -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $PICARDJARPATH/picard.jar CollectInsertSizeMetrics",
         "PICARD3": "/ngs/bin/jdk1.8.0_25/bin/java -jar /ngs/bin/picard-tools-1.119/CreateSequenceDictionary.jar",
