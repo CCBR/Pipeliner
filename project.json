@@ -1,10 +1,10 @@
 {
     "project": {
         "DEG": "no",
-        "MINCOUNTGENEJUNCTIONS": "5",
-        "MINCOUNTGENES": "5",
-        "MINCOUNTJUNCTIONS": "5",
-        "MINSAMPLES": "3",
+        "MINCOUNTGENEJUNCTIONS": "",
+        "MINCOUNTGENES": "",
+        "MINCOUNTJUNCTIONS": "",
+        "MINSAMPLES": "",
         "SJDBOVERHANG": "100",
         "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-100",
         "STARSTRANDCOL": "2",
