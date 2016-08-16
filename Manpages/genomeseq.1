@@ -1,0 +1,32 @@
+.ll 6.4i
+.TH Genomeseq Family Details
+.SH Pipeline Initialqc
+.TP
+.IP Input::
+Paired fastq files
+
+The files may be either compressed with gzip or uncompressed
+.IP Output::
+BAM files
+
+aligned, deduplicated, indel-realigned reads (BAM), QC reports
+
+.SH Pipeline Genomeseq
+.TP
+.IP Input::
+BAMs from Initialqc
+.IP Output::
+VCFs, Reports, Graphics
+.TP
+.SH  Sample_names
+Sample names are taken from the fastq file names and consist of the unique portion of the name ending in the dot prior to the read specifier, e.g.
+.IP filename 
+Sample_YS_11.R2.fastq.gz
+.IP Sample_id 
+Sample_YS_11
+
+.SH Sample Data
+.IP Project_file
+/data/CCBR/dev/PipelineTestSeqs/genomeseq/genomeseq.json
+.PP
+Runtime is 30 minutes.

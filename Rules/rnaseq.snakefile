@@ -5,7 +5,7 @@ configfile: "run.json"
 #samples=config['project']['units']
 #degsamples=config['project']['contrasts']['rsamps']
 
-if config['bin'][pfamily]['DEG'] == "yes" and config['bin'][pfamily]['TRIM'] == "yes":
+if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
      input: "STAR_QC",
@@ -29,7 +29,7 @@ if config['bin'][pfamily]['DEG'] == "yes" and config['bin'][pfamily]['TRIM'] == 
             "RawCountFileOverlap.txt",
             "RawCountFileStar.txt",expand("{name}.rsem.genes.results",name=samples)
 
-elif config['bin'][pfamily]['DEG'] == "no" and config['bin'][pfamily]['TRIM'] == "yes":
+elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
      input: "STAR_QC",
@@ -42,7 +42,7 @@ elif config['bin'][pfamily]['DEG'] == "no" and config['bin'][pfamily]['TRIM'] ==
             "RawCountFileOverlap.txt","RawCountFileStar.txt",
             expand("{name}.rsem.genes.results",name=samples)
 
-elif config['bin'][pfamily]['DEG'] == "yes" and config['bin'][pfamily]['TRIM'] == "no":
+elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
      input: "STAR_QC",
             "ebseq_completed.txt",
@@ -82,7 +82,7 @@ else:
 
 
 
-if config['bin'][pfamily]['TRIM'] == "yes":
+if config['project']['TRIM'] == "yes":
    rule trimmomatic_pe:
       input: file1= config['project']['workpath']+"/{name}.R1."+config['project']['filetype'],file2=config['project']['workpath']+"/{name}.R2."+config['project']['filetype'] 
       output: out11="trim/{name}_R1_001_trim_paired.fastq.gz",out12="trim/{name}_R1_001_trim_unpaired.fastq.gz",out21="trim/{name}_R2_001_trim_paired.fastq.gz",out22="trim/{name}_R2_001_trim_unpaired.fastq.gz"
@@ -133,7 +133,7 @@ if config['bin'][pfamily]['TRIM'] == "yes":
    rule star1p:
       input: file1= "trim/{name}_R1_001_trim_paired.fastq.gz",file2="trim/{name}_R2_001_trim_paired.fastq.gz"#,file3="fastqc_status_checked.txt"
       output: out1= "{name}.SJ.out.tab"#,out2= "{name}.SJ.out.tab.Pass1.sjdb"
-      params: rname='pl:star1p',prefix="{name}",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],stardir=config['references'][pfamily]['STARDIR'],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2'],
+      params: rname='pl:star1p',prefix="{name}",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],stardir=config['references'][pfamily]['STARDIR']+config['project']["SJDBOVERHANG"],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2'],
       threads: 32
       shell: """
              module load {params.starver}
@@ -146,7 +146,7 @@ if config['bin'][pfamily]['TRIM'] == "yes":
    rule star2p:
       input: file1= "trim/{name}_R1_001_trim_paired.fastq.gz",file2="trim/{name}_R2_001_trim_paired.fastq.gz",tab=expand("{name}.SJ.out.tab",name=samples)#, dir="STARINDEX"
       output: out1="{name}.p2.Aligned.sortedByCoord.out.bam",out2="{name}.p2.ReadsPerGene.out.tab",out3="{name}.p2.Aligned.toTranscriptome.out.bam",out4="{name}.p2.SJ.out.tab" #"{name}.p2.Aligned.out.sam"
-      params: rname='pl:star2p',prefix="{name}.p2",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2'],outsamunmapped=config['bin'][pfamily]['OUTSAMUNMAPPED'],wigtype=config['bin'][pfamily]['WIGTYPE'],wigstrand=config['bin'][pfamily]['WIGSTRAND'], gtffile=config['references'][pfamily]['GTFFILE'], nbjuncs=config['bin'][pfamily]['NBJUNCS'],stardir=config['references'][pfamily]['STARDIR']
+      params: rname='pl:star2p',prefix="{name}.p2",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2'],outsamunmapped=config['bin'][pfamily]['OUTSAMUNMAPPED'],wigtype=config['bin'][pfamily]['WIGTYPE'],wigstrand=config['bin'][pfamily]['WIGSTRAND'], gtffile=config['references'][pfamily]['GTFFILE'], nbjuncs=config['bin'][pfamily]['NBJUNCS'],stardir=config['references'][pfamily]['STARDIR']+config['project']["SJDBOVERHANG"]
       threads:32
       shell:"module load {params.starver}; STAR --genomeDir {params.stardir} --outFilterIntronMotifs {params.filterintronmotifs} --outSAMstrandField {params.samstrandfield}  --outFilterType {params.filtertype} --outFilterMultimapNmax {params.filtermultimapnmax} --alignSJoverhangMin {params.alignsjoverhangmin} --alignSJDBoverhangMin {params.alignsjdboverhangmin}  --outFilterMismatchNmax {params.filtermismatchnmax} --outFilterMismatchNoverLmax {params.filtermismatchnoverlmax}  --alignIntronMin {params.alignintronmin} --alignIntronMax {params.alignintronmax} --alignMatesGapMax {params.alignmatesgapmax}  --clip3pAdapterSeq {params.adapter1} {params.adapter2} --readFilesIn {input.file1} {input.file2} --readFilesCommand zcat --runThreadN {threads} --outFileNamePrefix {params.prefix}. --outSAMunmapped {params.outsamunmapped} --outWigType {params.wigtype} --outWigStrand {params.wigstrand} --sjdbFileChrStartEnd {input.tab} --sjdbGTFfile {params.gtffile} --limitSjdbInsertNsj {params.nbjuncs} --quantMode TranscriptomeSAM GeneCounts --outSAMtype BAM SortedByCoordinate"
 
@@ -155,14 +155,14 @@ else:
    rule star1p:      
       input: file1= config['project']['workpath']+"/{name}.R1."+config['project']['filetype'],file2=config['project']['workpath']+"/{name}.R2."+config['project']['filetype'] 
       output: out1= "{name}.SJ.out.tab"#,out2= "{name}.SJ.out.tab.Pass1.sjdb"
-      params: rname='pl:star1p',prefix="{name}",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],stardir=config['references'][pfamily]['STARDIR'],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2']
+      params: rname='pl:star1p',prefix="{name}",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],stardir=config['references'][pfamily]['STARDIR']+config['project']["SJDBOVERHANG"],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2']
       threads: 32
       shell:"module load {params.starver}; STAR --genomeDir {params.stardir} --outFilterIntronMotifs {params.filterintronmotifs} --outSAMstrandField {params.samstrandfield}  --outFilterType {params.filtertype} --outFilterMultimapNmax {params.filtermultimapnmax} --alignSJoverhangMin {params.alignsjoverhangmin} --alignSJDBoverhangMin {params.alignsjdboverhangmin}  --outFilterMismatchNmax {params.filtermismatchnmax} --outFilterMismatchNoverLmax {params.filtermismatchnoverlmax}  --alignIntronMin {params.alignintronmin} --alignIntronMax {params.alignintronmax} --alignMatesGapMax {params.alignmatesgapmax} clip3pAdapterSeq {params.adapter1} {params.adapter2} --readFilesIn {input.file1} {input.file2} --readFilesCommand zcat --runThreadN {threads} --outFileNamePrefix {params.prefix}. --outSAMtype BAM Unsorted"
    
    rule star2p:
       input: file1= config['project']['workpath']+"/{name}.R1."+config['project']['filetype'],file2=config['project']['workpath']+"/{name}.R2."+config['project']['filetype'],tab=expand("{name}.SJ.out.tab",name=samples)#,dir=config['bin'][pfamily]['STARINDEX']
       output: out1="{name}.p2.Aligned.sortedByCoord.out.bam", out2="{name}.p2.ReadsPerGene.out.tab", out3="{name}.p2.Aligned.toTranscriptome.out.bam",out4="{name}.p2.SJ.out.tab" #"{name}.p2.Aligned.out.sam"
-      params: rname='pl:star2p',prefix="{name}.p2",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2'],outsamunmapped=config['bin'][pfamily]['OUTSAMUNMAPPED'],wigtype=config['bin'][pfamily]['WIGTYPE'],wigstrand=config['bin'][pfamily]['WIGSTRAND'], gtffile=config['references'][pfamily]['GTFFILE'], nbjuncs=config['bin'][pfamily]['NBJUNCS'],stardir=config['references'][pfamily]['STARDIR']
+      params: rname='pl:star2p',prefix="{name}.p2",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2'],outsamunmapped=config['bin'][pfamily]['OUTSAMUNMAPPED'],wigtype=config['bin'][pfamily]['WIGTYPE'],wigstrand=config['bin'][pfamily]['WIGSTRAND'], gtffile=config['references'][pfamily]['GTFFILE'], nbjuncs=config['bin'][pfamily]['NBJUNCS'],stardir=config['references'][pfamily]['STARDIR']+config['project']["SJDBOVERHANG"]
       threads:32
       shell:"module load {params.starver}; STAR --genomeDir {params.stardir} --outFilterIntronMotifs {params.filterintronmotifs} --outSAMstrandField {params.samstrandfield}  --outFilterType {params.filtertype} --outFilterMultimapNmax {params.filtermultimapnmax} --alignSJoverhangMin {params.alignsjoverhangmin} --alignSJDBoverhangMin {params.alignsjdboverhangmin}  --outFilterMismatchNmax {params.filtermismatchnmax} --outFilterMismatchNoverLmax {params.filtermismatchnoverlmax}  --alignIntronMin {params.alignintronmin} --alignIntronMax {params.alignintronmax} --alignMatesGapMax {params.alignmatesgapmax}  --clip3pAdapterSeq {params.adapter1} {params.adapter2} --readFilesIn {input.file1} {input.file2} --readFilesCommand zcat --runThreadN {threads} --outFileNamePrefix {params.prefix}. --outSAMunmapped {params.outsamunmapped} --outWigType {params.wigtype} --outWigStrand {params.wigstrand} --sjdbFileChrStartEnd {input.tab} --sjdbGTFfile {params.gtffile} --limitSjdbInsertNsj {params.nbjuncs} --quantMode TranscriptomeSAM GeneCounts --outSAMtype BAM SortedByCoordinate" 
 
@@ -238,19 +238,19 @@ rule subreadoverlap:
 rule genecounts: 
    input: files=expand("{name}.star.count.txt", name=samples)
    output: "RawCountFile_genes_filtered.txt"
-   params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['bin'][pfamily]['MINCOUNTGENES'],minsamples=config['bin'][pfamily]['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
+   params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
    shell: "module load R; Rscript Scripts/genecounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
 
 rule junctioncounts: 
    input: files=expand("{name}.p2.SJ.out.tab", name=samples)
    output: "RawCountFile_junctions_filtered.txt"
-   params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['bin'][pfamily]['MINCOUNTJUNCTIONS'],minsamples=config['bin'][pfamily]['MINSAMPLES']
+   params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
    shell: "module load R; Rscript Scripts/junctioncounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}'"
 
 rule genejunctioncounts: 
    input: files=expand("{name}.p2.SJ.out.tab", name=samples)
    output: "RawCountFile_genejunctions_filtered.txt"
-   params: rname='pl:genejunctions',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],gtffile=config['references'][pfamily]['GTFFILE'],mincount=config['bin'][pfamily]['MINCOUNTGENEJUNCTIONS'],minsamples=config['bin'][pfamily]['MINSAMPLES']
+   params: rname='pl:genejunctions',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],gtffile=config['references'][pfamily]['GTFFILE'],mincount=config['project']['MINCOUNTGENEJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
    shell: "module load R; Rscript Scripts/genejunctioncounts.R '{params.dir}' '{input.files}' '{params.gtffile}' '{params.mincount}' '{params.minsamples}'"
 
 rule joincounts:
