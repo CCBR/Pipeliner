@@ -1,6 +1,6 @@
 rule oncotator_strelka:
-    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".realign.bam",
-           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".realign.bam",
+    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
+           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
            vcf="strelka_out/{x}.vcf"
     output: maf="strelka_out/oncotator_out/{x}.maf"
     params: rname="pl:oncotator_strelka"
