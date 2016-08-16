@@ -1,0 +1,51 @@
+{
+    "project": {
+        "DEG": "no",
+        "MINCOUNTGENEJUNCTIONS": "",
+        "MINCOUNTGENES": "",
+        "MINCOUNTJUNCTIONS": "",
+        "MINSAMPLES": "",
+        "PICARDSTRAND": "NONE",
+        "SJDBOVERHANG": "100",
+        "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-100",
+        "STARSTRANDCOL": "2",
+        "STRANDED": "0",
+        "TRIM": "no",
+        "analyst": "",
+        "annotation": "hg19",
+        "batchsize": "20",
+        "binset": "standard-bin",
+        "cluster": "cluster_medium.json",
+        "contrasts": {
+            "rcontrasts": "na",
+            "rgroups": "na",
+            "rsamps": "na"
+        },
+        "custom": [],
+        "datapath": "",
+        "description": "Enter CCBR Project Description and Notes here.\n",
+        "efiletype": "fastq",
+        "filetype": "fastq.gz",
+        "flowcellid": "",
+        "id": "",
+        "organism": "",
+        "pairs": {
+            "na": "na"
+        },
+        "pfamily": "exomeseq",
+        "pi": "",
+        "pipeline": "initialqc",
+        "platform": "Illumina",
+        "poc": "",
+        "rgid": {},
+        "samples": {
+            "na": "na"
+        },
+        "smparams": [],
+        "technique": "",
+        "units": {},
+        "username": "",
+        "version": "1.0",
+        "workpath": ""
+    }
+}
