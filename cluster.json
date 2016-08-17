@@ -11,6 +11,16 @@
     {
         "threads": "1"
     },
+    "make_germline_network":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
+    "make_somatic_network":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
     "multiqc":
     {
         "threads": "1"
