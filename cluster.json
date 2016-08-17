@@ -11,6 +11,16 @@
     {
         "threads": "1"
     },
+    "make_germline_network":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
+    "make_somatic_network":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
     "multiqc":
     {
         "threads": "1"
@@ -31,7 +41,7 @@
     "bwa_mem":
     {
         "mem": "48g",
-        "threads": "24"
+        "threads": "32"
     },
     "fastqc_fastq":
     {
@@ -54,12 +64,12 @@
     "gatk_combine_gvcfs":
     {
         "threads": "1",
-        "time" : "48:00:00",
+        "time" : "5-00:00:00",
         "mem": "96g"
     },
     "gatk_genotype_gvcfs":
     {
-        "threads": "24",
+        "threads": "8",
         "time" : "96:00:00",
         "mem": "96g"
     },
@@ -80,7 +90,7 @@
     },
     "gatk_recal":
     {
-        "threads": "8",
+        "threads": "24",
         "mem": "64g"
     },
     "gatk_variant_annnotator":
@@ -127,7 +137,7 @@
     },
     "picard_markdups":
     {
-        "threads": "1"
+        "threads": "12"
     },
     "qualimap":
     {

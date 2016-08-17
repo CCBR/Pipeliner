@@ -75,7 +75,12 @@ else{
   $demultend = $projectname;
 }
 $pipeline = $cmds{'r'} if ($cmds{'r'});
+if (-f 'laneBarcode.html') {
 $printmode = $cmds{'m'} if ($cmds{'m'});
+}
+else {
+$printmode = 3;
+}
 $paired = 2 if ($pipeline == 2 or $pipeline == 3 or $pipeline == 4); #paired end if any RNAseq or if hiseq chipseq
 $paired = $cmds{'e'} if ($cmds{'e'});
 $paired = 0 if ($paired == 1);
