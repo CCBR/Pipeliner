@@ -482,9 +482,12 @@ def makejson(*args):
 
         if cp[i].var.get()=="1":
             smparams.append(parameters[i])
-        
-    
-    PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":"{0}".format(int(rStrand.get().split(",")[0])+2),"MINSAMPLES":rMinsamples.get(),"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get(),"STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-"+rReadlen.get().split(" ")[3]}}
+    AD=eval(open(whereiam+"/Pipeliner/"+annotation.get()+".json","r").read())
+    SD=AD['references']['rnaseq']['STARDIR']
+#    tkinter.messagebox.showinfo("initLock","SD={0}".format(SD))    
+
+
+    PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":"{0}".format(int(rStrand.get().split(",")[0])+2),"MINSAMPLES":rMinsamples.get(),"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get(),"STARDIR": SD+rReadlen.get().split(" ")[3],"PICARDSTRAND":["NONE", "FIRST_READ_TRANSCRIPTION_STRAND","SECOND_READ_TRANSCRIPTION_STRAND"][int(rStrand.get().split(",")[0])]}}
 
     J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=TRUE)
     jsonconf.delete("1.0", END)    
@@ -1727,7 +1730,7 @@ optspanel2.grid(row=0,column=2,sticky=W,padx=10,pady=10)
 # Manpage area
 manscrollbar = Scrollbar(optspanel2)
 manscrollbar.grid(row=1,column=3,sticky=W,padx=10,pady=10)
-mandisplay = Text(optspanel2,width=60,height=26,bg="white",fg="black",font=("nimbus mono","14"),yscrollcommand = manscrollbar.set)
+mandisplay = Text(optspanel2,width=60,height=26,bg="white",fg="black",font=("nimbus mono","12"),yscrollcommand = manscrollbar.set)
 manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/exomeseq.1|groff  -t -e -man -Tascii|col -bx".format(whereiam)).read()
 mandisplay.insert(INSERT, manpage)
 mandisplay.mark_set("insert", "1.0")
@@ -1826,7 +1829,7 @@ rframe2.grid(row=0,column=3,sticky=W,padx=10,pady=10)
 rmanscrollbar = Scrollbar(rframe2)
 rmanscrollbar.grid(row=1,column=3,sticky=W,padx=10,pady=10)
  
-rmandisplay = Text(rframe2,width=60,height=26,bg="white",fg="black",font=("nimbus mono","14"),yscrollcommand = rmanscrollbar.set)
+rmandisplay = Text(rframe2,width=60,height=26,bg="white",fg="black",font=("nimbus mono","12"),yscrollcommand = rmanscrollbar.set)
 rmanpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/exomeseq.1|groff  -t -e -man -Tascii|col -bx".format(whereiam)).read()
 rmandisplay.insert(INSERT, manpage)
 rmandisplay.mark_set("insert", "1.0")

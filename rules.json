@@ -6,6 +6,7 @@
         "bamstats": ["initialqc"],
         "fastq_screen": ["initialqc","wgslow"],
         "multiqc": ["initialqc","wgslow"],
+        "alview": ["exomeseq-somatic"],
 #        "oncotator": ["exomeseq-somatic"],
         "oncotator_strelka": ["exomeseq-somatic"],
         "oncotator_mutect": ["exomeseq-somatic"],

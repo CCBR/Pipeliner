@@ -5,6 +5,7 @@
         "MINCOUNTGENES": "",
         "MINCOUNTJUNCTIONS": "",
         "MINSAMPLES": "",
+        "PICARDSTRAND": "NONE",
         "SJDBOVERHANG": "100",
         "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-100",
         "STARSTRANDCOL": "2",

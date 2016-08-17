@@ -1,6 +1,6 @@
 rule oncotator:
-    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".realign.bam",
-           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".realign.bam",
+    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
+           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
            vcf="mutect2_out/{x}.FINAL.vcf"
     output: maf="mutect2_out/oncotator_out/{x}.maf"
     params: rname="pl:oncotator"
