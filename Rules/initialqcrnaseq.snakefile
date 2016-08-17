@@ -33,7 +33,7 @@ else:
   rule all:
      params: batch='--time=168:00:00'
      input: "STAR_QC",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),
+            expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC"
 
 if config['project']['TRIM'] == "yes":
    rule trimmomatic_pe:
@@ -110,7 +110,7 @@ else:
 
 
    rule fastqc2:  
-      input: config['project']['workpath']+"/{name}.R1."+config['project']['filetype'],file2=config['project']['workpath']+"/{name}.R2."+config['project']['filetype'] 
+      input: expand(config['project']['workpath']+"/{name}.R1."+config['project']['filetype'], name=samples), expand(config['project']['workpath']+"/{name}.R2."+config['project']['filetype'], name=samples) 
       output: "rawQC"
       priority: 2
       params: rname='pl:fastqc',batch='--cpus-per-task=32 --mem=110g --time=48:00:00',fastqcver=config['bin'][pfamily]['FASTQCVER']
