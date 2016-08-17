@@ -10,6 +10,8 @@ open C, ">$outfile";
 
 my $maffile = $ARGV[0]; #to fix...
 my @line = ();
+my $path = $ARGV[2];
+my $sortmaf = 'mutect_out/oncotator_out/mutect_variants_sorted.maf';
 my $sample = 'null';
 my $muts=0;
 my $name = 'null';
@@ -23,10 +25,10 @@ my @tumorsample=();
 my @germsample=();
 
 my $cmd = '';
-$cmd = 'sort -k1,1 -k16,16 mutect_variants.maf | awk \'BEGIN { FS = OFS = "\t" } { for(i=1; i<=NF; i++) if($i ~ /^ *$/) $i ="-" }; 1\' > mutect_variants_sorted.maf';
+$cmd = 'sort -k1,1 -k16,16 ' . $maffile . ' | awk \'BEGIN { FS = OFS = "\t" } { for(i=1; i<=NF; i++) if($i ~ /^ *$/) $i ="-" }; 1\' > ' . $sortmaf;
 system($cmd);
 
-open G, "<$maffile";
+open G, "<$sortmaf";
 while (<G>){
 	chomp;
   	last if m/^$/;
@@ -58,8 +60,8 @@ while (<G>){
 			if ($muts > 1) {
 				$a = 0;
 				for ($a = 0; $a < @type; $a++) {
-					print C "$chrom[$a]\t$position[$a]\t$tumorsample[$a]\t$gene\t$muts\t$type[$a]\n";
-					print C "$chrom[$a]\t$position[$a]\t$germsample[$a]\t$gene\t$muts\t$type[$a]\n";
+					print C "$chrom[$a]\t$position[$a]\t" . $path . '/' . "$tumorsample[$a]\t$gene\t$muts\t$type[$a]\n";
+					print C "$chrom[$a]\t$position[$a]\t" . $path . '/' . "$tumorsample[$a]\t$gene\t$muts\t$type[$a]\n";
 				}
 			}
 			@type = ();
@@ -82,11 +84,8 @@ while (<G>){
 }
 $a = 0;
 for ($a = 0; $a < @type; $a++) {
-	print C "$chrom[$a]\t$position[$a]\t$tumorsample[$a]\t$gene\t$muts\t$type[$a]\n";
-	print C "$chrom[$a]\t$position[$a]\t$germsample[$a]\t$gene\t$muts\t$type[$a]\n";
+	print C "$chrom[$a]\t$position[$a]\t" . $path . '/' . "$tumorsample[$a]\t$gene\t$muts\t$type[$a]\n";
+	print C "$chrom[$a]\t$position[$a]\t" . $path . '/' . "$tumorsample[$a]\t$gene\t$muts\t$type[$a]\n";
 }
 close C;
 close G;
-
-$cmd = './data/CCBR/apps/ALVIEW/alvgenslideshow mutect_variants_images mutect_variants_alview.input ' . $ARGV[1];
-system($cmd);
