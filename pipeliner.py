@@ -117,9 +117,9 @@ b=rules.pop()
 #rules=['samtools.sort','picard.headers','picard-markdups']
 PL="initialqc"
 smver=os.popen("snakemake --version").read().strip()
-PJ=open("project.json","r")
-projectjson=PJ.read()
-PJ.close()
+#PJ=open("project.json","r")
+#projectjson=PJ.read()
+#PJ.close()
 errorreport=""
 batchsize="20"
 parameters=[]
@@ -1709,7 +1709,7 @@ Projscrollbar = Scrollbar(projframe)
 Projscrollbar.grid(row=2,column=4,rowspan=30 )
 jsonconf = Text(projframe,width=80,height=30,bg=projectBgColor,fg=projectFgColor,font=("nimbus mono bold","11"),yscrollcommand = Projscrollbar.set)
 Projscrollbar['command']=jsonconf.yview
-jsonconf.insert(INSERT, projectjson)
+#jsonconf.insert(INSERT, projectjson)
 #jsonconf.pack(side=RIGHT,expand=YES)
 jsonconf.grid(row=3,column=0,sticky="e",padx=10,pady=10)
 #jsonconf.bind('<FocusOut>',lambda _:saveproject(jsonconf.get("1.0",END)))
