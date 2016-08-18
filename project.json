@@ -22,7 +22,7 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline",
+        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/germline_test3",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
@@ -36,19 +36,40 @@
         "platform": "Illumina",
         "poc": "",
         "rgid": {
-            "F22_10000": {
+            "3435Ttest": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22_10000"
+                "rgsm": "3435Ttest"
             },
-            "F23_10000": {
+            "D115test": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F23_10000"
+                "rgsm": "D115test"
+            },
+            "F22testA": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F22testA"
+            },
+            "F22testB": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F22testB"
+            },
+            "F22testC": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F22testC"
             }
         },
         "samples": {
@@ -57,11 +78,14 @@
         "smparams": [],
         "technique": "",
         "units": {
-            "F22_10000": "F22_10000",
-            "F23_10000": "F23_10000"
+            "3435Ttest": "3435Ttest",
+            "D115test": "D115test",
+            "F22testA": "F22testA",
+            "F22testB": "F22testB",
+            "F22testC": "F22testC"
         },
         "username": "",
         "version": "1.0",
-        "workpath": "/scratch/dwheeler/exome-new"
+        "workpath": "/data/CCBR/dev/Exome-seq-pipeline/germline_test3"
     }
 }
