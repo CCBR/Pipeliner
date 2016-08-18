@@ -9,7 +9,7 @@
         "SJDBOVERHANG": "100",
         "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-100",
         "STARSTRANDCOL": "2",
-        "STRANDED": "1",
+        "STRANDED": "0",
         "TRIM": "no",
         "analyst": "",
         "annotation": "hg19",
@@ -22,30 +22,46 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "",
+        "datapath": "/data/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
         "flowcellid": "",
         "id": "",
         "organism": "",
-        "pairs": {
-            "na": "na"
-        },
+        "pairs": {},
         "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "initialqc",
+        "pipeline": "exomeseq-germline",
         "platform": "Illumina",
         "poc": "",
-        "rgid": {},
+        "rgid": {
+            "F22_10000": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F22_10000"
+            },
+            "F23_10000": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F23_10000"
+            }
+        },
         "samples": {
             "na": "na"
         },
         "smparams": [],
         "technique": "",
-        "units": {},
+        "units": {
+            "F22_10000": "F22_10000",
+            "F23_10000": "F23_10000"
+        },
         "username": "",
         "version": "1.0",
-        "workpath": ""
+        "workpath": "/scratch/dwheeler/exome-new"
     }
 }
