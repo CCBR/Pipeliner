@@ -36,7 +36,7 @@
      "rnaseq":{
 "GENOMEFILE": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/ref.fa",	 
 "GTFFILE": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/genes.gtf",
-"STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/genes-125",
+"STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/genes-",
 "ANNOTATE": "/data/CCBR/db/PipeDB/dev/Mm10_genes.txt",
 "REFFLAT": "/data/CCBR/db/PipeDB/dev/refFlatMm10.txt",
 "RSEMREF": "/data/CCBR/db/PipeDB/dev/rsemref/mouse_gencode",
