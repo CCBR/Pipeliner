@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Nested activatables</title>
+    <style type="text/css">
+		div.inactive {
+			display: none;
+		}
+    </style>
+</head>
+<body>
+	<h1>My Homepage</h1>
+	<div id="log-in">
+		<form action="login" method="POST">
+			<h2>Log in</h2>
+			<p><a href="#sign-up-1">No account yet? Sign up!</a></p>
+			<p>Username:</p>
+			<p><input name="username" type="text" /></p>
+			<p>Password:</p>
+			<p><input name="password" type="password" /></p>
+			<p><input type="submit" value="Log in" /></p>
+		</form>
+	</div>
+	<div id="sign-up">
+		<form action="signup" method="POST">
+			<h2>Sign up</h2>
+			<p><a href="#log-in">Back to login form</a></p>
+			<div id="sign-up-1">
+				<h3>Step 1</h3>
+				<p>Username:</p>
+				<p><input name="username" type="text" /></p>
+				<p>Password:</p>
+				<p><input name="password1" type="password" /></p>
+				<p>Repeat password:</p>
+				<p><input name="password2" type="password" /></p>
+				<p><a href="#sign-up-2">Continue</a></p>
+			</div>
+			<div id="sign-up-2">
+				<h3>Step 2</h3>
+				<p>Full name:</p>
+				<p><input name="name" type="text" /></p>
+				<p>Bio:</p>
+				<p><textarea name="bio" cols="30" rows="5"></textarea></p>
+				<p><a href="#sign-up-1">Back</a> <input type="submit" value="Register!" /></p>
+			</div>
+		</form>
+	</div>
+	<script src="activatables.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	activatables('action', ['log-in', {'sign-up': ['sign-up-1', 'sign-up-2']}]);
+	</script>
+</body>
+</html>

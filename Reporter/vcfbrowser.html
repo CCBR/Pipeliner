@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>vcf browser</title>
+	<meta charset="utf8">
+	<style>
+	table {
+		border: 3px solid black;
+		border-collapse: collapse;
+		table-layout: fixed;
+	}
+	th, td {
+		border: 1px solid black;
+	}
+	tr:nth-child(even) {
+    	background-color: #e6e6e6;
+    }
+    div.scrolltable {
+    	width: 9250px;
+    	height: 500px;
+    	overflow-y: auto;
+    	overflow-x: visible;
+    }
+    div.scrollable {
+    	width: 127px;
+    	height: 55px;
+    	margin: 0;
+    	padding: 0;
+    	overflow: auto;
+    }
+    div.head {
+    	width: 127px;
+    	height: 35px;
+    	margin: 0;
+    	padding: 0;
+    	overflow: auto;
+    }
+    div.filter {
+    	width: 127px;
+    	height: 25px;
+    	margin: 0;
+    	padding: 0;
+    }
+	</style>
+</head>
+
+<body>
+
+<h1>vcf browser</h1>
+
+<!-- <p id = "ucscpicker">
+<select onchange="assemblyoptions(this.value)" id="selectedorganism">
+	<option value="" disabled selected>-default-</option>
+	<option value="human">human</option>
+	<option value="mouse">mouse</option>
+	<option value="rat">rat</option>
+	<option value="fruitfly">fruitfly</option>
+	<option value="worm">worm</option>
+	<option value="yeast">yeast</option>
+</select>
+<select id="assembly" onchange="updatelinks(selectedorganism.value, this.value)"></select></p>
+<p> -->
+<p id = "gotobrowser">
+Go to genome browser (JBrowse)   
+<input type="text" placeholder="chrom" id="tobrowser_chrom">
+<input type="text" placeholder="pos" id="tobrowser_pos">
+<button onclick="gotobrowser()">GO</button>
+</p>
+<div id="filepicker"><label class="button">Load SQLite database: <input type='file' id='dbfile' ></label></div>
+</p>
+<div id ="grouporder"></div>
+<div id = "genotypefilter"></div>
+<p></p>
+<div id = "includetext"></div>
+<div style="font-size:75%;" id = "selectall"></div>
+<div style="font-size:75%;" id = "checkboxes"></div>
+<div id = "groupbutton"></div>
+<p></p>
+<div id = "buildaquerytext"></div>
+<div id = "buildaquery"></div>
+<div id = "addorfinish"></div>
+<p></p>
+<div id = "manualquery"></div>
+<p style="font-size:50%;" id = "queried">Current query: SELECT * FROM vcf</p>
+<div id = "finishorreturn"></div>
+<div id = "copytable"></div>
+<p></p>
+<div id = "navigate"></div>
+<div id = "navinfo"></div>
+<p id = "tablehere">[LOAD TABLE]</p>
+
+<script src="sql.js"></script>
+<script>
+	sql = window.SQL; 
+	var UintsLoad;
+	var exportarray;
+	var db;
+	var dbFileElm = document.getElementById('dbfile');
+	var allcolnames;
+	var colnames;
+	var columnstodisplay;
+	var columnfilters;
+	var FIRSTLOAD = false;
+	var currentquerySELECT = "SELECT * FROM vcf";
+	var currentqueryWHERE = "";
+	var currentqueryBUILD = "";
+	var currentqueryNOLIMITS;
+	var currentqueryPOS = 0;
+	var numresults;
+	var org = "human";
+	var asmbly = "hg38";
+	// var assemblies = {
+	// 	human: ["hg38", "hg19", "hg18", "hg17", "hg16"],
+	// 	mouse: ["mm10", "mm9", "mm8", "mm7"],
+	// 	rat: ["rn6", "rn5", "rn4", "rn3"],
+	// 	fruitfly: ["dm6", "dm3", "dm2", "dm1"],
+	// 	worm: ["ce11", "ce10", "ce6", "ce4", "ce2"],
+	// 	yeast: ["sacCer3", "sacCer2", "sacCer1"]
+	// }
+	var builtlines = 0;
+	var colsearchboxstatus = "";
+	var finalized = false;
+	var numexportresults;
+	var groupsmode = false;
+	var chroms = [];
+	//document.getElementById("tablehere").innerHTML ="LOADING...";
+	//var UintsSTORED = new Uint8Array([]);
+	//db = new SQL.Database(UintsSTORED);
+	//firstload = true;
+	//handle(currentquerySELECT, 0, true);
+	//firstload = false;
+
+
+	// function assemblyoptions(organism){
+	// 	if (organism.length == 0) document.getElementById("assembly").innerHTML = "<option></option>";
+	// 	else {
+	// 		catOptions = "";
+	// 		catOptions+='<option value="" disabled selected>-select-</option>';
+	// 		for (var i=0; i<assemblies[organism].length; i++) {
+	// 			catOptions += '<option value = "'+assemblies[organism][i]+'">' + assemblies[organism][i] + '</option>';
+	// 		}
+	// 		document.getElementById("assembly").innerHTML = catOptions;
+	// 	}
+	// }
+
+	// function updatelinks(o, a){
+	// 	org = o;
+	// 	asmbly = a;
+	// }
+
+	dbFileElm.onchange = function() {
+		document.getElementById("tablehere").innerHTML ="LOADING...";
+		var f = dbFileElm.files[0];
+		var r = new FileReader();
+		r.onload = function() {
+			//document.getElementById('ucscpicker').innerHTML = "";
+			UintsLoad = new Uint8Array(r.result);
+			db = new SQL.Database(UintsLoad);
+			firstload = true;
+			handle(currentquerySELECT, 0, true);
+			firstload = false;
+		}
+		r.readAsArrayBuffer(f);
+	}
+
+	function handle(query, start, updatenumresults) {
+		currentqueryNOLIMITS = query;
+		var contents;
+		currentqueryPOS = start;
+		var limits = " limit " + currentqueryPOS + ", 50";
+		outputElm = document.getElementById("tablehere");
+		outputElm.innerHTML = "";
+		var tmpgrp = "";
+		if(query.lastIndexOf("GROUP BY ") != -1){
+			tmpgrp = " "+query.substring(query.lastIndexOf("GROUP BY "));
+			query = query.substring(0,query.lastIndexOf("GROUP BY "));
+
+		}
+		if(currentqueryGENOTYPE != ""){
+			if(query.lastIndexOf("WHERE ") == -1){
+				query += " WHERE " + currentqueryGENOTYPE;
+			}else{
+				query += " AND " + currentqueryGENOTYPE;
+			}
+		}
+		query+=tmpgrp;
+
+		if(firstload){
+			// alert();
+			//TRIAL
+			//var genes = db.exec("SELECT DISTINCT Gene FROM vcf")[0].values;
+			//db.run('UPDATE vcf SET Gene="foo"');
+			//OLD
+			// var genes = genequery[0].values;
+			// for(var i = 0; i < genes.length; i++) {
+			// 	var separated = genes[i][0].split(/[,;]+/);
+			// 	var replace = "";
+			// 	for(var j = 0; j < separated.length; j++) {
+			// 		replace += '<a href=\'https://genome.ucsc.edu/cgi-bin/hgTracks?org='+org+'&db='+asmbly+'&position='+separated[j]+'\' target=\'_blank\'>'+separated[j]+'<br>';
+			// 	}
+			// 	db.run('UPDATE vcf SET Gene="'+replace+'" WHERE Gene="'+genes[i][0]+'"');
+			// }
+			// var chromposquery = db.exec("SELECT CHROM, POS FROM vcf");
+			// var chrompos = chromposquery[0].values;
+			// for(var i = 0; i < chrompos.length; i++) {
+			// 	var chrom = chrompos[i][0];
+			// 	var pos = chrompos[i][1];
+			// 	var minpos = parseInt(pos)-100;
+			// 	if(minpos<0) minpos=0;
+			// 	var maxpos = parseInt(pos)+100;
+			// 	var replace = '<a href=\'https://genome.ucsc.edu/cgi-bin/hgTracks?org='+org+'&db='+asmbly+'&position=chr'+chrom+':'+minpos+'-'+maxpos+'\' target=\'_blank\'>'+pos;
+			// 	db.run('UPDATE vcf SET POS="'+replace+'" WHERE POS="'+pos+'"');
+			// }
+			//db = db.run('UPDATE vcf SET POS="<a href=\'https://genome.ucsc.edu/cgi-bin/hgTracks?org='+org+'&db='+asmbly+'&position=chr"||CHROM||":"||POS||"\' target=\'_blank\'>"||Pos');
+			//numentries = parseInt(db.exec('SELECT Count(*) FROM vcf')[0].values);
+			chromquery = db.exec("SELECT DISTINCT CHROM FROM vcf")[0].values;
+			for(var i = 0; i < chromquery.length; i++){
+				chroms.push(chromquery[i][0]);
+			}
+			contents = db.exec(query + limits);
+			document.getElementById('includetext').innerHTML = 'Include:';
+			document.getElementById('selectall').innerHTML = '<input type="checkbox" id="allcheckbox" onchange = "includeall(this)" checked>select all';
+			createcheckboxes(contents[0].columns);
+			creategenotypeboxes(contents[0].columns);
+			document.getElementById('groupbutton').innerHTML = '<button onclick="getGroups()">GROUP SELECTED</button>';
+			document.getElementById('buildaquerytext').innerHTML = 'Build a query:';
+			document.getElementById('addorfinish').innerHTML = '<button onclick="addaline()">+</button><button onclick="finishthequery()">Generate</button>';
+			document.getElementById('manualquery').innerHTML = '<input type="text" style="width:700px" id="queryInput" placeholder = "manual query"/><button onclick="queryButton()">RUN</button><button onclick="removeall()">CLEAR</button>';
+			document.getElementById('finishorreturn').innerHTML = '<button onclick="finalizetable()">FINISH</button>';
+			document.getElementById('navigate').innerHTML = '<button onclick="switchlimits(false)">&#60;</button><button onclick="switchlimits(true)">&#62;</button>';
+			colnames = contents[0].columns;
+			allcolnames = colnames;
+			columnstodisplay = new Array(contents[0].columns.length);
+			for(var i = 0; i < columnstodisplay.length; i++) { columnstodisplay[i] = true; }
+			columnfilters = new Array(contents[0].columns.length);
+			for(var i = 0; i < columnfilters.length; i++) { columnfilters[i] = ""; }
+			blankcolfilters = columnfilters;
+			addaline();
+		}else{
+			contents = db.exec(query + limits);
+		}
+		outputElm.appendChild(headerCreate(contents[0].columns));
+		var innerDiv = document.createElement('div');
+		innerDiv.setAttribute('id', 'tablediv');
+		innerDiv.setAttribute('class', 'scrolltable');
+		innerDiv.style.width = (allcolnames.length * 130 + 35)+"px";
+		outputElm.appendChild(innerDiv);
+		innerDiv.appendChild(tableCreate(contents[0].values));
+		colnames = contents[0].columns;
+		//document.getElementById("tablehere").innerHTML = new TextDecoder("utf-8").decode(binaryArray);
+		document.getElementById("queried").innerHTML = "Current query: " + query;
+		if(updatenumresults){
+			numresults = parseInt(db.exec('SELECT Count(*) FROM ('+query+")")[0].values);
+			numexportresults = numresults;
+		}
+		document.getElementById('navinfo').innerHTML = start + " - " + (start+50) + " of <span style='color:#FF0000'><b>" + numresults + "</span></b>";
+	}
+
+	function finalizetable() {
+		finalized = true;
+		document.getElementById('filepicker').style.display='none';
+		document.getElementById('includetext').style.display='none';
+		document.getElementById('selectall').style.display='none';
+		document.getElementById('genotypefilter').style.display='none';
+		document.getElementById('checkboxes').style.display='none';
+		document.getElementById('groupbutton').style.display='none';
+		document.getElementById('buildaquerytext').style.display='none';
+		document.getElementById('addorfinish').style.display='none';
+		document.getElementById('manualquery').style.display='none';
+		document.getElementById('buildaquery').style.display='none';
+		document.getElementById('finishorreturn').innerHTML='<button onclick="goback()">RETURN</button>';
+		document.getElementById('copytable').innerHTML = '<button onclick="selectTable()">EXPORT</button>';
+		handle(currentqueryNOLIMITS, currentqueryPOS, false);
+	}
+
+	function goback() {
+		finalized = false;
+		groupsmode = false;
+		currentqueryWHERE="";
+		currentqueryNOLIMITS=currentquerySELECT+" "+currentqueryBUILD;
+		for(var i = 0; i < columnfilters.length; i++) { columnfilters[i] = ""; }
+		document.getElementById('filepicker').style.display='';
+		document.getElementById('includetext').style.display='';
+		document.getElementById('selectall').style.display='';
+		document.getElementById('genotypefilter').style.display='';
+		document.getElementById('checkboxes').style.display='';
+		document.getElementById('groupbutton').style.display='';
+		document.getElementById('buildaquerytext').style.display='';
+		document.getElementById('addorfinish').style.display='';
+		document.getElementById('manualquery').style.display='';
+		document.getElementById('buildaquery').style.display='';
+		document.getElementById('finishorreturn').innerHTML='<button onclick="finalizetable()">FINISH</button>';
+		document.getElementById('copytable').innerHTML = '';
+		document.getElementById('grouporder').innerHTML='';
+		handle(currentqueryNOLIMITS, currentqueryPOS, true);
+	}
+
+	function createcheckboxes(columns) {
+		var html = "";
+		for (i = 0; i < columns.length; i++) {
+			html += ' <input type="checkbox" id="'+columns[i]+'"name = "colcheckbox" value ="'+i+'" onchange = "include(this)" checked>'+columns[i]+" ";
+		}
+		document.getElementById('checkboxes').innerHTML = html;
+	}
+
+	var genotypefilters = [];
+	var currentqueryGENOTYPE = "";
+
+	function creategenotypeboxes(columns) {
+		var html = "Genotype filter:<br>";
+		for (i = 41; i < columns.length; i++) {
+			genotypefilters.push("");
+			html += "["+columns[i];
+			html += ' <input type="checkbox" id="gR_'+columns[i]+'"name = "gcheckbox" value ="reference" onchange = "genotypefilter(this)">ref ';
+			html += ' <input type="checkbox" id="gA_'+columns[i]+'"name = "gcheckbox" value ="alternate" onchange = "genotypefilter(this)">alt';
+			html += '] ';
+		}
+		document.getElementById('genotypefilter').innerHTML = html;
+	}
+
+	function genotypefilter(element) {
+		var samplename = element.id.substr(3);
+		var spos = allcolnames.indexOf(samplename)-41;
+		if(element.checked){
+			if(element.value=="reference"){
+				document.getElementById('gA_'+samplename).checked = false;
+				genotypefilters[spos] = '(\"'+samplename+'\" IS "0/0")';
+			}
+			if(element.value=="alternate"){
+				document.getElementById('gR_'+samplename).checked = false;
+				genotypefilters[spos] = '(\"'+samplename+'\" IS "1/1" OR \"'+samplename+'\" IS "0/1")';
+			}
+
+		}else{
+			genotypefilters[spos] = '';
+		}
+
+		// var q = "WHERE ";
+		// if(currentqueryBUILD != ""){
+		// 	q = " AND ";
+		// }
+		var q = "";
+		var anygenofilters = false;
+		for(var i=0; i<genotypefilters.length;i++){
+			if(!anygenofilters && genotypefilters[i]!=""){
+				anygenofilters=true;
+				q+=genotypefilters[i];
+			}else if(genotypefilters[i]!=""){
+				q+=" AND "+genotypefilters[i];
+			}
+		}
+		if(!anygenofilters)
+			q="";
+		currentqueryGENOTYPE = q;
+		handle(currentquerySELECT + " " + currentqueryBUILD, 0, true);
+	}
+
+	function include(element) {
+		if(element.checked && element.id != allcheckbox){
+			columnstodisplay[parseInt(element.value)] = true;
+		}
+		if(!element.checked && element.id != allcheckbox){
+			columnstodisplay[parseInt(element.value)] = false;
+			//filter(allcolnames.indexOf(element.id), "");
+		}
+
+		var query = "SELECT ";
+		var allselected = true;
+		var firstone = true;
+		for(var i=0; i<columnstodisplay.length; i++){
+			if(columnstodisplay[i]){
+				if(firstone){
+					query += '\"'+allcolnames[i]+'\"';
+					firstone = false;
+				}else{
+					query += ", " + '\"'+allcolnames[i]+'\"';
+				}
+			}else{
+				allselected = false;
+			}
+
+		}
+
+		if(allselected){
+			query = "SELECT *";
+			document.getElementById('allcheckbox').checked = true;
+		}else{
+			document.getElementById('allcheckbox').checked = false;
+		}
+		query += " FROM vcf";
+		currentquerySELECT = query;
+		handle((currentquerySELECT + " " +currentqueryBUILD), currentqueryPOS, false);
+	}
+
+	function includeall(element) {
+		var checkboxes = document.getElementsByName('colcheckbox');
+		for(var i=0; i<checkboxes.length;i++){
+			checkboxes[i].checked = element.checked;
+			columnstodisplay[i] = element.checked;
+		}
+		if(!element.checked){
+			document.getElementById("tablehere").innerHTML = "";
+			document.getElementById("queried").innerHTML = "Current query: NONE";
+		}
+		if(element.checked){
+			include(element);
+		}
+	}
+
+	function valconcat(vals, tagName) {
+		if (vals.length === 0) return '';
+		var open = '<'+tagName+'><div class=scrollable>', close='</div></'+tagName+'>';
+		return open + vals.join(close + open) + close;
+	}
+	function tableCreate(values){
+		var tbl  = document.createElement('table');
+		tbl.setAttribute('id', 'datatable');
+		var rows = values.map(function(v){ return valconcat(v, 'td'); });
+		if(groupsmode){
+			for(var i = 0; i < rows.length; i++){
+				var thiscombo = values[i][0];
+				for(var j = 1; j < values[i].length-1; j++){
+					thiscombo += "._-:SEP:-_."+values[i][j];
+				}
+				rows[i]+='<td><button onclick="gotogroup(\''+thiscombo+'\')">GO</button></td>';
+			}
+		}
+		var html = '<tbody>' + valconcat(rows, 'tr') + '</tbody>';
+		tbl.innerHTML = html;
+		tbl.innerHTML = tbl.innerHTML.substring(0,tbl.innerHTML.lastIndexOf("</tbody>")+8);
+		//THE ABOVE LINE IS A HOTFIX FOR AN UNEXPLICABLE ISSUE WITH INNERHTML...
+		return tbl;
+	}
+
+	function headconcat(vals, tagName) {
+		if (vals.length === 0) return '';
+		var open = '<th><div class=head>', close='</div></th>';
+		return open + vals.join(close + open) + close;
+	}
+	function filterconcat(vals) {
+		var html = "";
+		for (i = 0; i < vals.length; i++) {
+			pos = allcolnames.indexOf(vals[i]);
+			html += '<th><div class=filter><input type="text" value = "'+columnfilters[pos]+'" name = "colsearchbox"id="'+pos+'" placeholder = "Filter" onkeypress="filterentry(this, event)" style = "width:120px" /></div></th>';
+		}
+		return html;
+	}
+	function headerCreate(columns){
+		var tbl  = document.createElement('table');
+		tbl.setAttribute('id', 'headertable');
+		var html = '<thead>' + headconcat(columns) + '</thead>';
+		if(finalized){ html += '<thead>' + filterconcat(columns) + '</thead>'; }
+		tbl.innerHTML = html;
+		return tbl;
+	}
+
+	function addaline() {
+		var insert = "";
+		if(builtlines!=0){
+			insert += '<select id="logical'+builtlines+'"><option value="AND" selected>AND</option><option value="OR">OR</option></select>';
+		}
+		insert += '<select id="columnselect'+builtlines+'">';
+		insert += '<option value="" disabled selected>-select-</option>';
+		for(var i = 0; i < allcolnames.length; i++) {
+			insert += '<option value=\'\"'+allcolnames[i]+'\"\'>'+allcolnames[i]+'</option>';
+		}
+		insert += '</select>';
+		insert += '<select id = "searchtype'+builtlines+'"><option value="CONTAINS" selected>CONTAINS</option><option value="BEGINS WITH">BEGINS WITH</option><option value="EQUALS">EQUALS</option><option value="DOES NOT CONTAIN">DOES NOT CONTAIN</option><option value="DOES NOT BEGIN WITH">DOES NOT BEGIN WITH</option><option value="DOES NOT EQUAL">DOES NOT EQUAL</option><option value="LESS THAN">LESS THAN</option><option value="GREATER THAN">GREATER THAN</option></select>';
+		insert += '<input type="text" id="term'+builtlines+'" placeholder = "search term"/>';
+		insert += "<br>";
+		document.getElementById('buildaquery').insertAdjacentHTML('beforeend', insert);
+		builtlines++;
+	}
+
+	function finishthequery() {
+		var queryadditions = "WHERE ";
+		for(var i = 0; i < builtlines; i++) {
+			if(i!=0){
+				queryadditions += document.getElementById('logical'+i).value + " ";
+			}
+			if(document.getElementById('columnselect'+i).value==''||document.getElementById('term'+i).value==''){
+				alert("ERROR: Missing input in query builder. Unable to build SQLite query.");
+				return;
+			}
+			if(document.getElementById('searchtype'+i).value=='CONTAINS')
+				queryadditions += document.getElementById('columnselect'+i).value+' LIKE "%'+document.getElementById('term'+i).value+'%" ';
+			if(document.getElementById('searchtype'+i).value=='BEGINS WITH')
+				queryadditions += document.getElementById('columnselect'+i).value+' LIKE "'+document.getElementById('term'+i).value+'%" ';
+			if(document.getElementById('searchtype'+i).value=='EQUALS')
+				queryadditions += document.getElementById('columnselect'+i).value+' IS "'+document.getElementById('term'+i).value+'" ';
+			if(document.getElementById('searchtype'+i).value=='DOES NOT CONTAIN')
+				queryadditions += document.getElementById('columnselect'+i).value+' NOT LIKE "%'+document.getElementById('term'+i).value+'%" ';
+			if(document.getElementById('searchtype'+i).value=='DOES NOT BEGIN WITH')
+				queryadditions += document.getElementById('columnselect'+i).value+' NOT LIKE "'+document.getElementById('term'+i).value+'%" ';
+			if(document.getElementById('searchtype'+i).value=='DOES NOT EQUAL')
+				queryadditions += document.getElementById('columnselect'+i).value+' IS NOT "'+document.getElementById('term'+i).value+'" ';
+			if(document.getElementById('searchtype'+i).value=='LESS THAN')
+				queryadditions += document.getElementById('columnselect'+i).value+' < '+document.getElementById('term'+i).value+' ';
+			if(document.getElementById('searchtype'+i).value=='GREATER THAN')
+				queryadditions += document.getElementById('columnselect'+i).value+' > '+document.getElementById('term'+i).value+' ';
+		}
+		document.getElementById('queryInput').value = queryadditions;
+	}
+
+	function removeall() {
+		document.getElementById('buildaquery').innerHTML = "";
+		builtlines=0;
+		addaline();
+		currentqueryBUILD="";
+		document.getElementById('queryInput').value = "";
+		handle(currentquerySELECT, 0, false);
+	}
+
+	function queryButton() {
+		var q = currentquerySELECT + " " + document.getElementById('queryInput').value;
+		handle(q, 0, true);
+		if(q.lastIndexOf("WHERE ") != -1)
+			currentqueryBUILD = q.substring(q.lastIndexOf("WHERE "));
+	}
+
+	function filterentry(element, event) {
+		if(event.keyCode == 13)
+			filter(element.id, element.value);
+	}
+
+	function filter(pos, value) {
+		columnfilters[parseInt(pos)] = value;
+		var query = "";
+		var anyfilters = false;
+		for(var i = 0; i < columnfilters.length; i++){
+			if(columnfilters[i]!="" && columnstodisplay[i]){
+				if(!anyfilters && currentqueryBUILD==""){
+					query += 'WHERE \"'+allcolnames[i]+'\" LIKE "%'+columnfilters[i]+'%" ';
+					anyfilters = true;
+				}else{
+					query += 'AND \"'+allcolnames[i]+'\" LIKE "%'+columnfilters[i]+'%" ';
+				}
+			}
+		}
+		currentqueryWHERE = query;
+		q = currentquerySELECT + " " + currentqueryBUILD + " " + currentqueryWHERE;
+		currentqueryNOLIMITS = q;
+		currentqueryPOS = 0;
+		if(currentqueryGENOTYPE != ""){
+			if(q.lastIndexOf("WHERE ") == -1){
+				q += " WHERE " + currentqueryGENOTYPE;
+			}else{
+				q += " AND " + currentqueryGENOTYPE;
+			}
+		}
+		var contents = db.exec(q + " limit " + currentqueryPOS + ", 50 ");
+		document.getElementById('datatable').innerHTML = tableCreate(contents[0].values).innerHTML;
+		numresults = parseInt(db.exec('SELECT Count(*) FROM ('+q+")")[0].values);
+		numexportresults = numresults;
+		document.getElementById('navinfo').innerHTML = "0 - 50 of <span style='color:#FF0000'><b>" + numresults + "</span></b>";
+		document.getElementById("queried").innerHTML = "Current query: " + q;
+	}
+
+	function switchlimits(movefwd) {
+		if(movefwd){
+			if (currentqueryPOS+50 < numresults){
+				currentqueryPOS += 50;
+				handle(currentqueryNOLIMITS, currentqueryPOS, false);
+			}
+		}else{
+			if(currentqueryPOS-50 >= 0){
+				currentqueryPOS -= 50;
+				handle(currentqueryNOLIMITS, currentqueryPOS, false);
+			}
+		}
+	}
+
+    function selectTable() {
+    	if(numexportresults>1000){
+    		alert("ERROR: Attempting to export table with more than 1,000 entries. This is not permitted.");
+    		return;
+    	}
+    	var contents = db.exec(currentqueryNOLIMITS);
+    	var rawhead = headerCreate(contents[0].columns).innerHTML;
+    	var rawdata = tableCreate(contents[0].values).innerHTML;
+    	var htmltable = "<table>"+rawhead+rawdata+"</table> ";
+    	//htmltable=escapeHTML(htmltable);
+    	var hiddenElement = window.document.createElement('a');
+    	hiddenElement.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(htmltable);
+    	hiddenElement.download = 'vcf_export.xls';
+    	hiddenElement.innerHTML="vcf_export.xls";
+    	document.getElementById('copytable').innerHTML += " Download (right-click and save/download) this link: ";
+    	document.getElementById('copytable').appendChild(hiddenElement);
+    	document.getElementById('copytable').innerHTML += "<br>WARNING: WHEN USING SAFARI BROWSER PLEASE RIGHT-CLICK AND 'SAVE/DOWNLOAD AS' WITH EXTENSION '.xls'";
+    	//hiddenElement.click();
+    	//alert("Please copy and paste the entire contents of the next page into Excel");
+    	//var wnd = window.open("about:blank", "", "_blank");
+    	//wnd.document.write(htmltable);
+    }
+
+    function escapeHTML(s) { 
+	    return s.replace(/&/g, '&amp;')
+	            .replace(/"/g, '&quot;')
+	            .replace(/</g, '&lt;')
+	            .replace(/>/g, '&gt;');
+	}
+
+	function getGroups() {
+		var numcolsselected = 0;
+		var orderhtml = "Order by: ";
+		for(var i = 0; i < columnstodisplay.length; i++){
+			if(columnstodisplay[i]){
+				numcolsselected++;
+				if(numcolsselected==1){
+					orderhtml+='<input type = "radio" name = "orderby" onchange="changeorder(this)" value = "'+allcolnames[i]+'" checked>'+allcolnames[i]+' ';
+				}else{
+					orderhtml+='<input type = "radio" name = "orderby" onchange="changeorder(this)" value = "'+allcolnames[i]+'">'+allcolnames[i]+' ';
+				}
+			}
+		}
+		orderhtml+='<input type = "radio" name = "orderbyCOUNT" onchange="changeorder(this)" value = "COUNT(*) DESC">COUNT(*) ';
+		if(numcolsselected>3){
+			alert("ERROR: For sake of simplicity, you may not group by more than 3 fields!");
+			return;
+		}
+		groupsmode = true;
+		document.getElementById('filepicker').style.display='none';
+		document.getElementById('includetext').style.display='none';
+		document.getElementById('selectall').style.display='none';
+		document.getElementById('genotypefilter').style.display='none';
+		document.getElementById('checkboxes').style.display='none';
+		document.getElementById('groupbutton').style.display='none';
+		document.getElementById('buildaquerytext').style.display='none';
+		document.getElementById('addorfinish').style.display='none';
+		document.getElementById('manualquery').style.display='none';
+		document.getElementById('buildaquery').style.display='none';
+		document.getElementById('finishorreturn').innerHTML='<button onclick="goback()">RETURN</button>';
+		var tmppos = currentquerySELECT.lastIndexOf("FROM vcf");
+		var q = currentquerySELECT.slice(0,tmppos)+",COUNT(*) "+currentquerySELECT.slice(tmppos)+ " " +currentqueryBUILD+ " GROUP BY "+currentquerySELECT.slice(7,tmppos);
+		handle(q,0,true);
+		document.getElementById('grouporder').innerHTML=orderhtml;
+	}
+
+	function gotogroup(combo){
+		groupsmode = false;
+		combo = combo.split("._-:SEP:-_.");
+		currentquerySELECT="SELECT * FROM vcf"
+		q = currentqueryBUILD;
+		if(currentqueryBUILD==""){
+			q+= "WHERE ";
+		}else{
+			q+=" AND "
+		}
+		q+= '\"'+colnames[0]+'\" IS "'+combo[0]+'"';
+		for(var i = 1; i < combo.length; i++){
+			q+=' AND \"'+colnames[i]+'\" IS "'+combo[i]+'"';
+		}
+		var checkboxes = document.getElementsByName('colcheckbox');
+		for(var i=0; i<checkboxes.length;i++){
+			checkboxes[i].checked = true;
+			columnstodisplay[i] = true;
+		}
+		addalineforcombo(combo);
+		document.getElementById('filepicker').style.display='';
+		document.getElementById('includetext').style.display='';
+		document.getElementById('selectall').style.display='';
+		document.getElementById('genotypefilter').style.display='';
+		document.getElementById('checkboxes').style.display='';
+		document.getElementById('groupbutton').style.display='';
+		document.getElementById('buildaquerytext').style.display='';
+		document.getElementById('addorfinish').style.display='';
+		document.getElementById('manualquery').style.display='';
+		document.getElementById('buildaquery').style.display='';
+		document.getElementById('finishorreturn').innerHTML='<button onclick="finalizetable()">FINISH</button>';
+		document.getElementById('copytable').innerHTML = '';
+		document.getElementById('grouporder').innerHTML='';
+		handle(currentquerySELECT+" "+q, currentqueryPOS,true);
+		currentqueryBUILD = q.substring(q.lastIndexOf("WHERE "));
+		document.getElementById('queryInput').value = currentqueryBUILD;
+	}
+
+	function changeorder(e) {
+		if(currentqueryNOLIMITS.lastIndexOf("ORDER BY ") != -1){
+			currentqueryNOLIMITS = currentqueryNOLIMITS.substring(0,currentqueryNOLIMITS.lastIndexOf("ORDER BY "));
+		}
+		if(e.name=='orderbyCOUNT'){
+			var q = currentqueryNOLIMITS + "ORDER BY " + e.value + "";
+		}else{
+			var q = currentqueryNOLIMITS + "ORDER BY \"" + e.value + "\"";
+		}
+		
+		handle(q,0,false);
+	}
+
+	function addalineforcombo(combo) {
+		for(var c = 0; c < combo.length; c++){
+			var insert = "";
+			if(builtlines==1&&(document.getElementById('columnselect0').value==''||document.getElementById('term0').value=='')){
+				document.getElementById('buildaquery').innerHTML="";
+				builtlines=0;
+			}
+			if(builtlines!=0){
+				insert += '<select id="logical'+builtlines+'"><option value="AND" selected>AND</option><option value="OR">OR</option></select>';
+			}
+			insert += '<select id="columnselect'+builtlines+'">';
+			insert += '<option value="" disabled>-select-</option>';
+			for(var i = 0; i < allcolnames.length; i++) {
+				if(allcolnames[i]==colnames[c]){
+					insert += '<option value="'+allcolnames[i]+'" selected>'+allcolnames[i]+'</option>';
+				}else{
+					insert += '<option value="'+allcolnames[i]+'">'+allcolnames[i]+'</option>';
+				}
+			}
+			insert += '</select>';
+			insert += '<select id = "searchtype'+builtlines+'"><option value="CONTAINS">CONTAINS</option><option value="BEGINS WITH">BEGINS WITH</option><option value="EQUALS" selected>EQUALS</option><option value="DOES NOT CONTAIN">DOES NOT CONTAIN</option><option value="DOES NOT BEGIN WITH">DOES NOT BEGIN WITH</option><option value="DOES NOT EQUAL">DOES NOT EQUAL</option></select>';
+			insert += '<input type="text" id="term'+builtlines+'" placeholder = "search term" value = "'+combo[c]+'"/>';
+			insert += "<br>";
+			document.getElementById('buildaquery').insertAdjacentHTML('beforeend', insert);
+			builtlines++;
+		}
+	}
+
+	function gotobrowser(){
+		var input_chrom = document.getElementById("tobrowser_chrom").value;
+		var input_pos = document.getElementById("tobrowser_pos").value;
+		if(chroms.length == 0){
+			alert("ERROR: Please load valid vcf database first.");
+			return;
+		}
+		if(chroms.indexOf(input_chrom) == -1){
+			alert("ERROR: Chromosome not recognized. Valid options are:\n"+chroms);
+			return;
+		}
+		if(isNaN(input_pos) || input_pos.replace(/\s/g, '').length==0){
+			alert("ERROR: Position input is not numeric.");
+			return;
+		}
+		filename = dbFileElm.value.split(/(\\|\/)/g).pop().replace(/\.[^/.]+$/, "");
+		alert("NOT YET FUNCTIONAL: WILL BROWSE WITH: " + filename + " " + input_chrom + " " + input_pos);
+	}
+	
+</script>
+
+</body>
+
+
+</html>

@@ -1,0 +1,99 @@
+{
+    "ProjectSummary": {
+        "analyst": "",
+        "annotation": "mm10",
+        "batchsize": "20",
+        "binset": "standard-bin",
+        "bysample": "no",
+        "cluster": "cluster_medium.json",
+        "comments": "Enter comments here.\n",
+        "custom": [],
+        "datapath": "/gpfs/gsfs4/users/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline",
+        "efiletype": "fastq",
+        "filetype": "fastq.gz",
+        "id": "",
+        "organism": "",
+        "pairs": {},
+        "pi": "",
+        "pipeline": "exomeseq-germline",
+        "platform": "Illumina",
+        "poc": "",
+        "rgid": {
+            "test": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "test"
+            }
+        },
+        "samples": {
+            "na": "na"
+        },
+        "smparams": [],
+        "technique": "",
+        "units": {
+            "test": "test"
+        },
+        "username": "",
+        "version": "1.0",
+        "workpath": "/data/dwheeler/extest"
+    },
+
+ "QCWorkflow":{
+
+"include":"/data/CCBR/dev/Exome-seq-pipeline/report_files/Reports/initialqc.png"
+
+
+},
+ "ExomeWorkflow":{
+
+"include":"/data/CCBR/dev/Exome-seq-pipeline/report_files/Reports/exomeseq-germline.png"
+
+
+},
+ "ExperimentalProc":{
+
+"Library Construction":"Blah",
+"Exome Capture":"Blah",
+
+},
+"TrimmedFastQC":{
+
+"include":"/data/CCBR/dev/Exome-seq-pipeline/report_files/QC/F24.R1.trimmed_fastqc.html"
+
+},
+
+"F22Stats":{
+
+"include1":"/data/CCBR/dev/Exome-seq-pipeline/report_files/QC/F22.qualimapReport/images_qualimapReport/genome_coverage_histogram.png",
+
+"include2":"/data/CCBR/dev/Exome-seq-pipeline/report_files/QC/F22.qualimapReport/images_qualimapReport/genome_coverage_quotes.png",
+
+"include3":"/data/CCBR/dev/Exome-seq-pipeline/report_files/QC/F22.qualimapReport/images_qualimapReport/genome_insert_size_histogram.png",
+
+"include4":"/data/CCBR/dev/Exome-seq-pipeline/report_files/QC/F22.qualimapReport/images_qualimapReport/genome_mapping_quality_histogram.png",
+
+"include5":"/data/CCBR/dev/Exome-seq-pipeline/report_files/QC/F22.qualimapReport/images_qualimapReport/genome_coverage_across_reference.png",
+
+"include6":"/data/CCBR/dev/Exome-seq-pipeline/report_files/QC/F22.qualimapReport/images_qualimapReport/genome_uniq_read_starts.png",
+
+
+},
+
+"SNPs":{
+
+"include":"/data/CCBR/dev/Exome-seq-pipeline/report_files/stats_summary.snp.html",
+},
+
+"VariantsBySample":{
+
+"F22":"stats",
+},
+
+"VCF-Browser":{
+
+"include":"/data/CCBR/dev/Reporter/vcfbrowser.html",
+},
+
+}
