@@ -23,7 +23,7 @@
     "HAPMAP": "/fdb/GATK_resource_bundle/hg19-2.8/hapmap_3.3.hg19.vcf.gz",
     "B1K": "/fdb/GATK_resource_bundle/hg19-2.8/1000G_phase1.snps.high_confidence.hg19.vcf.gz",
     "OMNI": "/fdb/GATK_resource_bundle/hg19-2.8/1000G_omni2.5.hg19.vcf.gz", 
-    "adapter.file": "/data/CCBR/dev/Pipeline/Pipeliner/Data/TruSeq_and_nextera_adapters.ngsqc.dat",
+    "adapter.file": "/data/CCBR/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat",
     "fastqc.adapters": "/data/CCBR/db/PipeDB/dev/fastqc.adapters",
     "trimmomatic.adapters": "/data/CCBR/db/PipeDB/dev/adapters2.fa",
     "ORGANISM": "HUMAN",

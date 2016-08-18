@@ -22,7 +22,7 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/PipelineTestSeqs/exomeseq/human/germline",
+        "datapath": "/data/CCBR/dev/PipelineTestSeqs/rnaseq/human",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
@@ -30,25 +30,25 @@
         "id": "",
         "organism": "",
         "pairs": {},
-        "pfamily": "exomeseq",
+        "pfamily": "rnaseq",
         "pi": "",
-        "pipeline": "exomeseq-germline",
+        "pipeline": "initialqcrnaseq",
         "platform": "Illumina",
         "poc": "",
         "rgid": {
-            "F22_10000": {
+            "SS.SRR950078": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22_10000"
+                "rgsm": "SS.SRR950078"
             },
-            "F23_10000": {
+            "SS.SRR950079": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F23_10000"
+                "rgsm": "SS.SRR950079"
             }
         },
         "samples": {
@@ -57,11 +57,11 @@
         "smparams": [],
         "technique": "",
         "units": {
-            "F22_10000": "F22_10000",
-            "F23_10000": "F23_10000"
+            "SS.SRR950078": "SS.SRR950078",
+            "SS.SRR950079": "SS.SRR950079"
         },
         "username": "",
         "version": "1.0",
-        "workpath": "/scratch/dwheeler/exome-new"
+        "workpath": "/scratch/dwheeler/rnaseq-new/"
     }
 }
