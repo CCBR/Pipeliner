@@ -262,15 +262,16 @@ rule joincounts:
 rule samplecondition:
    input: files=expand("{name}.star.count.txt", name=samples)
    output: out1= "sampletable.txt"
-   params: rname='pl:samplecondition',batch='--mem=4g --time=10:00:00', groups=config['project']['contrasts']['rgroups']
+   params: rname='pl:samplecondition',batch='--mem=4g --time=10:00:00', groups=config['project']['contrasts']['rgroups'], labels=config['project']['contrasts']['rlabels']
    run:
         with open(output.out1, "w") as out:
-            out.write("sampleName\tfileName\tcondition\n")
+            out.write("sampleName\tfileName\tcondition\tlabel\n")
             i=0
             for f in input.files:
                 out.write("%s\t"  % f)
                 out.write("%s\t"  % f)
                 out.write("%s\n" % params.groups[i])
+                out.write("%s\n" % params.labels[i])                
                 i=i+1
             out.close()
 

@@ -422,9 +422,10 @@ def makejson(*args):
         D["rsamps"]=f[0].split()
         D["rgroups"]=f[1].split()
         D["rcontrasts"]=f[2].split()
+        D["rlabels"]=f[3].split()        
         contrasts=D
     except:
-        contrasts={"rsamps":"na","rgroups":"na","rcontrasts":"na"}   
+        contrasts={"rsamps":"na","rgroups":"na","rcontrasts":"na","rlabels":"na"}   
         
    
     D=dict() 
