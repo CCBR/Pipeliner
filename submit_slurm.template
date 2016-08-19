@@ -1,5 +1,7 @@
 #!/bin/bash
 #
+#SBATCH --mail-type=BEGIN,END
+
 cd $SLURM_SUBMIT_DIR
 
 #. /usr/local/Modules/default/init/bash
