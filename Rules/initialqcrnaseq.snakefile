@@ -46,6 +46,7 @@ if config['project']['TRIM'] == "yes":
 # ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold}  LEADING:{params.leadingquality} TRAILING:{params.trailingquality} SLIDINGWINDOW:{params.windowsize}:{params.windowquality} MAXINFO:{params.targetlength}:{params.strictness} MINLEN:{params.minlen} HEADCROP:{params.headcroplength}"
 
 
+
    rule fastqc:  
       input: expand("trim/{name}_R1_001_trim_paired.fastq.gz", name=samples), expand("trim/{name}_R2_001_trim_paired.fastq.gz", name=samples)  
       output: "postTrimQC"
@@ -188,3 +189,9 @@ rule rnaseqc:
          fi
          """
 
+rule rnaseq_multiqc:
+    input: "STAR_QC/index.html","STAR_QC/report.html"
+    output: "Reports/multiqc_report.html"
+    params: rname="pl:multiqc"
+    threads: 1
+    shell:  "module load multiqc; cd Reports && multiqc -f -e featureCounts ../"

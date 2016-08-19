@@ -24,6 +24,9 @@ D['ExomeWorkflow']=dict()
 L=list()
 L.append("../Reports/rnaseq.png")
 D['ExomeWorkflow']['include']=L
+L=list()
+L.append("../Reports/multiqc_report.html")
+D['MultiQC']['include']=L
 
 
 L=list()
