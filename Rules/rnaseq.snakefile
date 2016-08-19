@@ -259,6 +259,17 @@ rule joincounts:
    params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],starstrandcol=config['bin'][pfamily]['STARSTRANDCOL']
    shell: "module load R; Rscript Scripts/joincounts.R '{params.dir}' '{input.files}' '{input.files2}' '{params.starstrandcol}'"
 
+
+rule rnaseq_multiqc:
+    input: "STAR_QC/index.html","STAR_QC/report.html"
+    output: "Reports/multiqc_report.html"
+    params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
+    threads: 1
+    shell:  """
+            echo PYTHONPATH={params.pythonpath}
+            cd Reports && {params.multiqc} -f -e featureCounts -e picard ../
+
+            """
    
 rule samplecondition:
    input: files=expand("{name}.star.count.txt", name=samples)
