@@ -73,7 +73,6 @@ else:
      input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
             "RawCountFile_genes_filtered.txt",
-            "RawCountFile_genes_junctions_filtered.txt",
             "RawCountFile_genejunctions_filtered.txt",
             expand("{name}.star.count.overlap.txt",name=samples),
             "RawCountFileOverlap.txt","RawCountFileStar.txt",
