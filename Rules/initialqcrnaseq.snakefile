@@ -192,6 +192,10 @@ rule rnaseqc:
 rule rnaseq_multiqc:
     input: "STAR_QC/index.html","STAR_QC/report.html"
     output: "Reports/multiqc_report.html"
-    params: rname="pl:multiqc"
+    params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
     threads: 1
-    shell:  "module load multiqc; cd Reports && multiqc -f -e featureCounts ../"
+    shell:  """
+            echo PYTHONPATH={params.pythonpath}
+            cd Reports && {params.multiqc} -f -e featureCounts -e picard ../
+
+            """

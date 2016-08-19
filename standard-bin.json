@@ -74,7 +74,9 @@
         "BWA": "/usr/local/apps/bwa/0.7.10/bwa",
         "FASTQ_SCREEN": "/data/CCBR/apps/fastq_screen_v0.6.3/fastq_screen"
     },
-    "rnaseq": {
+	 "rnaseq": {
+	     "PYTHONPATH": "/data/CCBR/db/PipeDB/bin/lib/python3.4/site-packages/",
+	"MULTIQC":"/data/CCBR/db/PipeDB/bin/bin/multiqc",     
         "TRIMMOMATICVER": "trimmomatic/0.33",
         "FASTQCVER": "fastqc",
         "CHKQCVER": " /data/CCBR/dev/RNA-Seq-pipeline/ver2/summarizeFastQCver2",
