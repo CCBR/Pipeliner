@@ -8,7 +8,7 @@ configfile: "run.json"
 if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC",
+     input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
             "postTrimQC",
 
@@ -16,14 +16,14 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC",
+     input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
             "postTrimQC",
 
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
-     input: "STAR_QC",
+     input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC"
 
             
@@ -32,7 +32,7 @@ elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
 else:
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC",
+     input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC"
 
 if config['project']['TRIM'] == "yes":
@@ -44,6 +44,7 @@ if config['project']['TRIM'] == "yes":
       shell:"module load {params.trimmomaticver}; java -classpath $TRIMMOJAR   org.usadellab.trimmomatic.TrimmomaticPE -threads {threads} {input.file1} {input.file2} {output.out11} {output.out12} {output.out21} {output.out22} ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold}  LEADING:{params.leadingquality} TRAILING:{params.trailingquality} SLIDINGWINDOW:{params.windowsize}:{params.windowquality} MAXINFO:{params.targetlength}:{params.strictness} MINLEN:{params.minlen} HEADCROP:{params.headcroplength}"
 
 # ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold}  LEADING:{params.leadingquality} TRAILING:{params.trailingquality} SLIDINGWINDOW:{params.windowsize}:{params.windowquality} MAXINFO:{params.targetlength}:{params.strictness} MINLEN:{params.minlen} HEADCROP:{params.headcroplength}"
+
 
 
    rule fastqc:  
@@ -188,3 +189,9 @@ rule rnaseqc:
          fi
          """
 
+rule rnaseq_multiqc:
+    input: "STAR_QC/index.html","STAR_QC/report.html"
+    output: "Reports/multiqc_report.html"
+    params: rname="pl:multiqc"
+    threads: 1
+    shell:  "module load multiqc; cd Reports && multiqc -f -e featureCounts ../"

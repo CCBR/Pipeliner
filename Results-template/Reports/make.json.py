@@ -24,6 +24,7 @@ D['ExomeWorkflow']=dict()
 L=list()
 L.append("../Reports/rnaseq.png")
 D['ExomeWorkflow']['include']=L
+D['MultiQC']=dict()
 L=list()
 L.append("../Reports/multiqc_report.html")
 D['MultiQC']['include']=L
@@ -37,7 +38,7 @@ for s in samples:
 D['RawFastQC']=dict()
 D['RawFastQC']['include']=L
 
-with open(config['project']['workpath']+'/Reporter/report.json', 'w') as F:
+with open(config['project']['workpath']+'/Reports/report.json', 'w') as F:
     json.dump(D, F, sort_keys = True, indent = 4,ensure_ascii=False)
 
 F.close()

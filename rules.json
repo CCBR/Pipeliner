@@ -65,7 +65,7 @@
         "database_somatic": ["exomeseq-somatic"],
         "svdetect": ["none"],
         "bicseq": ["none"],
-        "generate_QC_table": ["initialqc"]
+        "generate_QC_table": ["initialqc"],
         },
     "final": {
         "exomeseq-pairs": "all-exomeseq-pairs.rl",

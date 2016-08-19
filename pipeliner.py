@@ -422,9 +422,10 @@ def makejson(*args):
         D["rsamps"]=f[0].split()
         D["rgroups"]=f[1].split()
         D["rcontrasts"]=f[2].split()
+        D["rlabels"]=f[3].split()        
         contrasts=D
     except:
-        contrasts={"rsamps":"na","rgroups":"na","rcontrasts":"na"}   
+        contrasts={"rsamps":"na","rgroups":"na","rcontrasts":"na","rlabels":"na"}   
         
    
     D=dict() 
@@ -1889,6 +1890,7 @@ om.grid(row=6,column=1,sticky=W,padx=10,pady=10)
 
 
 rMincount = StringVar()
+rMincount.set("5")
 rmincountL = Label(rframe, text="Threshold  Number of Counts in a Sample",fg=textLightColor,bg=baseColor)
 rmincountL.grid(row=8,column=1,sticky=W,padx=10,pady=10)
 rmincountE = Entry(rframe, bd =2, width=10, bg=entryBgColor,fg=entryFgColor,textvariable=rMincount)
@@ -1897,6 +1899,7 @@ rMincount.trace('w', lambda a,b,c,x="rmincount": makejson(x))
 
 
 rMinsamples = StringVar()
+rMinsamples.set("2")
 rminsamplesL = Label(rframe, text="Minimun Number of Samples that Must Pass Count Threshold",fg=textLightColor,bg=baseColor)
 rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=10)
 rminsamplesE = Entry(rframe, bd =2, width=10, bg=entryBgColor,fg=entryFgColor,textvariable=rMinsamples)
