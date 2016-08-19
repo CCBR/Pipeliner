@@ -66,7 +66,6 @@
         "svdetect": ["none"],
         "bicseq": ["none"],
         "generate_QC_table": ["initialqc"],
-	"rnaseq.multiqc": ["initialqcrnaseq"]
         },
     "final": {
         "exomeseq-pairs": "all-exomeseq-pairs.rl",
