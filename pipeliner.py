@@ -1889,6 +1889,7 @@ om.grid(row=6,column=1,sticky=W,padx=10,pady=10)
 
 
 rMincount = StringVar()
+rMincount.set("5")
 rmincountL = Label(rframe, text="Threshold  Number of Counts in a Sample",fg=textLightColor,bg=baseColor)
 rmincountL.grid(row=8,column=1,sticky=W,padx=10,pady=10)
 rmincountE = Entry(rframe, bd =2, width=10, bg=entryBgColor,fg=entryFgColor,textvariable=rMincount)
@@ -1897,6 +1898,7 @@ rMincount.trace('w', lambda a,b,c,x="rmincount": makejson(x))
 
 
 rMinsamples = StringVar()
+rMinsamples.set("1")
 rminsamplesL = Label(rframe, text="Minimun Number of Samples that Must Pass Count Threshold",fg=textLightColor,bg=baseColor)
 rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=10)
 rminsamplesE = Entry(rframe, bd =2, width=10, bg=entryBgColor,fg=entryFgColor,textvariable=rMinsamples)
