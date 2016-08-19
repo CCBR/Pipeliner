@@ -39,7 +39,7 @@
         "novocraft.sort": ["bam2recal","initialqc","exomeseq-germline-partial","wgslow"],
         "varscan": ["exomeseq-pairs"],
         "gatk.genotype.gvcfs": ["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
-        "gatk.combine.gvcfs": ["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
+        "gatk.combine.gvcfs": ["exomeseq-germline-recal","exomeseq-germline-partial"],
         "script.batchgvcf": ["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
         "gatk.variant.annotator": ["none"],
         "gatk.apply.variant.recal": ["none"],
