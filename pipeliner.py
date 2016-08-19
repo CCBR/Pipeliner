@@ -1898,7 +1898,7 @@ rMincount.trace('w', lambda a,b,c,x="rmincount": makejson(x))
 
 
 rMinsamples = StringVar()
-rMinsamples.set("1")
+rMinsamples.set("2")
 rminsamplesL = Label(rframe, text="Minimun Number of Samples that Must Pass Count Threshold",fg=textLightColor,bg=baseColor)
 rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=10)
 rminsamplesE = Entry(rframe, bd =2, width=10, bg=entryBgColor,fg=entryFgColor,textvariable=rMinsamples)

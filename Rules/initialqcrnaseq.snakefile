@@ -8,7 +8,7 @@ configfile: "run.json"
 if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC",
+     input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
             "postTrimQC",
 
@@ -16,14 +16,14 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC",
+     input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
             "postTrimQC",
 
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
-     input: "STAR_QC",
+     input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC"
 
             
@@ -32,7 +32,7 @@ elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
 else:
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC",
+     input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC"
 
 if config['project']['TRIM'] == "yes":
