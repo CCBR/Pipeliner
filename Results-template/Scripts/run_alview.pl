@@ -61,7 +61,7 @@ while (<G>){
 				$a = 0;
 				for ($a = 0; $a < @type; $a++) {
 					print C "$chrom[$a]\t$position[$a]\t" . $path . '/' . "$tumorsample[$a]\t$gene\t$muts\t$type[$a]\n";
-					print C "$chrom[$a]\t$position[$a]\t" . $path . '/' . "$tumorsample[$a]\t$gene\t$muts\t$type[$a]\n";
+					print C "$chrom[$a]\t$position[$a]\t" . $path . '/' . "$germsample[$a]\t$gene\t$muts\t$type[$a]\n";
 				}
 			}
 			@type = ();
@@ -85,7 +85,7 @@ while (<G>){
 $a = 0;
 for ($a = 0; $a < @type; $a++) {
 	print C "$chrom[$a]\t$position[$a]\t" . $path . '/' . "$tumorsample[$a]\t$gene\t$muts\t$type[$a]\n";
-	print C "$chrom[$a]\t$position[$a]\t" . $path . '/' . "$tumorsample[$a]\t$gene\t$muts\t$type[$a]\n";
+	print C "$chrom[$a]\t$position[$a]\t" . $path . '/' . "$germsample[$a]\t$gene\t$muts\t$type[$a]\n";
 }
 close C;
 close G;
