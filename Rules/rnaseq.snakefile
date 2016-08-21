@@ -8,7 +8,7 @@ configfile: "run.json"
 if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC",,"Reports/multiqc_report.html",
+     input: "STAR_QC","Reports/multiqc_report.html",
             "ebseq_completed.txt",
             "salmonrun/sleuth_completed.txt",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
@@ -32,7 +32,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC",,"Reports/multiqc_report.html",
+     input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
             "postTrimQC",
             "RawCountFile_genes_filtered.txt",
@@ -44,7 +44,7 @@ elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
-     input: "STAR_QC",,"Reports/multiqc_report.html",
+     input: "STAR_QC","Reports/multiqc_report.html",
             "ebseq_completed.txt",
             "salmonrun/sleuth_completed.txt",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
@@ -279,7 +279,7 @@ rule samplecondition:
             for f in input.files:
                 out.write("%s\t"  % f)
                 out.write("%s\t"  % f)
-                out.write("%s\n" % params.groups[i])
+                out.write("%s\t" % params.groups[i])
                 out.write("%s\n" % params.labels[i])                
                 i=i+1
             out.close()

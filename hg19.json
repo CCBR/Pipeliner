@@ -106,10 +106,11 @@
     "rnaseq": {
     "GENOMEFILE": "/fdb/GENCODE/Gencode_human/release_19/GRCh37.p13.genome.fa",
     "GTFFILE": "/fdb/GENCODE/Gencode_human/release_19/gencode.v19.annotation.gtf",
-    "ANNOTATE": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/Hg19_genes.txt",
+#    "ANNOTATE": "/data/CCBR/dev/RNA-Seq-pipeline/ver3/Hg19_genes.txt",
+    "ANNOTATE": "/data/CCBR/db/PipeDB/dev/Hg19_genes.txt",
     "REFFLAT": "/data/CCBR/db/PipeDB/dev/refFlatHg19.txt",
     "RSEMREF": "/data/CCBR/db/PipeDB/Rnaseq/human_gencode",
-    "SALMONREF": "/data/CCBR/db/PipeDB/Rnaseq/human_gencode/transcripts.fa",	
+    "SALMONREF": "/data/CCBR/db/PipeDB/Rnaseq/human_gencode.transcripts.fa",	
     "FASTAWITHADAPTERSETC": "/data/CCBR/dev/RNA-Seq-pipeline/ver2/TruSeq_and_nextera_adapters_new.fa",
     "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-",
     "RRNALIST": "/data/CCBR/db/PipeDB/dev/Hg19.rRNA.interval_list_v3"

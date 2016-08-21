@@ -190,7 +190,7 @@ rule rnaseqc:
          """
 
 rule rnaseq_multiqc:
-    input: "STAR_QC/index.html","STAR_QC/report.html"
+    input: "STAR_QC"
     output: "Reports/multiqc_report.html"
     params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
     threads: 1
