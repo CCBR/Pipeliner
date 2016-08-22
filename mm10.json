@@ -2,8 +2,6 @@
     "exomeseq": {
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
     "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
-#    "BWAGENOME": "/data/CCBR/local/lib/mm10_cre_luc4.fasta",
-#    "GENOME": "/data/CCBR/local/lib/mm10_cre_luc4.fasta",
     "CHROMS": "/data/CCBR/db/PipeDB/lib/mm10_chromosomes",
     "INDELSITES": "/data/CCBR/db/PipeDB/lib/sorted.dict.repaired_mgp.v5.merged.indels.dbSNP142.normed.vcf",
     "KNOWNANCESTRY": "/data/CCBR/db/PipeDB/lib/mm10_dbSNP_allStrains_compSet.vcf",
