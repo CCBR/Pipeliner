@@ -25,7 +25,7 @@
         "novocraft.novoalign": ["none"],
         "bwa.index.ref": ["none"],
         "annovar": ["exomeseq-pairs"],
-        "script.checkqc": ["exomeseq-pairs","exomeseq-somatic","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"],
+        "script.checkqc": ["none"],
         "samtools.sam2bam": ["none"],
         "script.coverage.qc": ["none"],
         "script.bzip2": ["none"],
