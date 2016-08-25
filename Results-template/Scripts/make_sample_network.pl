@@ -75,7 +75,7 @@ close O;
 
 $cmd = 'module load phylip; neighbor << EOF' . "\n" . 'distance.matrix' . "\n" . "N\nY\nEOF";
 system($cmd);
-$cmd = 'module load phylip; drawtree << EOF' . "\nouttree\n" . '/data/CCBR/local/lib/fontfile' . "\nP\nW\n3000\n3000\nC\n" . '0.75' . "\nL\nR\nY\nEOF";
+$cmd = 'module load phylip; drawtree << EOF' . "\nouttree\n" . 'Scripts/fontfile' . "\nP\nW\n3000\n3000\nC\n" . '0.75' . "\nL\nR\nY\nEOF";
 system($cmd);
 $cmd = 'mv plotfile sample_network.bmp';
 system($cmd);
