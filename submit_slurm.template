@@ -14,8 +14,8 @@ rm $R/Reports/makeasnake.log
 touch $R/Reports/makeasnake.log
 touch $R/Reports/snakemake.log
 
-# sbatch --partition=ccr,norm --gres=lscratch:200 --time=120:00:00 --mail-type=BEGIN,END $R/pipeline_ctrl.sh
-sbatch --partition=ccr,norm --gres=lscratch:200 --time=120:00:00  $R/pipeline_ctrl.sh
+sbatch --partition=ccr,norm --gres=lscratch:200 --time=120:00:00 --mail-type=BEGIN,END,FAIL $R/pipeline_ctrl.sh
+# sbatch --partition=ccr,norm --gres=lscratch:200 --time=120:00:00  $R/pipeline_ctrl.sh
 
 
 
