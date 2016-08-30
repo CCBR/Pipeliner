@@ -25,7 +25,7 @@ my @tumorsample=();
 my @germsample=();
 
 my $cmd = '';
-$cmd = 'sort -k1,1 -k16,16 ' . $maffile . ' | awk \'BEGIN { FS = OFS = "\t" } { for(i=1; i<=NF; i++) if($i ~ /^ *$/) $i ="-" }; 1\' > ' . $sortmaf;
+$cmd = 'sort -k1,1 -k17,17 ' . $maffile . ' | awk \'BEGIN { FS = OFS = "\t" } { for(i=1; i<=NF; i++) if($i ~ /^ *$/) $i ="-" }; 1\' > ' . $sortmaf;
 system($cmd);
 
 open G, "<$sortmaf";
