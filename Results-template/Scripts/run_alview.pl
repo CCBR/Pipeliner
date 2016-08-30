@@ -12,6 +12,7 @@ my $maffile = $ARGV[0]; #to fix...
 my @line = ();
 my $path = $ARGV[2];
 my $sortmaf = 'mutect_out/oncotator_out/mutect_variants_sorted.maf';
+my $fixedmaf = 'mutect_out/oncotator_out/mutect_variants_fixed.maf';
 my $sample = 'null';
 my $muts=0;
 my $name = 'null';
@@ -25,8 +26,11 @@ my @tumorsample=();
 my @germsample=();
 
 my $cmd = '';
-$cmd = 'sort -k1,1 -k17,17 ' . $maffile . ' | awk \'BEGIN { FS = OFS = "\t" } { for(i=1; i<=NF; i++) if($i ~ /^ *$/) $i ="-" }; 1\' > ' . $sortmaf;
+$cmd = 'awk \'BEGIN { FS = OFS = "\t" } { for(i=1; i<=NF; i++) if($i ~ /^ *$/) $i ="-" }; 1\' ' . $maffile . ' > ' . $fixedmaf;
 system($cmd);
+$cmd = 'sort -k1,1 -k17,17 ' . $fixedmaf . ' > ' . $sortmaf;
+system($cmd);
+#$cmd = 'sort -k1,1 -k17,17 ' . $maffile . ' | awk \'BEGIN { FS = OFS = "\t" } { for(i=1; i<=NF; i++) if($i ~ /^ *$/) $i ="-" }; 1\' > ' . $sortmaf;
 
 open G, "<$sortmaf";
 while (<G>){
