@@ -9,7 +9,7 @@ rule all_exomeseq_somatic:
             expand("mutect_out/oncotator_out/{p}"+".maf",p=pairs),
             "mutect_out/oncotator_out/mutect_variants_alview.input",
             "strelka_out",
-            "mutect2_out",
+#            "mutect2_out",
             "cnvkit_out",
             "mutect_out",
             "delly_out",

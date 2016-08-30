@@ -4,15 +4,15 @@ use List::Util 'shuffle';
 
 #INPUT
 
-my $outfile = 'mutect_variants_alview.input'; #to fix...
+my $outfile = $ARGV[3] . '_variants_alview.input'; #to fix...
 open C, ">$outfile";
 #print C "Chromosome\tRead_1_Start\tRead_2_Start\tHighCounts\tLowCounts\tHomozygous_informative\tHeterozygous_informative\tComps\tHighProp\tLowProp\tWinner\n";
 
 my $maffile = $ARGV[0]; #to fix...
 my @line = ();
-my $path = $ARGV[2];
-my $sortmaf = 'mutect_out/oncotator_out/mutect_variants_sorted.maf';
-my $fixedmaf = 'mutect_out/oncotator_out/mutect_variants_fixed.maf';
+my $path = $ARGV[4];
+my $sortmaf = $ARGV[2] . $ARGV[3] . '_variants_sorted.maf';
+my $fixedmaf = $ARGV[2] . $ARGV[3] . '_variants_fixed.maf';
 my $sample = 'null';
 my $muts=0;
 my $name = 'null';
