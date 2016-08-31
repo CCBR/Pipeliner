@@ -497,14 +497,14 @@ def makejson(*args):
 
     topic=caller
     
-    if re.match(re.compile(".*"+topic+".*"),"refsets,binsets,workpath,datapath,exomeseq,rnaseq,genomeseq,mirseq,custom,chipseq"):
-        manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,topic)).read()    
-        mandisplay.delete("1.0", END)        
-        mandisplay.insert(INSERT, manpage)
-    if re.match(re.compile(".*"+topic+".*"),"rnaseq,rtrim,rreadlength,rstrand,rdeg,rcol,rthresh,rmincount"):
-        manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,topic)).read()    
-        rmandisplay.delete("1.0", END)        
-        rmandisplay.insert(INSERT, manpage)
+#    if re.match(re.compile(".*"+topic+".*"),"refsets,binsets,workpath,datapath,exomeseq,rnaseq,genomeseq,mirseq,custom,chipseq"):
+#        manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,topic)).read()    
+#        mandisplay.delete("1.0", END)        
+#        mandisplay.insert(INSERT, manpage)
+#    if re.match(re.compile(".*"+topic+".*"),"rnaseq,rtrim,rreadlength,rstrand,rdeg,rcol,rthresh,rmincount"):
+#        manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/{1}.1|groff  -t -e -man -Tascii|col -bx".format(whereiam,topic)).read()    
+#        rmandisplay.delete("1.0", END)        
+#        rmandisplay.insert(INSERT, manpage)
 
 def initialize():  
     global initLock  
@@ -1238,19 +1238,24 @@ mirseqframe=ttk.Frame(nbook)
 chipseqframe=ttk.Frame(nbook)
 customframe=ttk.Frame(nbook)
 
-nbook.add(editframe, text='Project Information')
-nbook.add(opts2, text='Global Options')
-nbook.add(projframe, text='Project Json')
-nbook.add(runframe,text="Run Sequence")
+nbook.add(editframe, text='1.Project Information')
+nbook.add(opts2, text='2.Global Options')
+nbook.add(rnaseqframe,text="3.RNASeq Options")
+nbook.add(exomeseqframe,text="4.ExomeSeq Options")
+nbook.add(genomeseqframe,text="5.GenomeSeq Options")
+nbook.add(pastewriteframe, text='6.Paste/Write Files')
+nbook.add(runframe,text="7.Run Sequence")
+nbook.add(projframe, text='8.Project Json')
+#nbook.add(runframe,text="7.Run Sequence")
 #nbook.add(filesframe, text='Job Status')
-nbook.add(pastewriteframe, text='Paste/Write Files')
+#nbook.add(pastewriteframe, text='6.Paste/Write Files')
 #nbook.add(manualframe,text="Manual")
-nbook.add(rnaseqframe,text="RNASeq Options")
-nbook.add(genomeseqframe,text="GenomeSeq Options")
-nbook.add(exomeseqframe,text="ExomeSeq Options")
-nbook.add(mirseqframe,text="MirSeq Options")
-nbook.add(chipseqframe,text="ChIPSeq Options")
-nbook.add(customframe,text="Custom Pipeline")
+#nbook.add(rnaseqframe,text="RNASeq Options")
+#nbook.add(genomeseqframe,text="5.GenomeSeq Options")
+#nbook.add(exomeseqframe,text="4.ExomeSeq Options")
+#nbook.add(mirseqframe,text="MirSeq Options")
+#nbook.add(chipseqframe,text="ChIPSeq Options")
+#nbook.add(customframe,text="Custom Pipeline")
 
 nbook.pack( side = LEFT,fill=BOTH,padx=10,pady=10,expand=YES )
 
@@ -1729,14 +1734,14 @@ optspanel2 = LabelFrame(opts2,text="Pipeline Details",fg=textLightColor,bg=baseC
 optspanel2.grid(row=0,column=2,sticky=W,padx=10,pady=10)
 
 # Manpage area
-manscrollbar = Scrollbar(optspanel2)
-manscrollbar.grid(row=1,column=3,sticky=W,padx=10,pady=10)
-mandisplay = Text(optspanel2,width=60,height=26,bg="white",fg="black",font=("nimbus mono","12"),yscrollcommand = manscrollbar.set)
-manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/exomeseq.1|groff  -t -e -man -Tascii|col -bx".format(whereiam)).read()
-mandisplay.insert(INSERT, manpage)
-mandisplay.mark_set("insert", "1.0")
-mandisplay.grid(row=1,column=2,sticky=W,padx=10,pady=10)
-manscrollbar['command']=mandisplay.yview
+#manscrollbar = Scrollbar(optspanel2)
+#manscrollbar.grid(row=1,column=3,sticky=W,padx=10,pady=10)
+#mandisplay = Text(optspanel2,width=60,height=26,bg="white",fg="black",font=("nimbus mono","12"),yscrollcommand = manscrollbar.set)
+#manpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/exomeseq.1|groff  -t -e -man -Tascii|col -bx".format(whereiam)).read()
+#mandisplay.insert(INSERT, manpage)
+#mandisplay.mark_set("insert", "1.0")
+#mandisplay.grid(row=1,column=2,sticky=W,padx=10,pady=10)
+#manscrollbar['command']=mandisplay.yview
 # end Manpage area
 
 
@@ -1831,8 +1836,8 @@ rmanscrollbar = Scrollbar(rframe2)
 rmanscrollbar.grid(row=1,column=3,sticky=W,padx=10,pady=10)
  
 rmandisplay = Text(rframe2,width=60,height=26,bg="white",fg="black",font=("nimbus mono","12"),yscrollcommand = rmanscrollbar.set)
-rmanpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/exomeseq.1|groff  -t -e -man -Tascii|col -bx".format(whereiam)).read()
-rmandisplay.insert(INSERT, manpage)
+#rmanpage=os.popen("man -M {0}/Pipeliner/Manpages/ {0}/Pipeliner/Manpages/exomeseq.1|groff  -t -e -man -Tascii|col -bx".format(whereiam)).read()
+#rmandisplay.insert(INSERT, manpage)
 rmandisplay.mark_set("insert", "1.0")
 rmandisplay.grid(row=1,column=2,sticky=W,padx=10,pady=10)
 rmanscrollbar['command']=rmandisplay.yview

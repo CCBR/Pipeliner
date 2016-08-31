@@ -145,7 +145,8 @@
         "MINCOUNTGENEJUNCTIONS": 5,
         "MINSAMPLES": 1,
         "PIPERLIB": "/data/CCBR/db/PipeDB/R2/",
-        "RSEM": "/data/CCBR/apps/rsem1.2.23/RSEM-1.2.23/"
+        "RSEM": "/data/CCBR/apps/rsem1.2.23/RSEM-1.2.23/",
+	"FASTQ_SCREEN": "/data/CCBR/db/PipeDB/bin/fastq_screen_v0.6.3/fastq_screen"
     },
 	 "chipseq":{},
 	 "mirseq":{
