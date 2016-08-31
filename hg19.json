@@ -114,7 +114,8 @@
 #    "FASTAWITHADAPTERSETC": "/data/CCBR/dev/RNA-Seq-pipeline/ver2/TruSeq_and_nextera_adapters_new.fa",
     "FASTAWITHADAPTERSETC": "/data/CCBR/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
     "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-",
-    "RRNALIST": "/data/CCBR/db/PipeDB/dev/Hg19.rRNA.interval_list_v3"
+    "RRNALIST": "/data/CCBR/db/PipeDB/dev/Hg19.rRNA.interval_list_v3",
+    "FASTQ_SCREEN_CONFIG": "/data/CCBR/db/PipeDB/fastq_screen/fastq_screen.conf"
     },
 "mirseq": {
 "run_info":{    
