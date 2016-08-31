@@ -65,7 +65,7 @@
         "avia.make.bed.somatic": ["exomeseq-somatic"],
         "avia.make.bed.germ": ["exomeseq-germline"],
         "avia.make.bed.genomeseq": ["wgslow"],
-        "database_germline": ["exomeseq-germline",
+        "database_germline": ["exomeseq-germline"],
         "database_genomeseq": ["wgslow"],
         "database_somatic": ["exomeseq-somatic"],
         "svdetect": ["none"],
