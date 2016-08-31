@@ -15,3 +15,7 @@ rule all_initialqcgenomeseq:
             expand("QC/{s}.qualimapReport/genome_results.txt",s=samples),
 #            config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
     output:
+    shell:  """
+             rm *.out
+
+            """

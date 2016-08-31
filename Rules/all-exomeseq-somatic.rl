@@ -38,3 +38,7 @@ rule all_exomeseq_somatic:
             "mutect_out/oncotator_out/mutect_variants.maf",
             "mutect_out/mutsigCV_out/somatic.sig_genes.txt"
     output:
+    shell:  """
+             rm *.out
+
+            """

@@ -5,3 +5,7 @@ rule all_wgslow:
            "sample_network.bmp",
            "combined.snpeff.vcf"
     output: 
+    shell:  """
+             rm *.out
+
+            """
