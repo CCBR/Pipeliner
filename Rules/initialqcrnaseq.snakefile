@@ -94,7 +94,7 @@ if config['project']['TRIM'] == "yes":
             "TrimFQscreen/{name}.R2.trimmed_screen.txt",
             "TrimFQscreen/{name}.R2.trimmed_screen.png"
       params: rname='pl:fqscreen',fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
-            outdir = "FQscreen",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
+            outdir = "TrimFQscreen",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
             config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
       threads: 8
       shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"
