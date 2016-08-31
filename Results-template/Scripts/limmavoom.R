@@ -6,6 +6,7 @@ library('reshape')
 library('ggplot2')
 library('limma')
 library('geneplotter')
+library('ggfortify')
 
 ## grab args
 args <- commandArgs(trailingOnly = TRUE)
@@ -20,6 +21,7 @@ setwd(DIR)
 # read files
 sampleinfo=read.delim(FILE1)
 x = read.delim(FILE2,row.names=1)
+colnames(x)=as.character(sampleinfo[,4])
 # sampleFiles=as.character(sampleinfo[,2])
 Group <- factor(sampleinfo$condition)
 design=model.matrix(~0+Group)
@@ -80,4 +82,13 @@ all.genes.con$FC <- ifelse(all.genes.con$logFC<0, -1/(2^all.genes.con$logFC), 2^
 write.table(all.genes.con,file=paste("Limma_deg_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
 }}
 #
+## PCA
+pr2=prcomp(t(v1$E))
+condition = factor(sampleinfo$condition)
+dd=cbind(t(v1$E),condition)
+
+png("LIMMA_PCA.png")
+autoplot(pr2,data=dd, colour = 'condition')
+dev.off()
+
 
