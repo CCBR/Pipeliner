@@ -16,6 +16,6 @@ rule all_initialqc:
             config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
     output:
     shell:  """
-             rm *.out
+             mv *.out slurmfiles/; mkdir bamstats; mv *onTarget.bam_stats bamstats/; mv *onTarget.bam_stats.err bamstats/; rm *sorted.bam.bai
 
             """

@@ -7,6 +7,6 @@ rule all_exomeseq_germline:
            "exome.snpeff.vcf"
     output: 
     shell:  """
-             rm *.out
+             mv *.out slurmfiles/
 
             """

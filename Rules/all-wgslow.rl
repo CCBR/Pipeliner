@@ -6,6 +6,6 @@ rule all_wgslow:
            "combined.snpeff.vcf"
     output: 
     shell:  """
-             rm *.out
+             mv *.out slurmfiles/
 
             """
