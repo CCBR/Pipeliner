@@ -69,8 +69,8 @@
     },
     "gatk_genotype_gvcfs":
     {
-        "threads": "8",
-        "time" : "96:00:00",
+        "threads": "32",
+        "time" : "10-00:00:00",
         "mem": "96g"
     },
     "gatk_genotyping":
@@ -90,7 +90,7 @@
     },
     "gatk_recal":
     {
-        "threads": "24",
+        "threads": "32",
         "mem": "64g"
     },
     "gatk_variant_annnotator":
