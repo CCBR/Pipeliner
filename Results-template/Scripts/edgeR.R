@@ -4,6 +4,7 @@ library('RColorBrewer')
 library('gplots')
 library('reshape') 
 library('ggplot2')
+library('ggfortify')
 
 ## grab args
 args <- commandArgs(trailingOnly = TRUE)
@@ -19,6 +20,7 @@ setwd(DIR)
 # read files
 sampleinfo=read.delim(FILE1)
 x = read.delim(FILE2,row.names=1)
+colnames(x)=as.character(sampleinfo[,4])
 # sampleFiles=as.character(sampleinfo[,2])
 ## read annotation file
 ## ann=read.delim(ANNOTATE)
@@ -96,8 +98,14 @@ heatmap.2(mat, trace="none", col = rev(hmcol), margin=c(16, 16))
 dev.off()
 #pca
 pr2=prcomp(t(ylog2))
+dd=cbind(t(ylog2),condition)
+
 png("edgeR_prcomp.png")
 # biplot(pr2)
 plot(pr2$x[,1],pr2$x[,2],col="red", main="PCA plot using prcomp and Logcpm data")
 text(pr2$x[,1],pr2$x[,2], labels=colnames(ylog2), cex=0.7, pos=4)
+dev.off()
+
+png("edgeR_pca.png")
+autoplot(pr2,data=dd, colour = 'condition')
 dev.off()
