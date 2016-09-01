@@ -6,3 +6,8 @@ rule all_exomeseq_germline:
            "sample_network.bmp",
            "exome.snpeff.vcf"
     output: 
+    params: rname="final"
+    shell:  """
+             mv *.out slurmfiles/
+
+            """
