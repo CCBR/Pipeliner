@@ -144,6 +144,11 @@
         "threads": "8",
         "mem": "96g"
     },
+    "qualimap_wgs":
+    {
+        "threads": "8",
+        "mem": "96g"
+    },
     "samtools_flagstats_dedup":
     {
         "threads": "1"
