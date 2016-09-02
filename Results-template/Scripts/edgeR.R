@@ -98,7 +98,7 @@ heatmap.2(mat, trace="none", col = rev(hmcol), margin=c(16, 16))
 dev.off()
 #pca
 pr2=prcomp(t(ylog2))
-dd=cbind(t(ylog2),condition)
+dd=cbind(t(ylog2),condition=as.character(condition))
 
 png("edgeR_prcomp.png")
 # biplot(pr2)

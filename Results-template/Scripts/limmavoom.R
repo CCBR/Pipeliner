@@ -85,7 +85,7 @@ write.table(all.genes.con,file=paste("Limma_deg_",cons[i],"_all_genes.txt",sep="
 ## PCA
 pr2=prcomp(t(v1$E))
 condition = factor(sampleinfo$condition)
-dd=cbind(t(v1$E),condition)
+dd=cbind(t(v1$E),condition=as.character(condition))
 
 png("LIMMA_PCA.png")
 autoplot(pr2,data=dd, colour = 'condition')
