@@ -68,6 +68,7 @@
     "MUTECTSNP": ""
 },
      "rnaseq":{
+"FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
 "GENOMEFILE": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/ref.fa",	 
 "GTFFILE": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/genes.gtf",
 "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/genes-",
