@@ -577,7 +577,7 @@ def symlink(data):
 
 
     makejson("none")
-    
+
 def show(x,y,fg,bg,height,width):
     sm=Toplevel()
     sm.title(y)
@@ -1243,6 +1243,7 @@ nbook.add(opts2, text='2.Global Options')
 nbook.add(rnaseqframe,text="3a.RNASeq Options")
 nbook.add(exomeseqframe,text="3b.ExomeSeq Options")
 nbook.add(genomeseqframe,text="3c.GenomeSeq Options")
+nbook.add(mirseqframe,text="3d.MirSeq Options")
 nbook.add(pastewriteframe, text='4.Paste/Write Files')
 nbook.add(runframe,text="5.Run Sequence")
 nbook.add(projframe, text='View Project Json')
