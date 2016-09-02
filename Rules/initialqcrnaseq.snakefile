@@ -10,7 +10,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
      params: batch='--time=168:00:00'
      input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "postTrimQC",
+            "postTrimQC",expand("TrimFQscreen/{name}_R1_001_trim_paired_screen.txt",name=samples)
 
 
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
@@ -18,22 +18,20 @@ elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
      params: batch='--time=168:00:00'
      input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "postTrimQC",
+            "postTrimQC",expand("TrimFQscreen/{name}_R1_001_trim_paired_screen.txt",name=samples)
 
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
      input: "STAR_QC","Reports/multiqc_report.html",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC"
-
-            
+            expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",expand("FQscreen/{name}.R1_screen.txt",name=samples)
      params: batch='--time=168:00:00'
      #input: "files_to_rnaseqc.txt","STAR_QC","RawCountFile_filtered.txt","sampletable.txt","deseq2_pca.png","edgeR_prcomp.png","Limma_MDS.png"
 else:
   rule all:
      params: batch='--time=168:00:00'
      input: "STAR_QC","Reports/multiqc_report.html",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC"
+            expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",expand("FQscreen/{name}.R1_screen.txt",name=samples)
 
 if config['project']['TRIM'] == "yes":
    rule trimmomatic_pe:
@@ -85,7 +83,18 @@ if config['project']['TRIM'] == "yes":
 #                  exit 1
 #             fi
 #            """
-
+   rule trimfastq_screen:
+      input:  expand("trim/{name}_R1_001_trim_paired.fastq.gz", name=samples), expand("trim/{name}_R2_001_trim_paired.fastq.gz", name=samples) 
+      output: "TrimFQscreen/{name}_R1_001_trim_paired_screen.txt",
+            "TrimFQscreen/{name}_R1_001_trim_paired_screen.png",
+            "TrimFQscreen/{name}_R1_001_trim_paired_screen.txt",
+            "TrimFQscreen/{name}_R1_001_trim_paired_screen.png"
+      params: rname='pl:fqscreen',fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
+            outdir = "TrimFQscreen",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
+            config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
+      threads: 8
+      shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"
+   
    rule star1p:
       input: file1= "trim/{name}_R1_001_trim_paired.fastq.gz",file2="trim/{name}_R2_001_trim_paired.fastq.gz"#,file3="fastqc_status_checked.txt"
       output: out1= "{name}.SJ.out.tab"#,out2= "{name}.SJ.out.tab.Pass1.sjdb"
@@ -118,7 +127,18 @@ else:
       threads: 32
       shell: "mkdir -p {output};module load {params.fastqcver}; fastqc {input} -t {threads} -o {output}"
 
-  
+   rule fastq_screen:
+      input:  expand(config['project']['workpath']+"/{name}.R1."+config['project']['filetype'], name=samples), expand(config['project']['workpath']+"/{name}.R2."+config['project']['filetype'], name=samples)
+      output: "FQscreen/{name}.R1_screen.txt",
+            "FQscreen/{name}.R1_screen.png",
+            "FQscreen/{name}.R2_screen.txt",
+            "FQscreen/{name}.R2_screen.png"
+      params: rname='pl:fqscreen',fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
+            outdir = "FQscreen",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
+            config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
+      threads: 8
+      shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"
+
    rule star1p:      
       input: file1= config['project']['workpath']+"/{name}.R1."+config['project']['filetype'],file2=config['project']['workpath']+"/{name}.R2."+config['project']['filetype'] 
       output: out1= "{name}.SJ.out.tab"#,out2= "{name}.SJ.out.tab.Pass1.sjdb"
