@@ -104,6 +104,7 @@
     "MUTECTVARIANTS": "--dbsnp /fdb/muTect/dbsnp_137.b37.vcf --cosmic /fdb/muTect/cosmic_v67.b37.vcf"
     },
     "rnaseq": {
+    "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
     "GENOMEFILE": "/fdb/GENCODE/Gencode_human/release_19/GRCh37.p13.genome.fa",
     "GTFFILE": "/fdb/GENCODE/Gencode_human/release_19/gencode.v19.annotation.gtf",
 #    "ANNOTATE": "/data/CCBR_Pipeliner/dev/RNA-Seq-pipeline/ver3/Hg19_genes.txt",
