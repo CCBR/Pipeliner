@@ -1,9 +1,9 @@
 {
     "colors":{
-        "base":["gray"],
-        "menu":["black","white"],
-        "widget":["black","white"],
-        "text":["blue","black"],
+        "base":["beige"],
+        "menu":["white","firebrick4"],
+        "widget":["blue","white"],
+        "text":["blue","brown"],
         "entry":["black","white"],
         "project":["black","white"],
         "status":["green","black"],
