@@ -35,8 +35,7 @@ else:
      input: "STAR_QC","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
 
-if config['project']['TRIM'] == "yes":
-   rule fastq_screen:
+rule fastq_screen:
       input:  expand(config['project']['workpath']+"/{name}.R1."+config['project']['filetype'], name=samples), expand(config['project']['workpath']+"/{name}.R2."+config['project']['filetype'], name=samples)
       output: "FQscreen/{name}.R1_screen.txt",
             "FQscreen/{name}.R1_screen.png",
@@ -47,6 +46,10 @@ if config['project']['TRIM'] == "yes":
             config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
       threads: 8
       shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"
+
+
+
+if config['project']['TRIM'] == "yes":
 
    rule trimmomatic_pe:
       input: file1= config['project']['workpath']+"/{name}.R1."+config['project']['filetype'],file2=config['project']['workpath']+"/{name}.R2."+config['project']['filetype'] 
@@ -129,18 +132,6 @@ else:
       params: rname='pl:fastqc',batch='--cpus-per-task=32 --mem=110g --time=48:00:00',fastqcver=config['bin'][pfamily]['FASTQCVER']
       threads: 32
       shell: "mkdir -p {output};module load {params.fastqcver}; fastqc {input} -t {threads} -o {output}"
-
-   rule fastq_screen:
-      input:  expand(config['project']['workpath']+"/{name}.R1."+config['project']['filetype'], name=samples), expand(config['project']['workpath']+"/{name}.R2."+config['project']['filetype'], name=samples)
-      output: "FQscreen/{name}.R1_screen.txt",
-            "FQscreen/{name}.R1_screen.png",
-            "FQscreen/{name}.R2_screen.txt",
-            "FQscreen/{name}.R2_screen.png"
-      params: rname='pl:fqscreen',fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
-            outdir = "FQscreen",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
-            config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
-      threads: 8
-      shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"
 
    rule star1p:      
       input: file1= config['project']['workpath']+"/{name}.R1."+config['project']['filetype'],file2=config['project']['workpath']+"/{name}.R2."+config['project']['filetype'] 
