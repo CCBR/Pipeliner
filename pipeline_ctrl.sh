@@ -13,7 +13,7 @@ snakemake  -s $R/Snakefile -d $R --printshellcmds --cluster-config $D/cluster.js
 
 
 
-cd $R/Reports && $R/Reports/sum-fastqc-lite.py *fastqc.zip ../QC ./
+cd $R/Reports && $R/Reports/sum-fastq-lite.py *fastqc.zip ../QC ./
 cd $R/Reports && $R/Reports/ngser.pl ../QC ./
 cd $R/Reports && $R/Reports/stats2html.py
 
