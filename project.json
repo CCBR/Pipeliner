@@ -10,7 +10,7 @@
         "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-100",
         "STARSTRANDCOL": "2",
         "STRANDED": "0",
-        "TRIM": "yes",
+        "TRIM": "no",
         "analyst": "",
         "annotation": "hg19",
         "batchsize": "20",
@@ -23,7 +23,7 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/PipelineTestSeqs/rnaseq/human",
+        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
@@ -31,25 +31,46 @@
         "id": "",
         "organism": "",
         "pairs": {},
-        "pfamily": "rnaseq",
+        "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "initialqcrnaseq",
+        "pipeline": "initialqc",
         "platform": "Illumina",
         "poc": "",
         "rgid": {
-            "SS.SRR950078": {
+            "3435Ttest": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "SS.SRR950078"
+                "rgsm": "3435Ttest"
             },
-            "SS.SRR950079": {
+            "D115test": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "SS.SRR950079"
+                "rgsm": "D115test"
+            },
+            "F22testA": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F22testA"
+            },
+            "F22testB": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F22testB"
+            },
+            "F22testC": {
+                "rgcn": "na",
+                "rglb": "na",
+                "rgpl": "ILLUMINA",
+                "rgpu": "na",
+                "rgsm": "F22testC"
             }
         },
         "samples": {
@@ -58,11 +79,14 @@
         "smparams": [],
         "technique": "",
         "units": {
-            "SS.SRR950078": "SS.SRR950078",
-            "SS.SRR950079": "SS.SRR950079"
+            "3435Ttest": "3435Ttest",
+            "D115test": "D115test",
+            "F22testA": "F22testA",
+            "F22testB": "F22testB",
+            "F22testC": "F22testC"
         },
         "username": "",
         "version": "1.0",
-        "workpath": "/home/jailwalapa/pipe_test2"
+        "workpath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test"
     }
 }

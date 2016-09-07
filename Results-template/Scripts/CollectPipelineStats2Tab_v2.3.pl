@@ -171,6 +171,26 @@ if ($printmode == 1 or $printmode == 2) {
   close(DMT);
 }
 elsif ($printmode == 3){
+ if ($pipeline == 5) {
+    opendir(DIR,$projectpath) or die "Can't open directory: $projectpath: $!\n";
+  	my @bams = grep {-f "$projectpath/$_" && m/\.star_rg_added\.sorted\.dmark\.bam$/} readdir(DIR);
+  	close(DIR);
+  	foreach my $bamfile (@bams){
+    	my $sname;
+    	if ($bamfile =~ m/(.+)\.star_rg_added\.sorted\.dmark\.bam$/) {
+      	$sname = $1;
+      	$demultstats{$sname} = 1;
+    	}
+    	else{
+      		die "\nError: Sample Name parsing failed for: $bamfile\n\n";
+    	}
+    	if (-e "$projectpath/run_trimmomatic.err"){
+      		rename "$projectpath/run_trimmomatic.err","$projectpath/$sname\_run_trimmomatic.err";
+      		print STDERR "\nWarning: renaming Trimmomatic log file for sample: $sname\n\n";
+    	}
+  	}
+ }
+ else {
   opendir(DIR,$projectpath) or die "Can't open directory: $projectpath: $!\n";
   my @bams = grep {-f "$projectpath/$_" && m/\.dedup\.bam$/} readdir(DIR);
   close(DIR);
@@ -188,6 +208,7 @@ elsif ($printmode == 3){
       print STDERR "\nWarning: renaming Trimmomatic log file for sample: $sname\n\n";
     }
   }
+}
 }
 
 #print  multiplex and summary tab-delimited text file headers
@@ -245,14 +266,14 @@ foreach my $sample (sort {lc($a) cmp lc($b)} keys %demultstats){
   #find alignment stats in analysis sample folders
   my $samplefile = $sample; 
   $samplefile = 'Sample_'.$samplefile if (($pipeline == 1 or $pipeline == 2) and $samplefile !~ m/^Sample_/); #should be adding 'Sample_'. to all sample names for future
-  my $markdfile = $samplefile.'_MARKEDUPmetrics.txt'; # for ChIPseq and Star RNAseq duplication stats
+  my $markdfile = $samplefile.'.star.duplic'; # for ChIPseq and Star RNAseq duplication stats
   $markdfile = $samplefile.'_MKDUPmetrics.txt' if ($pipeline == 2);
   $markdfile = $samplefile.'.sorted.txt' if ($pipeline == 3 or $pipeline == 4);
   my $bamfile = $samplefile.'_bowtie2.err';  # for ChIPseq stats
   my $trimfile = 'QC/'.$samplefile.'_run_trimmomatic.err';  # for RNAseq and exome trimming stats
-  my $picardfile = $samplefile.'_RnaSeqMetrics.txt'; # for RNAseq RNA stats
+  my $picardfile = $samplefile.'.RnaSeqMetrics.txt'; # for RNAseq RNA stats
   my $tophatfile = 'align_summary.txt';  # for tophat RNSseq alignment stats
-  my $starfile = $samplefile.'_Log.final.out'; #for star RNAseq alignment stats
+  my $starfile = $samplefile.'.Log.final.out'; #for star RNAseq alignment stats
   my $exomefile1 = $samplefile.'.dedup.bam.bam_stats';  ###exome alignment and markdup stats
   my $exomefile2 = $samplefile.'.dedup.bam.onTarget.bam_stats'; ###exome on-target stats
   my $exomecovfile = 'QC/'.$samplefile.'.qualimapReport/genome_results.txt'; #exome coverage stats
