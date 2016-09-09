@@ -82,10 +82,11 @@ else:
 if config['project']['TRIM'] == "yes":
    rule trimmomatic_pe:
       input: file1= config['project']['workpath']+"/{name}.R1."+config['project']['filetype'],file2=config['project']['workpath']+"/{name}.R2."+config['project']['filetype'] 
-      output: out11="trim/{name}_R1_001_trim_paired.fastq.gz",out12="trim/{name}_R1_001_trim_unpaired.fastq.gz",out21="trim/{name}_R2_001_trim_paired.fastq.gz",out22="trim/{name}_R2_001_trim_unpaired.fastq.gz"
+      output: out11="trim/{name}_R1_001_trim_paired.fastq.gz",out12="trim/{name}_R1_001_trim_unpaired.fastq.gz",out21="trim/{name}_R2_001_trim_paired.fastq.gz",out22="trim/{name}_R2_001_trim_unpaired.fastq.gz",err="QC/{name}_run_trimmomatic.err"
       params: rname='pl:trimmomatic_pe',batch='--cpus-per-task=32 --mem=110g --time=48:00:00',trimmomaticver=config['bin'][pfamily]['TRIMMOMATICVER'],fastawithadaptersetc=config['references'][pfamily]['FASTAWITHADAPTERSETC'],seedmismatches=config['bin'][pfamily]['SEEDMISMATCHES'],palindromeclipthreshold=config['bin'][pfamily]['PALINDROMECLIPTHRESHOLD'],simpleclipthreshold=config['bin'][pfamily]['SIMPLECLIPTHRESHOLD'],leadingquality=config['bin'][pfamily]['LEADINGQUALITY'],trailingquality=config['bin'][pfamily]['TRAILINGQUALITY'],windowsize=config['bin'][pfamily]['WINDOWSIZE'],windowquality=config['bin'][pfamily]['WINDOWQUALITY'],targetlength=config['bin'][pfamily]['TARGETLENGTH'],strictness=config['bin'][pfamily]['STRICTNESS'],minlen=config['bin'][pfamily]['MINLEN'],headcroplength=config['bin'][pfamily]['HEADCROPLENGTH']
       threads:32
-      shell:"module load {params.trimmomaticver}; java -classpath $TRIMMOJAR   org.usadellab.trimmomatic.TrimmomaticPE -threads {threads} {input.file1} {input.file2} {output.out11} {output.out12} {output.out21} {output.out22} ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold}  LEADING:{params.leadingquality} TRAILING:{params.trailingquality} SLIDINGWINDOW:{params.windowsize}:{params.windowquality} MAXINFO:{params.targetlength}:{params.strictness} MINLEN:{params.minlen} HEADCROP:{params.headcroplength}"
+#      shell:"module load {params.trimmomaticver}; java -classpath $TRIMMOJAR   org.usadellab.trimmomatic.TrimmomaticPE -threads {threads} {input.file1} {input.file2} {output.out11} {output.out12} {output.out21} {output.out22} ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold}  LEADING:{params.leadingquality} TRAILING:{params.trailingquality} SLIDINGWINDOW:{params.windowsize}:{params.windowquality} MAXINFO:{params.targetlength}:{params.strictness} MINLEN:{params.minlen} HEADCROP:{params.headcroplength}"
+      shell:"module load {params.trimmomaticver}; java -classpath $TRIMMOJAR   org.usadellab.trimmomatic.TrimmomaticPE -threads {threads} {input.file1} {input.file2} {output.out11} {output.out12} {output.out21} {output.out22} ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold} > {output.err}"
 
 # ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold}  LEADING:{params.leadingquality} TRAILING:{params.trailingquality} SLIDINGWINDOW:{params.windowsize}:{params.windowquality} MAXINFO:{params.targetlength}:{params.strictness} MINLEN:{params.minlen} HEADCROP:{params.headcroplength}"
 
@@ -264,9 +265,16 @@ rule rnaseq_multiqc:
     threads: 1
     shell:  """
             module load multiqc
-            cd Reports && multiqc -f -e featureCounts -e picard ../
-
+#            cd Reports && multiqc -f -e featureCounts -e picard ../
+            cd Reports && multiqc -f ../ 
             """
+
+rule generate_QC_table:
+    input: expand("{s}.dedup.bam.onTarget.bam_stats",s=samples), expand("{s}.dedup.bam.bam_stats",s=samples), expand("QC/{s}_run_trimmomatic.err",s=samples), expand("QC/{s}.qualimapReport/genome_results.txt",s=samples), expand("{s}.sorted.txt",s=samples), "multiqc_report.html"
+    output: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
+    params: project=config['project']['id'],flowcell=config['project']['flowcellid'],dir=config['project']['workpath'],rname="pl:QC_table"
+    shell: "perl Scripts/CollectPipelineStats2Tab_v2.3.pl -p {params.project} -f {params.flowcell} -d {params.dir} -r 3 -e 2; perl Scripts/Tab2Excel_v2.3.pl -i {params.project}_{params.flowcell} -r 3"
+
    
 rule samplecondition:
    input: files=expand("{name}.star.count.txt", name=samples)
