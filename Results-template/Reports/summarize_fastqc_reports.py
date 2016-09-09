@@ -1,20 +1,9 @@
-#
-
-# /Users/mcintoshc/bin/fastqc/FastQC.app/Contents/Resources/Java/fastqc \
-# --outdir
-
-
 ####################################################################################################
 #  summarize_fastqc_reports_gz.py
 #  Developer: Carl McIntosh
 #  Email:     mcintoshc@nih.gov
 #  Date:      2015-05
 ####################################################################################################
-# This pipeline was developed to run PandaSeq on paired-end reads to generate "single-end reads" as
-# specified by PandaSeq's developer Josh Neufeld and can be obtained at GitHub:
-#      https://github.com/neufeld/pandaseq/wiki/PANDAseq-Assembler
-#
-# For this pipeline, we selected rather restrictive parameters for PandaSeq which resulted in < 5%
 
 ## Import Section
 import sys
@@ -83,15 +72,17 @@ def extract_fastqc_zip_files(inSEARCH_SUFFIX_FILE_NAME, inSEARCH_DIR, inSUPPLIME
     ## http://stackoverflow.com/questions/2186525/use-a-glob-to-find-files-recursively-in-python
     fastqc_ziped_files = []
     for root, directory_names, filenames in os.walk(inSEARCH_DIR):
-        for filename in fnmatch.filter(filenames, '*' + inSEARCH_SUFFIX_FILE_NAME):
-            fastqc_ziped_files.append(os.path.join(root, filename))
+		for filename in fnmatch.filter(filenames, '*' + inSEARCH_SUFFIX_FILE_NAME):
+			fastqc_ziped_files.append(os.path.join(root, filename))
+	    
+    fastqc_ziped_files.sort()
 
     print ("Extracting " + str(len(fastqc_ziped_files)) + " files:")
 
     for inZipFastqcFile in fastqc_ziped_files:
     	print "\t" + inZipFastqcFile
-        file_name = ntpath.basename(inZipFastqcFile)
-        file_name = file_name.split(".")[0]
+        file_name = inZipFastqcFile.split("/")[-1]
+        file_name = file_name.replace(".zip", "")
 
         ## Create Acrhive manifest to locate two files to parse
         archive_manifest_tmp= inSUPPLIMENTAL_QC_DIR + "/" + "archive_manifest_tmp.txt"
@@ -148,8 +139,8 @@ def process_summary_file(in_html_file, in_R_script_file, in_fastqc_ziped_files, 
     for inZipFastqcFile in in_fastqc_ziped_files:
     	print "\t" + inZipFastqcFile
         row_table_count = row_table_count + 1
-        file_name = ntpath.basename(inZipFastqcFile)
-        file_name = file_name.split(".")[0]
+        file_name = inZipFastqcFile.split("/")[-1]
+        file_name = file_name.replace(".zip", "")
         inSummary_file = in_SUPPLIMENTAL_QC_DIR + "/" + file_name + ".summary.txt"
         inFastqc_data_file = in_SUPPLIMENTAL_QC_DIR + "/" + file_name + ".fastqc_data.txt"
 
@@ -170,8 +161,12 @@ def process_summary_file(in_html_file, in_R_script_file, in_fastqc_ziped_files, 
             elif summary_dict[aKey] == "FAIL":
                 HTML_FILE.write("<td bgcolor=\"#FF0000\" title=\"" + title + " \"></td>")
             else:
-                HTML_FILE.write("\n<td>" + str(row_table_count) + "</td>" + "<td bgcolor=\"#FFFFFF\" title=\"" + file_name + "\">" + "<a href=#" + file_name + ">" + file_name + "</a>"+ "</td>")
-                
+                full_file_name = inZipFastqcFile.split("/")[-1]
+                full_file_name = full_file_name.replace("zip", "html")
+
+                full_report_relative_path = "../" + inZipFastqcFile.split("/")[-2] + "/" + full_file_name
+                HTML_FILE.write("\n<td>" + str(row_table_count) + "</td>" + "<td bgcolor=\"#FFFFFF\" title=\"" + file_name + "\">" + "<a href=#" + file_name + ">" + file_name + "</a>" + " <a href=" + full_report_relative_path + " target=\"_blank\"> [Full Report]</a>" + "</td>")
+
                 for grep_search_term in basic_stats[3:]:
 					grep_result = subprocess.Popen(["grep", "-m", "1" ,grep_search_term, inFastqc_data_file], stdout=subprocess.PIPE)
 					result = grep_result.stdout.read()
@@ -180,11 +175,6 @@ def process_summary_file(in_html_file, in_R_script_file, in_fastqc_ziped_files, 
 					result = result.lstrip()
 #					print (grep_search_term + ": " + result)
 					HTML_FILE.write("<td>" + result + "</td>")
-
-
-
-
-
 
             if aKey == "Sample":
                 row_count = row_count + 1
@@ -222,8 +212,8 @@ def process_summary_file(in_html_file, in_R_script_file, in_fastqc_ziped_files, 
     row_counter = 0
     for inZipFastqcFile in in_fastqc_ziped_files:
         row_counter = row_counter + 1
-        file_name = ntpath.basename(inZipFastqcFile)
-        file_name = file_name.split(".")[0]
+        file_name = inZipFastqcFile.split("/")[-1]
+        file_name = file_name.replace(".zip", "")
         
         inSummary_file = in_SUPPLIMENTAL_QC_DIR + "/" + file_name + ".summary.txt"
 
@@ -234,9 +224,15 @@ def process_summary_file(in_html_file, in_R_script_file, in_fastqc_ziped_files, 
                 (val,key,file) = sum_file_line.split("\t")
                 summary_dict[key]=val
                 summary_dict["Sample"]=file
+
+
+		full_file_name = inZipFastqcFile.split("/")[-1]
+		full_file_name = full_file_name.replace("zip", "html")
+		
+		full_report_relative_path = "../" + inZipFastqcFile.split("/")[-2] + "/" + full_file_name
         
         HTML_FILE.write("\n\n" + "<div class=\"outer\">" + "\n")
-        HTML_FILE.write("<h3><a name=\"" + file_name + "\">" + str(row_counter) + ": " + file_name + " </a><a href=\"#STATS_TABLE\">(Return to Basic Statistics and QC Test Status Table)</a></h3>" + "\n")
+        HTML_FILE.write("<h3><a name=\"" + file_name + "\">" + str(row_counter) + ": " + file_name + " </a><a href=\"#STATS_TABLE\">(Return to Basic Statistics and QC Test Status Table)</a>"+ " <a href=" + full_report_relative_path + " target=\"_blank\"> [Full Report]</a>" +"</h3>" + "\n")
         
         
         for img in extract_files[2:]:
@@ -250,6 +246,11 @@ def process_summary_file(in_html_file, in_R_script_file, in_fastqc_ziped_files, 
         		HTML_FILE.write("<a href=\"" + img_file +"\" target=\"_blank\" >" + "<img class=\"fail\" src=\"" + img_file + "\" /></a>" + "\n")
         	else:
         		print "error: " + img
+        
+        if "R2" in inZipFastqcFile:
+        	HTML_FILE.write("<hr>")
+    
+    
     HTML_FILE.write("<span class=\"fix\"></span></div>" + "\n")
 
     # Work on table in R

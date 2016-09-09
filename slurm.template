@@ -16,7 +16,7 @@ snakemake -s $R/Snakefile -d $R --printshellcmds --cluster-config $D/cluster.jso
 # snakemake -s $R/Snakefile -d $R --printshellcmds --cluster-config $D/cluster.json --cluster "sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem}" -j 100 --rerun-incomplete --stats $R/Reports/initialqc.stats -T 2>&1|tee -a $R/Reports/snakemake.log
 
 cd $R/Reports
-$R/Reports/sum-fastq-lite.py *fastqc.zip ../QC ./
+$R/Reports/summarize_fastqc_reports.py *fastqc.zip ../QC ./
 $R/Reports/ngser.pl ../QC ./
 $R/Reports/stats2html.py
 
