@@ -393,7 +393,7 @@ foreach my $sample (sort {lc($a) cmp lc($b)} keys %demultstats){
     }
     elsif ($pipeline == 5){
       #open files, get lines
-      open (TRM, "<$samplefolder".'logs/'.$trimfile) or die "\nError: open $samplefolder"."logs/$trimfile:$!\n\n";
+      open (TRM, "<$samplefolder".$trimfile) or die "\nError: open $samplefolder"."/$trimfile:$!\n\n";
       chomp(my @trims = <TRM>);
       close TRM;
       open (STAR, "<$samplefolder".$starfile) or die "\nError: open $samplefolder$starfile:$!\n\n";
