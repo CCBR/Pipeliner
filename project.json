@@ -1,6 +1,6 @@
 {
     "project": {
-        "DEG": "no",
+        "DEG": "yes",
         "MINCOUNTGENEJUNCTIONS": "5",
         "MINCOUNTGENES": "5",
         "MINCOUNTJUNCTIONS": "5",
@@ -10,8 +10,8 @@
         "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-100",
         "STARSTRANDCOL": "2",
         "STRANDED": "0",
-        "TRIM": "no",
-        "analyst": "lackjb",
+        "TRIM": "yes",
+        "analyst": "",
         "annotation": "hg19",
         "batchsize": "20",
         "binset": "standard-bin",
@@ -23,70 +23,62 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/test_reads",
+        "datapath": "/data/CCBR/dev/PipelineTestSeqs/rnaseq/human",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "test",
-        "id": "test",
-        "organism": "human",
+        "flowcellid": "",
+        "id": "",
+        "organism": "",
         "pairs": {},
-        "pfamily": "exomeseq",
+        "pfamily": "rnaseq",
         "pi": "",
-        "pipeline": "initialqc",
+        "pipeline": "initialqcrnaseq",
         "platform": "Illumina",
-        "poc": "lackjb",
+        "poc": "",
         "rgid": {
-            "3435Ttest": {
+            "SS.SRR950078": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "3435Ttest"
+                "rgsm": "SS.SRR950078"
             },
-            "D115test": {
+            "SS.SRR950079": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "D115test"
+                "rgsm": "SS.SRR950079"
             },
-            "F22testA": {
+            "SS.SRR950080": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22testA"
+                "rgsm": "SS.SRR950080"
             },
-            "F22testB": {
+            "SS.SRR950081": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "F22testB"
-            },
-            "F22testC": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "F22testC"
+                "rgsm": "SS.SRR950081"
             }
         },
         "samples": {
             "na": "na"
         },
         "smparams": [],
-        "technique": "paired",
+        "technique": "",
         "units": {
-            "3435Ttest": "3435Ttest",
-            "D115test": "D115test",
-            "F22testA": "F22testA",
-            "F22testB": "F22testB",
-            "F22testC": "F22testC"
+            "SS.SRR950078": "SS.SRR950078",
+            "SS.SRR950079": "SS.SRR950079",
+            "SS.SRR950080": "SS.SRR950080",
+            "SS.SRR950081": "SS.SRR950081"
         },
         "username": "",
         "version": "1.0",
-        "workpath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test"
+        "workpath": "/home/jailwalapa/pipe_test_trim"
     }
 }
