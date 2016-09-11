@@ -8,7 +8,8 @@ configfile: "run.json"
 if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC","Reports/multiqc_report.html",
+#     input: "QC_table.xlsx","Reports/multiqc_report.html",
+     input: "Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
             "postTrimQC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
 
@@ -16,14 +17,16 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC","Reports/multiqc_report.html",
+#     input: "QC_table.xlsx","Reports/multiqc_report.html",
+     input: "Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
             "postTrimQC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
 
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
-     input: "STAR_QC","Reports/multiqc_report.html",
+#     input: "QC_table.xlsx","Reports/multiqc_report.html",
+     input: "Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
 
             
@@ -32,7 +35,8 @@ elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
 else:
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC","Reports/multiqc_report.html",
+#     input: "QC_table.xlsx","Reports/multiqc_report.html",
+     input: "Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
 
 rule fastq_screen:
@@ -205,32 +209,34 @@ rule rnaseqc:
          """
 
 rule rnaseq_multiqc:
-    input: "STAR_QC"
+    input: expand("{name}.Rdist.info",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
     output: "Reports/multiqc_report.html"
     params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
     threads: 1
     shell:  """
             module load multiqc
             # cd Reports && multiqc -f -e featureCounts -e picard ../
-            cd Reports && multiqc -f ../
+            cd Reports && multiqc -f -e featureCounts ../
             """
 
 rule RNAseq_generate_QC_table:
-    input: expand("QC/{s}_run_trimmomatic.err",s=samples), expand("{s}.star.duplic",s=samples), expand("{s}.p2.Log.final.out",s=samples), expand("{s}.RnaSeqMetrics.txt",s=samples)
-    output: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
+    input: expand("QC/{name}_run_trimmomatic.err",name=samples), expand("{name}.star.duplic",name=samples), expand("{name}.p2.Log.final.out",name=samples), expand("{name}.RnaSeqMetrics.txt",name=samples)
+#    output: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
+    output: "QC_table.xlsx"
     params: project=config['project']['id'],flowcell=config['project']['flowcellid'],dir=config['project']['workpath'],rname="pl:QC_table"
     shell: "perl Scripts/CollectPipelineStats2Tab_v2.3.pl -p {params.project} -f {params.flowcell} -d {params.dir} -r 5 -e 2; perl Scripts/Tab2Excel_v2.3.pl -i {params.project}_{params.flowcell} -r 5"
 
 rule rseqc:
     input: file1="{name}.star_rg_added.sorted.dmark.bam"
-    #output: out1="{name}.strand.info",out2="{name}.inner_distance_plot.pdf",out3="{name}.GC_plot.pdf",out4="{name}.Rdist.info"
-    output: out1="{name}.strand.info",out2="{name}.inner_distance_plot.pdf",out3="{name}.GC_plot.pdf"
-    params: bedref=config['references'][pfamily]['BEDREF'],prefix="{name}"
+    output: out1="{name}.strand.info",out2="{name}.inner_distance_plot.pdf",out3="{name}.GC_plot.pdf",out4="{name}.Rdist.info"
+    # output: out1="{name}.strand.info",out2="{name}.inner_distance_plot.pdf",out3="{name}.GC_plot.pdf"
+    params: bedref=config['references'][pfamily]['BEDREF'],prefix="{name}",rname="pl:rseqc"
     shell: """
            module load rseqc
            inner_distance.py -i {input.file1} -r {params.bedref} -o {params.prefix}
            infer_experiment.py -r {params.bedref}  -i {input.file1} > {output.out1}
            read_GC.py -i {input.file1}  -o {params.prefix}
-           # read_distribution.py -i {input.file1} -r {params.bedref} > {output.out4}
+           read_distribution.py -i {input.file1} -r {params.bedref} > {output.out4}
            """
+
    
