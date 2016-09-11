@@ -11,7 +11,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
 #     input: "QC_table.xlsx","Reports/multiqc_report.html",
      input: "Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "postTrimQC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
+            "QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
 
 
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
@@ -20,14 +20,14 @@ elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
 #     input: "QC_table.xlsx","Reports/multiqc_report.html",
      input: "Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "postTrimQC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
+            "QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
 
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
 #     input: "QC_table.xlsx","Reports/multiqc_report.html",
      input: "Reports/multiqc_report.html",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
+            expand("{name}.RnaSeqMetrics.txt",name=samples),"QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
 
             
      params: batch='--time=168:00:00'
@@ -37,7 +37,7 @@ else:
      params: batch='--time=168:00:00'
 #     input: "QC_table.xlsx","Reports/multiqc_report.html",
      input: "Reports/multiqc_report.html",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
+            expand("{name}.RnaSeqMetrics.txt",name=samples),"QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
 
 rule fastq_screen:
       input:  expand(config['project']['workpath']+"/{name}.R1."+config['project']['filetype'], name=samples), expand(config['project']['workpath']+"/{name}.R2."+config['project']['filetype'], name=samples)
@@ -69,7 +69,7 @@ if config['project']['TRIM'] == "yes":
 
    rule fastqc:  
       input: expand("trim/{name}_R1_001_trim_paired.fastq.gz", name=samples), expand("trim/{name}_R2_001_trim_paired.fastq.gz", name=samples)  
-      output: "postTrimQC"
+      output: "QC"
       priority: 2
       params: rname='pl:fastqc',batch='--cpus-per-task=32 --mem=110g --time=48:00:00',fastqcver=config['bin'][pfamily]['FASTQCVER']
       threads: 32
@@ -132,7 +132,7 @@ else:
 
    rule fastqc2:  
       input: expand(config['project']['workpath']+"/{name}.R1."+config['project']['filetype'], name=samples), expand(config['project']['workpath']+"/{name}.R2."+config['project']['filetype'], name=samples) 
-      output: "rawQC"
+      output: "QC"
       priority: 2
       params: rname='pl:fastqc',batch='--cpus-per-task=32 --mem=110g --time=48:00:00',fastqcver=config['bin'][pfamily]['FASTQCVER']
       threads: 32
