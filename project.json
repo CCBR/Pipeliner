@@ -85,7 +85,7 @@
             "F22testB": "F22testB",
             "F22testC": "F22testC"
         },
-        "username": "test",
+        "username": "",
         "version": "1.0",
         "workpath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test"
     }
