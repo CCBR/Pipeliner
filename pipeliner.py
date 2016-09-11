@@ -101,7 +101,7 @@ def set_colors(*args):
     
 set_colors()
 customRules=[]
-pipeline=["initialqc","bam2recal","wgslow","exomeseq-somatic","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"]
+pipeline=["initialqc","exomeseq-somatic","exomeseq-germline"]
 auto_check=0
 
 whereiam=os.popen("cd ../ && pwd").read().strip()
@@ -1813,7 +1813,7 @@ workpath.trace('w', lambda a,b,c,x="workpath":makejson(x))
 eframe = LabelFrame(exomeseqframe,text="Pipeline",fg=textLightColor,bg=baseColor)
 eframe.pack( side = TOP,fill=X,padx=10,pady=10,expand=NO )
 
-Pipelines=["initialqc","bam2recal","wgslow","exomeseq-somatic","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial"]
+Pipelines=["initialqc","exomeseq-somatic","exomeseq-germline"]
 Pipeline = StringVar()
 Pipeline.set(Pipelines[0])
 om = OptionMenu(eframe, Pipeline, *Pipelines, command=makejson)
