@@ -23,7 +23,7 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/test_reads",
+        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
@@ -33,7 +33,7 @@
         "pairs": {},
         "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "initialqc",
+        "pipeline": "exomeseq-germline",
         "platform": "Illumina",
         "poc": "lackjb",
         "rgid": {
