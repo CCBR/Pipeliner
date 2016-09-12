@@ -393,13 +393,13 @@ foreach my $sample (sort {lc($a) cmp lc($b)} keys %demultstats){
     }
     elsif ($pipeline == 5){
       #open files, get lines
-      open (TRM, "<$samplefolder".$trimfile) or die "\nError: open $samplefolder"."/$trimfile:$!\n\n";
+      open (TRM, "<$samplefolder/".$trimfile) or die "\nError: open $samplefolder"."/$trimfile:$!\n\n";
       chomp(my @trims = <TRM>);
       close TRM;
-      open (STAR, "<$samplefolder".$starfile) or die "\nError: open $samplefolder$starfile:$!\n\n";
+      open (STAR, "<$samplefolder/".$starfile) or die "\nError: open $samplefolder$starfile:$!\n\n";
       chomp(my @stars = <STAR>);
       close STAR;
-      open (PIC, "<$samplefolder".$picardfile) or die "\nError: open $samplefolder$picardfile:$!\n\n";
+      open (PIC, "<$samplefolder/".$picardfile) or die "\nError: open $samplefolder$picardfile:$!\n\n";
       chomp(my @pics = <PIC>);
       close PIC;
       #parse trim file lines

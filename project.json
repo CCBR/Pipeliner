@@ -23,7 +23,11 @@
             "rsamps": "na"
         },
         "custom": [],
+<<<<<<< HEAD
+        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test",
+=======
         "datapath": "/data/CCBR/dev/PipelineTestSeqs/rnaseq/human",
+>>>>>>> upstream/master
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
@@ -33,7 +37,11 @@
         "pairs": {},
         "pfamily": "rnaseq",
         "pi": "",
+<<<<<<< HEAD
+        "pipeline": "exomeseq-germline",
+=======
         "pipeline": "initialqcrnaseq",
+>>>>>>> upstream/master
         "platform": "Illumina",
         "poc": "",
         "rgid": {
