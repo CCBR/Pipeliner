@@ -1,6 +1,6 @@
 {
     "project": {
-        "DEG": "yes",
+        "DEG": "no",
         "MINCOUNTGENEJUNCTIONS": "5",
         "MINCOUNTGENES": "5",
         "MINCOUNTJUNCTIONS": "5",
@@ -10,7 +10,7 @@
         "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-100",
         "STARSTRANDCOL": "2",
         "STRANDED": "0",
-        "TRIM": "yes",
+        "TRIM": "no",
         "analyst": "",
         "annotation": "hg19",
         "batchsize": "20",
@@ -23,70 +23,30 @@
             "rsamps": "na"
         },
         "custom": [],
-<<<<<<< HEAD
-        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test",
-=======
-        "datapath": "/data/CCBR/dev/PipelineTestSeqs/rnaseq/human",
->>>>>>> upstream/master
+        "datapath": "",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "",
-        "id": "",
+        "flowcellid": "NA",
+        "id": "NA",
         "organism": "",
-        "pairs": {},
-        "pfamily": "rnaseq",
+        "pairs": {
+            "na": "na"
+        },
+        "pfamily": "exomeseq",
         "pi": "",
-<<<<<<< HEAD
-        "pipeline": "exomeseq-germline",
-=======
-        "pipeline": "initialqcrnaseq",
->>>>>>> upstream/master
+        "pipeline": "initialqc",
         "platform": "Illumina",
         "poc": "",
-        "rgid": {
-            "SS.SRR950078": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "SS.SRR950078"
-            },
-            "SS.SRR950079": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "SS.SRR950079"
-            },
-            "SS.SRR950080": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "SS.SRR950080"
-            },
-            "SS.SRR950081": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "SS.SRR950081"
-            }
-        },
+        "rgid": {},
         "samples": {
             "na": "na"
         },
         "smparams": [],
         "technique": "",
-        "units": {
-            "SS.SRR950078": "SS.SRR950078",
-            "SS.SRR950079": "SS.SRR950079",
-            "SS.SRR950080": "SS.SRR950080",
-            "SS.SRR950081": "SS.SRR950081"
-        },
+        "units": {},
         "username": "",
         "version": "1.0",
-        "workpath": "/home/jailwalapa/pipe_test_trim"
+        "workpath": ""
     }
 }
