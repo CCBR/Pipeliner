@@ -1136,9 +1136,9 @@ def setopts(*args):
 def settargets(*args):
 	genome=annotation.get()
 	if genome=="hg19":
-		targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/reformatS04380219_qualimap.bed")
+		targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/SS_v5_UTRs_hg19.bed")
 	else:
-		targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/SS_mouse_exome_mm10_reformat.bed")
+		targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/SureSelect_mm10.bed")
 
 
 #######################
@@ -1843,9 +1843,9 @@ targetsE = Entry(eframe,bd =2, width=80, bg=entryBgColor,fg=entryFgColor,textvar
 genome=annotation.get()
 
 if genome=="hg19":
-	targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/reformatS04380219_qualimap.bed")
+	targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/SS_v5_UTRs_hg19.bed")
 else:
-	targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/mmreformatS04380219_qualimap.bed")
+	targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/SureSelect_mm10.bed")
 		  
 targetsE.grid(row=5,column=1,sticky=W,padx=10,pady=10)
 targetspath.trace('w', lambda a,b,c,x="targetspath":makejson(x))

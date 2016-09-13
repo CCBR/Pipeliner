@@ -10,7 +10,7 @@
         "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-100",
         "STARSTRANDCOL": "2",
         "STRANDED": "0",
-        "TRIM": "no",
+        "TRIM": "yes",
         "analyst": "",
         "annotation": "hg19",
         "batchsize": "20",
@@ -27,12 +27,10 @@
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "optional",
-        "id": "optional",
+        "flowcellid": "FlowCellID",
+        "id": "ProjectID",
         "organism": "",
-        "pairs": {
-            "na": "na"
-        },
+        "pairs": {},
         "pfamily": "exomeseq",
         "pi": "",
         "pipeline": "initialqc",
@@ -79,6 +77,7 @@
             "na": "na"
         },
         "smparams": [],
+        "targetspath": "/data/CCBR_Pipeliner/db/PipeDB/lib/SS_v5_UTRs_hg19.bed",
         "technique": "",
         "units": {
             "3435Ttest": "3435Ttest",
