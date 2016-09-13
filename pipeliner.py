@@ -251,6 +251,7 @@ def load_project():
             workpath.set(PD['project']['workpath'])
             pfamily.set(PD['project']['pfamily'])            
             datapath.set(PD['project']['datapath'])
+            targetspath.set(PD['project']['targetspath'])
             annotation.set(PD['project']['annotation'])
             binset.set(PD['project']['binset'])
             efiletype.set(PD['project']['efiletype'])
@@ -488,7 +489,7 @@ def makejson(*args):
 #    tkinter.messagebox.showinfo("initLock","SD={0}".format(SD))    
 
 
-    PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",'annotation':annotation.get(),'datapath':datapath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":rTrim.get().split(",")[0].lower(),"SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":"{0}".format(int(rStrand.get().split(",")[0])+2),"MINSAMPLES":rMinsamples.get(),"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get(),"STARDIR": SD+rReadlen.get().split(" ")[3],"PICARDSTRAND":["NONE", "FIRST_READ_TRANSCRIPTION_STRAND","SECOND_READ_TRANSCRIPTION_STRAND"][int(rStrand.get().split(",")[0])]}}
+    PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",'annotation':annotation.get(),'datapath':datapath.get(),'targetspath':targetspath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":"yes","SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":"{0}".format(int(rStrand.get().split(",")[0])+2),"MINSAMPLES":rMinsamples.get(),"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get(),"STARDIR": SD+rReadlen.get().split(" ")[3],"PICARDSTRAND":["NONE", "FIRST_READ_TRANSCRIPTION_STRAND","SECOND_READ_TRANSCRIPTION_STRAND"][int(rStrand.get().split(",")[0])]}}
 
     J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=TRUE)
     jsonconf.delete("1.0", END)    
@@ -517,7 +518,7 @@ def initialize():
 
         #p=os.popen("rm -rf {0}/expression;rm -rf {0}/fastqs;rm -rf {0}/igv;rm -rf {0}/logs;rm -rf {0}/mirdeep2;rm -rf {0}/mirspring;rm -rf {0}/qc;rm -rf {0}/variants;rm -rf {0}/bams;rm -rf {0}/bams-bwa;rm -rf {0}/config;rm -rf {0}/differential*;rm -rf {0}/dir_mapper*;rm -rf {0}/*stats rm -rf {0}/QC;rm -rf {0}/Reports;rm -rf {0}/*dedup_stats; rm {0}/*; rm -rf {0}/.*; mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get()))
 
-        p=os.popen("rm -rf {0}/*;mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get())) 
+        p=os.popen("rm -rf {0}/*;rm -rf {0}/.snakemake;mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get())) 
 
 def initialize_results():
     global initLock
@@ -1132,6 +1133,14 @@ def setopts(*args):
     eprojectid.set("optional")
     eflowcell.set("optional")
 
+def settargets(*args):
+	genome=annotation.get()
+	if genome=="hg19":
+		targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/reformatS04380219_qualimap.bed")
+	else:
+		targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/SS_mouse_exome_mm10_reformat.bed")
+
+
 #######################
 ## Gui components
 #######################
@@ -1341,10 +1350,12 @@ nbook.pack( side = LEFT,fill=BOTH,padx=10,pady=10,expand=YES )
 #The Run Frame
 #####################
 
+note_fastqname=Label(runframe, text="Note: Fastq files in the data directory should have this naming convention:<SampleName>.R1.fastq.gz, <SampleName>.R2.fastq.gz",anchor="ne",bg="firebrick",fg="white")
+note_fastqname.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 button = Button(runframe, text="Initialize Working Directory", fg="white",bg="firebrick",command=initialize_results)
-button.grid(row=0,column=0,padx=10,pady=10,sticky="w")
+button.grid(row=1,column=0,padx=10,pady=10,sticky="w")
 L=Label(runframe,text="The Working Directory must exist. Any data within it will be deleted.",anchor="ne",bg="firebrick",fg="white")
-L.grid(row=0,column=1,padx=10,pady=10,sticky="w")
+L.grid(row=1,column=1,padx=10,pady=10,sticky="w")
 
 initLock=StringVar()
 initlock = Checkbutton(runframe, text="Unlock",variable=initLock,bg="firebrick",fg="white",offvalue="locked",onvalue="unlocked",state="active")
@@ -1353,25 +1364,24 @@ initLock.set("locked")
 
 
 button = Button(runframe, text="Symbolically Link Data", fg=widgetFgColor,bg=widgetBgColor,command=lambda:symlink(datapath.get()))
-button.grid(row=1,column=0,padx=10,pady=10,sticky="w")
-L=Label(runframe,text="The starting data file will be linked from the Data Directory to the Working Directory.",anchor="ne",fg=widgetFgColor,bg=widgetBgColor)
-L.grid(row=1,column=1,padx=10,pady=10,sticky="w")
-
-button = Button(runframe, text="Perform Dry Run", fg=widgetFgColor,bg=widgetBgColor,command=lambda: cmd("--dryrun -s %s/Snakefile --rerun-incomplete -d %s" % (workpath.get(),workpath.get())))
 button.grid(row=2,column=0,padx=10,pady=10,sticky="w")
-L=Label(runframe,text="A test will be performed to verify that the pipeline will run as expected. No data is processed at this point.",anchor="ne",bg=widgetBgColor,fg=widgetFgColor)
+L=Label(runframe,text="The starting fastq files will be linked from the Data Directory to the Working Directory.",anchor="ne",fg=widgetFgColor,bg=widgetBgColor)
 L.grid(row=2,column=1,padx=10,pady=10,sticky="w")
 
-button = Button(runframe, text="Save Project Profile", fg=widgetFgColor,bg=widgetBgColor,command=save_project)
+button = Button(runframe, text="Perform Dry Run", fg=widgetFgColor,bg=widgetBgColor,command=lambda: cmd("--dryrun -s %s/Snakefile --rerun-incomplete -d %s" % (workpath.get(),workpath.get())))
 button.grid(row=3,column=0,padx=10,pady=10,sticky="w")
-L=Label(runframe,text="The pipeline parameters, project information and comments are saved.",anchor="ne",bg=widgetBgColor,fg=widgetFgColor)
+L=Label(runframe,text="A test will be performed to verify that the pipeline will run as expected. No data is processed at this point.",anchor="ne",bg=widgetBgColor,fg=widgetFgColor)
 L.grid(row=3,column=1,padx=10,pady=10,sticky="w")
 
-button = Button(runframe, text="Submit Job to Biowulf2 via Slurm", fg=widgetFgColor,bg=widgetBgColor,command=runslurm)
+button = Button(runframe, text="Save Project Profile", fg=widgetFgColor,bg=widgetBgColor,command=save_project)
 button.grid(row=4,column=0,padx=10,pady=10,sticky="w")
-L=Label(runframe,text="The pipeline job is submitted to the batch queuing system on the Biowulf2 cluster.",anchor="ne",bg=widgetBgColor,fg=widgetFgColor)
+L=Label(runframe,text="The pipeline parameters, project information and comments are saved.",anchor="ne",bg=widgetBgColor,fg=widgetFgColor)
 L.grid(row=4,column=1,padx=10,pady=10,sticky="w")
 
+button = Button(runframe, text="Submit Job to Biowulf2 via Slurm", fg=widgetFgColor,bg=widgetBgColor,command=runslurm)
+button.grid(row=5,column=0,padx=10,pady=10,sticky="w")
+L=Label(runframe,text="The pipeline job is submitted to the batch queuing system on the Biowulf2 cluster.",anchor="ne",bg=widgetBgColor,fg=widgetFgColor)
+L.grid(row=5,column=1,padx=10,pady=10,sticky="w")
 
 #####################
 #The Files Pane
@@ -1727,6 +1737,7 @@ jsonconf.bind('<FocusOut>',lambda _:makejson("none"))
 
 datapath=StringVar()
 workpath=StringVar()
+targetspath=StringVar()
 
 ##########################
 # The Global Options Panel
@@ -1770,6 +1781,7 @@ label.grid(row=1,column=0,sticky=W,padx=10,pady=10)
 annotations=['hg19','mm10']
 annotation = StringVar()
 annotation.set(annotations[0])
+annotation.trace('w', settargets)
 om = OptionMenu(optspanel1, annotation, *annotations, command=lambda _:makejson("refsets"))
 om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
@@ -1814,7 +1826,8 @@ workpath.trace('w', lambda a,b,c,x="workpath":makejson(x))
 
 eframe = LabelFrame(exomeseqframe,text="Pipeline",fg=textLightColor,bg=baseColor)
 eframe.pack( side = TOP,fill=X,padx=10,pady=10,expand=NO )
-
+label = Label(eframe,text="Pipeline",fg=textLightColor,bg=baseColor)
+label.grid(row=3,column=0,sticky=W,padx=10,pady=10)
 Pipelines=["initialqc","exomeseq-somatic","exomeseq-germline"]
 Pipeline = StringVar()
 Pipeline.set(Pipelines[0])
@@ -1824,6 +1837,20 @@ om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 #om.pack(side=LEFT,padx=20,pady=5)
 om.grid(row=3,column=1,sticky=W,padx=10,pady=10)
 
+targetsL=Label(eframe,text="Target Capture Kit",fg=textLightColor,bg=baseColor)
+targetsL.grid(row=5,column=0,sticky=W,padx=10,pady=10)
+targetsE = Entry(eframe,bd =2, width=80, bg=entryBgColor,fg=entryFgColor,textvariable=targetspath)
+genome=annotation.get()
+
+if genome=="hg19":
+	targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/reformatS04380219_qualimap.bed")
+else:
+	targetspath.set("/data/CCBR_Pipeliner/db/PipeDB/lib/mmreformatS04380219_qualimap.bed")
+		  
+targetsE.grid(row=5,column=1,sticky=W,padx=10,pady=10)
+targetspath.trace('w', lambda a,b,c,x="targetspath":makejson(x))
+label=Label(eframe, text="By default, the path to the Agilent V5+UTR targets file is filled in here",fg=textLightColor,bg=baseColor)
+label.grid(row=5,column=3,sticky=W,padx=10,pady=10)
 
 #########################
 # The RNASeq Pane
@@ -1856,13 +1883,13 @@ om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 #om.pack(side=LEFT,padx=20,pady=5)
 om.grid(row=0,column=1,sticky=NW,padx=10,pady=10)
 
-rTrims=['No, Do not Trim the Reads','Yes, Trim the Reads']
-rTrim = StringVar()
-rTrim.set(rTrims[0])
-om = OptionMenu(rframe, rTrim, *rTrims, command=lambda _:makejson("rtrim"))
-om.config(bg = widgetBgColor,fg=widgetFgColor)
-om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
-om.grid(row=3,column=1,sticky=W,padx=10,pady=10)
+#rTrims=['No, Do not Trim the Reads','Yes, Trim the Reads']
+#rTrim = StringVar()
+#rTrim.set(rTrims[0])
+#om = OptionMenu(rframe, rTrim, *rTrims, command=lambda _:makejson("rtrim"))
+#om.config(bg = widgetBgColor,fg=widgetFgColor)
+#om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
+#om.grid(row=3,column=1,sticky=W,padx=10,pady=10)
 
 rReadlens=['Read Length is 50','Read Length is 75','Read Length is 100','Read Length is 125','Read Length is 150', 'Read Length is 250']
 rReadlen = StringVar()
