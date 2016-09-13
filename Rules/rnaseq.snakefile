@@ -8,7 +8,8 @@ configfile: "run.json"
 if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC","Reports/multiqc_report.html",
+#     input: "STAR_QC","Reports/multiqc_report.html",
+     input: "Reports/multiqc_report.html",
             "ebseq_completed.txt",
             "salmonrun/sleuth_completed.txt",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
@@ -32,9 +33,10 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC","Reports/multiqc_report.html",
+#     input: "STAR_QC","Reports/multiqc_report.html",
+     input: "Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "postTrimQC",
+#            "postTrimQC",
             "RawCountFile_genes_filtered.txt",
             "RawCountFile_junctions_filtered.txt",
             "RawCountFile_genejunctions_filtered.txt",
@@ -44,7 +46,8 @@ elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
-     input: "STAR_QC","Reports/multiqc_report.html",
+#     input: "STAR_QC","Reports/multiqc_report.html",
+     input: "Reports/multiqc_report.html",
             "ebseq_completed.txt",
             "salmonrun/sleuth_completed.txt",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
@@ -70,7 +73,8 @@ elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
 else:
   rule all:
      params: batch='--time=168:00:00'
-     input: "STAR_QC","Reports/multiqc_report.html",
+#     input: "STAR_QC","Reports/multiqc_report.html",
+     input: "Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
             "RawCountFile_genes_filtered.txt",
             "RawCountFile_genejunctions_filtered.txt",
