@@ -1605,7 +1605,7 @@ E = Entry(projpanel1, bd =2, width=20,bg=entryBgColor,fg=entryFgColor,textvariab
 #E.pack(pady=1,padx=5)
 L.grid(row=0,column=0,sticky=W,padx=10,pady=10)
 E.grid(row=0,column=2,sticky=W,padx=10,pady=10)
-eprojectid.set("optional")
+eprojectid.set("ProjectID")
 eprojectid.trace('w', makejson)
 
 L=Label(projpanel1,text="Biowulf Username",anchor="ne",bg=baseColor,fg=textLightColor)
@@ -1624,7 +1624,7 @@ E = Entry(projpanel1, bd =2, width=20, bg=entryBgColor, fg=entryFgColor,textvari
 #E.pack(pady=1,padx=5)
 L.grid(row=1,column=0,sticky=W,padx=10,pady=10)
 E.grid(row=1,column=2,sticky=W,padx=10,pady=10)
-eflowcell.set("optional")
+eflowcell.set("FlowCellID")
 eflowcell.trace('w', makejson)
 
 
