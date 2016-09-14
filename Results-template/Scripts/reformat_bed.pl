@@ -21,6 +21,6 @@ while (<U>){
   	@line = split;
   	if ($line[0] ne '#'){
 #		$chrom = ((split /hr/, $line[0])[1]);
-		print C "$line[0]\t$line[1]\t$line[2]\t$line[3]\0\t.\n";
+		print C "$line[0]\t$line[1]\t$line[2]\t$line[3]\t0\t.\n";
 	}
 }
