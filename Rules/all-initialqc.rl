@@ -13,7 +13,8 @@ rule all_initialqc:
             "multiqc_report.html",
             expand("QC/{s}_run_trimmomatic.err",s=samples),
             expand("QC/{s}.qualimapReport/genome_results.txt",s=samples),
-            config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
+            config['project']['id']+"_"+config['project']['flowcellid']+".xlsx",
+            "exome_targets.bed"
     output:
     params: rname="final"
     shell:  """

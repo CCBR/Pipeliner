@@ -4,6 +4,7 @@
         "ngsqc": ["initialqc","initialqcgenomeseq"],
         "fastqc.fastq": ["initialqc","initialqcgenomeseq"],
         "bamstats": ["initialqc"],
+        "make_target_files": ["initialqc","exomeseq-somatic","exomeseq-germline"],
         "fastq_screen": ["initialqc","initialqcgenomeseq"],
         "multiqc": ["initialqc"],
         "multiqc_genomeseq": ["initialqcgenomeseq"],

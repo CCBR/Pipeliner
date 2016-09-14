@@ -4,7 +4,8 @@ rule all_exomeseq_germline:
            "full_annot.txt.zip",
            "variants.database",
            "sample_network.bmp",
-           "exome.snpeff.vcf"
+           "exome.snpeff.vcf",
+           "exome_targets.bed"
     output: 
     params: rname="final"
     shell:  """

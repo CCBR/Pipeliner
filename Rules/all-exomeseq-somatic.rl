@@ -36,7 +36,8 @@ rule all_exomeseq_somatic:
             "strelka_out/oncotator_out/strelka_variants.maf",
             "strelka_out/mutsigCV_out/somatic.sig_genes.txt",
             "mutect_out/oncotator_out/mutect_variants.maf",
-            "mutect_out/mutsigCV_out/somatic.sig_genes.txt"
+            "mutect_out/mutsigCV_out/somatic.sig_genes.txt",
+            "exome_targets.bed"
     output:
     params: rname="final"
     shell:  """

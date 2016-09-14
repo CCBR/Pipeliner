@@ -28,10 +28,12 @@ s2c <- dplyr::mutate(s2c, path = sample_dirs)
 for(sdir in s2c$path){
      prepare_fish_for_sleuth(sdir)
 }
-if SPECIES == "hg19":
+
+if (SPECIES == "hg19") {
    mart <- biomaRt::useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
-else:
+} else {
    mart <- biomaRt::useMart(biomart = "ensembl", dataset = "mmusculus_gene_ensembl")
+}
 
 t2g <- biomaRt::getBM(attributes = c("ensembl_transcript_id", "ensembl_gene_id",
   "external_gene_name"), mart = mart)
