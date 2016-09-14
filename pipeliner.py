@@ -1795,8 +1795,8 @@ om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 #om.pack(side=LEFT,padx=20,pady=5)
 om.grid(row=1,column=1,sticky=W,padx=10,pady=10)
 
-L=Label(optspanel1, text="Pipeline Family",fg=textLightColor,bg=baseColor)
-L.grid(row=2,column=0)
+L=Label(optspanel1, text="Pipeline Family",anchor="ne",fg=textLightColor,bg=baseColor)
+L.grid(row=2,column=0,sticky=W,padx=10,pady=10)
 
 pfamilys=['exomeseq','rnaseq','genomeseq','mirseq','chipseq','custom']
 pfamily = StringVar()
