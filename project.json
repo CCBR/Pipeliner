@@ -11,7 +11,7 @@
         "STARSTRANDCOL": "2",
         "STRANDED": "0",
         "TRIM": "yes",
-        "analyst": "",
+        "analyst": "lackjb",
         "annotation": "hg19",
         "batchsize": "20",
         "binset": "standard-bin",
@@ -29,13 +29,13 @@
         "filetype": "fastq.gz",
         "flowcellid": "FlowCellID",
         "id": "ProjectID",
-        "organism": "",
+        "organism": "human",
         "pairs": {},
         "pfamily": "exomeseq",
         "pi": "",
         "pipeline": "initialqc",
         "platform": "Illumina",
-        "poc": "",
+        "poc": "lackjb",
         "rgid": {
             "3435Ttest": {
                 "rgcn": "na",
@@ -78,7 +78,7 @@
         },
         "smparams": [],
         "targetspath": "/data/CCBR_Pipeliner/db/PipeDB/lib/SS_v5_UTRs_hg19.bed",
-        "technique": "",
+        "technique": "paired",
         "units": {
             "3435Ttest": "3435Ttest",
             "D115test": "D115test",
