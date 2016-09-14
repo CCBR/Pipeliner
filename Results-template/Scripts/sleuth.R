@@ -3,6 +3,7 @@ DIR <- args[1]
 PIPERLIB <- args[2]
 SAMTAB <- args[3]
 CONTRASTS <- args[4]
+SPECIES <- args[5]
 
 setwd(paste(DIR,"/salmonrun",sep=""))
 
@@ -27,8 +28,11 @@ s2c <- dplyr::mutate(s2c, path = sample_dirs)
 for(sdir in s2c$path){
      prepare_fish_for_sleuth(sdir)
 }
+if SPECIES == "hg19":
+   mart <- biomaRt::useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+else:
+   mart <- biomaRt::useMart(biomart = "ensembl", dataset = "mmusculus_gene_ensembl")
 
-mart <- biomaRt::useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
 t2g <- biomaRt::getBM(attributes = c("ensembl_transcript_id", "ensembl_gene_id",
   "external_gene_name"), mart = mart)
 t2g <- dplyr::rename(t2g, target_id = ensembl_transcript_id,

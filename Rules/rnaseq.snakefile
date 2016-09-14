@@ -324,8 +324,8 @@ rule salmon:
 rule sleuth:
   input: samtab = "sampletable.txt", bam=expand("salmonrun/{name}/quant.sf", name=samples)
   output: "salmonrun/sleuth_completed.txt"
-  params: rname='pl:sleuth',batch='--mem=128g --cpus-per-task=8 --time=10:00:00',dir=config['project']['workpath'],pipeRlib=config['bin'][pfamily]['PIPERLIB'],contrasts=" ".join(config['project']['contrasts']['rcontrasts'])
-  shell: "module load R; Rscript Scripts/sleuth.R '{params.dir}' '{params.pipeRlib}' '{input.samtab}' '{params.contrasts}'"
+  params: rname='pl:sleuth',batch='--mem=128g --cpus-per-task=8 --time=10:00:00',dir=config['project']['workpath'],pipeRlib=config['bin'][pfamily]['PIPERLIB'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']),species=config['project']['annotation']
+  shell: "module load R; Rscript Scripts/sleuth.R '{params.dir}' '{params.pipeRlib}' '{input.samtab}' '{params.contrasts}' '{params.species}'"
 
 rule EBSeq:
   input: samtab = "sampletable.txt", isoforms=expand("{name}.rsem.isoforms.results", name=samples)

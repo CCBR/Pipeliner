@@ -146,7 +146,7 @@
         "MINCOUNTGENEJUNCTIONS": 5,
         "MINSAMPLES": 1,
         "PIPERLIB": "/data/CCBR_Pipeliner/db/PipeDB/R2/",
-        "RSEM": "/data/CCBR_Pipeliner/apps/rsem1.2.23/RSEM-1.2.23/"
+        "RSEM": "/data/CCBR_Pipeliner/db/PipeDB/bin/rsem1.2.23/RSEM-1.2.23"
     },
 	 "chipseq":{},
 	 "mirseq":{
