@@ -14,7 +14,7 @@ rule script_checkqc:
               picard2=config['bin'][pfamily]['PICARD2'],
               pichist=config['bin'][pfamily]['PICHIST'],
               readdist = config['bin'][pfamily]['READDIST'],
-              refflat=config['references'][pfamily]['REFFLAT'],rname="pl:checkqc"
+              refflat="exome_targets.bed",rname="pl:checkqc"
       shell:  "coverageBed -abam {input} -hist -b {params.refflat} > {output.cov}; \
               perl {params.covcalc} {output.cov} {output.stat}; \
               grep 'all' {output.cov} > {output.covall}; \

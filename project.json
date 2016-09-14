@@ -10,8 +10,8 @@
         "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-100",
         "STARSTRANDCOL": "2",
         "STRANDED": "0",
-        "TRIM": "no",
-        "analyst": "",
+        "TRIM": "yes",
+        "analyst": "lackjb",
         "annotation": "hg19",
         "batchsize": "20",
         "binset": "standard-bin",
@@ -23,21 +23,19 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/test_reads",
+        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "optional",
-        "id": "optional",
-        "organism": "",
-        "pairs": {
-            "na": "na"
-        },
+        "flowcellid": "FlowCellID",
+        "id": "ProjectID",
+        "organism": "human",
+        "pairs": {},
         "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "initialqc",
+        "pipeline": "exomeseq-germline",
         "platform": "Illumina",
-        "poc": "",
+        "poc": "lackjb",
         "rgid": {
             "3435Ttest": {
                 "rgcn": "na",
@@ -79,7 +77,8 @@
             "na": "na"
         },
         "smparams": [],
-        "technique": "",
+        "targetspath": "/data/CCBR_Pipeliner/db/PipeDB/lib/SS_v5_UTRs_hg19.bed",
+        "technique": "paired",
         "units": {
             "3435Ttest": "3435Ttest",
             "D115test": "D115test",
