@@ -75,8 +75,10 @@
 "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/dev/Mm10_genes.txt",
 "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/dev/refFlatMm10.txt",
 "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCm38_mm10_RefSeq.bed",
-"RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/dev/rsemref/mouse_gencode",
-"SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/dev/rsemref/mouse_gencode.transcripts.fa",
+# "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/dev/rsemref/mouse_gencode",
+"RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/mouse_gencode",
+# "SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/dev/rsemref/mouse_gencode.transcripts.fa",
+"SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/mouse_gencode.transcripts.fa",
 "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
 "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Mm10.rRNA.interval_list_v3"
 
