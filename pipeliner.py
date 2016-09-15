@@ -162,9 +162,10 @@ def writeheader(*args):
         comments.insert(INSERT,"Sample1\tSample2\n")
     if ftype.get()=="contrasts.tab":
         comments.delete(1.0,END)
-        t=list(PD['project']['units'].keys())
-        t.sort()
-        comments.insert(INSERT," ".join(t))
+#        t=list(PD['project']['units'].keys())
+#        t.sort()
+#        comments.insert(INSERT," ".join(t))
+        comments.insert(INSERT,"Sample.Name\tSample.Group\tSample.Label\tContrasts\n")
     return
 
 def writepaste():
@@ -418,12 +419,28 @@ def makejson(*args):
     D=dict()
     try:
         F=open(workpath.get()+"/contrasts.tab","r")
-        f=F.read().split('\n')
+#        f=F.read().split('\n')
+#        F.close()
+#        D["rsamps"]=f[0].split()
+#        D["rgroups"]=f[1].split()
+#        D["rcontrasts"]=f[2].split()
+#        D["rlabels"]=f[3].split()        
+        f=F.readlines()
         F.close()
-        D["rsamps"]=f[0].split()
-        D["rgroups"]=f[1].split()
-        D["rcontrasts"]=f[2].split()
-        D["rlabels"]=f[3].split()        
+        sampl=[]
+        grp=[]
+        cont=[]
+        lbl=[]
+        for x in f:
+           sampl.append(x.split()[0])
+           grp.append(x.split()[1])
+           lbl.append(x.split()[2])
+           if len(x.split()) == 4:
+                cont.append(x.split()[3])
+        D["rsamps"]=sampl
+        D["rgroups"]=grp
+        D["rcontrasts"]=cont
+        D["rlabels"]=lbl
         contrasts=D
     except:
         contrasts={"rsamps":"na","rgroups":"na","rcontrasts":"na","rlabels":"na"}   
