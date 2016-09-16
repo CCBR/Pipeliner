@@ -11,7 +11,7 @@
         "STARSTRANDCOL": "2",
         "STRANDED": "0",
         "TRIM": "yes",
-        "analyst": "lackjb",
+        "analyst": "",
         "annotation": "hg19",
         "batchsize": "20",
         "binset": "standard-bin",
@@ -29,13 +29,13 @@
         "filetype": "fastq.gz",
         "flowcellid": "FlowCellID",
         "id": "ProjectID",
-        "organism": "human",
+        "organism": "",
         "pairs": {},
         "pfamily": "exomeseq",
         "pi": "",
         "pipeline": "exomeseq-germline",
         "platform": "Illumina",
-        "poc": "lackjb",
+        "poc": "",
         "rgid": {
             "3435Ttest": {
                 "rgcn": "na",
@@ -78,7 +78,7 @@
         },
         "smparams": [],
         "targetspath": "/data/CCBR_Pipeliner/db/PipeDB/lib/SS_v5_UTRs_hg19.bed",
-        "technique": "paired",
+        "technique": "",
         "units": {
             "3435Ttest": "3435Ttest",
             "D115test": "D115test",
@@ -86,7 +86,7 @@
             "F22testB": "F22testB",
             "F22testC": "F22testC"
         },
-        "username": "",
+        "username": "lackjb",
         "version": "1.0",
         "workpath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test"
     }

@@ -1,6 +1,7 @@
 rule mutect:
        input:  normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
-               tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam"
+               tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
+               targets="exome_targets.bed"
        output: vcf="mutect_out/{x}.vcf",
                stats="mutect_out/{x}.stats.out",
                vcfRename="mutect_out/{x}.FINAL.vcf"
