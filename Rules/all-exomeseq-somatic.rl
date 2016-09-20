@@ -25,6 +25,7 @@ rule all_exomeseq_somatic:
             expand("delly_out/{p}_inv.bcf", p=pairs),
             "mutect_out/merged_somatic.vcf",
             "mutect_out/merged_somatic_snpEff.vcf",
+            "strelka_out/merged_somatic_snpEff.vcf",
 #            "mutect2_out/merged_somatic.vcf",
 #            "mutect2_out/merged_somatic_snpEff.vcf",
             "variants.bed",

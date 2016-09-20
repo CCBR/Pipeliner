@@ -4,8 +4,8 @@ rule strelka:
            targets="exome_targets.bed"
     output: vcf="strelka_out/{x}.vcf",
             outdir="strelka_out/{x}",
-            csvstats="strelka_out/{x}.stats.csv",
-            htmlstats="strelka_out/{x}.stats.html",
+            csvstats="strelka_out/{x}.strelka.stats.csv",
+            htmlstats="strelka_out/{x}.strelka.stats.html",
             snpeffvcf="strelka_out/{x}.snpeff.vcf"
     params: dir=config['project']['workpath'],strelkaconfig=config['references'][pfamily]['STRELKA_CONFIG'],gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],targets="exome_targets.bed",snpeff=config['bin'][pfamily]['SNPEFF'],snpeffgenome=config['references'][pfamily]['SNPEFF_GENOME'],rname="pl:strelka_calls"
     threads: 4
