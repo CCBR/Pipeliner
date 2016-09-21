@@ -3,5 +3,6 @@ rule somatic_germline_calls:
              targets="exome_targets.bed"
      output: unfiltered="germline.vcf",
              filtered="germline_snps.vcf"
-     params: genome=config['references'][pfamily]['GENOME'],regions="exome_targets.bed",rname="pl:germcalls"
-     shell:  "ls *recal.bam > samtoolsinbams; module load samtools; samtools mpileup -ug -b samtoolsinbams --fasta-ref {params.genome} --positions {params.regions} | bcftools call -mvO v - > {output.unfiltered}; module load vcftools; vcftools --vcf {output.unfiltered} --minQ 30 --remove-indels --recode --out germsnps; mv germsnps.recode.vcf {output.filtered}"
+     params: genome=config['references'][pfamily]['GENOME'],regions="exome_targets.bed",snpsites=config['references'][pfamily]['SNPSITES'],gatk=config['bin'][pfamily]['GATK'],rname="pl:germcalls"
+     threads: 8
+     shell:  "ls *recal.bam > inbams.list; {params.gatk} -T UnifiedGenotyper -R {params.genome} -I inbams.list -L {params.regions} --read_filter BadCigar --annotation Coverage -A FisherStrand -A HaplotypeScore -A MappingQualityRankSumTest -A QualByDepth -A RMSMappingQuality -A ReadPosRankSumTest --dbsnp {params.snpsites} -nct {threads} -o {output.filtered}"
