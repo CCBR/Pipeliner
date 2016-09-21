@@ -5,6 +5,7 @@ rule all_exomeseq_germline:
            "variants.database",
            "sample_network.bmp",
            "exome.snpeff.vcf",
+           expand("sample_vcfs/{s}"+".stats.csv",s=samples),
            "exome_targets.bed"
     output: 
     params: rname="final"

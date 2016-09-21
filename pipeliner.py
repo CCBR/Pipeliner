@@ -1727,7 +1727,7 @@ Commentscrollbar = Scrollbar(pastewriteframe)
 Commentscrollbar.grid(row=0,column=4,rowspan=30)
 comments = Text(pastewriteframe,width=80,height=30,bg=commentBgColor,fg=commentFgColor,font=("nimbus mono bold","11"),yscrollcommand = Commentscrollbar.set)
 Commentscrollbar['command']=comments.yview
-comments.insert(INSERT, "Enter configuration data here.  Then save the data under one of the Pipeliner configuration files listed in the 'File Type' pulldown. Use 'pairs' to designate the pairs for comparison in the ExomeSeq Somatic pipeline.  Use 'contrasts.tab' to specify sample groups and contrasts for the RNASeq pipeline.  Use 'rg.tab' to specify read groups for samples.")
+comments.insert(INSERT, "Enter configuration data here.  Then save the data under one of the Pipeliner configuration files listed in the 'File Type' pulldown. Use 'pairs' to designate the pairs for comparison in the ExomeSeq Somatic pipeline, with each sample pair on a single line. The germline sample is in column 1 and the tumor sample in column 2, with tabs separating the two sample names (example: germ1	tumor1).  Use 'contrasts.tab' to specify sample groups and contrasts for the RNASeq pipeline.  Use 'rg.tab' to specify read groups for samples.")
 #comments.bind('<FocusOut>',lambda _:writepaste())
 comments.grid(row=1,column=0,sticky="e")
 L=Label(pastewriteframe, text="File Type",fg=textLightColor,bg=baseColor)
