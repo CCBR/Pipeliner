@@ -23,12 +23,12 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test",
+        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/test_reads",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "FlowCellID",
-        "id": "ProjectID",
+        "flowcellid": "stats",
+        "id": "project",
         "organism": "",
         "pairs": {},
         "pfamily": "exomeseq",
@@ -86,7 +86,7 @@
             "F22testB": "F22testB",
             "F22testC": "F22testC"
         },
-        "username": "lackjb",
+        "username": "justin.lack@nih.gov",
         "version": "1.0",
         "workpath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test"
     }
