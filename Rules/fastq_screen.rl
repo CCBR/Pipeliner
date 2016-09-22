@@ -7,5 +7,5 @@ rule fastq_screen:
     params: fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
             outdir = "QC",
             config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG'],rname="pl:fastq_screen"
-    threads: 8
+    threads: 24
     shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"

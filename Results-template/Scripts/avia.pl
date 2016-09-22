@@ -7,13 +7,14 @@ $id="viz-ccbr-".$r->randpattern("ccccnnnn");
 
 #INPUT
 
-$vcf=shift;
+$vcf=$ARGV[0];
+$email=((split '@ni', $ARGV[1])[0]);
 
 $status = 0;
 $cmd = '';
 $time = 300; #amount of time (seconds) to wait between pings to AVIA
 
-$cmd="/usr/local/bin/curl  https://avia-abcc.ncifcrf.gov/apps/site/upload_viz -X POST -F user_file=\@$vcf -F user.ver=hg19 -F user_inputformat=bed -F user_api=cFMdtEdwm34iVzXOZ6 -F 'user_email=justin.lack|nih.gov' --insecure -F user_id=$id";
+$cmd="/usr/local/bin/curl  https://avia-abcc.ncifcrf.gov/apps/site/upload_viz -X POST -F user_file=\@$vcf -F user.ver=hg19 -F user_inputformat=bed -F user_api=cFMdtEdwm34iVzXOZ6 -F 'user_email=" . $email . "|nih.gov' --insecure -F user_id=$id";
 
 print STDERR "Executing command: $cmd\n";
 
