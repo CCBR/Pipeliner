@@ -23,131 +23,54 @@
             "rsamps": "na"
         },
         "custom": [],
-        "datapath": "/data/CCBR/projects/ccbr745/reads",
+        "datapath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test",
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "ccbr745",
-        "id": "ccbr745",
+        "flowcellid": "FlowCellID",
+        "id": "ProjectID",
         "organism": "",
         "pairs": {},
         "pfamily": "exomeseq",
         "pi": "",
-        "pipeline": "initialqc",
+        "pipeline": "exomeseq-germline",
         "platform": "Illumina",
         "poc": "",
         "rgid": {
-            "D154_S8": {
+            "3435Ttest": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "D154_S8"
+                "rgsm": "3435Ttest"
             },
-            "D191_S7": {
+            "D115test": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "D191_S7"
+                "rgsm": "D115test"
             },
-            "D353_S6": {
+            "F22testA": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "D353_S6"
+                "rgsm": "F22testA"
             },
-            "D388_S5": {
+            "F22testB": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "D388_S5"
+                "rgsm": "F22testB"
             },
-            "D446_S4": {
+            "F22testC": {
                 "rgcn": "na",
                 "rglb": "na",
                 "rgpl": "ILLUMINA",
                 "rgpu": "na",
-                "rgsm": "D446_S4"
-            },
-            "D495_S3": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "D495_S3"
-            },
-            "D508_S2": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "D508_S2"
-            },
-            "D536_S1": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "D536_S1"
-            },
-            "D565_S16": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "D565_S16"
-            },
-            "D568_S15": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "D568_S15"
-            },
-            "D597_S14": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "D597_S14"
-            },
-            "D649_S13": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "D649_S13"
-            },
-            "D672_all": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "D672_all"
-            },
-            "D679_S11": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "D679_S11"
-            },
-            "D854_S10": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "D854_S10"
-            },
-            "D891_S9": {
-                "rgcn": "na",
-                "rglb": "na",
-                "rgpl": "ILLUMINA",
-                "rgpu": "na",
-                "rgsm": "D891_S9"
+                "rgsm": "F22testC"
             }
         },
         "samples": {
@@ -157,25 +80,14 @@
         "targetspath": "/data/CCBR_Pipeliner/db/PipeDB/lib/SS_v5_UTRs_hg19.bed",
         "technique": "",
         "units": {
-            "D154_S8": "D154_S8",
-            "D191_S7": "D191_S7",
-            "D353_S6": "D353_S6",
-            "D388_S5": "D388_S5",
-            "D446_S4": "D446_S4",
-            "D495_S3": "D495_S3",
-            "D508_S2": "D508_S2",
-            "D536_S1": "D536_S1",
-            "D565_S16": "D565_S16",
-            "D568_S15": "D568_S15",
-            "D597_S14": "D597_S14",
-            "D649_S13": "D649_S13",
-            "D672_all": "D672_all",
-            "D679_S11": "D679_S11",
-            "D854_S10": "D854_S10",
-            "D891_S9": "D891_S9"
+            "3435Ttest": "3435Ttest",
+            "D115test": "D115test",
+            "F22testA": "F22testA",
+            "F22testB": "F22testB",
+            "F22testC": "F22testC"
         },
         "username": "lackjb",
         "version": "1.0",
-        "workpath": "/data/CCBR/projects/ccbr745/pipeline"
+        "workpath": "/data/CCBR/dev/Exome-seq-pipeline/exome_test"
     }
 }
