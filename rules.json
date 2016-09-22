@@ -1,6 +1,7 @@
  {
     "rules": {
         "avia": ["wgslow","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","exomeseq-somatic"],
+        "gatk_select_variants": ["exomeseq-germline"],
         "ngsqc": ["initialqc","initialqcgenomeseq"],
         "fastqc.fastq": ["initialqc","initialqcgenomeseq"],
         "bamstats": ["initialqc"],

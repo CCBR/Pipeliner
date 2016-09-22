@@ -27,8 +27,8 @@
         "description": "Enter CCBR Project Description and Notes here.\n",
         "efiletype": "fastq",
         "filetype": "fastq.gz",
-        "flowcellid": "FlowCellID",
-        "id": "ProjectID",
+        "flowcellid": "stats",
+        "id": "project",
         "organism": "",
         "pairs": {
             "D115+3435T": [
@@ -387,7 +387,7 @@
             "D416": "D416",
             "D550": "D550"
         },
-        "username": "lackjb",
+        "username": "justin.lack@nih.gov",
         "version": "1.0",
         "workpath": "/data/CCBR/projects/ccbr612/new_test"
     }
