@@ -105,6 +105,7 @@ pipeline=["initialqc","exomeseq-somatic","exomeseq-germline"]
 auto_check=0
 
 whereiam=os.popen("cd ../ && pwd").read().strip()
+uhome=os.popen("echo $HOME").read().strip()
 runmode=1
 defaultwork=whereiam+"/Results"
 
@@ -695,7 +696,8 @@ def saveproject(proj):
     P=eval(proj)
 
     try:
-        with open('project.json', 'w') as F:
+        # with open('project.json', 'w') as F:
+        with open(uhome+'/project.json', 'w') as F:
             json.dump(P, F, sort_keys = True, indent = 4, ensure_ascii=False)
         F.close()
 #        tkinter.messagebox.showinfo("Project Json Write","Project Json file written.")
@@ -736,14 +738,16 @@ def getworkflow():
 
 def cmd(smcommand):
     global img
-    PL=pipelineget()
+    pl=pipelineget()
+    PL=uhome
 #    makejson("none")
     if checklist()==1:
         return
     saveproject(jsonconf.get("1.0",END))
-    MkaS=os.popen("./makeasnake.py 2>&1 | tee -a "+workpath.get()+"/Reports/makeasnake.log").read()
+    #MkaS=os.popen("./makeasnake.py 2>&1 | tee -a "+workpath.get()+"/Reports/makeasnake.log").read()
+    MkaS=os.popen("./makeasnake.py "+PL+" 2>&1 | tee -a "+workpath.get()+"/Reports/makeasnake.log").read()
     Out=os.popen("cd "+workpath.get()+" && snakemake " + smcommand +" 2>&1").read()
-    show(Out,"CCBR Pipeliner: "+ PL + " "+smcommand,dryrunFgColor,dryrunBgColor,200,100)
+    show(Out,"CCBR Pipeliner: "+ pl + " "+smcommand,dryrunFgColor,dryrunBgColor,200,100)
 
 def swarm():
     return
@@ -890,7 +894,8 @@ def seelog():
     
 def run():
     global snakemakeRun
-    PL=pipelineget()
+    #PL=pipelineget()
+    PL=uhome
     MkaS=os.popen("./makeasnake.py "+PL+" 2>&1 | tee -a makeasnake.log").read()
     tkinter.messagebox.showinfo("Run by Simple Script","Starting Snakemake Run "+PL+"\n")
     snakemakeRun=Popen("../run.sh")
@@ -900,7 +905,8 @@ def runqsub():
     global snakemakeRun
     global runmode
     runmode=1
-    PL=pipelineget()
+    # PL=pipelineget()
+    PL=uhome
     MkaS=os.popen("./makeasnake.py "+PL+" 2>&1 | tee -a "+workpath.get()+"/Reports/makeasnake.log").read()
     tkinter.messagebox.showinfo("Qsub","Starting Qsub Snakemake Run "+PL+"\n")
     #snakemakeRun=Popen("../qsub.sh")
@@ -911,12 +917,13 @@ def runslurm():
     global snakemakeRun
     global runmode
     runmode=2
-    PL=pipelineget()
+    pl=pipelineget()
+    PL=uhome
     if checklist()==1:
         return
     
     MkaS=os.popen("./makeasnake.py "+PL+" 2>&1 | tee -a "+workpath.get()+"/Reports/makeasnake.log").read()
-    tkinter.messagebox.showinfo("Slurm","Starting Slurm Snakemake Run "+PL+"\n")
+    tkinter.messagebox.showinfo("Slurm","Starting Slurm Snakemake Run "+pl+"\n")
     #snakemakeRun=Popen("../qsub.sh")
     snakemakeRun=Popen(workpath.get()+"/submit_slurm.sh")    
     #seelog()    

@@ -3,7 +3,7 @@ from snakemake.utils import R
 configfile: "run.json"
 
 #samples=config['project']['units']
-#degsamples=config['project']['contrasts']['rsamps']
+samples=config['project']['contrasts']['rsamps']
 
 if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
   rule all:

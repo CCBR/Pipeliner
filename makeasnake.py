@@ -3,14 +3,21 @@ import sys,os,re,subprocess
 import json
 #from subprocess import call,Popen, PIPE, STDOUT
 
+#pathprj= os.path.dirname(sys.argv[1])
+pathprj= sys.argv[1]
+print(pathprj)
+print(pathprj+"/project.json")
+
 whereiam=os.popen("pwd").read().strip()
 
-C=open("project.json","r")
+C=open(pathprj+"/project.json","r")
 C=eval(C.read())
 pipeline=C['project']['pipeline']
 pfamily=C['project']['pfamily']
 WP=C['project']['workpath']
 
+# print(pipeline)
+#return
 # jobscripts for PBS and slurm
 
 #F={"qsub":"/pipeline_ctrl.sh","submit":"/submit.sh","slurm":"/pipeline_ctrls.sh","submit_slurm":"/submit_slurm.sh"}
