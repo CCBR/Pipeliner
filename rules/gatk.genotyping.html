@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: gatk.genotyping</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>gatk.genotyping.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule gatk_genotyping:
+	input: gvcf = expand("../gvcf/{sample}.gvcf", sample=samples)
+	output: '../gvcf/all.vcf'
+	params: batch="-l nodes=1:gpfs", GATK_BASE=config.GATK_BASE2, REF=config.REF, snp138=config.SNP138,rname="pl:genotyping"
+        threads: 4
+        run: gvcf = gatk_multi_arg(" --variant", input.gvcf);shell('/usr/local/java/jdk1.7.0_02/bin/{params.GATK_BASE} -T GenotypeGVCFs -R {params.REF} --annotation InbreedingCoeff --annotation FisherStrand --annotation QualByDepth --annotation ChromosomeCounts {gvcf} --dbsnp {params.snp138} -o {output}')
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

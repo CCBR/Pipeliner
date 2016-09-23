@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: gatk.mutect2</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>gatk.mutect2.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule gatk_mutect2:
+    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".realign.bam",
+           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".realign.bam"
+    output: vcf="{x}.paired.vcf",
+#           stats="{x}.stats.out",
+#           wig="{x}.wig.txt"
+    params: gatk=config['bin']['GATK'],genome=config['references']['GENOME'],cosmic=config['references']['MUTECTCOSMIC'],snpsites=config['references']['SNPSITES'],rname="pl:mutect2"
+    threads: 4
+    shell: "{params.gatk} -T MuTect2 -R {params.genome} -I:tumor {input.tumor} -I:normal {input.normal} --read_filter BadCigar --dbsnp {params.snpsites} -nct {threads} -o {output.vcf}"
+</font></pre>
+</div>
+</div>
+</body>
+</html>

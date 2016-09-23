@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: ngsqc</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>ngsqc.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule ngsqc:
+    input:  "{x}.R1."+config['project']['filetype'],
+            "{x}.R2."+config['project']['filetype']
+    output: "QC/{x}.R1."+config['project']['filetype']+"_filtered",
+            "QC/{x}.R2."+config['project']['filetype']+"_filtered"
+    params: illuqc=config['bin']['NGSQCTOOLKIT'],
+            adapters=config['references']['adapter.file'],rname="pl:ngsqc"
+    shell:  "{params.illuqc} -pe {input[0]} {input[1]} 3 A -o QC"
+#    shell:  "{params.illuqc} -pe {input[0]} {input[1]} {params.adapters} A -o QC"
+
+
+
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

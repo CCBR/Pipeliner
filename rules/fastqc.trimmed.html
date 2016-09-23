@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: fastqc.trimmed</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>fastqc.trimmed.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule fastqc_trimmed:
+    input:  "{x}.R1.trimmed.fastq.gz","{x}.R2.trimmed.fastq.gz"
+    output: "QC/{x}.R1.trimmed_fastqc.html","QC/{x}.R2.trimmed_fastqc.html"
+    params: fastqc=config['bin']['FASTQC'],adapters=config['references']['fastqc.adapters'],rname="pl:fastqc"
+    threads: 8
+    shell:  "{params.fastqc} -o QC -f fastq --threads {threads} --contaminants {params.adapters} {input}"
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

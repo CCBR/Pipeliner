@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: fastq</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>fastq.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule fastq:
+     input:
+     output: config['FILEDIR']+"{sample}_1.fastq.gz",
+             config['FILEDIR']+"{sample}_2.fastq.gz"
+#     log:    config['lpath']+"{sample}.fastqc.log"
+     message: "Executing Fastq Rule."
+     threads: 1
+     version: "1.0"
+     shell:  config['rules']['fastq'][mode]
+
+</font></pre>
+</div>
+</div> 
+</body>
+</html>

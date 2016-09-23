@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: snpeff_somatic</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>snpeff_somatic.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule snpeff_somatic:
+        input: "merged_somatic.vcf"
+        output: "merged_somatic_snpEff.vcf"
+        params: snpeff=config['bin']['SNPEFF'],regions=config['references']['REFFLAT'],genome=config['references']['SNPEFF_GENOME'],snpsift=config['bin']['SNPSIFT'],rname="pl:snpeff_somatic"
+        shell: "module load snpEff;{params.snpeff} -v {params.genome} -interval {params.regions} -cancer -cancerSamples pairs {input} > {output}"
+</font></pre>
+</div>
+</div>
+</body>
+</html>

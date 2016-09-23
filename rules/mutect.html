@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: mutect</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>mutect.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule mutect:
+       input:  normal=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".realign.bam",
+               tumor=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".realign.bam"
+       output: vcf="{x}.vcf",
+               stats="{x}.stats.out",
+#               wig="{x}.wig.txt"
+       params: mutect=config['bin']['MUTECT'],genome=config['references']['MUTECTGENOME'],cosmic=config['references']['MUTECTCOSMIC'],snp=config['references']['MUTECTSNP'],rname="pl:mutect"
+       shell:  """
+{params.mutect} --analysis_type MuTect --reference_sequence {params.genome} --vcf {output.vcf} --cosmic {params.cosmic} {params.snp} --input_file:normal {input.normal} --input_file:tumor {input.tumor} --out {output.stats} -rf BadCigar 
+
+"""
+#--coverage_file {output.wig}
+#--dbsnp {params.snp}
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

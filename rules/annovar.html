@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: annovar</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>annovar.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule annovar_all:
+      input:  snp = "all.snp.vcf", indel = "all.indel.vcf",
+      output: snpav = "all.snp.vcf.av", indelav = "all.indel.vcf.av",
+      params: snpsum = "all.snp.vcf.sum.av", indelsum = "all.indel.vcf.sum.av", annovar1=config['bin']['ANNOVAR1'], annovar2=config['bin']['ANNOVAR2'], anndir=config['references']['ANNDIR'],rname="pl:annovar"
+      shell:  "{params.annovar1} -format vcf4 {input.snp} -outfile {output.snpav}; {params.annovar1} -format vcf4 {input.indel} -outfile {output.indelav}; {params.annovar2} {output.snpav} {params.anndir} -buildver hg19 -out {params.snpsum} -remove -protocol refGene,ensGene -operation g,g,g -nastring NA; {params.annovar2} {output.indelav} {params.anndir} -buildver hg19 -out {params.indelsum} -remove -protocol refGene,ensGene -operation g,g,g -nastring NA;"
+
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

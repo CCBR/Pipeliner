@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: gatk.realign.2</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>gatk.realign.2.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule gatk_realign2:
+        input:  "{x}.dedup.bam"
+        output: re="{x}.realign.bam",
+                int="{x}.fin.bam.intervals"
+        params: gatk=config['bin']['GATK'],
+                genome=config['references']['GENOME'],
+                novosort=config['bin']['NOVOSORT'],
+                sam=config['bin']['SAMTOOLS'],
+                picard3=config['bin']['PICARD3'],
+                indelsites=config['references']['INDELSITES'],rname="pl:realign"
+        shell:  "module load novocraft/3.02.10;{params.novosort} -t /scratch -s -i -o {output} {input};{params.sam} index {input};{params.gatk} -T RealignerTargetCreator -I {input} -R {params.genome} -known {params.indelsites} -o {output.int}; {params.gatk} -T IndelRealigner -R {params.genome} -I {input} -targetIntervals {output.int} -o {output.re}"
+#        shell:  "{params.sam} index {input}; {params.sam} faidx {params.genome};  {params.gatk} -T RealignerTargetCreator -I {input} -R {params.genome} -known {params.indelsites} -o {output.int}; {params.gatk} -T IndelRealigner -R {params.genome} -I {input} -targetIntervals {output.int} -o {output.re}"
+params: 
+     threads: 1
+     shell:  "module load novocraft/3.02.10;{params.novosort} -t /scratch -s -i -o {output} {input};"
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

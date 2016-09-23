@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: star.align.2</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>star.align.2.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule star_align_2:
+     input:  "{x}.R1."+config['project']['filetype'],
+             "{x}.R2."+config['project']['filetype']
+     output: temp("{x}.p2.bam")
+     params: genomeDir=config['references']['genomeDir2'],
+             gtf=config['references']['gencodeGtf'],
+             adapter1=config['references']['ADAPTER1'],
+             adapter2=config['references']['ADAPTER2'],rname="pl:star2"
+     threads: 8
+     version: "1.0"
+     shell: "module load STAR;  STAR --genomeDir {params.genomeDir2} --readFilesIn {input} --readFilesCommand zcat --runThreadN {threads} --sjdbGTFfile {params.genomeDir}/{params.gtf} --sjdbOverhang 99 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --clip3pAdapterSeq {params.adapter1} {params.adapter2} --outSAMunmapped Within --outSAMtype BAM SortedByCoordinate"
+     
+#      --outFileNamePrefix $3/pass2/
+
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

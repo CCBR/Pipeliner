@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: varscan</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>varscan.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule varscan:
+       input:  lambda wildcards: config['project']['pairs'][wildcards.x][0]+".pileup.bam",
+               lambda wildcards: config['project']['pairs'][wildcards.x][1]+".pileup.bam"
+       output: snp="{x}.snp",
+               indel= "{x}.indel",
+               snpvcf="{x}.snp.vcf",
+               indelvcf="{x}.indel.vcf"
+       params: varscan=config['bin']['VARSCAN'],
+               snpvcf="{x}.snp",indelvcf="{x}.indel",rname="pl:varscan"
+       shell:  "{params.varscan} somatic {input[0]} {input[1]} --output-snp {output.snp} --output-indel {output.indel} --tumor-purity 0.85 --strand-filter 1;{params.varscan} somatic {input[0]} {input[1]} --output-snp {params.snpvcf} --output-indel {params.indelvcf} --output-vcf 1 --tumor-purity 0.85 --strand-filter 1"
+
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

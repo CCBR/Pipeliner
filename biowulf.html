@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+  <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+</head>
+<body>
+  <h1>Getting Started On Biowulf</h1>
+  See <a href="https://hpc.nih.gov/docs/userguide.html">Biowulf User Guide</a> for more information.<br>
+  <br>ExomePipeline was developed to work on the NIH Biowulf cluster. So, this will require that you have an account with user name and password for Helix and Biowulf2. Additionally, you will need to run your favorite SSH and telnet client software such as Terminal for Mac OS X or PuTTY for Windows. This example is given from Macintosh's Terminal App.
+
+<!-- comment -->
+<h2>1. SSH connection to the Biowulf Cluster and launching CCBR Pipeliner <a href="./index.html" target="_parent">(Return to Main Page)</a></h2>
+<div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+<p><b>ssh</b> - Creates a connection with Biowulf.
+<br>Launch Macintosh's Terminal application from the Utility directory and type in the following lines</p>
+<div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+<font color="red">
+<font color="gray"># This is the pretend terminal window</font>
+<font color="red">
+<br>% ssh -Y <username>@biowulf2
+<br>% password: <enter password>
+<br>biowulf % 
+<br>biowulf % module load ccbr
+<br>biowulf % module load pipeliner
+<br>biowulf % runpipe
+</font>
+</div>
+<br>
+</div>
+<br>
+<font color="black">
+CCBR Pipeliner will launch giving you the following graphical user interface below.
+<hr>
+<!-- comment -->
+<h2>2. Project Information Tab <a href="./index.html" target="_parent">(Return to Main Page)</a></h2>
+Select the Project Information tab and fill it in with the appropriate information.
+
+<br><br><img id="d" src="./other_graphics/Project_Informaion.png" alt="pipeliner application" height="823px" width="1261px">
+<font color="black">
+
+<hr>
+<!-- comment -->
+<h2>3. Pipeline Options Tab <a href="./index.html" target="_parent">(Return to Main Page)</a></h2>
+Select the Pipeline Options tab.
+
+<br><br><b>Initial File Type: </b>Select the input data format. In this example, we will start with fastq.gz files. We suggest conversion and storage of fastq files as fastq.gz files with as much as a 75% reduction in file size. 
+
+<br><br>
+<b>Software Set: </b>Currently, <i><b>Standard-bin</b></i> is the only option.
+
+<br><br>
+<b>Annotation Set: </b>Currently, <i><b>hg19</b></i> and <i><b>mm10</b></i> are currently being supported.
+
+<br><br>
+<br><b>Pipeline: </b>Select <i><b>initalqc</b></i> for this example. CCBR provides the following pipelines:
+<menu>
+	<li><i><b>initialqc</b></i> - This pipeline runs a set of Quality Control software on your data.</li>
+	<li><i><b>bam2recal</b></i> - </li>
+	<li><i><b>exomeseq-somatic</b></i> - </li>
+	<li><i><b>exomeseq-germline</b></i> - </li>
+	<li><i><b>exomeseq-germline-recal</b></i> - </li>
+	<li><i><b>exomeseq-germline-partial</b></i> - </li>
+	<li><i><b>custom</b></i> - </li>
+</menu>
+
+<br>
+<b>Final File Type: </b>Select <i><b>fastq</b></i> for this example.
+
+<br><br>
+<b>Full Path to Data Directory:</b> For example <i><b>/home/user_name/projects/ccbr_xxxx/Data</b></i>
+
+<br>This needs to be an absolute path to your data directory. In this case, a set of fastq.gz files.
+
+<br><br>
+<b>Full Path to Working Directory:</b> Create a new empty directory such as <i><b>/home/user_name/projects/ccbr_xxxx/Exome_germline_analysis</b></i>.
+<br><font color="red"><b>WARNING: We will "Initialize" this working directory later on which will delete everything inside. This directory should be different from the Data directory.</b><font color="black">
+You may copy and paste the paths to the two directs or use the File Menu.
+<br><center><img id="d" src="./other_graphics/File_Menu.png" alt="Run Sequence Tab" height="20%" width="20%"></center>
+
+<br><br><img id="d" src="./other_graphics/Pipeline_Options.png" alt="Pipeline Options Tab" height="823px" width="1261px">
+<font color="black">
+
+<hr>
+<!-- comment -->
+<h2>4. Project Json Tab <a href="./index.html" target="_parent">(Return to Main Page)</a></h2>
+Select the Project Json Tab. This will allow you to review the JSON file which contains the project information. You can select any of the prior tabs discuss to adjust Project settings contained in the JSON file.
+
+<br><br><img id="d" src="./other_graphics/Project_Json.png" alt="Project Json Tab" height="823px" width="1261px">
+<font color="black">
+
+
+<hr>
+<!-- comment -->
+<h2>5. Run Sequence Tab <a href="./index.html" target="_parent">(Return to Main Page)</a></h2>
+Select the Run Sequence Tab. This will walk you though the sequence running up to the submitting the run to Biowulf.
+
+
+<br><br><b>Initialize Working Directory:</b> In this step a directory, which must already exist, will be initialized for Pipeliner.  Initializatin involves deleting all preexisting directory content and writing a few subdirectories containing a colletion of data files and scripts to be used locally diring the pipeline run.
+<br><br><b>Symbolic Link Data:</b> The starting data file will be linked from the Data Directory to the Working Directory.  
+<br><br><b>Preform Dry Run:</b> A test will be preformed to verify that the pipeline will run as expected. No data is processed at this point. 
+<br><br><b>Save Project Profile:</b> The pipeline parameters, project information and comments are saved. 
+<br><br><b>Submit Job to Biowulf2 via Slurm:</b> The pipeline job is submitted to the batch queuing system on the Biowulf2 cluster. 
+
+<br><br><img id="d" src="./other_graphics/Run_Sequence.png" alt="Run Sequence Tab" height="823px" width="1261px">
+<font color="black">
+
+<hr>
+<!-- comment -->
+<h2>6. Job Status Tab <a href="./index.html" target="_parent">(Return to Main Page)</a></h2>
+
+
+<br><br><img id="d" src="./other_graphics/Job_Status.png" alt="Job Status Tab" height="823px" width="1261px">
+<font color="black">
+
+<hr>
+<!-- comment -->
+<h2>7. Comments Tab <a href="./index.html" target="_parent">(Return to Main Page)</a></h2>
+
+
+<br><br><img id="d" src="./other_graphics/Comments.png" alt="Comments Tab" height="823px" width="1261px">
+<font color="black">
+
+<hr>
+<!-- comment -->
+<h2>8. Manual Tab <a href="./index.html" target="_parent">(Return to Main Page)</a></h2>
+
+
+<br><br><img id="d" src="./other_graphics/Manual.png" alt="Manual Tab" height="823px" width="1261px">
+<font color="black">
+
+</font>
+
+
+
+</body>
+</html>

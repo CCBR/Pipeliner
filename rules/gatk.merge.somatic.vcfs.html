@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: gatk.merge.somatic.vcfs</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>gatk.merge.somatic.vcfs.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule gatk_merge_somatic_vcfs:
+    input: expand("{s}"+".paired.vcf",s=pairs)
+    output:"merged_somatic.vcf"
+    params: gres="lscratch:100",gatk=config['bin']['GATK'],genome=config['references']['GENOME'],snpsites=config['references']['SNPSITES'],rname="CombineVariants"
+    run:
+        fl=os.popen("ls *.vcf").read().split()      
+        var=" --variant "+" --variant ".join(fl)
+        cmd="{params.gatk} -T CombineVariants -R {params.genome} --filteredrecordsmergetype KEEP_IF_ANY_UNFILTERED -o {output}"+var
+        system(cmd)
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: picard.headers</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>picard.headers.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule picard_headers:
+     input:  "{x}.bam",
+     output: temp("{x}.fin.bam")
+     params: picard1=config['bin']['PICARD1'],rname="pl:headers"
+     threads: 1
+     run:  rgid=config['project']['units'][wildcards.x];rgpl=config['project']['rgid'][wildcards.x]['rgpl'];rgsm=config['project']['rgid'][wildcards.x]['rgsm'];rglb=config['project']['rgid'][wildcards.x]['rglb'];rgpu=config['project']['rgid'][wildcards.x]['rgpu'];rgcn=config['project']['rgid'][wildcards.x]['rgcn'];shell('{params.picard1} I={input} O={output} RGID={rgid} RGPL={rgpl} RGLB={rglb} RGPU={rgpu} RGSM={rgsm} RGCN={rgcn} RGDS={input} Validation_Stringency=LENIENT')
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

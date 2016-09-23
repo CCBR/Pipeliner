@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: novoalign</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body> 
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>novoalign.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule novoalign:
+     input:  "{x}.R1.trimmed.fastq.bz2",
+             "{x}.R2.trimmed.fastq.bz2"
+     output: sam = "{x}.sam",
+             qcal = "{x}.qcal"
+     params: adapter1=config['constants']['ADAPTER1'],
+             adapter2=config['constants']['ADAPTER2'],
+             novoindex=config['references']['NOVOINDEX'],
+             qcal=config['bin']['QCAL'],
+             sam=config['bin']['SAMTOOLS']
+     message: "Executing NovoAlign Rule."
+     threads: 16
+     version: "1.0"
+     shell: "module load novocraft; novoalign -c {threads} -d {params.novoindex} -a {params.adapter1} {params.adapter2} -H 10 -k -K {output.qcal} -i PE 180,50 -o SAM -f {input} > {output.sam};"
+
+#{params.qcal} {output.qcal} {output.qcal}.qcalreport.pdf;
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

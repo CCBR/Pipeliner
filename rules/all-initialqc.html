@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: all-initialqc</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>all-initialqc.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule all_initialqc:
+    input:  expand("QC/{s}.R1_fastqc.html",s=samples),
+#            expand("QC/{s}.R1."+config['project']['filetype']+"_filtered",s=samples),
+#            expand("{s}.R1.trimmed.fastq.bz2",s=samples),
+#            expand("QC/{s}.qualimapReport",s=samples),
+            expand("QC/{s}.{r}.trimmed_fastqc.html",s=samples,r=['R1','R1']),
+            expand("{s}.dedup.bam",s=samples)
+    output: 
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>

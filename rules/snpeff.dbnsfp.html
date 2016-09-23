@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="utf-8" />
+     <title>Rule Documentation: snpeff.dbnsfp</title>
+     <link href="../assets/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+     pre {
+          display: block;
+          font-family: monospace;
+          white-space: pre;
+          background-color:white;
+          border: none;
+          margin: 1em 0; }
+     body {
+          padding-left: 32px;
+          padding-right: 32px;
+          min-width: 800px;
+</style>
+</head>
+<body>
+     <!-- Code Parameter -->
+     <div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+     <p><b>snpeff.dbnsfp.rl</b> - Description
+     <br>Version: x.x</p>
+     <div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+     <font color="red">
+     <font color="gray"># Comment</font>
+     <pre><font color="red">
+rule snpeff_dbnsfp:
+	input: 'all.snp.filter.vcf','all.indel.filter.vcf'
+	output: 'all.snp.dbnsfp.vcf','all.indel.dbnsfp.vcf'
+	params: genome=config['references']['SNPEFF_GENOME'], snpsift=config['bin']['SNPSIFT'], effconfig=config['references']['SNPEFF_CONFIG'],selectDB=config['references']['SELECTDB'], db29=config['references']['DB29'],rname="pl:snpeff"
+        run:
+          for mode in ["snp","indel"]:
+              ifile="all.{}.filter.vcf".format(mode)
+              ofile="all.{}.dbnsfp.vcf".format(mode)
+	      shell("module load snpEff; {params.snpsift} dbnsfp -f {params.selectDB} -v -db {params.db29} %s > %s"%(ifile,ofile))
+
+
+</font></pre>
+</div>
+</div>
+</body>
+</html>
