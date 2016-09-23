@@ -1,3 +1,4 @@
+#FULL PIPELINER MANUAL AVAILABLE HERE: >[https://github.com/CCBR/Pipeliner/blob/master](cluster.json)
 #Pipeliner
 
 ## Introduction
