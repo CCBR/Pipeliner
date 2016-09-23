@@ -1,4 +1,4 @@
-#FULL PIPELINER MANUAL AVAILABLE HERE: >[https://github.com/CCBR/Pipeliner/blob/master/PipelinerVer1.0_documentation]
+#FULL PIPELINER MANUAL AVAILABLE HERE: >[https://github.com/CCBR/Pipeliner/blob/master/PipelinerVer1.0_documentation.pdf]
 #Pipeliner
 
 ## Introduction
