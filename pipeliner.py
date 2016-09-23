@@ -433,11 +433,12 @@ def makejson(*args):
         cont=[]
         lbl=[]
         for x in f:
-           sampl.append(x.split()[0])
-           grp.append(x.split()[1])
-           lbl.append(x.split()[2])
-           if len(x.split()) == 4:
-                cont.append(x.split()[3])
+           if len(x.split()) == 4 or len(x.split()) == 3:
+              sampl.append(x.split()[0])
+              grp.append(x.split()[1])
+              lbl.append(x.split()[2])
+              if len(x.split()) == 4:
+                 cont.append(x.split()[3])
         D["rsamps"]=sampl
         D["rgroups"]=grp
         D["rcontrasts"]=cont
