@@ -8,7 +8,7 @@ $id="viz-ccbr-".$r->randpattern("ccccnnnn");
 #INPUT
 
 $vcf=$ARGV[0];
-$email=((split '@ni', $ARGV[1])[0]);
+$email=((split '@', $ARGV[1])[0]);
 
 $status = 0;
 $cmd = '';

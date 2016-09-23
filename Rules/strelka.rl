@@ -1,7 +1,8 @@
 rule strelka:
     input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
            tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
-           targets="exome_targets.bed"
+           targets="exome_targets.bed",
+           dir="strelka_out"
     output: vcf="strelka_out/{x}.vcf",
             outdir="strelka_out/{x}",
             csvstats="strelka_out/{x}.strelka.stats.csv",

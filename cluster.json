@@ -84,7 +84,7 @@
     },
     "gatk_haplotype_caller":
     {
-        "threads": "8",
+        "threads": "4",
         "mem": "64g"
     },
     "gatk_realign":
