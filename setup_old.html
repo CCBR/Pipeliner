@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+  <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+</head>
+<body>
+  <h1>Getting Started On Biowulf</h1>
+  See the <a href="http://biowulf.nih.gov/user_guide.html">Biowulf User Guide</a> for more general information.<br>
+  <br>ExomePipeline has been developed to work on the Biowulf cluster. Any ohter cluster and this time will surely fail.
+
+
+<!-- comment -->
+<h2>1. SSH to the Biowulf Cluster</h2>
+
+<div style="border-radius: 10px; background-color:Gainsboro; padding: 10px;">
+<p><b>ssh</b> - Creates a connection with Biowulf.
+<br>Launch Macintosh's Terminal</p>
+<div style="border-radius: 10px; background-color:white; ; padding: 10px;">
+<font color="red">
+<font color="gray"># This is the pretend terminal window</font>
+<font color="red">
+<br>% ssh -X your-user-name@biowulf.nih.gov
+<br>% password: enter password
+<br>% cd directory
+<br>% python pipeliner.py
+</font>
+</div>
+<br>
+</div>
+<br>
+<img id="d" src="./other_graphics/pipeliner.png" alt="pipeliner application" height="823px" width="1261px">
+<font color="black">
+
+<!-- comment -->
+<h2>2. Creating Symlinks (symbolic links) to the data.</h2>
+<img id="d" src="./other_graphics/paths.png" alt="pipeliner application" height="48px" width="672px">
+<br>
+<br>Set the <i>"Full Path to Starting Files"</i> by entering the absolute file path to directory containing the input files (fastq, bam, etc.).
+<br>This doesn't create a new copy of the data. It simply provies an alias or shortcut path to the files. For example: /data/project/DATA
+
+<!-- basic_options -->
+<h2>3. Set the basic options.</h2>
+<img id="d" src="./other_graphics/basic_options.png" alt="pipeliner application" height="50px" width="1262px">
+<br>
+<br>Set the <i>"Full Path to Starting Files"</i> by entering the absolute file path to directory containing the input files (fastq, bam, etc.).
+<ul>
+	<li><b>Starting File Type</b> - This along with the Entry of <i>Full Path to Starting file</i> will define the Symlinks.</li>
+	<li><b>Software Set</b> - This allows for other preset parameters for this pipeline.</li>
+	<li><b>Annotation Set</b> - Select the build used for reference and annotation. Human(hg19) and Mouse(mm10) currently supported.</li>
+	<li><b>Pipeline</b> - Choose pipeline to use.</li>
+	<li><b>Ending File Type</b> - Choose the resulting file format.</li>
+</ul>
+
+<h2>4. Set Project Information.</h2>
+<img id="d" src="./other_graphics/project_info.png" alt="pipeliner application" height="371px" width="175px">
+<ul>
+	<li><b>Project Id</b> - For example CCBR123.</li>
+	<li><b>Biowulf Username</b></li>
+	<li><b>Organism</b></li>
+	<li><b>Analyst</b></li>
+	<li><b>Point of Contact</b></li>
+	<li><b>PI</b></li>
+	<li><b>Platform</b> - Illumina for example.</li>
+</ul>
+
+<h2>4. Review Selected Options and Run Sequence .</h2>
+<img id="d" src="./other_graphics/SelectOptionsRunSequence.png" alt="pipeliner application" height="90px" width="1261px">
+
+<br>Review your selected options: Pipeline, Annotation Bundle, Binary Set and Data Path.
+<br><b></b>
+<ul>
+	<li><b>Symlink Data</b> - This button will create/write symbolic links to the data files.</li>
+	<li><b>Build Project Json</b> - This button will build the Project Json and display in the window above.</li>
+	<li><b>Save Project Json</b> - This button will save/write the project.json to the directory.</li>
+	<li><b>Perform Dry Run</b> - This button perform dry run to insure all is correct.</li>
+	<li><b>Run Via Qsub</b> - This button will submit job via Qsub. The job is in the queue to be run.</li>
+</ul>
+
+
+
+
+
+
+</font>
+
+</body>
+</html>
