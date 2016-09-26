@@ -270,9 +270,9 @@ rule rnaseq_multiqc:
     params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
     threads: 1
     shell:  """
-            module load multiqc/0.7
+            module load multiqc
 #            cd Reports && multiqc -f -e featureCounts -e picard ../
-            cd Reports && multiqc -f ../ 
+            cd Reports && multiqc -f -e picard ../ 
             """
 
 rule generate_QC_table:

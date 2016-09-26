@@ -51,6 +51,12 @@ else:
 #      threads: 8
 #      shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"
 
+rule fastq_screen:
+      input: "{name}.R1.fastq.gz","{name}.R2.fastq.gz"
+      output: "FQscreen/{name}.R1_screen.txt","FQscreen/{name}.R1_screen.png","FQscreen/{name}.R2_screen.txt","FQscreen/{name}.R2_screen.png"
+      params: rname='pl:fqscreen',fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],outdir = "FQscreen",config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
+      threads: 24
+      shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"
 
 
 if config['project']['TRIM'] == "yes":
@@ -75,17 +81,12 @@ if config['project']['TRIM'] == "yes":
       threads: 32
       shell: "mkdir -p {output};module load {params.fastqcver}; fastqc {input} -t {threads} -o {output}"
 
-   rule fastq_screen:
-      input: "trim/{name}_R1_001_trim_paired.fastq.gz", "trim/{name}_R2_001_trim_paired.fastq.gz"
-      output: "FQscreen/{name}.R1_screen.txt",
-            "FQscreen/{name}.R1_screen.png",
-            "FQscreen/{name}.R2_screen.txt",
-            "FQscreen/{name}.R2_screen.png"
-      params: rname='pl:fqscreen',fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
-            outdir = "FQscreen",
-            config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
-      threads: 24
-      shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"
+##   rule fastq_screen:
+##      input: "trim/{name}_R1_001_trim_paired.fastq.gz","trim/{name}_R2_001_trim_paired.fastq.gz"
+##      output: "FQscreen/{name}_R1_001_trim_paired_screen.txt","FQscreen/{name}_R1_001_trim_paired_screen.png","FQscreen/{name}_R2_001_trim_paired_screen.txt","FQscreen/{name}_R2_001_trim_paired_screen.png"
+##      params: rname='pl:fqscreen',fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],outdir = "FQscreen",config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
+##      threads: 24
+##      shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"
 
 
       
@@ -221,14 +222,14 @@ rule rnaseqc:
          """
 
 rule rnaseq_multiqc:
-    input: expand("{name}.Rdist.info",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
+    input: expand("{name}.Rdist.info",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.flagstat.concord.txt",name=samples),expand("{name}.RnaSeqMetrics.txt",name=samples)
     output: "Reports/multiqc_report.html"
     params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
     threads: 1
     shell:  """
-            module load multiqc/0.7
+            module load multiqc
             # cd Reports && multiqc -f -e featureCounts -e picard ../
-            cd Reports && multiqc -f -e featureCounts ../
+            cd Reports && multiqc -f -e featureCounts -e picard ../
             """
 
 rule RNAseq_generate_QC_table:
