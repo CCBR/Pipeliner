@@ -118,7 +118,7 @@
         "A1": "CTGTCTCTTATACACATCTCCGAGCCCACGAGAC",
         "A2": "CTGTCTCTTATACACATCTGACGCTGCCGACGA",
         "STARSTRANDCOL": 4,
-        "NBJUNCS": 2000000,
+        "NBJUNCS": 4000000,
         "cufflinks": "-------------------------Cufflinks options (for now defaults)----------------------------------------------------",
         "FILTERINTRONMOTIFS": "RemoveNoncanonicalUnannotated",
         "SAMSTRANDFIELD": "None",

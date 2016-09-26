@@ -264,12 +264,13 @@ rule joincounts:
 
 
 rule rnaseq_multiqc:
-    input: "STAR_QC/index.html","STAR_QC/report.html"
+#    input: "STAR_QC/index.html","STAR_QC/report.html"
+    input: "sampletable.txt"
     output: "Reports/multiqc_report.html"
     params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
     threads: 1
     shell:  """
-            module load multiqc
+            module load multiqc/0.7
 #            cd Reports && multiqc -f -e featureCounts -e picard ../
             cd Reports && multiqc -f ../ 
             """
