@@ -9,7 +9,7 @@ rule gatk_merge_somatic_vcfs:
         var=" --variant "+" --variant ".join(fl)
         cmd="{params.gatk} -T CombineVariants -R {params.genome} -L {params.regions} --filteredrecordsmergetype KEEP_UNCONDITIONAL --genotypemergeoption UNIQUIFY -o {output.mutectvcf}"+var
         shell(cmd)
-        flb=os.popen("ls strelka_out/*.vcf").read().split()
+        flb=os.popen("ls strelka_out/*.vcf | grep -v 'snpEff'").read().split()
         varb=" --variant "+" --variant ".join(flb)
         cmd="{params.gatk} -T CombineVariants -R {params.genome} -L {params.regions} --filteredrecordsmergetype KEEP_UNCONDITIONAL --genotypemergeoption UNIQUIFY -o {output.strelkavcf}"+varb
         shell(cmd)        
