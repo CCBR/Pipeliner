@@ -229,7 +229,7 @@ rule rnaseq_multiqc:
     shell:  """
             module load multiqc
             # cd Reports && multiqc -f -e featureCounts -e picard ../
-            cd Reports && multiqc -f -e featureCounts -e picard ../
+            cd Reports && multiqc -f -e featureCounts ../
             """
 
 rule RNAseq_generate_QC_table:
