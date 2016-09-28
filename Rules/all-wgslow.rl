@@ -3,6 +3,7 @@ rule all_wgslow:
            "full_annot.txt.zip",
            "variants.database",
            "sample_network.bmp",
+           expand("sample_vcfs/{s}"+".stats.csv",s=samples),           
            "combined.snpeff.vcf"
     output: 
     params: rname="final"
