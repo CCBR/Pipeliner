@@ -6,11 +6,10 @@ rule gatk_recal:
 #              plots="{X}.plots.bam.pdf"
       params: gatk=config['bin'][pfamily]['GATK'],
               genome=config['references'][pfamily]['GENOME'],
-              indelsites=config['references'][pfamily]['INDELSITES'],
-              snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:recal"
+              knownrecal=config['references'][pfamily]['KNOWNRECAL']
       threads: 32
       shell:  """
-              {params.gatk} -T BaseRecalibrator -I {input} -R {params.genome} -knownSites {params.snpsites} -knownSites {params.indelsites} -nct {threads} -o {output.re};
+              {params.gatk} -T BaseRecalibrator -I {input} -R {params.genome} {params.knownrecal} -nct {threads} -o {output.re};
               {params.gatk} -T PrintReads -R {params.genome} -I {input} -BQSR {output.re} -o {output.bam};
               """
 # -plots {output.plots}
