@@ -6,7 +6,8 @@ rule all_exomeseq_germline:
            "sample_network.bmp",
            "exome.snpeff.vcf",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),
-           "exome_targets.bed"
+           "exome_targets.bed",
+           "exome.strictFilter.vcf"
     output: 
     params: rname="final"
     shell:  """
