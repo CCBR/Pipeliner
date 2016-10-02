@@ -4,7 +4,8 @@ rule all_wgslow:
            "variants.database",
            "sample_network.bmp",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),           
-           "combined.snpeff.vcf"
+           "combined.snpeff.vcf",
+           "combined.strictFilter.vcf"
     output: 
     params: rname="final"
     shell:  """
