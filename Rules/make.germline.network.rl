@@ -1,5 +1,5 @@
 rule make_germline_network:
-    input: "exome.recode.vcf"
+    input: "exome.strictFilter.vcf"
     output: network="sample_network.bmp",
             vcf="samples_and_knowns.vcf"
     params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],knowns=config['references'][pfamily]['KNOWNANCESTRY'],rname="make.germline.network"
