@@ -21,6 +21,7 @@
         "mutsig_mutect": ["exomeseq-somatic"],
         "mkdir_somatic": ["exomeseq-somatic"],
         "cnvkit_somatic": ["exomeseq-somatic"],
+        "cnvkit_summary": ["exomeseq-somatic"],
         "delly_somatic": ["exomeseq-somatic"],
         "fastqc.trimmed": ["initialqc","initialqcgenomeseq"],
         "trimmomatic": ["initialqc","initialqcgenomeseq"],

@@ -24,6 +24,7 @@ rule all_exomeseq_somatic:
             expand("delly_out/{p}_tra.bcf", p=pairs),
             expand("delly_out/{p}_inv.bcf", p=pairs),
             "mutect_out/merged_somatic.vcf",
+            "cnvkit_out/CNVkit_summary_heatmap.pdf",
             "mutect_out/merged_somatic_snpEff.vcf",
             "strelka_out/merged_somatic_snpEff.vcf",
 #            "mutect2_out/merged_somatic.vcf",
