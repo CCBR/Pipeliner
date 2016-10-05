@@ -15,6 +15,8 @@ from tkinter.filedialog import askdirectory
 from tkinter.messagebox import showerror
 from tkinter.ttk import *
 
+from pathlib import Path
+
 try:
     # Python2
     from Tkinter import *
@@ -568,9 +570,16 @@ def symlink(data):
     try:
         #cmd="for f in `ls "+data+"*.fastq`;do ln -s $f;done"
 #        cmd="for f in `ls "+data+"*."+FT+"`;do ln -s $f ../;done"
-        cmd="for f in `ls {0}*[._]{1}`;do ln -s $f {2};done".format(data,FT,workpath.get())        
-        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-        Out = p.stdout.read()
+        labelfile=Path(datapath.get()+"/Labels.txt")
+        if labelfile.is_file():
+           cmd="perl symfiles.pl {0} {1} {2}".format(datapath.get(),datapath.get()+"/Labels.txt",workpath.get())        
+           p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+           Out = p.stdout.read()
+        else:
+           cmd="for f in `ls {0}*[._]{1}`;do ln -s $f {2};done".format(data,FT,workpath.get())        
+           p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+           Out = p.stdout.read()
+
     except Exception as e:
         tkinter.messagebox.showinfo("Error",str(e))
     if str(Out).find("No such file")==-1:    
