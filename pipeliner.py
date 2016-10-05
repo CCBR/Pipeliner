@@ -570,9 +570,9 @@ def symlink(data):
     try:
         #cmd="for f in `ls "+data+"*.fastq`;do ln -s $f;done"
 #        cmd="for f in `ls "+data+"*."+FT+"`;do ln -s $f ../;done"
-        labelfile=Path(datapath.get()+"/Labels.txt")
+        labelfile=Path(datapath.get()+"/labels.txt")
         if labelfile.is_file():
-           cmd="perl symfiles.pl {0} {1} {2}".format(datapath.get(),datapath.get()+"/Labels.txt",workpath.get())        
+           cmd="perl symfiles.pl {0} {1} {2}".format(datapath.get(),datapath.get()+"/labels.txt",workpath.get())        
            p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
            Out = p.stdout.read()
         else:
