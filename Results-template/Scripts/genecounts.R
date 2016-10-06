@@ -35,7 +35,12 @@ mydata=read.delim("RawCountFile_genes.txt",row.names=1)
 val1=as.numeric(MINCOUNT)
 val2=as.numeric(MINSAMPLES)
 cat(val1," ", val2, "checking..\n",file="check.txt")
-filter <- apply(mydata, 1, function(x) length(x[x>val1])>=val2)
+## filter <- apply(mydata, 1, function(x) length(x[x>val1])>=val2)
+## res=mydata[filter,]
+tot=colSums(mydata)
+val1=(val1/max(tot))*1e6
+cat(val1," ", val2, "checking..\n",file="check2.txt")
+filter <- apply(cpm(mydata), 1, function(x) length(x[x>val1])>=val2)
 res=mydata[filter,]
 write.table(as.data.frame(res),file="RawCountFile_genes_filtered.txt",sep="\t",col.names=NA)
 png("HistBeforenormFilter.png")
