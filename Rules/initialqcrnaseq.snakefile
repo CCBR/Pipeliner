@@ -121,7 +121,7 @@ if config['project']['TRIM'] == "yes":
 
    rule star1p:
       input: file1= "trim/{name}_R1_001_trim_paired.fastq.gz",file2="trim/{name}_R2_001_trim_paired.fastq.gz"#,file3="fastqc_status_checked.txt"
-      output: out1= "{name}.SJ.out.tab"#,out2= "{name}.SJ.out.tab.Pass1.sjdb"
+      output: out1= "{name}.SJ.out.tab", out3= temp("{name}.Aligned.out.bam") #,out2= "{name}.SJ.out.tab.Pass1.sjdb"
       params: rname='pl:star1p',prefix="{name}",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],stardir=config['references'][pfamily]['STARDIR']+config['project']["SJDBOVERHANG"],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2'],
       threads: 32
       shell: """
@@ -134,7 +134,7 @@ if config['project']['TRIM'] == "yes":
 
    rule star2p:
       input: file1= "trim/{name}_R1_001_trim_paired.fastq.gz",file2="trim/{name}_R2_001_trim_paired.fastq.gz",tab=expand("{name}.SJ.out.tab",name=samples)#, dir="STARINDEX"
-      output: out1="{name}.p2.Aligned.sortedByCoord.out.bam",out2="{name}.p2.ReadsPerGene.out.tab",out3="{name}.p2.Aligned.toTranscriptome.out.bam",out4="{name}.p2.SJ.out.tab",out5="{name}.p2.Log.final.out"
+      output: out1=temp("{name}.p2.Aligned.sortedByCoord.out.bam"),out2="{name}.p2.ReadsPerGene.out.tab",out3="{name}.p2.Aligned.toTranscriptome.out.bam",out4="{name}.p2.SJ.out.tab",out5="{name}.p2.Log.final.out"
       params: rname='pl:star2p',prefix="{name}.p2",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2'],outsamunmapped=config['bin'][pfamily]['OUTSAMUNMAPPED'],wigtype=config['bin'][pfamily]['WIGTYPE'],wigstrand=config['bin'][pfamily]['WIGSTRAND'], gtffile=config['references'][pfamily]['GTFFILE'], nbjuncs=config['bin'][pfamily]['NBJUNCS'],stardir=config['references'][pfamily]['STARDIR']+config['project']["SJDBOVERHANG"]
       threads:32
       shell:"module load {params.starver}; STAR --genomeDir {params.stardir} --outFilterIntronMotifs {params.filterintronmotifs} --outSAMstrandField {params.samstrandfield}  --outFilterType {params.filtertype} --outFilterMultimapNmax {params.filtermultimapnmax} --alignSJoverhangMin {params.alignsjoverhangmin} --alignSJDBoverhangMin {params.alignsjdboverhangmin}  --outFilterMismatchNmax {params.filtermismatchnmax} --outFilterMismatchNoverLmax {params.filtermismatchnoverlmax}  --alignIntronMin {params.alignintronmin} --alignIntronMax {params.alignintronmax} --alignMatesGapMax {params.alignmatesgapmax}  --clip3pAdapterSeq {params.adapter1} {params.adapter2} --readFilesIn {input.file1} {input.file2} --readFilesCommand zcat --runThreadN {threads} --outFileNamePrefix {params.prefix}. --outSAMunmapped {params.outsamunmapped} --outWigType {params.wigtype} --outWigStrand {params.wigstrand} --sjdbFileChrStartEnd {input.tab} --sjdbGTFfile {params.gtffile} --limitSjdbInsertNsj {params.nbjuncs} --quantMode TranscriptomeSAM GeneCounts --outSAMtype BAM SortedByCoordinate"
@@ -182,7 +182,7 @@ rule rsem:
 
 rule picard:
   input: file1= "{name}.p2.Aligned.sortedByCoord.out.bam"
-  output: outstar1="{name}.star_rg_added.sorted.bam", outstar2="{name}.star_rg_added.sorted.dmark.bam",outstar3="{name}.star.duplic" 
+  output: outstar1=temp("{name}.star_rg_added.sorted.bam"), outstar2="{name}.star_rg_added.sorted.dmark.bam",outstar3="{name}.star.duplic" 
   params: rname='pl:picard',batch='--mem=24g --time=10:00:00 --gres=lscratch:800',picardver=config['bin'][pfamily]['PICARDVER']#,picardjarpath=config['bin'][pfamily]['PICARDJARPATH']
   shell: "module load {params.picardver}; java -Xmx10g  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar INPUT={input.file1} OUTPUT={output.outstar1} TMP_DIR=/lscratch/$SLURM_JOBID RGID=id RGLB=library RGPL=illumina RGPU=machine RGSM=sample; java -Xmx10g -jar $PICARDJARPATH/MarkDuplicates.jar INPUT={output.outstar1} OUTPUT={output.outstar2} TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3}"
 
@@ -224,7 +224,8 @@ rule rnaseqc:
 rule rnaseq_multiqc:
     input: expand("{name}.Rdist.info",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.flagstat.concord.txt",name=samples),expand("{name}.RnaSeqMetrics.txt",name=samples)
     output: "Reports/multiqc_report.html"
-    params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
+#    params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
+    params: rname="pl:multiqc"
     threads: 1
     shell:  """
             module load multiqc
