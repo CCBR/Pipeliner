@@ -270,7 +270,23 @@ def load_project():
             eorganism.set(PD['project']['organism'])
             technique.set(PD['project']['technique'])
 
-            
+            rPipeline.set(PD['project']['pipeline'])
+#            rReadlen.set(PD['project']['SJDBOVERHANG'])
+#            rStrand.set(PD['project']['STRANDED']) ## to check
+#            rDeg.set(PD['project']['DEG'])
+            rMincount.set(PD['project']['MINCOUNTGENES'])
+            rMinsamples.set(PD['project']['MINSAMPLES'])
+
+            rReadlens={50:'Read Length is 50',75:'Read Length is 75',100:'Read Length is 100',125:'Read Length is 125',150:'Read Length is 150',250:'Read Length is 250'}
+            rReadlen.set(rReadlens[int(PD['project']['SJDBOVERHANG'])])
+
+            rStrands={0:"0, Reads are Unstranded",1:"1, Reads are from Sense Strand",2:"2, Reads are from Anti-Sense Strand"}
+            rStrand.set(rStrands[int(PD['project']['STRANDED'])])
+
+            rDegs={'no':'no, Do not Report Differentially Expressed Genes','yes':'yes, Report Differentially Expressed Genes'}
+            rDeg.set(rDegs[PD['project']['DEG']])
+
+
             
 #            tkinter.messagebox.showinfo(fname,customRules)            
             F.close()
@@ -544,7 +560,6 @@ def initialize():
 def initialize_results():
     global initLock
 #    tkinter.messagebox.showinfo("initLock","initLock={0}".format(initLock))
-
     if initLock.get()=="unlocked":
         tkinter.messagebox.showinfo("Locked","Initialize button is locked. Uncheck to unlock.")
         pass
@@ -1948,7 +1963,7 @@ om.config(bg = widgetBgColor,fg=widgetFgColor)
 om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
 om.grid(row=5,column=1,sticky=W,padx=10,pady=10)
 
-rDegs=["No, Do not Report Differentially Expressed Genes","Yes, Report Differentially Expressed Genes"]
+rDegs=["no, Do not Report Differentially Expressed Genes","yes, Report Differentially Expressed Genes"]
 rDeg = StringVar()
 rDeg.set(rDegs[0])
 om = OptionMenu(rframe, rDeg, *rDegs, command=lambda _:makejson("rdeg"))
