@@ -264,6 +264,7 @@ def load_project():
             epoc.set(PD['project']['poc'])
             eanalyst.set(PD['project']['analyst'])
             euser.set(PD['project']['username'])
+            eflowcell.set(PD['project']['flowcellid'])
             eplatform.set(PD['project']['platform'])
             epi.set(PD['project']['pi'])
             eprojectid.set(PD['project']['id'])
