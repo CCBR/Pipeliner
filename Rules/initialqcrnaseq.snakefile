@@ -11,7 +11,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
 #     input: "QC_table.xlsx","Reports/multiqc_report.html",
      input: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
+            "QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
 
 
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
@@ -20,14 +20,14 @@ elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
 #     input: "QC_table.xlsx","Reports/multiqc_report.html",
      input: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
+            "QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
 
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
 #     input: "QC_table.xlsx","Reports/multiqc_report.html",
      input: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx","Reports/multiqc_report.html",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),"QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
+            expand("{name}.RnaSeqMetrics.txt",name=samples),"QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
 
             
      params: batch='--time=168:00:00'
@@ -37,7 +37,7 @@ else:
      params: batch='--time=168:00:00'
 #     input: "QC_table.xlsx","Reports/multiqc_report.html",
      input: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx","Reports/multiqc_report.html",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),"QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples)
+            expand("{name}.RnaSeqMetrics.txt",name=samples),"QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
 
 #rule fastq_screen:
 #      input:  expand(config['project']['workpath']+"/{name}.R1."+config['project']['filetype'], name=samples), expand(config['project']['workpath']+"/{name}.R2."+config['project']['filetype'], name=samples)
@@ -188,9 +188,11 @@ rule picard:
 
 rule stats:
   input: file1= "{name}.star_rg_added.sorted.dmark.bam"
-  output: outstar1="{name}.RnaSeqMetrics.txt", outstar2="{name}.flagstat.concord.txt"
+  output: outstar1="{name}.RnaSeqMetrics.txt", outstar2="{name}.flagstat.concord.txt", outstar3="{name}.InsertSizeMetrics.txt", outstar4="{name}.InsertSizeHisto.pdf"
   params: rname='pl:stats',batch='--mem=24g --time=10:00:00 --gres=lscratch:800',picardver=config['bin'][pfamily]['PICARDVER'],refflat=config['references'][pfamily]['REFFLAT'],rrnalist=config['references'][pfamily]['RRNALIST'],picardstrand=config['bin'][pfamily]['PICARDSTRAND']
-  shell: "module load {params.picardver}; java -Xmx10g -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar REF_FLAT={params.refflat} INPUT={input.file1} OUTPUT={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY={params.picardstrand} TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT; module load samtools; samtools flagstat {input.file1} > {output.outstar2}; samtools  view -f 0x2 {input.file1} | wc -l >>{output.outstar2}; samtools view {input.file1} | grep -w -c NH:i:1  >>{output.outstar2} "
+#  shell: "module load {params.picardver}; java -Xmx10g -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar REF_FLAT={params.refflat} INPUT={input.file1} OUTPUT={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY={params.picardstrand} TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT; module load samtools; samtools flagstat {input.file1} > {output.outstar2}; samtools  view -f 0x2 {input.file1} | wc -l >>{output.outstar2}; samtools view {input.file1} | grep -w -c NH:i:1  >>{output.outstar2} "
+  shell: "module load R;module load {params.picardver}; java -Xmx10g -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar REF_FLAT={params.refflat} INPUT={input.file1} OUTPUT={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY={params.picardstrand} TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT; java -Xmx10g -jar $PICARDJARPATH/CollectInsertSizeMetrics.jar INPUT={input.file1} OUTPUT={output.outstar3} HISTOGRAM_FILE={output.outstar4} MINIMUM_PCT=0.5 TMP_DIR=/lscratch/$SLURM_JOBID ;module load samtools; samtools flagstat {input.file1} > {output.outstar2}; samtools  view -f 0x2 {input.file1} | wc -l >>{output.outstar2}; samtools view {input.file1} | grep -w -c NH:i:1  >>{output.outstar2} "
+
 
 rule prernaseqc:
   input: expand("{name}.star_rg_added.sorted.dmark.bam", name=samples)
@@ -222,7 +224,7 @@ rule rnaseqc:
          """
 
 rule rnaseq_multiqc:
-    input: expand("{name}.Rdist.info",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.flagstat.concord.txt",name=samples),expand("{name}.RnaSeqMetrics.txt",name=samples)
+    input: expand("{name}.Rdist.info",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.flagstat.concord.txt",name=samples),expand("{name}.RnaSeqMetrics.txt",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
     output: "Reports/multiqc_report.html"
 #    params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
     params: rname="pl:multiqc"
