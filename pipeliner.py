@@ -1867,7 +1867,7 @@ datapathE = Entry(optspanel1, bd =2, width=40, bg=entryBgColor,fg=entryFgColor,t
 datapathE.grid(row=3,column=1,sticky=W,padx=10,pady=10)
 datapath.trace('w', lambda a,b,c,x="datapath":makejson(x))
 
-workL = Label(optspanel1, text="Full Path to Working Directory",fg=textLightColor,bg=baseColor)
+workL = Label(optspanel1, text="Full Path to Working Directory (should not exist)",fg=textLightColor,bg=baseColor)
 #workL.pack(side=LEFT,padx=5,pady=5)
 workL.grid(row=4,column=0,sticky=W,padx=10,pady=10)
 
