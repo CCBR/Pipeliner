@@ -556,7 +556,7 @@ def initialize():
 
         #p=os.popen("rm -rf {0}/expression;rm -rf {0}/fastqs;rm -rf {0}/igv;rm -rf {0}/logs;rm -rf {0}/mirdeep2;rm -rf {0}/mirspring;rm -rf {0}/qc;rm -rf {0}/variants;rm -rf {0}/bams;rm -rf {0}/bams-bwa;rm -rf {0}/config;rm -rf {0}/differential*;rm -rf {0}/dir_mapper*;rm -rf {0}/*stats rm -rf {0}/QC;rm -rf {0}/Reports;rm -rf {0}/*dedup_stats; rm {0}/*; rm -rf {0}/.*; mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get()))
 
-        p=os.popen("rm -rf {0}/*;rm -rf {0}/.snakemake;mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get())) 
+        p=os.popen("mkdir {0};mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get())) 
 
 def initialize_results():
     global initLock
@@ -1867,7 +1867,7 @@ datapathE = Entry(optspanel1, bd =2, width=40, bg=entryBgColor,fg=entryFgColor,t
 datapathE.grid(row=3,column=1,sticky=W,padx=10,pady=10)
 datapath.trace('w', lambda a,b,c,x="datapath":makejson(x))
 
-workL = Label(optspanel1, text="Full Path to Working Directory",fg=textLightColor,bg=baseColor)
+workL = Label(optspanel1, text="Full Path to Working Directory (should not exist)",fg=textLightColor,bg=baseColor)
 #workL.pack(side=LEFT,padx=5,pady=5)
 workL.grid(row=4,column=0,sticky=W,padx=10,pady=10)
 
