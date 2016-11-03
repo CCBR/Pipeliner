@@ -565,18 +565,20 @@ def initialize_results():
         tkinter.messagebox.showinfo("Locked","Initialize button is locked. Uncheck to unlock.")
         pass
     else:
-        result=tkinter.messagebox.askquestion("Initialize Directory Warning", "Initialize working directory %s?  ALL FILES IN THIS DIRECTORY WILL BE DELETED!"%workpath.get(), icon='warning')
-        if result=='yes':
-            p=os.popen("ls {0}".format(workpath.get())).read()
-            result=tkinter.messagebox.askquestion("Initialize Directory Warning", "THESE FILES WILL BE DELETED! Continue? \n {0}".format(p), icon='warning')
-            if result=='yes':
-                initialize()
-                tkinter.messagebox.showinfo("Initializing Directory","Directory Initialized")
-            else:
-                tkinter.messagebox.showinfo("Aborted Initialing Directory","Directory Not Initialized")
+        initialize()
+        result=tkinter.messagebox.showinfo("Initializing Directory","Directory Initialized")
+#        result=tkinter.messagebox.askquestion("Initialize Directory Warning", "Initialize working directory %s?  ALL FILES IN THIS DIRECTORY WILL BE DELETED!"%workpath.get(), icon='warning')
+#        if result=='yes':
+#            p=os.popen("ls {0}".format(workpath.get())).read()
+#            result=tkinter.messagebox.askquestion("Initialize Directory Warning", "THESE FILES WILL BE DELETED! Continue? \n {0}".format(p), icon='warning')
+#            if result=='yes':
+#                initialize()
+#                tkinter.messagebox.showinfo("Initializing Directory","Directory Initialized")
+#            else:
+#                tkinter.messagebox.showinfo("Aborted Initialing Directory","Directory Not Initialized")
         
-        else:
-            tkinter.messagebox.showinfo("Aborted Initializing Directory","Directory Not Initialized")
+#        else:
+#            tkinter.messagebox.showinfo("Aborted Initializing Directory","Directory Not Initialized")
 
     
 def symlink(data):
