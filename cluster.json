@@ -74,7 +74,7 @@
     },
     "gatk_genotype_gvcfs":
     {
-        "threads": "32",
+        "threads": "4",
         "time" : "10-00:00:00",
         "mem": "96g"
     },
