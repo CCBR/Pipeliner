@@ -3,7 +3,8 @@ from snakemake.utils import R
 configfile: "run.json"
 
 #samples=config['project']['units']
-samples=config['project']['contrasts']['rsamps']
+#samples=config['project']['contrasts']['rsamps']
+samples=config['project']['groups']['rsamps']
 
 if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
   rule all:
@@ -286,7 +287,7 @@ rule generate_QC_table:
 rule samplecondition:
    input: files=expand("{name}.star.count.txt", name=samples)
    output: out1= "sampletable.txt"
-   params: rname='pl:samplecondition',batch='--mem=4g --time=10:00:00', groups=config['project']['contrasts']['rgroups'], labels=config['project']['contrasts']['rlabels']
+   params: rname='pl:samplecondition',batch='--mem=4g --time=10:00:00', groups=config['project']['groups']['rgroups'], labels=config['project']['groups']['rlabels']
    run:
         with open(output.out1, "w") as out:
             out.write("sampleName\tfileName\tcondition\tlabel\n")
