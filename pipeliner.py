@@ -163,12 +163,16 @@ def writeheader(*args):
     if ftype.get()=="pairs":
         comments.delete(1.0,END)
         comments.insert(INSERT,"Sample1\tSample2\n")
+    if ftype.get()=="groups.tab":
+        comments.delete(1.0,END)
+        comments.insert(INSERT,"Sample.Name\tSample.Group\tSample.Label\n")
     if ftype.get()=="contrasts.tab":
         comments.delete(1.0,END)
 #        t=list(PD['project']['units'].keys())
 #        t.sort()
 #        comments.insert(INSERT," ".join(t))
-        comments.insert(INSERT,"Sample.Name\tSample.Group\tSample.Label\tContrasts\n")
+        comments.insert(INSERT,"group1\tvs.group2\n")
+#        comments.insert(INSERT,"Sample.Name\tSample.Group\tSample.Label\tContrasts\n")
     return
 
 def writepaste():
@@ -447,26 +451,46 @@ def makejson(*args):
 #        D["rlabels"]=f[3].split()        
         f=F.readlines()
         F.close()
+##        sampl=[]
+##        grp=[]
+        cont=[]
+##        lbl=[]
+        for x in f:
+              if len(x.split()) == 2:
+                 cont.append(x.split()[0])
+                 cont.append(x.split()[1])
+        D["rcontrasts"]=cont
+#        contrasts["rcontrasts"]=cont
+        contrasts=D
+    except:
+        contrasts={"rcontrasts":"na"}
+##        contrasts={"rsamps":"na","rgroups":"na","rcontrasts":"na","rlabels":"na"}   
+##------
+    D=dict()
+    try:
+        F=open(workpath.get()+"/groups.tab","r")
+        f=F.readlines()
+        F.close()
         sampl=[]
         grp=[]
-        cont=[]
+#        cont=[]
         lbl=[]
         for x in f:
-           if len(x.split()) == 4 or len(x.split()) == 3:
+#           if len(x.split()) == 4 or len(x.split()) == 3:
+           if len(x.split()) == 3:  
               sampl.append(x.split()[0])
               grp.append(x.split()[1])
               lbl.append(x.split()[2])
-              if len(x.split()) == 4:
-                 cont.append(x.split()[3])
         D["rsamps"]=sampl
         D["rgroups"]=grp
-        D["rcontrasts"]=cont
         D["rlabels"]=lbl
-        contrasts=D
+#        D["rcontrasts"]="na"
+#        contrasts=D
+        groups=D
     except:
-        contrasts={"rsamps":"na","rgroups":"na","rcontrasts":"na","rlabels":"na"}   
-        
-   
+#        contrasts={"rsamps":"na","rgroups":"na","rcontrasts":"na","rlabels":"na"}
+        groups={"rsamps":"na","rgroups":"na","rlabels":"na"}          
+##------   
     D=dict() 
     FT=filetype.get()
 #    p = Popen("ls "+workpath.get()+"/*."+FT, shell=True, stdin=PIPE, stdout=PIPE, stderr=DEVNULL, close_fds=True)
@@ -527,7 +551,7 @@ def makejson(*args):
 #    tkinter.messagebox.showinfo("initLock","SD={0}".format(SD))    
 
 
-    PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",'annotation':annotation.get(),'datapath':datapath.get(),'targetspath':targetspath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"contrasts":contrasts,"TRIM":"yes","SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":"{0}".format(int(rStrand.get().split(",")[0])+2),"MINSAMPLES":rMinsamples.get(),"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get(),"STARDIR": SD+rReadlen.get().split(" ")[3],"PICARDSTRAND":["NONE", "FIRST_READ_TRANSCRIPTION_STRAND","SECOND_READ_TRANSCRIPTION_STRAND"][int(rStrand.get().split(",")[0])]}}
+    PD={'project':{'pfamily':pfamily.get(),'units':units,'samples':samples,'pairs':pairs,'id':eprojectid.get(),'pi':epi.get(),'organism':eorganism.get(),'analyst':eanalyst.get(),'poc':epoc.get(),'pipeline':pipelineget(),'version':"1.0",'annotation':annotation.get(),'datapath':datapath.get(),'targetspath':targetspath.get(),'filetype':filetype.get(), 'binset':binset.get(),'username':euser.get(),'flowcellid':eflowcell.get(),'platform':eplatform.get(),'custom':customRules,'efiletype':efiletype.get(),'workpath':workpath.get(),'batchsize':batchsize,"smparams":smparams,"rgid":RG,"cluster":"cluster_medium.json","description":description.get('1.0',END),"technique":technique.get(),"groups":groups,"contrasts":contrasts,"TRIM":"yes","SJDBOVERHANG":rReadlen.get().split(" ")[3],"STRANDED":rStrand.get().split(",")[0],"DEG":rDeg.get().split(",")[0].lower(),"STARSTRANDCOL":"{0}".format(int(rStrand.get().split(",")[0])+2),"MINSAMPLES":rMinsamples.get(),"MINCOUNTGENES":rMincount.get(),"MINCOUNTJUNCTIONS":rMincount.get(),"MINCOUNTGENEJUNCTIONS":rMincount.get(),"STARDIR": SD+rReadlen.get().split(" ")[3],"PICARDSTRAND":["NONE", "FIRST_READ_TRANSCRIPTION_STRAND","SECOND_READ_TRANSCRIPTION_STRAND"][int(rStrand.get().split(",")[0])]}}
 
     J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=TRUE)
     jsonconf.delete("1.0", END)    
@@ -551,13 +575,15 @@ def initialize():
     if initLock.get()=="unlocked":
         pass
     else:
-
-        p=os.popen("if [ ! -d {0} ]; then mkdir {0};fi".format(workpath.get()))
+        if not os.path.isdir(workpath.get()):
+         #  p=os.popen("if [ ! -d {0} ]; then mkdir {0};fi".format(workpath.get()))
 
         #p=os.popen("rm -rf {0}/expression;rm -rf {0}/fastqs;rm -rf {0}/igv;rm -rf {0}/logs;rm -rf {0}/mirdeep2;rm -rf {0}/mirspring;rm -rf {0}/qc;rm -rf {0}/variants;rm -rf {0}/bams;rm -rf {0}/bams-bwa;rm -rf {0}/config;rm -rf {0}/differential*;rm -rf {0}/dir_mapper*;rm -rf {0}/*stats rm -rf {0}/QC;rm -rf {0}/Reports;rm -rf {0}/*dedup_stats; rm {0}/*; rm -rf {0}/.*; mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get()))
 
-        p=os.popen("mkdir {0};mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get())) 
-
+           p=os.popen("mkdir {0};mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get())) 
+           return 0
+        else:
+           return 1
 def initialize_results():
     global initLock
 #    tkinter.messagebox.showinfo("initLock","initLock={0}".format(initLock))
@@ -565,8 +591,12 @@ def initialize_results():
         tkinter.messagebox.showinfo("Locked","Initialize button is locked. Uncheck to unlock.")
         pass
     else:
-        initialize()
-        result=tkinter.messagebox.showinfo("Initializing Directory","Directory Initialized")
+        if initialize()==0:
+#            result=tkinter.messagebox.showinfo("Initializing Directory","Directory Initialized")
+            tkinter.messagebox.showinfo("Initializing Directory","Directory Initialized")
+        else:
+            tkinter.messagebox.showinfo("Aborted Initializing Directory","Directory Already exists")
+
 #        result=tkinter.messagebox.askquestion("Initialize Directory Warning", "Initialize working directory %s?  ALL FILES IN THIS DIRECTORY WILL BE DELETED!"%workpath.get(), icon='warning')
 #        if result=='yes':
 #            p=os.popen("ls {0}".format(workpath.get())).read()
@@ -1406,7 +1436,7 @@ note_fastqname=Label(runframe, text="Note: Fastq files in the data directory sho
 note_fastqname.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 button = Button(runframe, text="Initialize Working Directory", fg="white",bg="firebrick",command=initialize_results)
 button.grid(row=1,column=0,padx=10,pady=10,sticky="w")
-L=Label(runframe,text="The Working Directory must exist. Any data within it will be deleted.",anchor="ne",bg="firebrick",fg="white")
+L=Label(runframe,text="The Working Directory should be a new non existing one.",anchor="ne",bg="firebrick",fg="white")
 L.grid(row=1,column=1,padx=10,pady=10,sticky="w")
 
 initLock=StringVar()
@@ -1769,7 +1799,7 @@ L=Label(pastewriteframe, text="File Type",fg=textLightColor,bg=baseColor)
 L.grid(row=11,column=1)
 
 
-ftypes=['pairs','rg.tab','contrasts.tab']
+ftypes=['pairs','rg.tab','groups.tab','contrasts.tab']
 ftype = StringVar()
 ftype.set(ftypes[0])
 om = OptionMenu(pastewriteframe, ftype, *ftypes, command=writeheader)
