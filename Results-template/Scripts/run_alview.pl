@@ -61,7 +61,7 @@ while (<G>){
 			}
 		}
 		else {
-			if ($muts > 1) {
+			if ($muts > 0) {
 				$a = 0;
 				for ($a = 0; $a < @type; $a++) {
 					print C "$chrom[$a]\t$position[$a]\t" . $path . '/' . "$tumorsample[$a]\t$gene\t$muts\t$type[$a]\n";
