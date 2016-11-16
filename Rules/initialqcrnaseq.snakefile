@@ -249,9 +249,9 @@ rule rseqc:
     params: bedref=config['references'][pfamily]['BEDREF'],prefix="{name}",rname="pl:rseqc"
     shell: """
            module load rseqc
-           inner_distance.py -i {input.file1} -r {params.bedref} -o {params.prefix}
+    #       inner_distance.py -i {input.file1} -r {params.bedref} -o {params.prefix}
            infer_experiment.py -r {params.bedref}  -i {input.file1} > {output.out1}
-           read_GC.py -i {input.file1}  -o {params.prefix}
+    #       read_GC.py -i {input.file1}  -o {params.prefix}
            read_distribution.py -i {input.file1} -r {params.bedref} > {output.out4}
            """
 
