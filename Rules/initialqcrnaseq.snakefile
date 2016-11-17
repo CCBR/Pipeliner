@@ -227,12 +227,13 @@ rule rnaseq_multiqc:
     input: expand("{name}.Rdist.info",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.flagstat.concord.txt",name=samples),expand("{name}.RnaSeqMetrics.txt",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
     output: "Reports/multiqc_report.html"
 #    params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
-    params: rname="pl:multiqc"
+    params: rname="pl:multiqc",multiqc=config['bin'][pfamily]['MULTIQC'],qcconfig=config['bin'][pfamily]['CONFMULTIQC']
     threads: 1
     shell:  """
-            module load multiqc
+            module load {params.multiqc}
             # cd Reports && multiqc -f -e featureCounts -e picard ../
-            cd Reports && multiqc -f -e featureCounts ../
+#            cd Reports && multiqc -f -e featureCounts ../
+            cd Reports && multiqc -f -c {params.qcconfig}  ../
             """
 
 rule RNAseq_generate_QC_table:
@@ -244,7 +245,8 @@ rule RNAseq_generate_QC_table:
 
 rule rseqc:
     input: file1="{name}.star_rg_added.sorted.dmark.bam"
-    output: out1="{name}.strand.info",out2="{name}.inner_distance_plot.pdf",out3="{name}.GC_plot.pdf",out4="{name}.Rdist.info"
+    # output: out1="{name}.strand.info",out2="{name}.inner_distance_plot.pdf",out3="{name}.GC_plot.pdf",out4="{name}.Rdist.info"
+    output: out1="{name}.strand.info",out4="{name}.Rdist.info"
     # output: out1="{name}.strand.info",out2="{name}.inner_distance_plot.pdf",out3="{name}.GC_plot.pdf"
     params: bedref=config['references'][pfamily]['BEDREF'],prefix="{name}",rname="pl:rseqc"
     shell: """

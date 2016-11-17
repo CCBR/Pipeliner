@@ -269,12 +269,14 @@ rule rnaseq_multiqc:
     input: "sampletable.txt"
     output: "Reports/multiqc_report.html"
 #    params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
-    params: rname="pl:multiqc"
+    params: rname="pl:multiqc",multiqc=config['bin'][pfamily]['MULTIQC'],qcconfig=config['bin'][pfamily]['CONFMULTIQC']
     threads: 1
     shell:  """
-            module load multiqc
-#            cd Reports && multiqc -f -e featureCounts -e picard ../
-            cd Reports && multiqc -f -e featureCounts  ../ 
+#            module load multiqc
+#               cd Reports && multiqc -f -e featureCounts -e picard ../
+#            cd Reports && multiqc -f -e featureCounts  ../ 
+            module load {params.multiqc}
+            cd Reports && multiqc -f -c {params.qcconfig}  ../
             """
 
 rule generate_QC_table:
