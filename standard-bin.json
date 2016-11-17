@@ -77,7 +77,9 @@
 	 "rnaseq": {
 	"FASTQ_SCREEN": "/data/CCBR_Pipeliner/db/PipeDB/bin/fastq_screen_v0.6.3/fastq_screen",
 	"PYTHONPATH": "/data/CCBR_Pipeliner/db/PipeDB/bin/lib/python3.4/site-packages/",
-	"MULTIQC":"/data/CCBR_Pipeliner/db/PipeDB/bin/bin/multiqc",     
+	#"MULTIQC":"/data/CCBR_Pipeliner/db/PipeDB/bin/bin/multiqc",
+        "MULTIQC":"multiqc/0.9dev0", 
+        "CONFMULTIQC": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/multiqc_config.yaml",    
         "TRIMMOMATICVER": "trimmomatic/0.33",
         "FASTQCVER": "fastqc",
         "CHKQCVER": " /data/CCBR_Pipeliner/dev/RNA-Seq-pipeline/ver2/summarizeFastQCver2",
