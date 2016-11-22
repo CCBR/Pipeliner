@@ -58,7 +58,7 @@
     "MUTECTCOSMIC": "/fdb/muTect/cosmic_v67.b37.vcf",
     "MUTECTSNP": "/fdb/muTect/dbsnp_137.b37.vcf",
     "MUTECTGENOME": "/fdb/muTect/human_g1k_v37.fasta",
-    "MUTECTVARIANTS": "--dbsnp /fdb/muTect/dbsnp_137.b37.vcf --cosmic /fdb/muTect/cosmic_v67.b37.vcf"
+    "MUTECTVARIANTS": "--dbsnp /fdb/muTect/dbsnp_137.b37.vcf --cosmic /data/CCBR_Pipeliner/db/PipeDB/lib/Cosmic_v78.vcf"
     },
     "genomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
