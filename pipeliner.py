@@ -580,7 +580,7 @@ def initialize():
 
         #p=os.popen("rm -rf {0}/expression;rm -rf {0}/fastqs;rm -rf {0}/igv;rm -rf {0}/logs;rm -rf {0}/mirdeep2;rm -rf {0}/mirspring;rm -rf {0}/qc;rm -rf {0}/variants;rm -rf {0}/bams;rm -rf {0}/bams-bwa;rm -rf {0}/config;rm -rf {0}/differential*;rm -rf {0}/dir_mapper*;rm -rf {0}/*stats rm -rf {0}/QC;rm -rf {0}/Reports;rm -rf {0}/*dedup_stats; rm {0}/*; rm -rf {0}/.*; mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get()))
 
-           p=os.popen("mkdir {0};mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get())) 
+           p=os.popen("mkdir {0};chmod 3770 {0};mkdir {0}/QC;touch {0}/pairs;touch {0}/samples;cp -rf ".format(workpath.get())+whereiam+"/Pipeliner/Results-template/* {0}".format(workpath.get())) 
            return 0
         else:
            return 1
