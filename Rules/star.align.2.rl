@@ -1,14 +1,6 @@
 rule star_align_2:
-     input:  "{x}.R1."+config['project']['filetype'],
-             "{x}.R2."+config['project']['filetype']
-     output: temp("{x}.p2.bam")
-     params: genomeDir=config['references'][pfamily]['genomeDir2'],
-             gtf=config['references'][pfamily]['gencodeGtf'],
-             adapter1=config['references'][pfamily]['ADAPTER1'],
-             adapter2=config['references'][pfamily]['ADAPTER2'],rname="pl:star2"
-     threads: 8
-     version: "1.0"
-     shell: "module load STAR;  STAR --genomeDir {params.genomeDir2} --readFilesIn {input} --readFilesCommand zcat --runThreadN {threads} --sjdbGTFfile {params.genomeDir}/{params.gtf} --sjdbOverhang 99 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --clip3pAdapterSeq {params.adapter1} {params.adapter2} --outSAMunmapped Within --outSAMtype BAM SortedByCoordinate"
-     
-#      --outFileNamePrefix $3/pass2/
-
+     input:  "{x}.R1.trimmed.fastq.gz","{x}.R2.trimmed.fastq.gz",tab=expand("{x}.SJ.out.tab",x=samples)
+     output: out1=temp("{x}.p2.Aligned.sortedByCoord.out.bam"),out2="{x}.p2.ReadsPerGene.out.tab",out4="{x}.p2.SJ.out.tab",out5="{x}.p2.Log.final.out"
+     params: rname='pl:star2p',prefix="{x}.p2",outsamunmapped=config['bin'][pfamily]['OUTSAMUNMAPPED'],wigtype=config['bin'][pfamily]['WIGTYPE'],wigstrand=config['bin'][pfamily]['WIGSTRAND'], gtffile=config['references'][pfamily]['GTFFILE'], nbjuncs=config['bin'][pfamily]['NBJUNCS'],starref=config['references'][pfamily]['STARREF']+config['project']["SJDBOVERHANG"]
+     threads: 32
+     shell: "module load STAR/2.5.2a; STAR --genomeDir {params.starref} --readFilesIn {input.file1} {input.file2} --readFilesCommand zcat --runThreadN {threads} --outFileNamePrefix {params.prefix}. --outSAMunmapped {params.outsamunmapped} --outWigType {params.wigtype} --outWigStrand {params.wigstrand} --sjdbFileChrStartEnd {input.tab} --sjdbGTFfile {params.gtffile} --outSAMtype BAM SortedByCoordinate"

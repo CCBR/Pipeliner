@@ -78,6 +78,8 @@
         "svdetect": ["none"],
         "bicseq": ["none"],
         "generate_QC_table": ["initialqc","rnaseqvar-qc"],
+        "star.align.rl": ["rnaseqvar-qc"],
+        "star.align.2.rl": ["rnaseqvar-qc"],
         },
     "final": {
         "exomeseq-pairs": "all-exomeseq-pairs.rl",

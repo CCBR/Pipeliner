@@ -204,11 +204,13 @@
     },
     "star_align_2":
     {
-        "threads": "32"
+        "threads": "32",
+        "mem" : "64g"
     },
-    "star_align":
+    "star_align_1":
     {
-        "threads": "32"
+        "threads": "32",
+        "mem" : "64g"
     },
     "star_generate":
     {
