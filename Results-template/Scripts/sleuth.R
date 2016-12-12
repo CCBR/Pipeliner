@@ -45,8 +45,9 @@ for(i in seq(1, length(contras), by = 2)){
 	s2c_pair = s2c[which(s2c$condition==as.character(contras[i])|s2c$condition==as.character(contras[i+1])),]
 	pairname = paste(contras[i],"_vs_",contras[i+1],sep="")
 
-	so <- sleuth_prep(s2c_pair, ~ condition, target_mapping = t2g)
-	 
+        newcond=relevel(as.factor(s2c$condition),contras[i+1])
+#	so <- sleuth_prep(s2c_pair, ~ condition, target_mapping = t2g)
+        so <- sleuth_prep(s2c_pair, ~ newcond, target_mapping = t2g)	 
 	so <- sleuth_fit(so)
 
 	beta <- colnames(design_matrix(so))[2]
