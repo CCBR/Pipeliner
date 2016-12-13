@@ -137,8 +137,8 @@
     },
     "rnaseqvar": {
     "GENOMEFILE": "/fdb/GENCODE/Gencode_human/release_19/GRCh37.p13.genome.fa",
-    "GTFFILE": "/fdb/GENCODE/Gencode_human/GRCh37_gencode_v19_CTAT_lib/ref_annot.gtf",
-    "ANNOTATE": "/data/CCBR_Pipeliner/dev/RNA-Seq-pipeline/ver3/Hg19_genes.txt",
+    "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/lib/GENCODE_GRCh37_ref_annot.gtf",
+#    "ANNOTATE": "/data/CCBR_Pipeliner/dev/RNA-Seq-pipeline/ver3/Hg19_genes.txt",
     "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg19_genes.txt",
     "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_GENCODE_GENE_V19_comprehensive.bed", 
     "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/human_gencode",
