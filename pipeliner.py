@@ -144,6 +144,8 @@ def pipelineget():
         pipeline_current=mPipeline.get()
     if pfamily.get()=="genomeseq":
         pipeline_current=gPipeline.get()
+    if pfamily.get()=="rnaseqvar":
+        pipeline_current=gPipeline.get()
     return(pipeline_current)    
 
 def checklist(*args):
@@ -1328,6 +1330,7 @@ runframe=ttk.Frame(nbook)
 rnaseqframe=ttk.Frame(nbook)
 genomeseqframe=ttk.Frame(nbook)
 exomeseqframe=ttk.Frame(nbook)
+rnaseqvarframe=ttk.Frame(nbook)
 mirseqframe=ttk.Frame(nbook)
 chipseqframe=ttk.Frame(nbook)
 customframe=ttk.Frame(nbook)
@@ -1338,6 +1341,7 @@ nbook.add(rnaseqframe,text="3a.RNASeq Options")
 nbook.add(exomeseqframe,text="3b.ExomeSeq Options")
 nbook.add(genomeseqframe,text="3c.GenomeSeq Options")
 nbook.add(mirseqframe,text="3d.MirSeq Options")
+nbook.add(rnaseqvarframe,text="3e.RNASeqVariantCalling Options")
 nbook.add(pastewriteframe, text='4.Paste/Write Files')
 nbook.add(runframe,text="5.Run Sequence")
 nbook.add(projframe, text='View Project Json')
@@ -1880,7 +1884,7 @@ om.grid(row=1,column=1,sticky=W,padx=10,pady=10)
 L=Label(optspanel1, text="Pipeline Family",anchor="ne",fg=textLightColor,bg=baseColor)
 L.grid(row=2,column=0,sticky=W,padx=10,pady=10)
 
-pfamilys=['exomeseq','rnaseq','genomeseq','mirseq','chipseq','custom']
+pfamilys=['exomeseq','rnaseq','genomeseq','mirseq','chipseq','custom','rnaseqvar']
 pfamily = StringVar()
 pfamily.set(pfamilys[0])
 om = OptionMenu(optspanel1, pfamily, *pfamilys, command=lambda _:makejson(pfamily.get()))
@@ -2044,6 +2048,23 @@ gframe.pack( side = TOP,fill=X,padx=10,pady=10,expand=NO)
 
 
 gPipelines=['initialqcgenomeseq','wgslow']
+gPipeline = StringVar()
+gPipeline.set(gPipelines[0])
+om = OptionMenu(gframe, gPipeline, *gPipelines, command=makejson)
+om.config(bg = widgetBgColor,fg=widgetFgColor)
+om["menu"].config(bg = widgetBgColor,fg=widgetFgColor)
+#om.pack(side=LEFT,padx=20,pady=5)
+om.grid(row=2,column=1,sticky=W,padx=10,pady=10)
+
+#########################
+# The RNASeqVariantCalling Pane
+#########################
+
+gframe = LabelFrame(rnaseqvarframe,text="Pipeline",fg=textLightColor,bg=baseColor)
+gframe.pack( side = TOP,fill=X,padx=10,pady=10,expand=NO)
+
+
+gPipelines=['rnaseqvar-qc','rnaseqvargerm']
 gPipeline = StringVar()
 gPipeline.set(gPipelines[0])
 om = OptionMenu(gframe, gPipeline, *gPipelines, command=makejson)

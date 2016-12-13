@@ -147,7 +147,7 @@
     "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
     "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-",
     "STARREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/Star_refs/hs37d5/genes-",
-    "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg19.rRNA.interval_list_v3"
+    "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg19.rRNA.interval_list_v3",
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
     "CHROMS": ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","X","Y","MT"],
     "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
