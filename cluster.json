@@ -78,6 +78,11 @@
         "time" : "10-00:00:00",
         "mem": "96g"
     },
+    "gatk_splitcigar":
+    {
+        "threads": "1",
+        "mem": "96g"
+    },
     "gatk_genotyping":
     {
         "threads": "1",
@@ -131,6 +136,14 @@
     {
         "threads": "1"
     },
+    "picard_rnaseqvarheaders":
+    {
+        "threads": "1"
+    },
+    "picard_rnaseqvar_markdups":
+    {
+        "threads": "1"
+    },
     "picard_index_bam":
     {
         "threads": "1",
@@ -145,6 +158,11 @@
         "threads": "12"
     },
     "qualimap":
+    {
+        "threads": "8",
+        "mem": "96g"
+    },
+    "qualimap_rna":
     {
         "threads": "8",
         "mem": "96g"
@@ -211,6 +229,21 @@
     {
         "threads": "32",
         "mem" : "64g"
+    },
+    "germline_filter_rnaseqvar":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "gatk_select_variants_rnaseqvar":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "gatk_rnaseqvar_haplotype_caller":
+    {
+        "threads": "4",
+        "mem": "96g"
     },
     "star_generate":
     {

@@ -1,4 +1,4 @@
-rule qualimap:
+rule qualimap_rna:
     input:  bam="{x}.dedup.bam"
     output: "QC/{x}.qualimapReport","QC/{x}.qualimapReport/genome_results.txt"
     threads: 8

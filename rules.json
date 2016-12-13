@@ -83,7 +83,8 @@
         "star.align.2": ["rnaseqvar-qc"],
         "picard.rnaseqvar.headers": ["rnaseqvar-qc"],
         "picard.rnaseqvar.markdups": ["rnaseqvar-qc"],
-        "gatk.rnaseqvar.haplotype.caller": ["rnaseqvargerm"]
+        "gatk.rnaseqvar.haplotype.caller": ["rnaseqvargerm"],
+        "germline_filter_rnaseqvar": ["rnaseqvargerm"]
         },
     "final": {
         "exomeseq-pairs": "all-exomeseq-pairs.rl",
