@@ -23,7 +23,7 @@
     },
     "somatic_germline_calls":
     {
-        "threads": "32",
+        "threads": "4",
         "mem" : "64g",
     },
     "multiqc":
