@@ -24,7 +24,7 @@
     "somatic_germline_calls":
     {
         "threads": "4",
-        "mem" : "64g"
+        "mem" : "64g",
     },
     "multiqc":
     {
@@ -74,7 +74,7 @@
     },
     "gatk_genotype_gvcfs":
     {
-        "threads": "4",
+        "threads": "12",
         "time" : "10-00:00:00",
         "mem": "120g"
     },
