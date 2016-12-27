@@ -146,7 +146,7 @@ def pipelineget():
         pipeline_current=gPipeline.get()
     if pfamily.get()=="rnaseqvar":
         pipeline_current=gPipeline.get()
-    return(pipeline_current)
+    return(pipeline_current)    
 
 def checklist(*args):
     p=pipelineget()
