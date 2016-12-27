@@ -1,6 +1,6 @@
 rule gatk_combine_gvcfs:
     input: "xa{batches}"
-    output:"xa{batches}.gvcf"
+    output: temp("xa{batches}.gvcf")
     params: batch ="-l nodes=1:gpfs -q ccr",gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],rname="pl:combgvcfs"
     run: 
        F=open(input[0],"r")

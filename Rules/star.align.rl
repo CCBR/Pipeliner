@@ -1,12 +1,6 @@
 rule star_align_1:
-     input:  "{x}.R1."+config['project']['filetype'],
-             "{x}.R2."+config['project']['filetype']
-     output: temp("{x}.p1.bam")
-     params: genomeDir=config['references'][pfamily]['genomeDir'],
-             gtf=config['references'][pfamily]['gencodeGtf'],
-             adapter1=config['references'][pfamily]['ADAPTER1'],
-             adapter2=config['references'][pfamily]['ADAPTER2'],rname="pl:star"
-     threads: 8
-     version: "1.0"
-     shell: "module load STAR; STAR --genomeDir {params.genomeDir} --readFilesIn {input} --readFilesCommand zcat --runThreadN {threads} --sjdbGTFfile {params.genomeDir}/{params.gencodeGtf} --sjdbOverhang 99 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --outFilterType BySJout --clip3pAdapterSeq {params.adapter1} {params.adapter2} --outSAMtype BAM SortedByCoordinate --chimSegmentMin 25 --outStd SAM > {output}"
-# --outFileNamePrefix $3 
+     input:  "{x}.R1.trimmed.fastq.gz","{x}.R2.trimmed.fastq.gz"
+     output: out1=temp("{x}.p2.Aligned.sortedByCoord.out.bam"),out2="{x}.p2.ReadsPerGene.out.tab",out3="{x}.p2.Aligned.toTranscriptome.out.bam",out4="{x}.p2.SJ.out.tab",out5="{x}.p2.Log.final.out"
+     params: rname='pl:star1p',prefix="{x}",starref=config['references'][pfamily]['STARREF']+config['project']["SJDBOVERHANG"]
+     threads: 32
+     shell: "module load STAR/2.5.2a; STAR --genomeDir {params.starref} --readFilesIn {input.file1} {input.file2} --readFilesCommand zcat --runThreadN {threads} --outFileNamePrefix {params.prefix}. --outSAMtype BAM Unsorted"

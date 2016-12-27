@@ -13,6 +13,7 @@ rule all_exomeseq_somatic:
             "cnvkit_out",
             "mutect_out",
             "delly_out",
+            "germline_snps.vcf",
             expand("cnvkit_out/{p}_calls.cns", p=pairs),
             expand("cnvkit_out/{p}_gainloss.tsv", p=pairs),                        
             expand("delly_out/{p}_del.bcf", p=pairs),

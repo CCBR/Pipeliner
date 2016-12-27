@@ -1,7 +1,7 @@
 rule somatic_germline_calls:
-     input:  bams=expand("{s}"+".recal.bam",s=samples),
+     input:  bams=lambda wildcards: config['project']['units'][wildcards.x]+".recal.bam",
              targets="exome_targets.bed"
-     output: filtered="germline_snps.vcf"
+     output: filtered="germline_vcfs/{x}.vcf"
      params: genome=config['references'][pfamily]['GENOME'],regions="exome_targets.bed",knowns=config['references'][pfamily]['KNOWNVCF'],snpsites=config['references'][pfamily]['SNPSITES'],gatk=config['bin'][pfamily]['GATK'],rname="pl:germcalls"
-     threads: 32
-     shell:  "ls *recal.bam > inbams.list; {params.gatk} -T UnifiedGenotyper -R {params.genome} -I inbams.list -L {params.knowns} --read_filter BadCigar --annotation Coverage -A FisherStrand -A HaplotypeScore -A MappingQualityRankSumTest -A QualByDepth -A RMSMappingQuality -A ReadPosRankSumTest --dbsnp {params.snpsites} -nt {threads} -o {output.filtered}"
+     threads: 4
+     shell:  "{params.gatk} -T HaplotypeCaller -R {params.genome} -I {input.bams} -L {params.knowns} --read_filter BadCigar --annotation Coverage -A FisherStrand -A HaplotypeScore -A MappingQualityRankSumTest -A QualByDepth -A RMSMappingQuality -A ReadPosRankSumTest --variant_index_type LINEAR --variant_index_parameter 128000 --dbsnp {params.snpsites} -nct {threads}  -o {output.filtered} --output_mode EMIT_ALL_CONFIDENT_SITES"
