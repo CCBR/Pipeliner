@@ -11,6 +11,15 @@
     {
         "threads": "1"
     },
+    "theta":
+    {
+        "threads": "8",
+        "mem" : "64g"
+    },
+    "conpair":
+    {
+        "threads": "1"
+    },
     "make_germline_network":
     {
         "threads": "1",
@@ -257,10 +266,10 @@
     {
         "threads": "1"
     },
-    "gatk_mutect2":
+    "gatk_chrom_mutect2":
     {
         "time": "6-00:00:00",
-        "threads": "4"
+        "threads": "2"
     },
     "trimmomatic_pe":
     {
