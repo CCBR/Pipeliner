@@ -2,7 +2,7 @@
     "exomeseq": {
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
     "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
-    "CHROMS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_chromosomes",
+    "CHROMS": ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10","chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19","chrX","chrY","chrM"],
     "INDELSITES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142_indels.vcf",
     "KNOWNINDELS": "-known /data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142_indels.vcf",
     "KNOWNRECAL": "-knownSites /data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142_indels.vcf -knownSites /data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142_snps.vcf",
@@ -34,7 +34,7 @@
     "CNVKITACCESS": "/data/CCBR_Pipeliner/db/PipeDB/lib/access-mm10.bed",
     "CONPAIRMARKERS": "/data/CCBR_Pipeliner/db/PipeDB/lib/SureSelect_Mouse_All_Exon_V1_GRCm38_markers_MAF_0.4_LD_0.8.txt",
     "EXONS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_UCSCexons.bed",
-#    "THETASNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_theta_SNPfile.txt",
+    "THETASNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_theta_SNPfile.txt",
     "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
     #below here is junk placeholders
     "HAPMAP_DBNSFP": "/data/CCBR_Pipeliner/db/PipeDB/lib/snpEff_db/hapmap.bed",

@@ -5,4 +5,4 @@ rule mkdir_somatic:
                 strelka_dir="strelka_out",
                 delly_dir="delly_out"
         params: rname="pl:mkdir"
-        shell:  "mkdir strelka_out cnvkit_out delly_out mutect_out mutect_out/oncotator_out mutect_out/mutsigCV_out strelka_out/oncotator_out strelka_out/mutsigCV_out theta_out conpair_out germline_vcfs"
+        shell:  "mkdir strelka_out cnvkit_out delly_out mutect_out mutect_out/oncotator_out mutect_out/mutsigCV_out strelka_out/oncotator_out strelka_out/mutsigCV_out theta_out conpair_out germline_vcfs mutect2_out mutect2_out/chrom_files"
