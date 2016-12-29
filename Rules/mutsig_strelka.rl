@@ -1,5 +1,6 @@
 rule mutsig_strelka:
-        input: expand("strelka_out/oncotator_out/{p}.maf",p=pairs)
+        input: expand("strelka_out/oncotator_out/{p}.maf",p=pairs),
+               dir="strelka_out"
         output: genes="strelka_out/mutsigCV_out/somatic.sig_genes.txt",
                 maf="strelka_out/oncotator_out/strelka_variants.maf"
         params: rname="pl:mutsig_strelka"

@@ -1,5 +1,6 @@
 rule mutsig_mutect:
-        input: expand("mutect_out/oncotator_out/{p}.maf",p=pairs)
+        input: expand("mutect_out/oncotator_out/{p}.maf",p=pairs),
+               dir="mutect_out"
         output: genes="mutect_out/mutsigCV_out/somatic.sig_genes.txt",
                 maf="mutect_out/oncotator_out/mutect_variants.maf"
         params: rname="pl:mutsig_mutect"
