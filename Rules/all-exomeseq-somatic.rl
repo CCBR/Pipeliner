@@ -2,8 +2,7 @@ if config['project']['annotation'] == "hg19":
 
   rule all_exomeseq_somatic:
     input:  expand("{s}"+".realign.bam",s=samples),
-#            expand("mutect2_out/{p}"+".FINAL.vcf",p=pairs),
-#            expand("mutect2_out/chrom_files/{p}_{CHROM}.vcf",p=pairs,CHROM=config['references'][pfamily]['CHROMS']),
+#            expand("mutect2_out/{p}.vcf",p=pairs),
 #            expand("mutect2_out/chrom_files/{p}_{chr}.vcf",p=pairs,chr=config['references'][pfamily]['CHROMS']),
             expand("mutect_out/{p}"+".FINAL.vcf",p=pairs),
             expand("strelka_out/{p}"+".vcf",p=pairs),
@@ -53,8 +52,7 @@ else:
 
   rule all_exomeseq_somatic:
     input:  expand("{s}"+".realign.bam",s=samples),
-#            expand("mutect2_out/{p}"+".FINAL.vcf",p=pairs),
-#            expand("mutect2_out/chrom_files/{p}_{CHROM}.vcf",p=pairs,CHROM=config['references'][pfamily]['CHROMS']),
+#            expand("mutect2_out/{p}.vcf",p=pairs),
 #            expand("mutect2_out/chrom_files/{p}_{chr}.vcf",p=pairs,chr=config['references'][pfamily]['CHROMS']),
             expand("mutect_out/{p}"+".FINAL.vcf",p=pairs),
             expand("strelka_out/{p}"+".vcf",p=pairs),

@@ -2,6 +2,7 @@ rule cnvkit_somatic:
     input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
            tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
            targets="cnvkit_targets.bed",
+           outdir="cnvkit_out"
     output: calls="cnvkit_out/{x}_calls.cns",
             gainloss="cnvkit_out/{x}_gainloss.tsv",
             dir="cnvkit_out/{x}_cnvkit"
