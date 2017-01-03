@@ -7,7 +7,7 @@
     "KNOWNINDELS": "-known /data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142_indels.vcf",
     "KNOWNRECAL": "-knownSites /data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142_indels.vcf -knownSites /data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142_snps.vcf",
     "KNOWNANCESTRY": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_dbSNP_allStrains_compSet.vcf",
-    "KNOWNVCF": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_dbSNP_allStrains_compSet.vcf",
+    "KNOWNVCF": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_dbSNP_allStrains_compSet.vcf.gz",
     "NOVOINDEX": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_genome.nix",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/genome.fa",
     "SNPSITES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf",
@@ -35,7 +35,7 @@
     "CONPAIRMARKERSA": "/data/CCBR_Pipeliner/db/PipeDB/lib/SureSelect_Mouse_All_Exon_V1_GRCm38_markers_MAF_0.4_LD_0.8.txt",
     "CONPAIRMARKERSB": "/data/CCBR_Pipeliner/db/PipeDB/lib/SureSelect_Mouse_All_Exon_V1_GRCm38_markers_MAF_0.4_LD_0.8.bed",
     "EXONS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_UCSCexons.bed",
-    "THETASNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_theta_SNPfile.txt",
+    "THETASNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_theta_SNPfile_reformat.txt",
     "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
     #below here is junk placeholders
     "HAPMAP_DBNSFP": "/data/CCBR_Pipeliner/db/PipeDB/lib/snpEff_db/hapmap.bed",
