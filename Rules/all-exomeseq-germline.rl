@@ -7,7 +7,8 @@ rule all_exomeseq_germline:
            "exome.snpeff.vcf",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),
            "exome_targets.bed",
-           "exome.strictFilter.vcf"
+           "exome.strictFilter.vcf",
+           "manta_out/results/variants/diploidSV.vcf.gz"
     output: 
     params: rname="final"
     shell:  """
