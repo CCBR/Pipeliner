@@ -16,6 +16,14 @@
         "threads": "8",
         "mem" : "64g"
     },
+    "manta_germline":
+        "threads": "8",
+        "mem" : "96g",
+    },
+    "manta_wgs":
+        "threads": "8",
+        "mem" : "96g",
+    },
     "conpair":
     {
         "threads": "1"
