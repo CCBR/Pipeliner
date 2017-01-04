@@ -25,6 +25,11 @@
         "threads": "1",
         "mem" : "64g",
     },
+    "avia_make_bed_germ":
+    {
+        "threads": "8",
+        "mem" : "96g",
+    },
     "make_somatic_network":
     {
         "threads": "1",
