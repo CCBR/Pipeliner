@@ -13,8 +13,18 @@
     },
     "theta":
     {
+        "threads": "4",
+        "mem" : "120g"
+    },
+    "manta_germline":
+     {
         "threads": "8",
-        "mem" : "64g"
+        "mem" : "96g",
+    },
+    "manta_wgs":
+    {
+        "threads": "8",
+        "mem" : "96g",
     },
     "conpair":
     {

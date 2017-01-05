@@ -5,7 +5,8 @@ rule all_wgslow:
            "sample_network.bmp",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),           
            "combined.snpeff.vcf",
-           "combined.strictFilter.vcf"
+           "combined.strictFilter.vcf",
+           "manta_out/results/variants/diploidSV.vcf.gz"
     output: 
     params: rname="final"
     shell:  """
