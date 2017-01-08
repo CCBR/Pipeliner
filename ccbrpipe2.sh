@@ -5,4 +5,4 @@ module load python/3.5
 module load graphviz
 
 pipehome=$(dirname $0)
-python $pipehome/pipeliner2.py &
+cd  $pipehome && python pipeliner2.py &
