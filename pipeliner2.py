@@ -820,7 +820,7 @@ class PipelinerGUI(Tk):
         #euser.trace('w', makejson)
 
         L=Label(projpanel1,text="Flow Cell ID",anchor="ne")
-        E = Entry(projpanel1, bd =2, width=20)#, bg=entryBgColor)
+        E = Entry(projpanel1, bd =2, width=20, textvariable=eflowcell )#, bg=entryBgColor)
         L4=Label( projpanel1,
                  text="(Examples: FlowCellID, Labname, date or short project name)",
                  anchor="ne" 
