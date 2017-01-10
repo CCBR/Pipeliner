@@ -20,7 +20,7 @@ from tkinter import ttk
 from tkinter.ttk import Label, Button, LabelFrame, Scrollbar, Frame, Notebook, Style
 
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
-from tkinter.messagebox import showerror, showinfo
+from tkinter.messagebox import showerror, showinfo, showwarning
 
 from pathlib import Path
 
@@ -83,6 +83,11 @@ filetype = filetypes[1] #StringVar()
 efiletype = filetypes[0]
 batchsize = '20'
 customRules = []
+
+#################################
+#makejson in PipelieFrame is not good!
+#need to be improved!
+#################################
 
 
 ################################
@@ -170,6 +175,7 @@ class PipelineFrame( Frame ) :
         if not fname :
             fname = askdirectory( initialdir=PWD, 
                  title="Select Work Directory")    
+            self.workpath.set(fname)
         
         error = 'Error'
         error_msg = ''
@@ -177,25 +183,25 @@ class PipelineFrame( Frame ) :
             if len(listdir(fname))==0:
                 pass
             else :
-                error_msg = 'Select another directory!'
-                error_msg += "Selected directory: %s "%fname
-                error_msg +="The work directory needs to be empty" 
-                error_msg +=" or does not exists!"
+                error = "WARNING!"
+                error_msg ="The work directory not initialized!" 
+                showwarning( error, error_msg )
         else :
             try :
                 makedirs( fname )
             except OSError :
                 error_msg = 'Failed to make a new directory: "%s"' % fname
                 error_msg += 'Check if you have a write permission in the directory.'
-            
-        if error_msg :
-            showerror( error, error_msg )
-            return
+                showerror( error, error_msg )
         
         #further initialization steps
         #will be done by each Pipeline
-        self.workpath.set(fname)
-        return True
+        
+        if error_msg :
+            return False
+        else :
+            return True
+        
         
     def makejson(self, *args):
         #print(args[0])
@@ -451,7 +457,7 @@ class PipelineFrame( Frame ) :
             symlink('ChIP-Seq-Pipeline/main.nf', self.workpath.get() + '/main.nf')
             showinfo( "ChIPSeq", "ChIP-seq input files:\n%s" % "\n".join(files) )
 
-        self.makejson("none")
+        #self.makejson("none")
         return True
         
     def writepaste( self, ftype, comments ) :
@@ -464,7 +470,7 @@ class PipelineFrame( Frame ) :
         except:
             showerror("Error","Did not write file "+fname+"\nIs working directory set?")
             
-        self.makejson("none")
+        #self.makejson("none")
         return
 
     def readpaste( self, ftype, comments ):
@@ -478,10 +484,11 @@ class PipelineFrame( Frame ) :
         except:
             showerror("Error","Did not read file "+fname+"\nIs working directory set?")
             
-        self.makejson("none")
+        #self.makejson("none")
         return
     
     def dryrun( self ) :
+        self.makejson("none")
         return self.cmd( "--dryrun -s %s/Snakefile --rerun-incomplete -d %s" % ( self.workpath.get(), self.workpath.get())) 
     
     def runslurm( self ) :
@@ -529,6 +536,7 @@ class PipelineFrame( Frame ) :
    
 
     def saveproject( self, proj ):
+        print( proj )
         P=eval(proj)
         try:
             # with open('project.json', 'w') as F:
