@@ -1,10 +1,10 @@
-rule avia_make_bed_germ:
+rule avia_make_bed_rnaseqvar:
     input: "combined.vcf"
     output: bed="variants.bed",
             vcf="exome.recode.vcf"
-    params: regions="exome_targets.bed",batch ="-l nodes=1:gpfs -q ccr",rname="make_bed"
+    params: regions="exome_targets.bed",genome=config['references'][pfamily]['GENOME'],batch ="-l nodes=1:gpfs -q ccr",rname="make_bed"
     shell: """
-         module load vcftools; vcftools --vcf combined.vcf --bed {params.regions} --recode --recode-INFO-all --out exome; perl Scripts/avia_make_bed.pl exome.recode.vcf; mkdir -p sample_vcfs
+         module load GATK/3.5-0; GATK -m 24G SelectVariants -V combined.vcf -o {output.vcf} -L {params.regions} -R {params.genome} -nt 8; perl Scripts/avia_make_bed.pl exome.recode.vcf; mkdir -p sample_vcfs
 
            """
 
