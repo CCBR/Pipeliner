@@ -37,8 +37,7 @@
     },
     "avia_make_bed_germ":
     {
-        "threads": "8",
-        "mem" : "96g",
+        "mem" : "96g"
     },
     "make_somatic_network":
     {
@@ -148,13 +147,13 @@
     },
     "novocraft_sort":
     {
-        "threads": "1",
-        "mem": "64g"
+        "threads": "2",
+        "mem": "120g"
     },
     "novo_sort":
     {
-        "threads": "1",
-        "mem": "64g"
+        "threads": "2",
+        "mem": "120g"
     },
     "picard_headers2":
     {
