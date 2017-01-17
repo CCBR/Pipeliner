@@ -214,6 +214,10 @@ png(paste(cons[i],"_MAplot_Limma_v2.png",sep=""))
 plotMA(dataf,log="",main=cons[i],ylim=range(all.genes.con$logFC))
 dev.off()
 all.genes.con$FC <- ifelse(all.genes.con$logFC<0, -1/(2^all.genes.con$logFC), 2^all.genes.con$logFC)
+x=rownames(all.genes.con)
+ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
+gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+all.genes.con=cbind(ensID,gene,all.genes.con)
 write.table(all.genes.con,file=paste("Limma_deg_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
 }}
 l
