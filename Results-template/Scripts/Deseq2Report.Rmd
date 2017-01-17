@@ -1,0 +1,192 @@
+---
+title: "Deseq2 results"
+author: "CCBR RNAseq pipeline"
+output: html_document
+params:
+  folder: result
+  sampleinfo: sampletable.txt
+  data: RawCountFile_genes_filtered.txt
+  contrasts: "GN GP"
+---
+
+## **Histogram after normalization**
+
+```{r setup, echo=FALSE, warning=FALSE,message=FALSE}
+
+library(rgl)
+library(knitr)
+library('DESeq2')
+library('statmod')
+library('RColorBrewer')
+library('gplots')
+library('reshape')
+library('ggplot2')
+library('ggfortify')
+library(amap)
+library(DT)
+library(plotly)
+library('geneplotter')
+
+knit_hooks$set(rgl = function(before, options, envir) {
+  if (!before) {
+    ## after a chunk has been evaluated
+    if (rgl.cur() == 0) return()  # no active device
+    name = paste(options$fig.path, options$label, sep = '')
+    rgl.snapshot(paste(name, '.png', sep = ''), fmt = 'png')
+    return(paste('\\includegraphics{', name, '}\n', sep = ''))
+  }
+})
+
+knit_hooks$set(webgl = hook_webgl)
+```
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+
+## grab args & normalization
+
+DIR <- params$folder
+FILE1 <- params$sampleinfo
+FILE2 <- params$data
+CONTRASTS <- params$contrasts
+
+# ANNOTATE <- args[4]
+
+#
+## setwd(DIR)
+## Sys.setenv("DISPLAY"=":0.0")
+sampleinfo=read.delim(FILE1)
+sampleFiles=as.character(sampleinfo[,2])
+x = read.delim(FILE2,row.names=1)
+colnames(x)=as.character(sampleinfo[,4])
+## read annotation file
+## ann=read.delim(ANNOTATE)
+#
+ddsHTSeq<-DESeqDataSetFromMatrix(countData=x,colData=sampleinfo, design=~condition)
+dds<-DESeq(ddsHTSeq)
+ndata=as.data.frame(counts(dds,normalized=TRUE))
+colnames(ndata)=colnames(x)
+write.table(ndata,file="Deseq2_normalized_counts.txt",sep="\t",col.names=NA)
+#png("HistDesq2normFilter.png")
+df.m <- melt(as.data.frame(ndata))
+print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='top') + scale_x_log10())
+# dev.off() 
+#
+## transformation
+rld <- rlogTransformation(dds, blind=TRUE)
+rldm=assay(rld)
+colnames(rldm)=colnames(x)
+write.table(rldm,file="Deseq2_normalized_rld.txt",sep="\t",col.names=NA)
+
+png("deseq2_pca.png")
+print(plotPCA(rld, intgroup=c("condition")))
+## dev.copy(png,"deseq2_pca.png")
+dev.off()
+png("deseq2_pca_details.png")
+# print(plotPCA(rld, intgroup=c("condition","fileName")))
+print(plotPCA(rld, intgroup=c("condition","label")))
+## dev.copy(png,"deseq2_pca_details.png")
+dev.off()
+
+```
+
+```{r, echo=FALSE,webgl=TRUE,message=FALSE}
+
+## Boxplot and PCA
+df.m <- melt(as.data.frame(rldm))
+
+#dev.off()
+par(mar=c(10,7,1,1))
+boxplot(value~variable,las=2,data=df.m,main="Normalized Signal",
+        ylab="Counts",col=as.numeric(as.factor(sampleinfo$condition)))
+
+edf=rldm
+tedf= t(edf)
+pca=prcomp(tedf,scale.=T)
+tedf1 = data.frame(tedf)
+Phenotype=sampleinfo$condition
+cell_rep=sampleinfo$label
+tedf1$group = as.factor(Phenotype)
+
+# plot(pca,type="lines")  #Decide how many PC's are relevant for plotting
+  #pca$x[,1:3]  #look at first 3 PC's
+
+plot3d(pca$x[,1:3],col = as.integer(tedf1$group),type="s",size=2)
+group.v<-as.vector(cell_rep)
+text3d(pca$x, pca$y, pca$z, group.v, cex=1.0, adj = 1.2)
+rgl.postscript("pca3d_deseq2.pdf","pdf")
+
+```
+## **Similarity Heatmap**
+```{r, echo=FALSE,warning=FALSE,message=FALSE}
+
+## clustering / heatmap
+hmcol <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
+distsRL <- dist(t(assay(rld)))
+mat <- as.matrix(distsRL)
+rownames(mat) <- colnames(mat) <- with(colData(dds),paste(condition,sampleFiles , sep=" : "))
+#if you just want the conditions use this line : rownames(mat) <- colnames(mat) <- with(colData(dds),condition)
+png("deseq2_heatmaps_samplebysample.png")
+heatmap.2(mat, trace="none", col = rev(hmcol), margin=c(16, 16))
+## dev.copy(png,"deseq2_heatmaps_samplebysample.png")
+dev.off()
+
+d=Dist(tedf,method="pearson",diag=TRUE)
+m=as.matrix(d)
+
+new.palette=colorRampPalette(c("black","red","yellow","white"),space="rgb")
+#levelplot(m[1:ncol(m),ncol(m):1],col.regions=new.palette(20))
+heatmap(m,symm=TRUE,col=new.palette(20))
+
+```
+
+## **DEG and Volcano plots**
+
+```{r, echo=FALSE, warning=F,message=F}
+
+## differentially expressed genes -----
+contras=unlist(strsplit(CONTRASTS, split=" "))        
+cat(contras,"\t",length(contras),"\t",contras[1],"\t",contras[2],"\n",file="readcontra.txt")
+mfc=c()
+mpval=c()
+cons=c()
+l <- htmltools::tagList()
+for(i in seq(1, length(contras), by = 2))
+{{
+res<-results(dds,contrast=c("condition",as.character(contras[i]),as.character(contras[i+1])))
+## res<-res[order(res$padj),] for now
+res1=as.data.frame(res)
+mfc=cbind(mfc,res1$log2FoldChange)
+mpval=cbind(mpval,res1$pvalue)
+cons=c(cons,paste(contras[i],"-",contras[i+1],sep=""))
+
+restmp=res1
+restmp$FoldChange <- ifelse(restmp$log2FoldChange<0, -1/(2^restmp$log2FoldChange), 2^restmp$log2FoldChange)
+write.table(restmp,file=paste("DESeq2_deg_",contras[i],"_vs_",contras[i+1],".txt",sep=""),sep="\t",col.names=NA) 
+x=res1$log2FoldChange[which(!is.na(res1$log2FoldChange))] 
+png(paste("MAplot_",contras[i],"_vs_",contras[i+1],".png",sep=""))
+plotMA(res,ylim=range(x),main=paste("MAplot_",contras[i],"_vs_",contras[i+1],sep=""))
+##dev.copy(png,paste("DESeq2_MAplot_",contras[i],"_vs_",contras[i+1],".png",sep=""))
+dev.off()
+# Volcano
+log_FC=res1$log2FoldChange
+log_Apval=-log10(res1$padj)
+Significant=rep("NotSignificant",length(log_FC))
+Significant[which(res1$padj<0.05 & abs(res1$padj)>=1)]="Significant&LogFoldChange"
+Significant[which(res1$padj<0.05 & abs(res1$padj)<1)]="Significant"
+Significant[which(res1$padj>=0.05 & abs(res1$padj)>=1)]="LogFoldChange"
+gene=rownames(res1)
+volcano_data=as.data.frame(cbind(gene,log_FC,log_Apval,Significant))
+l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_Apval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Log2_ FC"),yaxis=list(title="Log10_Adj_pvalue"))
+#  %>% layout(annotations = a)
+
+}}
+
+colnames(mfc)=paste(cons,"logFC",sep="_")
+colnames(mpval)=paste(cons,"pval",sep="_")
+res=as.data.frame(cbind(mfc,mpval))
+rownames(res)=rownames(res1)
+write.table(res,file="DESeq2_res_all_contrasts.txt",sep="\t",col.names=NA)
+DT::datatable(res)
+
+l
+```

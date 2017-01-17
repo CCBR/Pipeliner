@@ -130,11 +130,11 @@
     "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg19_genes.txt",
     "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/dev/refFlatHg19.txt",
     "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_GENCODE_GENE_V19_comprehensive.bed", 
-    "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/human_gencode",
-    "SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/human_gencode.transcripts.fa",
+    "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/rsem1.3.0/human_gencode",
+    "SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/rsem1.3.0/human_gencode.transcripts.fa",
 #    "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/dev/RNA-Seq-pipeline/ver2/TruSeq_and_nextera_adapters_new.fa",
     "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
-    "STARDIR": "/fdb/STAR_2.4.2a/GENCODE/Gencode_human/release_19/genes-",
+    "STARDIR": "/fdb/STAR_current/GENCODE/Gencode_human/release_19/genes-",
     "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg19.rRNA.interval_list_v3"
     },
     "rnaseqvar": {
