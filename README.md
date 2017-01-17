@@ -13,7 +13,7 @@
 * An account on the NIH *Biowulf* Linux Cluster 
 
 
-*Pipeliner* runs on the NIH *Biowulf* cluster and uses a graphical interface. To use the program one must log into *Biowulf* using ssh with X11 packet forwarding.  For instance:
+*Pipeliner* runs on the NIH *Biowulf* cluster and uses a graphical interface. To use the program one must log into *Biowulf* using ssh with X11 packet forwarding or via a No machine NX terminal (https://www.nomachine.com/) specifically for RNAseq run.  For instance:
 
 ### Running *Pipeliner*
 
