@@ -83,7 +83,7 @@
         "TRIMMOMATICVER": "trimmomatic/0.33",
         "FASTQCVER": "fastqc",
         "CHKQCVER": " /data/CCBR_Pipeliner/dev/RNA-Seq-pipeline/ver2/summarizeFastQCver2",
-        "STARVER": "STAR/2.4.2a",
+        "STARVER": "STAR/2.5.2b",
         "PICARDVER": "picard/1.119",
         "SUBREADVER": "subread/1.4.6",
         "BWAVER": "bwa/0.7.10",
@@ -148,7 +148,7 @@
         "MINCOUNTGENEJUNCTIONS": 5,
         "MINSAMPLES": 1,
         "PIPERLIB": "/data/CCBR_Pipeliner/db/PipeDB/R2/",
-        "RSEM": "/data/CCBR_Pipeliner/db/PipeDB/bin/rsem1.2.23/RSEM-1.2.23"
+        "RSEM": "/usr/local/apps/rsem/1.3.0"
     },
     "rnaseqvar": {
         "NOVOALIGN": "/usr/local/apps/novocraft/3.04.04/novoalign",
