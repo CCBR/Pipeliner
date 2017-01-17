@@ -161,6 +161,11 @@ cons=c(cons,paste(contras[i],"-",contras[i+1],sep=""))
 
 restmp=res1
 restmp$FoldChange <- ifelse(restmp$log2FoldChange<0, -1/(2^restmp$log2FoldChange), 2^restmp$log2FoldChange)
+
+x=rownames(restmp)
+ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
+gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+restmp=cbind(ensID,gene,restmp)
 write.table(restmp,file=paste("DESeq2_deg_",contras[i],"_vs_",contras[i+1],".txt",sep=""),sep="\t",col.names=NA) 
 x=res1$log2FoldChange[which(!is.na(res1$log2FoldChange))] 
 png(paste("MAplot_",contras[i],"_vs_",contras[i+1],".png",sep=""))

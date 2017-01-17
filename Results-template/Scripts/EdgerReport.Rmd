@@ -196,6 +196,11 @@ cons=c(cons,paste(contras[i],"-",contras[i+1],sep=""))
 ## final=res1[order(res1$FDR),] for now 
 final=res1
 final$FC <- ifelse(final$logFC<0, -1/(2^final$logFC), 2^final$logFC)
+
+x=rownames(final)
+ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
+gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+final=cbind(ensID,gene,final)
 write.table(final,file=paste("EdgeR_deg_",contras[i],"_vs_",contras[i+1],".txt",sep=""),sep="\t",col.names=NA)
 #  like MAplot
 deg1sel <- decideTestsDGE(deg, p=0.05, adjust="BH")
