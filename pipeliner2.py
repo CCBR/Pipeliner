@@ -839,7 +839,8 @@ class RNASeqFrame( PipelineFrame ) :
         #####################
         #Sample Threshold 
         #####################
-        sampleLF = LabelFrame( eframe, text="Low Abundance Gene Thresholds" )
+        self.sampleLF = sampleLF = LabelFrame( eframe, 
+                                              text="Low Abundance Gene Thresholds" )
         
         self.rMincount = rMincount = StringVar()
         rMincount.set("5")
@@ -849,15 +850,15 @@ class RNASeqFrame( PipelineFrame ) :
         #rMincount.trace('w', lambda a,b,c,x="rmincount": makejson(x))
 
         #Filter out genes < [5] read counts in < [2] samples
-        rminsamplesL = Label(sampleLF, text="Filter out genes <") # in")
+        rminsamplesL = Label(sampleLF, text="Filter out genes  <") # in")
         rmincountE = Entry(sampleLF, bd =2, width=3, textvariable=rMincount)
-        rmincountL = Label(sampleLF, text="read counts in <")
+        rmincountL = Label(sampleLF, text="read counts in  >")
         rminsamplesE = Entry(sampleLF, bd =2, width=3, textvariable=rMinsamples)
         rminsamplesR = Label(sampleLF, text="samples")
         
         rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
         rmincountE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
-        rmincountL.grid(row=9,column=3,sticky=W,padx=10,pady=5)
+        rmincountL.grid(row=9,column=3,sticky=W,padx=5,pady=5)
         rminsamplesE.grid(row=9,column=4,sticky=W,padx=0,pady=5)
         rminsamplesR.grid(row=9,column=5,sticky=W,padx=10,pady=5)
         #rMinsamples.trace('w', lambda a,b,c,x="rmincount": makejson(x))
@@ -908,8 +909,10 @@ class RNASeqFrame( PipelineFrame ) :
     def makejson_wrapper( self, *args, **kwargs ) :
         if self.Pipeline.get() == 'initialqcrnaseq' :
             self.om4.grid_forget()
+            self.sampleLF.grid_forget()
         else :
             self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
+            self.sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
             
         self.makejson(*args, **kwargs)
     
