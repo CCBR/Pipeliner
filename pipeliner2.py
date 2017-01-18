@@ -836,25 +836,34 @@ class RNASeqFrame( PipelineFrame ) :
         self.om4 = OptionMenu(eframe, rDeg, *rDegs, command=self.makejson_wrapper)
         self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
         
+        #####################
+        #Sample Threshold 
+        #####################
+        sampleLF = LabelFrame( eframe, text="Low Abundance Gene Thresholds" )
+        
         self.rMincount = rMincount = StringVar()
         rMincount.set("5")
-        rmincountL = Label(eframe, text="Gene count threshold:")
-        rmincountL.grid(row=8,column=1,sticky=W,padx=10,pady=5)
-        rmincountE = Entry(eframe, bd =2, width=10, textvariable=rMincount)
-        rmincountE.grid(row=8,column=2,sticky=W,padx=10,pady=5)
-        #rMincount.trace('w', lambda a,b,c,x="rmincount": makejson(x))
-
-
         self.rMinsamples = rMinsamples = StringVar()
         rMinsamples.set("2")
-        rminsamplesL = Label(eframe, text="Filter out genes below the count threshold in")
-        rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
-        rminsamplesE = Entry(eframe, bd =2, width=10, textvariable=rMinsamples)
-        rminsamplesE.grid(row=9,column=2,sticky=W,padx=10,pady=5)
-        rminsamplesR = Label(eframe, text="samples")
-        rminsamplesR.grid(row=9,column=3,sticky=W,padx=10,pady=5)
         
+        #rMincount.trace('w', lambda a,b,c,x="rmincount": makejson(x))
+
+        #Filter out genes < [5] read counts in < [2] samples
+        rminsamplesL = Label(sampleLF, text="Filter out genes <") # in")
+        rmincountE = Entry(sampleLF, bd =2, width=3, textvariable=rMincount)
+        rmincountL = Label(sampleLF, text="read counts in <")
+        rminsamplesE = Entry(sampleLF, bd =2, width=3, textvariable=rMinsamples)
+        rminsamplesR = Label(sampleLF, text="samples")
+        
+        rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
+        rmincountE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
+        rmincountL.grid(row=9,column=3,sticky=W,padx=10,pady=5)
+        rminsamplesE.grid(row=9,column=4,sticky=W,padx=0,pady=5)
+        rminsamplesR.grid(row=9,column=5,sticky=W,padx=10,pady=5)
         #rMinsamples.trace('w', lambda a,b,c,x="rmincount": makejson(x))
+        
+        sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
+        #####################
 
 
         dry_button=Button( self, text="Dry Run", command=self.dryrun )
