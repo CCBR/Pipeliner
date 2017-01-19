@@ -1,0 +1,236 @@
+---
+title: "EdgeR results"
+author: "CCBR RNAseq pipeline"
+output: html_document
+params:
+  folder: result
+  sampleinfo: sampletable.txt
+  data: RawCountFile_genes_filtered.txt
+  contrasts: "GN GP"
+---
+
+## **Histogram after normalization**
+
+```{r setup, echo=FALSE, warning=FALSE,message=FALSE}
+
+library(rgl)
+library(knitr)
+library('edgeR')
+library('statmod')
+library('RColorBrewer') 
+library('gplots')
+library('reshape') 
+library('ggplot2')
+library('ggfortify')
+library(amap)
+library(DT)
+library(plotly)
+library('geneplotter')
+
+knit_hooks$set(rgl = function(before, options, envir) {
+  if (!before) {
+    ## after a chunk has been evaluated
+    if (rgl.cur() == 0) return()  # no active device
+    name = paste(options$fig.path, options$label, sep = '')
+    rgl.snapshot(paste(name, '.png', sep = ''), fmt = 'png')
+    return(paste('\\includegraphics{', name, '}\n', sep = ''))
+  }
+})
+
+knit_hooks$set(webgl = hook_webgl)
+```
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+
+## grab args & normalization
+
+DIR <- params$folder
+FILE1 <- params$sampleinfo
+FILE2 <- params$data
+CONTRASTS <- params$contrasts
+
+# ANNOTATE <- args[4]
+
+#
+## setwd(DIR)
+# read files
+sampleinfo=read.delim(FILE1)
+x = read.delim(FILE2,row.names=1)
+colnames(x)=as.character(sampleinfo[,4])
+# sampleFiles=as.character(sampleinfo[,2])
+## read annotation file
+## ann=read.delim(ANNOTATE)
+# DGElist object --------------------------------------------------------------
+condition = as.factor(sampleinfo$condition)
+y = DGEList(counts=x,group=condition)
+## Normalization TMM ------------------------------------------------------------
+## method = =c("TMM","RLE","upperquartile","none")
+y <- calcNormFactors(y,method="TMM")
+# y$samples
+
+#png("libdistrib.png")
+barplot(y$samples$lib.size*1e-6,main="Library size distribution", names= strsplit(colnames(y$counts),".star.count.txt"), ylab="Library size (millions)",las=2,cex.names=0.8)
+#dev.off()
+
+## MDS plots ----------------------------------------------------------------------
+# both pairewise (leading)
+
+# png("MDS_bcv.png")
+# print(y)
+#plotMDS(y, method="bcv", , main="MDS plot bcv")
+#dev.off()
+
+# png("MDS_logFC.png")
+plotMDS(y, method="logFC" , main="MDS plot logFC") ## plotMDS(y) default
+# dev.off()
+# plotMDS(y, method="logFC",gene.selection="common", main="MDS plot common")
+
+## estimating common and tagwise dispersions -----------------------------------------
+y <- estimateCommonDisp(y)
+y <- estimateTagwiseDisp(y) #default trend: moveingave
+## plotting
+# png("BCVplot.png")
+ plotBCV(y,main="BCV plot")
+#dev.off()
+
+ylog2=cpm(y,log=TRUE,normalized.lib.sizes=TRUE,prior.count=2) # prior count like avelogcpm
+ndata= cpm(y,log=FALSE,normalized.lib.sizes=TRUE)*1e6
+## save it
+write.table(ylog2,file="edgeR_normalized_counts_log.txt",sep="\t",col.names=NA)
+write.table(ndata,file="edgeR_normalized_counts.txt",sep="\t",col.names=NA)
+## png("HistEdgeRnormFilter.png")
+df.m <- melt(as.data.frame(ndata))
+print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10() + ggtitle("Normalized Counts"))
+
+## dev.off()
+pr2=prcomp(t(ylog2))
+dd=cbind(t(ylog2),condition=as.character(condition))
+
+png("edgeR_prcomp.png")
+#biplot(pr2)
+plot(pr2$x[,1],pr2$x[,2],col="red", main="PCA plot using prcomp and Logcpm data")
+text(pr2$x[,1],pr2$x[,2], labels=colnames(ylog2), cex=0.7, pos=4)
+dev.off()
+
+#png("edgeR_pca.png")
+autoplot(pr2,data=dd, colour = 'condition')
+# dev.off()
+
+```
+
+```{r, echo=FALSE,webgl=TRUE,message=FALSE}
+
+## Boxplot and PCA
+df.m <- melt(as.data.frame(ylog2))
+
+#dev.off()
+par(mar=c(10,7,1,1))
+boxplot(value~variable,las=2,data=df.m,main="Normalized Signal",
+        ylab="Counts",col=as.numeric(as.factor(sampleinfo$condition)))
+
+edf=ylog2
+tedf= t(edf)
+pca=prcomp(tedf,scale.=T)
+tedf1 = data.frame(tedf)
+Phenotype=sampleinfo$condition
+cell_rep=sampleinfo$label
+tedf1$group = as.factor(Phenotype)
+
+# plot(pca,type="lines")  #Decide how many PC's are relevant for plotting
+  #pca$x[,1:3]  #look at first 3 PC's
+
+plot3d(pca$x[,1:3],col = as.integer(tedf1$group),type="s",size=2)
+group.v<-as.vector(cell_rep)
+text3d(pca$x, pca$y, pca$z, group.v, cex=1.0, adj = 1.2)
+rgl.postscript("pca3d_edgeR.pdf","pdf")
+
+```
+
+## **Similarity Heatmap**
+```{r, echo=FALSE,warning=FALSE,message=FALSE}
+
+## clustering / heatmap
+hmcol <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
+distylog2=dist(t(ylog2))
+mat = as.matrix(distylog2)
+# rownames(mat) <- colnames(mat)
+png("edgeR_heatmaps_samplebysample.png")
+heatmap.2(mat, trace="none", col = rev(hmcol), margin=c(16, 16))
+## dev.copy(png,"edgeR_heatmaps_samplebysample.png")
+dev.off()
+
+d=Dist(tedf,method="pearson",diag=TRUE)
+m=as.matrix(d)
+
+new.palette=colorRampPalette(c("black","red","yellow","white"),space="rgb")
+#levelplot(m[1:ncol(m),ncol(m):1],col.regions=new.palette(20))
+heatmap(m,symm=TRUE,col=new.palette(20))
+
+```
+
+## **DEG and Volcano plots**
+
+```{r, echo=FALSE, warning=F,message=F}
+
+## differentially expressed genes -----
+contras=unlist(strsplit(CONTRASTS, split=" "))        
+cat(contras,"\t",length(contras),"\t",contras[1],"\t",contras[2],"\n",file="readcontra-edgeR.txt")
+mfc=c()
+mpval=c()
+cons=c()
+l <- htmltools::tagList()
+for(i in seq(1, length(contras), by = 2))
+{{
+deg<-exactTest(y,c(as.character(contras[i+1]),as.character(contras[i])))
+# 
+n=dim(y$counts)[1]
+tt=topTags(deg, n=n,sort.by="none")
+res1 = as.data.frame(tt)
+mfc=cbind(mfc,res1$logFC)
+mpval=cbind(mpval,res1$PValue)
+cons=c(cons,paste(contras[i],"-",contras[i+1],sep=""))
+#
+## res1=cbind(Ensembl.Gene.ID=substr(rownames(res1),1,18),id.ver=rownames(res1),res1)
+## final= merge(res1,ann,all.x=TRUE)
+##final=final[order(final$FDR),]
+## final=res1[order(res1$FDR),] for now 
+final=res1
+final$FC <- ifelse(final$logFC<0, -1/(2^final$logFC), 2^final$logFC)
+
+x=rownames(final)
+ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
+gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+final=cbind(ensID,gene,final)
+write.table(final,file=paste("EdgeR_deg_",contras[i],"_vs_",contras[i+1],".txt",sep=""),sep="\t",col.names=NA)
+#  like MAplot
+deg1sel <- decideTestsDGE(deg, p=0.05, adjust="BH")
+detags <- rownames(y)[as.logical(deg1sel)]
+png(paste("Smearplot_",contras[i],"_vs_",contras[i+1],".png",sep=""))
+plotSmear(deg, de.tags=detags,main= paste("Smearplot FDR<0.05 ",contras[i],"_vs_",contras[i+1],sep=""))
+abline(h = c(-2, 2), col = "blue")
+dev.off()
+# volcano
+
+log_FC=final$logFC
+log_Apval=-log10(final$FDR)
+Significant=rep("NotSignificant",length(log_FC))
+Significant[which(final$FDR<0.05 & abs(final$logFC)>=1)]="Significant&LogFoldChange"
+Significant[which(final$FDR<0.05 & abs(final$logFC)<1)]="Significant"
+Significant[which(final$FDR>=0.05 & abs(final$logFC)>=1)]="LogFoldChange"
+gene=rownames(final)
+volcano_data=as.data.frame(cbind(gene,log_FC,log_Apval,Significant))
+l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_Apval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Log2_ FC"),yaxis=list(title="Log10_Adj_pvalue"))
+#  %>% layout(annotations = a)
+}}
+
+# add DEG  table
+colnames(mfc)=paste(cons,"logFC",sep="_")
+colnames(mpval)=paste(cons,"pval",sep="_")
+res=as.data.frame(cbind(mfc,mpval))
+rownames(res)=rownames(res1)
+write.table(res,file="EdgeR_res_all_contrasts.txt",sep="\t",col.names=NA)
+DT::datatable(res)
+
+l
+```
+
