@@ -533,7 +533,6 @@ class PipelineFrame( Frame ) :
     def checklist( self ) :
         '''placeholder'''
         return 0
-   
 
     def saveproject( self, proj ):
         print( proj )
@@ -547,7 +546,64 @@ class PipelineFrame( Frame ) :
         except:
             showerror("Error","Project Json file not written.")
 
+class MiRSeqFrame( PipelineFrame ) :
+    def __init__(self, pipepanel, pipeline_name, *args, **kwargs) :
+        PipelineFrame.__init__(self, pipepanel, pipeline_name, *args, **kwargs)
+        self.pairs = None
+        
+        eframe = self.eframe = LabelFrame(self,text="Options") 
+        #,fg=textLightColor,bg=baseColor)
+        eframe.grid( row=5, column=1, sticky=W, columnspan=7, padx=10, pady=5 )
+        
+        label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
+        label.grid(row=3,column=0,sticky=W,padx=10,pady=5)
+        Pipelines=["CAPmirseq-plus","mirseq2"]
+        Pipeline = self.Pipeline = StringVar()
+        Pipeline.set(Pipelines[0])
+        
+        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.makejson_wrapper)
+        om.config()#bg = widgetBgColor,fg=widgetFgColor)
+        om["menu"].config()#bg = widgetBgColor,fg=widgetFgColor)
+        #om.pack(side=LEFT,padx=20,pady=5)
+        om.grid(row=3,column=1,sticky=W,padx=10,pady=5)
+        
+        dry_button=Button( self, text="Dry Run", command=self.dryrun )
+        dry_button.grid(row=4, column=4, sticky=E)
+        
+        run_button=Button( self, text="Run", command=self.runslurm )
+        run_button.grid( row=4, column=5 )
+     
+    def init_work_dir( self ) :
+        #basic building!
+        if PipelineFrame.init_work_dir( self ) :
+            pass
+        else :
+            showerror( "Initialization failed!", "Work directory could not be made." )
+            return
+        
+        fname = self.workpath.get()
+        try :
+            #need to be solved by making an empty dir in the Results-template
+            makedirs( join(fname, "QC") ) 
+            #os.mknod can replace but OSX needs a super user prev.
+            #open( join(fname, "pairs"), 'w' ).close() 
+            #open( join(fname, "samples"), 'w' ).close()
             
+            print( "copying", 'template', "into", fname )
+            os.system( "cp -r %s/Results-template/* %s"%(PIPELINER_HOME, fname ) )
+                
+        except :
+            showerror( "Initialization failed!", "Work directory data structure generation has failed." )
+            return
+        
+        if self.make_symlinks() :
+            showinfo( "Success", "The work directory has successfully initialized!")
+        else :
+            showerror( "Symlink failed", "" )
+    
+    def makejson_wrapper( self, *args, **kwargs ) :
+        self.makejson(*args, **kwargs)
+ 
         
 class ExomeSeqFrame( PipelineFrame ) :
     def __init__(self, pipepanel, pipeline_name, *args, **kwargs) :
@@ -575,7 +631,6 @@ class ExomeSeqFrame( PipelineFrame ) :
                        #,fg=textLightColor,bg=baseColor)
         targetsL.grid(row=5,column=0,sticky=W,padx=10,pady=5)
         targetsE = Entry(eframe,textvariable=self.targetspath, width=50)
-        
 
         if self.genome=="hg19":
             self.targetspath.set( 
@@ -673,7 +728,67 @@ class ExomeSeqFrame( PipelineFrame ) :
     
     def readpair( self ) :
         self.readpaste( 'pairs', self.pairs_text )
+
+
+class GenomeSeqFrame( PipelineFrame ) :
+    def __init__(self, pipepanel, pipeline_name, *args, **kwargs) :
+        PipelineFrame.__init__(self, pipepanel, pipeline_name, *args, **kwargs)
+        self.pairs = None
         
+        eframe = self.eframe = LabelFrame(self,text="Options") 
+        #,fg=textLightColor,bg=baseColor)
+        eframe.grid( row=5, column=1, sticky=W, columnspan=7, padx=10, pady=5 )
+        
+        label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
+        label.grid(row=3,column=0,sticky=W,padx=10,pady=5)
+        Pipelines=["initialqcgenomeseq","wgslow"]
+        Pipeline = self.Pipeline = StringVar()
+        Pipeline.set(Pipelines[0])
+        
+        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.makejson_wrapper)
+        om.config()#bg = widgetBgColor,fg=widgetFgColor)
+        om["menu"].config()#bg = widgetBgColor,fg=widgetFgColor)
+        #om.pack(side=LEFT,padx=20,pady=5)
+        om.grid(row=3,column=1,sticky=W,padx=10,pady=5)
+        
+        dry_button=Button( self, text="Dry Run", command=self.dryrun )
+        dry_button.grid(row=4, column=4, sticky=E)
+        
+        run_button=Button( self, text="Run", command=self.runslurm )
+        run_button.grid( row=4, column=5 )
+     
+    def init_work_dir( self ) :
+        #basic building!
+        if PipelineFrame.init_work_dir( self ) :
+            pass
+        else :
+            showerror( "Initialization failed!", "Work directory could not be made." )
+            return
+        
+        fname = self.workpath.get()
+        try :
+            #need to be solved by making an empty dir in the Results-template
+            makedirs( join(fname, "QC") ) 
+            #os.mknod can replace but OSX needs a super user prev.
+            #open( join(fname, "pairs"), 'w' ).close() 
+            #open( join(fname, "samples"), 'w' ).close()
+            
+            print( "copying", 'template', "into", fname )
+            os.system( "cp -r %s/Results-template/* %s"%(PIPELINER_HOME, fname ) )
+                
+        except :
+            showerror( "Initialization failed!", "Work directory data structure generation has failed." )
+            return
+        
+        if self.make_symlinks() :
+            showinfo( "Success", "The work directory has successfully initialized!")
+        else :
+            showerror( "Symlink failed", "" )
+    
+    def makejson_wrapper( self, *args, **kwargs ) :
+        self.makejson(*args, **kwargs)
+    
+    
 class ChIPSeqFrame( PipelineFrame ) :
     def __init__(self, pipepanel, pipeline_name, *args, **kwargs) :
         PipelineFrame.__init__(self, pipepanel, pipeline_name, *args, **kwargs)
@@ -797,7 +912,6 @@ class RNASeqFrame( PipelineFrame ) :
         eframe = self.eframe = LabelFrame(self,text="Options") 
         #,fg=textLightColor,bg=baseColor)
         eframe.grid( row=5, column=1, sticky=W, columnspan=7, padx=10, pady=5 )
-
         
         label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
         label.grid(row=3,column=0,sticky=W,padx=10,pady=5)
@@ -1355,6 +1469,19 @@ class PipelinerGUI(Tk):
             self.exomeseqframe = ExomeSeqFrame( self.notebook, 
                                                self.pfamily.get(), 
                                                self.annotation, global_info=self )
+
+        elif self.pfamily.get() == 'genomeseq' :
+            print( 'genomeseq' )
+            self.exomeseqframe = GenomeSeqFrame( self.notebook, 
+                                               'GenomeSeq', #self.pfamily.get(), 
+                                               self.annotation, global_info=self )
+
+       	elif self.pfamily.get() == 'mirseq' :
+            print( 'genomeseq' )
+            self.exomeseqframe = MiRSeqFrame( self.notebook, 
+                                               'miR-Seq', #self.pfamily.get(), 
+                                               self.annotation, global_info=self )
+     
         elif self.pfamily.get() == 'chipseq' :
             print( 'chipseq' )
             self.chipseqframe = ChIPSeqFrame( self.notebook, 
@@ -1369,11 +1496,6 @@ class PipelinerGUI(Tk):
             pass
         
               
-        
-class MirSeqFrame( PipelineFrame ) :
-    def __init__(self, *args, **kwargs) :
-        PipelineFrame.__init__(self, *args, **kwargs)
-
        
            
 
