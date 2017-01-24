@@ -13,7 +13,7 @@
     },
     "theta":
     {
-        "threads": "4",
+        "threads": "1",
         "mem" : "120g"
     },
     "manta_germline":
@@ -274,7 +274,7 @@
     },
     "trimmomatic":
     {
-        "threads": "8"
+        "threads": "32"
     },
     "varscan":
     {
