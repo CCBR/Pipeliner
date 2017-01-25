@@ -129,19 +129,19 @@ class PipelinerGUI(Tk):
         om["menu"].config() #bg = widgetBgColor,fg=widgetFgColor)
         om.grid(row=1,column=2,sticky=W,padx=10,pady=10)
         
-        pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'chipseq', 'custom']
+        pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'chipseq']
         self.pfamily = pfamily = StringVar()
         pfamily.set(pfamilys[0])
-        om = OptionMenu(pipeline_panel, pfamily, *pfamilys)
+        om = OptionMenu(pipeline_panel, pfamily, *pfamilys, command=self.set_pipeline)
         #, command=lambda _:makejson(pfamily.get()))
         om.config() #bg = widgetBgColor,fg=widgetFgColor)
         om["menu"].config() #bg = widgetBgColor,fg=widgetFgColor)
         om.grid(row=1,column=4,sticky=W,padx=10,pady=5)
-        add_button = Button( pipeline_panel, 
-                            text="Set a pipeline", 
-                            command=self.add_pipeline
-                           )
-        add_button.grid(row=1, column=5, sticky=W, padx=10, pady=5)
+        #add_button = Button( pipeline_panel, 
+        #                    text="Set a pipeline", 
+        #                    command=self.add_pipeline
+        #                   )
+        #add_button.grid(row=1, column=5, sticky=W, padx=10, pady=5)
         
         self.notebook = notebook = Notebook( editframe )
         self.pipelineframe = None #the pipeline frame in the notebook frame!
@@ -240,7 +240,7 @@ class PipelinerGUI(Tk):
         pass
     
         
-    def add_pipeline( self, *args ) :
+    def set_pipeline( self, *args ) :
         print( "set_pipeline", *args )
         print( self.pfamily )
 
@@ -276,6 +276,7 @@ class PipelinerGUI(Tk):
                                                'RNAseq',#self.pfamily.get(), 
                                                self.annotation, global_info=self )
         else :
+            return
             pass
 
         self.notebook.select( self.pipelineframe )
