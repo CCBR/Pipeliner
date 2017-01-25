@@ -3,6 +3,14 @@ from tkinter import VERTICAL, HORIZONTAL, RIGHT, BOTTOM, INSERT, X, Y, BOTH, Tex
 from tkinter import ttk
 from tkinter.ttk import Notebook
 
+#get the environmental variables
+from os import environ as ENV
+from os import getcwd, listdir, makedirs, symlink
+from os.path import join, exists, dirname, abspath
+
+USER_HOME = ENV.get( "HOME" ) #uhome in previous version
+PIPELINER_HOME = ENV.get( "PIPELINER_HOME" ) if ENV.get( "PIPELINER_HOME" ) else abspath(join( dirname(__file__), '..' ))
+PIPELINER_CONF = ENV.get( "PIPELINER_CONF" ) if ENV.get( "PIPELINER_CONF" ) else join(PIPELINER_HOME, "pipeliner.json")
 
 import os
 import shutil
@@ -124,3 +132,43 @@ def load_config(cfile):
     Cfg=eval(Q.read())
     Q.close()
     return Cfg
+
+##########################
+# Legacy variables
+# Needs to be integrated
+# into classes ASAP
+##########################
+#def settargets( annotation, *args ):
+#    pass
+
+ftypes=['pairs','rg.tab','groups.tab','contrasts.tab', "peakcallinfo.csv" ]
+filetypes=['fastq', 
+           'fastq.gz',
+           'R1.trimmed.fastq.gz',
+           'fastq.bz2',
+           'trimmed.fastq.bz2',
+           'sorted.bam',
+           'dedup.bam',
+           'fin.bam',
+           'recal.bam',
+           'realign.bam',
+           'bam',
+           'bai',
+           'sam',
+           'combined.gvcf',
+           'all.snp.dbnsfp.vcf',
+           'R1_fastqc.html',
+           'qualimapReport']
+
+filetype = filetypes[1] #StringVar()
+efiletype = filetypes[0]
+batchsize = '20'
+customRules = []
+
+#################################
+#makejson in PipelieFrame is not good!
+#need to be improved!
+#################################
+
+Cfg = load_config(PIPELINER_CONF)    
+dryrunFgColor, dryrunBgColor = Cfg['colors']['dryrun']
