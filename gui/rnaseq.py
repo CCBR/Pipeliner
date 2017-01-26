@@ -45,7 +45,7 @@ class RNASeqFrame( PipelineFrame ) :
         Pipelines=["initialqcrnaseq","rnaseq"]
         Pipeline = self.Pipeline = StringVar()
         Pipeline.set(Pipelines[0])        
-        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.makejson_wrapper)
+        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.option_controller)
         om.config()#bg = widgetBgColor,fg=widgetFgColor)
         om["menu"].config()#bg = widgetBgColor,fg=widgetFgColor)
         #om.pack(side=LEFT,padx=20,pady=5)
@@ -59,7 +59,7 @@ class RNASeqFrame( PipelineFrame ) :
                                      'Read Length is 250']
         self.rReadlen = rReadlen = StringVar()
         rReadlen.set(rReadlens[2])        
-        self.om2 = OptionMenu(eframe, rReadlen, *rReadlens, command=self.makejson_wrapper)
+        self.om2 = OptionMenu(eframe, rReadlen, *rReadlens, command=self.option_controller)
         self.om2.grid(row=4,column=1,sticky=W,padx=10,pady=5)
 
         rStrands = ['0, Reads are Unstranded',
@@ -67,14 +67,14 @@ class RNASeqFrame( PipelineFrame ) :
                                     '2, Reads are from Anti-Sense Strand']
         self.rStrand = rStrand = StringVar()
         rStrand.set(rStrands[0])
-        self.om3 = OptionMenu(eframe, rStrand, *rStrands, command=self.makejson_wrapper)
+        self.om3 = OptionMenu(eframe, rStrand, *rStrands, command=self.option_controller)
         self.om3.grid(row=5,column=1,sticky=W,padx=10,pady=5)
         
         rDegs = ["no, Do not Report Differentially Expressed Genes",
                               "yes, Report Differentially Expressed Genes"]
         self.rDeg = rDeg = StringVar()
         rDeg.set(rDegs[0])
-        self.om4 = OptionMenu(eframe, rDeg, *rDegs, command=self.makejson_wrapper)
+        self.om4 = OptionMenu(eframe, rDeg, *rDegs, command=self.option_controller)
         self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
         
         #####################
@@ -108,39 +108,10 @@ class RNASeqFrame( PipelineFrame ) :
         #####################
         
         self.add_info(eframe)
-        self.makejson_wrapper("none")
+        self.option_controller()
     
-    def init_work_dir( self ) :
-        #basic building!
-        if PipelineFrame.init_work_dir( self ) :
-            pass
-        else :
-            showerror( "Initialization failed!", "Work directory could not be made." )
-            return
-        
-        fname = self.workpath.get()
-        
-        try :
-            #need to be solved by making an empty dir in the Results-template
-            makedirs( join(fname, "QC") ) 
-            #os.mknod can replace but OSX needs a super user prev.
-            #open( join(fname, "pairs"), 'w' ).close() 
-            #open( join(fname, "samples"), 'w' ).close()
-            
-            print( "copying", 'template', "into", fname )
-            os.system( "cp -r %s/Results-template/* %s"%(PIPELINER_HOME, fname ) )
-                
-        except :
-            showerror( "Initialization failed!", "Work directory data structure generation has failed." )
-            return
-        
-        if self.make_symlinks() :
-            showinfo( "Success", "The work directory has successfully initialized!")
-        else :
-            showerror( "Symlink failed", "" )
-    
-    
-    def makejson_wrapper( self, *args, **kwargs ) :
+    def option_controller( self, *args, **kwargs ) :
+        PipelineFrame.option_controller( self )
         if self.Pipeline.get() == 'initialqcrnaseq' :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
@@ -148,6 +119,8 @@ class RNASeqFrame( PipelineFrame ) :
             self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
             self.sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
             
+            
+    def makejson_wrapper( self, *args, **kwargs ) :
         self.makejson(*args, **kwargs)
     
     
@@ -166,7 +139,6 @@ class RNASeqFrame( PipelineFrame ) :
 
             self.groups_button.grid( row=5, column=5, padx=10, pady=5 )
             self.contrasts_button.grid( row=5, column=6, padx=10, pady=5 )
-            
 
         self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
    

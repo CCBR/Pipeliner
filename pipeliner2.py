@@ -131,7 +131,7 @@ class PipelinerGUI(Tk):
         
         pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'chipseq']
         self.pfamily = pfamily = StringVar()
-        pfamily.set(pfamilys[0])
+        pfamily.set('Select a pipeline')
         om = OptionMenu(pipeline_panel, pfamily, *pfamilys, command=self.set_pipeline)
         #, command=lambda _:makejson(pfamily.get()))
         om.config() #bg = widgetBgColor,fg=widgetFgColor)
