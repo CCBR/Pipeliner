@@ -133,6 +133,7 @@ class PipelineFrame( Frame ) :
             
         if self.workpath.get() :
             self.dry_button.config( state='active' )
+            self.work_entry.config( state='normal' )
         
     def init_work_dir( self ):
         #Getting the work directory user input
