@@ -44,43 +44,10 @@ class GenomeSeqFrame( PipelineFrame ) :
         Pipeline = self.Pipeline = StringVar()
         Pipeline.set(Pipelines[0])
         
-        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.makejson_wrapper)
+        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.option_controller)
         om.config()#bg = widgetBgColor,fg=widgetFgColor)
         om["menu"].config()#bg = widgetBgColor,fg=widgetFgColor)
         #om.pack(side=LEFT,padx=20,pady=5)
         om.grid(row=3,column=1,sticky=W,padx=10,pady=5)
         
-        
-     
-    def init_work_dir( self ) :
-        #basic building!
-        if PipelineFrame.init_work_dir( self ) :
-            pass
-        else :
-            showerror( "Initialization failed!", "Work directory could not be made." )
-            return
-        
-        fname = self.workpath.get()
-        try :
-            #need to be solved by making an empty dir in the Results-template
-            makedirs( join(fname, "QC") ) 
-            #os.mknod can replace but OSX needs a super user prev.
-            #open( join(fname, "pairs"), 'w' ).close() 
-            #open( join(fname, "samples"), 'w' ).close()
-            
-            print( "copying", 'template', "into", fname )
-            os.system( "cp -r %s/Results-template/* %s"%(PIPELINER_HOME, fname ) )
-                
-        except :
-            showerror( "Initialization failed!", "Work directory data structure generation has failed." )
-            return
-        
-        if self.make_symlinks() :
-            showinfo( "Success", "The work directory has successfully initialized!")
-        else :
-            showerror( "Symlink failed", "" )
-    
-    def makejson_wrapper( self, *args, **kwargs ) :
-        self.makejson(*args, **kwargs)
-    
     

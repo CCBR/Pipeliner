@@ -1,4 +1,3 @@
-
 import sys,os,math,time
 import json,re
 import contextlib
@@ -43,46 +42,17 @@ class ChIPSeqFrame( PipelineFrame ) :
         Pipeline = self.Pipeline = StringVar()
         Pipeline.set(Pipelines[0])
         
-        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.makejson_wrapper)
+        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.option_controller)
         om.config()#bg = widgetBgColor,fg=widgetFgColor)
         om["menu"].config()#bg = widgetBgColor,fg=widgetFgColor)
         #om.pack(side=LEFT,padx=20,pady=5)
         om.grid(row=3,column=1,sticky=W,padx=10,pady=5)
 
         label.grid(row=6, column=0, columnspan=5, sticky=W, padx=10, pady=5)
-       
-        
         self.add_info(eframe)
     
-    def init_work_dir( self ) :
-        #basic building!
-        if PipelineFrame.init_work_dir( self ) :
-            pass
-        else :
-            return
-        
-        fname = self.workpath.get()
-        
-        try :
-            #need to be solved by making an empty dir in the Results-template
-            #makedirs( join(fname, "QC") ) 
-            #os.mknod can replace but OSX needs a super user prev.
-            open( join(fname, "peakcallinfo.csv"), 'w' ).close() 
-            #open( join(fname, "samples"), 'w' ).close()
-            
-            #print( "copying", 'template', "into", fname )
-            #os.system( "cp -r %s/Results-template/* %s"%(PIPELINER_HOME, fname ) )
-                
-        except :
-            showerror( "Initialization failed!", "Work directory data structure " )
-            return
-        
-        if self.make_symlinks() :
-            pass
-        else :
-            showerror( "Symlink failed", "" )
     
-    
+    '''
     def set_data_directory( self ):
         fname = askdirectory( initialdir = USER_HOME, 
                              title="Select Data Directory")
@@ -92,14 +62,7 @@ class ChIPSeqFrame( PipelineFrame ) :
             len([fn for fn in listdir(fname) if fn.endswith(filetype) or fn.endswith('.fastq')] )
         ) 
         print( "Found", self.data_count['text'], filetype, "files!" )
-    
-    
-    def makejson_wrapper( self, *args, **kwargs ) :
-        if self.Pipeline.get() == 'exomeseq-somatic' :
-            self.add_pairs( self.eframe )
-        elif self.Pipeline.get() != 'exomeseq-somatic' :
-            self.del_pairs( self.eframe )
-        self.makejson(*args, **kwargs)
+    '''
     
     
     def add_info( self, parent ) :
