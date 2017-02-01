@@ -2,9 +2,9 @@ rule theta:
        params: normalsample=lambda wildcards: config['project']['pairs'][wildcards.x][0],tumorsample=lambda wildcards: config['project']['pairs'][wildcards.x][1],genome=config['references'][pfamily]['GENOME'],exons=config['references'][pfamily]['EXONS'],sites=config['references'][pfamily]['THETASNPS'],workdir=config['project']['workpath'],rname="pl:theta"
        input:  normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
                tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
-               calls="cnvkit_out/{x}_calls.cns",
+               calls=config['project']['workpath']+"/cnvkit_out/{x}_calls.cns",
                targets="exome_targets.bed",
-               dir="theta_out"
+               dir=config['project']['workpath']+"/theta_out"
        output: infile=config['project']['workpath']+"/theta_out/{x}/{x}.input",
                sampdir=config['project']['workpath']+"/theta_out/{x}"
        threads: 1

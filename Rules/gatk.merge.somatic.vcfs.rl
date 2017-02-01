@@ -1,8 +1,8 @@
 rule gatk_merge_somatic_vcfs:
-    input: mutect=expand("mutect_out/{p}"+".FINAL.vcf",p=pairs),
-           strelka=expand("strelka_out/{p}"+".vcf",p=pairs)
-    output: mutectvcf="mutect_out/merged_somatic.vcf",
-            strelkavcf="strelka_out/merged_somatic.vcf"
+    input: mutect=expand(config['project']['workpath']+"/mutect_out/{p}"+".FINAL.vcf",p=pairs),
+           strelka=expand(config['project']['workpath']+"/strelka_out/{p}"+".vcf",p=pairs)
+    output: mutectvcf=config['project']['workpath']+"/mutect_out/merged_somatic.vcf",
+            strelkavcf=config['project']['workpath']+"/strelka_out/merged_somatic.vcf"
     params: regions="exome_targets.bed",gres="lscratch:100",gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="CombineVariants"
     run:
         fl=os.popen("ls mutect_out/*.FINAL.vcf").read().split()
