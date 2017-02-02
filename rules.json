@@ -71,7 +71,7 @@
         "make.germline.network": ["exomeseq-germline","rnaseqvargerm"],
         "make.genomeseq.network": ["wgslow"],
         "somatic.germline.calls": ["exomeseq-somatic"],
-#        "gatk.merge.mutect2.chrom": ["exomeseq-somatic"],
+        "gatk.merge.mutect2.chrom": ["exomeseq-somatic"],
         "gatk.merge.somatic.vcfs": ["exomeseq-somatic"],
         "snpeff_somatic": ["exomeseq-somatic"],
         "avia.make.bed.somatic": ["exomeseq-somatic"],
