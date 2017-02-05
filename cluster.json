@@ -4,7 +4,7 @@
         "mem" : "64g",
         "time" : "96:00:00",
         "partition" : "ccr,norm",
-        "threads": "1",
+        "threads": "4",
         "gres":"lscratch:256"
     },
     "bicseq":
