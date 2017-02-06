@@ -21,6 +21,11 @@
         "threads": "8",
         "mem" : "96g",
     },
+    "manta_somatic":
+     {
+        "threads": "8",
+        "mem" : "96g",
+    },
     "manta_wgs":
     {
         "threads": "8",

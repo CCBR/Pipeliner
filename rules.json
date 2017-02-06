@@ -3,6 +3,7 @@
         "avia": ["wgslow","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","exomeseq-somatic","rnaseqvargerm"],
         "germline_filter_wgs": ["wgslow"],
         "manta_germline": ["exomeseq-germline"],
+        "manta_somatic": ["exomeseq-somatic"],
         "manta_wgs": ["wgslow"],
         "germline_filter_exome": ["exomeseq-germline"],
         "gatk_select_variants": ["exomeseq-germline"],

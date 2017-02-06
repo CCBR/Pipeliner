@@ -26,7 +26,6 @@ if config['project']['annotation'] == "hg19":
             expand(config['project']['workpath']+"/mutect2_out/chrom_files/{p}_22.vcf",p=pairs),
             expand(config['project']['workpath']+"/mutect2_out/chrom_files/{p}_X.vcf",p=pairs),
             expand(config['project']['workpath']+"/mutect2_out/chrom_files/{p}_Y.vcf",p=pairs),
-#            expand("mutect2_out/chrom_files/{p}_{chr}.vcf",p=pairs,chr=config['references'][pfamily]['CHROMS']),
             expand(config['project']['workpath']+"/mutect_out/{p}"+".FINAL.vcf",p=pairs),
             expand(config['project']['workpath']+"/mutect2_out/{p}"+".FINALmutect2.vcf",p=pairs),
             expand(config['project']['workpath']+"/strelka_out/{p}"+".vcf",p=pairs),
@@ -64,7 +63,8 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/strelka_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/mutect_out/oncotator_out/mutect_variants.maf",
             config['project']['workpath']+"/mutect_out/mutsigCV_out/somatic.sig_genes.txt",
-            config['project']['workpath']+"/exome_targets.bed"
+            config['project']['workpath']+"/exome_targets.bed",
+            expand(config['project']['workpath']+"/manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs)
     output:
     params: rname="final"
     shell:  """
@@ -126,7 +126,8 @@ else:
             config['project']['workpath']+"/full_annot.txt.zip",
             config['project']['workpath']+"/sample_network.bmp",
             config['project']['workpath']+"/variants.database",
-            config['project']['workpath']+"/exome_targets.bed"
+            config['project']['workpath']+"/exome_targets.bed",
+            expand(config['project']['workpath']+"/manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs)
     output:
     params: rname="final"
     shell:  """
