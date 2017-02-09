@@ -1,7 +1,7 @@
 rule make_somatic_network:
-    input: expand("germline_vcfs/{x}.vcf", x=samples)
-    output: network="sample_network.bmp",
-            vcf=temp("samples_and_knowns.vcf")
+    input: expand(config['project']['workpath']+"/germline_vcfs/{x}.vcf", x=samples)
+    output: network=config['project']['workpath']+"/sample_network.bmp",
+            vcf=temp(config['project']['workpath']+"/samples_and_knowns.vcf")
     params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],knowns=config['references'][pfamily]['KNOWNANCESTRY'],regions="exome_targets.bed",rname="make.somatic.network"
     run:
       fl=os.popen("ls germline_vcfs/*.vcf").read().split()      

@@ -1,6 +1,6 @@
 rule avia_make_bed_germ:
     input: "combined.vcf"
-    output: bed="variants.bed",
+    output: bed=config['project']['workpath']+"/variants.bed",
             vcf="exome.recode.vcf"
     params: regions="exome_targets.bed",genome=config['references'][pfamily]['GENOME'],batch ="-l nodes=1:gpfs -q ccr",rname="make_bed"
     shell: """

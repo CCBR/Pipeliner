@@ -1,6 +1,6 @@
 rule database_germline:
     input: vcf="exome.recode.vcf",
-           annotation="full_annot.txt.zip"
+           annotation=config['project']['workpath']+"/full_annot.txt.zip"
     output: dbase="variants.database",
             vcf="exome_genotypes.vcf"
     params: regions=config['references'][pfamily]['REFFLAT'],rname="pl:database"

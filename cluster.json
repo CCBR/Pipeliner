@@ -1,10 +1,10 @@
 {
     "__default__" :
     {
-        "mem" : "32g",
+        "mem" : "64g",
         "time" : "96:00:00",
         "partition" : "ccr,norm",
-        "threads": "1",
+        "threads": "4",
         "gres":"lscratch:256"
     },
     "bicseq":
@@ -17,6 +17,11 @@
         "mem" : "120g"
     },
     "manta_germline":
+     {
+        "threads": "8",
+        "mem" : "96g",
+    },
+    "manta_somatic":
      {
         "threads": "8",
         "mem" : "96g",
@@ -147,12 +152,12 @@
     },
     "novocraft_sort":
     {
-        "threads": "2",
+        "threads": "8",
         "mem": "120g"
     },
     "novo_sort":
     {
-        "threads": "2",
+        "threads": "8",
         "mem": "120g"
     },
     "picard_headers2":
@@ -284,6 +289,12 @@
     {
         "time": "6-00:00:00",
         "threads": "2"
+    },
+    "gatk_mutect2":
+    {
+        "time": "10-00:00:00",
+        "threads": "2",
+        "mem": "120g"
     },
     "trimmomatic_pe":
     {
