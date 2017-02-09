@@ -64,7 +64,7 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/mutect_out/oncotator_out/mutect_variants.maf",
             config['project']['workpath']+"/mutect_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/exome_targets.bed",
-            expand(config['project']['workpath']+"/manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs)
+#            expand(config['project']['workpath']+"/manta_out/{p}_candidateSV.vcf.gz", p=pairs)
     output:
     params: rname="final"
     shell:  """
@@ -127,7 +127,7 @@ else:
             config['project']['workpath']+"/sample_network.bmp",
             config['project']['workpath']+"/variants.database",
             config['project']['workpath']+"/exome_targets.bed",
-            expand(config['project']['workpath']+"/manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs)
+#            expand(config['project']['workpath']+"/manta_out/{p}_candidateSV.vcf.gz", p=pairs)
     output:
     params: rname="final"
     shell:  """
