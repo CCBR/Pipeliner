@@ -60,6 +60,8 @@ from gui.mirseq import MiRSeqFrame
 from gui.epigenomeseq import ChIPSeqFrame
 from gui.exomeseq import ExomeSeqFrame
 
+from gui.menu import add_menubar
+
 class PipelinerGUI(Tk):
     def __init__(self,parent=None):
         Tk.__init__(self,parent)
@@ -74,6 +76,8 @@ class PipelinerGUI(Tk):
         self.grid_columnconfigure(0,weight=1)
         self.resizable(True,True)
         
+        #calling menubar main functioon
+        add_menubar(self)
         self.geometry("650x760")
         self.update()
 
@@ -280,6 +284,20 @@ class PipelinerGUI(Tk):
             pass
 
         self.notebook.select( self.pipelineframe )
+
+    def progress( self ) :
+        #adding menu functionality
+        if self.pipelineframe :
+            self.pipelineframe.progress()
+        else :
+            showinfo( "No Pipeline Selected", "Select your analysis pipeline first!" )
+
+    def workflow( self ) :
+        #add menu_functionality
+        if self.pipelineframe :
+            self.pipelineframe.workflow()
+        else :
+            showinfo( "No Pipeline Selected", "Select your analysis pipeline first!" )
 
 if __name__ == "__main__":
     gui = PipelinerGUI()
