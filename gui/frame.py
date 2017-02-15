@@ -13,6 +13,7 @@ from shutil import copytree
 import tkinter as tk
 from tkinter import Tk, END, StringVar, LEFT, TOP, BOTTOM, X, BOTH, YES, INSERT, W, E
 from tkinter import Toplevel, Text, Entry, OptionMenu, Button
+from tkinter import Canvas, HORIZONTAL, VERTICAL, Y, RIGHT, PhotoImage
 
 from tkinter import ttk
 from tkinter.ttk import Label, LabelFrame, Scrollbar, Frame, Notebook, Style
@@ -102,11 +103,14 @@ class PipelineFrame( Frame ) :
         self.data_count = data_count
         
         work_entry.grid( row=3, column=2, columnspan=3 )
+        work_sel_button = Button( pipepanel, text="Open Directory",command=self.sel_work_dir)
+        work_sel_button.grid(row=3,column=5)
+	
         self.work_button = work_button = Button( pipepanel, 
                              text="Initialize Directory",
                              command=self.init_work_dir
                             )
-        work_button.grid( row=3, column=5 )
+        work_button.grid( row=4, column=3 )
         work_button.config( state="disabled" ) #( "disabled" )
         
 
@@ -134,6 +138,11 @@ class PipelineFrame( Frame ) :
         if self.workpath.get() :
             self.dry_button.config( state='active' )
             self.work_entry.config( state='normal' )
+
+    def sel_work_dir( self ) :
+        fname = askdirectory( initialdir=USER_HOME, title="Select Work Directory" )
+        self.workpath.set(fname)
+        self.work_entry.config( state="normal" )
         
     def init_work_dir( self ):
         #Getting the work directory user input
@@ -531,3 +540,81 @@ class PipelineFrame( Frame ) :
             #showinfo("Project Json Write","Project Json file written.")
         except:
             showerror("Error","Project Json file not written.")
+
+    def workflow(self):
+        PL=self.Pipeline.get() #pipelineget()
+        gf=Toplevel()
+        #MkaS=os.popen("./makeasnake.py 2>&1 | tee -a "+workpath.get()+"/Reports/makeasnake.log").read()
+    
+        gf.title("CCBR Pipeliner: "+ PL + " Workflow Graph")
+        cgf = Canvas(gf,bg="white")
+        #gff=Frame(cgf,width=300,height=300)
+        xscrollbar = Scrollbar(gf, orient=HORIZONTAL)
+        xscrollbar.pack(side = BOTTOM, fill=X )
+        xscrollbar.config(command=cgf.xview)
+
+        yscrollbar = Scrollbar(gf,orient=VERTICAL)
+        yscrollbar.pack(side = RIGHT, fill=Y )
+        yscrollbar.config(command=cgf.yview)
+
+        cgf.config(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
+        cgf.config(width=600,height=600)
+        cgf.pack(expand=1,fill=BOTH,side=RIGHT)
+        cgf.config(scrollregion=(0,0,5000,20000))
+        img = PhotoImage(file=self.workpath.get()+"/Reports/"+PL+".gif")
+        cgf.create_image(0,0,image=img, anchor="nw")
+        cgf.image=img
+
+    def progress( self ):
+        o=os.popen("cd {0} && snakemake --dryrun --rerun-incomplete > {0}/Reports/checkpoint".format(self.workpath.get()))
+        o.close()
+        F=open("{0}/Reports/checkpoint".format(self.workpath.get()),"r").read()
+        rules2={}
+        rules=re.findall(r'rule .+:',F)
+        for i in rules:
+            i=re.sub("rule ","",i)
+            i=re.sub(":","",i)
+            rules2[i]=0
+    
+    
+        F=open("{0}/Reports/{1}.dot".format(self.workpath.get(), self.Pipeline.get() ),"r").read()
+        for i in rules2.keys():
+            F=re.sub(r'('+i+')(\".+?)\".+?\"',r'\1_pending\2"0.0 0.0 0.0"',F)
+    #        F=re.sub(i,"",F)
+    
+    
+        G=open("{0}/Reports/{1}-{2}.dot".format(self.workpath.get(),self.Pipeline.get(),"progress"),"w")
+        G.write(F)
+        G.close()
+    
+        o=os.popen("cd {0}/Reports && dot -Tpng -o {0}/Reports/{1}-progress.png {0}/Reports/{1}-progress.dot;convert {0}/Reports/{1}-progress.png {0}/Reports/{1}-progress.gif".format(self.workpath.get(),self.Pipeline.get()))
+    
+    #    tkinter.messagebox.showerror("o",o)
+    
+        PL=self.Pipeline.get() #pipelineget()
+        gf=Toplevel()
+    
+        gf.title("CCBR Pipeliner: {0} Progress Graph".format(PL))
+        cgf = Canvas(gf,bg="white")
+    #    gff=Frame(cgf,width=300,height=300)
+        xscrollbar = Scrollbar(gf, orient=HORIZONTAL)
+        xscrollbar.pack(side = BOTTOM, fill=X )
+        xscrollbar.config(command=cgf.xview)
+    
+        yscrollbar = Scrollbar(gf,orient=VERTICAL)
+        yscrollbar.pack(side = RIGHT, fill=Y )
+        yscrollbar.config(command=cgf.yview)
+    
+        cgf.config(xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
+        cgf.config(width=600,height=600)
+        cgf.pack(expand=1,fill=BOTH,side=RIGHT)
+        cgf.config(scrollregion=(0,0,1000,5000))
+        try:
+            time.sleep(5)
+            img = PhotoImage(file="{0}/Reports/{1}-progress.gif".format(self.workpath.get(),PL))
+        except:
+            time.sleep(5)
+            img = PhotoImage(file="{0}/Reports/{1}-progress.gif".format(self.workpath.get(),PL))
+        cgf.create_image(0,0,image=img, anchor="nw")
+        cgf.image=img
+        
