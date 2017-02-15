@@ -65,13 +65,13 @@ class PipelineFrame( Frame ) :
         self.dry_button = dry_button = Button(self, 
                                               text="Dry Run", 
                                               command=self.dryrun, 
-                                              state='disabled' )
+                                              state='active' )
         dry_button.grid(row=4, column=4, sticky=E)
         
         self.run_button = run_button = Button(self, 
                                               text="Run", 
                                               command=self.runslurm, 
-                                              state='disabled' )
+                                              state='active' )
         run_button.grid( row=4, column=5 )
         
         data_entry = Entry(pipepanel, 
@@ -79,7 +79,7 @@ class PipelineFrame( Frame ) :
                            width = 50, 
                            #bg = entryBgColor, 
                            #fg = entryFgColor, 
-                           textvariable = datapath, state='readonly'
+                           textvariable = datapath, state='normal'
                           )
         
         self.work_entry = work_entry = Entry(pipepanel, 
@@ -87,7 +87,7 @@ class PipelineFrame( Frame ) :
                            width=50, 
                            #bg=entryBgColor, 
                            #fg=entryFgColor,
-                           textvariable=workpath, state='readonly'
+                           textvariable=workpath, state='normal'
                           )
         
         data_entry.grid( row=1, column=2, columnspan=3 )
@@ -111,7 +111,7 @@ class PipelineFrame( Frame ) :
                              command=self.init_work_dir
                             )
         work_button.grid( row=4, column=3 )
-        work_button.config( state="disabled" ) #( "disabled" )
+        work_button.config( state="active" ) #( "disabled" )
         
 
     def set_data_directory( self ):

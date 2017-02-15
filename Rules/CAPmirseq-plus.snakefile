@@ -1,16 +1,35 @@
 import os
 
 configfile: "run.json"
+abc="a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z".split(",")
+BS=20
+
+samples=sorted(list(config['project']['units'].keys()))
+n=int(len(samples)/BS)
+if len(samples)%BS !=0:
+    n=n+1
+batches=abc[0:n]
+
+
+pairs=sorted(list(config['project']['pairs'].keys()))
+
+pfamily=config['project']['pfamily']
+
+
+
+import os
+
+configfile: "run.json"
 
 #l=list(config['sample_info']['units'].values())
 #l=list(config['project']['samples'].values())
 #samples=list(config['units'].values())
 #samples=[i[0].split('.fastq')[0] for i in l]
 
-SAMPLES=":".join(config['project']['contrasts']['rsamps'])
-GROUPS=":".join(config['project']['contrasts']['rgroups'])
+SAMPLES=":".join(config['project']['groups']['rsamps'])
+GROUPS=":".join(config['project']['groups']['rgroups'])
 PAIRS=":".join(config['project']['contrasts']['rcontrasts'])
-samples=config['project']['contrasts']['rsamps']
+samples=config['project']['groups']['rsamps']
 
 rule mirseq_final:
     input: expand("{out}/init.done",out=config['project']['workpath']),
@@ -21,14 +40,14 @@ rule mirseq_final:
             expand("{out}/bams/{x}.bam",x=samples,out=config['project']['workpath']),
             expand("{out}/mirdeep2/{x}/{x}.reads.fa",x=samples,out=config['project']['workpath']),
             expand("{out}/mirdeep2/{x}/mirdeep2.log",x=samples,out=config['project']['workpath']),
-            config['project']['workpath']+"/variants/mirna_variants.vcf",
-            expand("{p}/qc/other_rna/{x}.gencode.genecount.txt",x=samples,p=config['project']['workpath']),
+##            config['project']['workpath']+"/variants/mirna_variants.vcf",
+##            expand("{p}/qc/other_rna/{x}.gencode.genecount.txt",x=samples,p=config['project']['workpath']),
             config['project']['workpath']+"/expression/mature_miRNA_expression.xls",
             config['project']['workpath']+"/differential_expression/expression_boxplots.pdf",
             config['project']['workpath']+"/SampleSummary.xls",
             config['project']['workpath']+"/MainDocument.html",
-            expand("{out}/mirspring/{x}.html",x=samples,out=config['project']['workpath']),
-            expand("{out}/mirspring/{x}_bwa.html",x=samples,out=config['project']['workpath']),            
+##            expand("{out}/mirspring/{x}.html",x=samples,out=config['project']['workpath']),
+##            expand("{out}/mirspring/{x}_bwa.html",x=samples,out=config['project']['workpath']),            
 
 rule mirseq_init:
     input:
@@ -69,7 +88,8 @@ rule mirseq_cutadapt:
        params: cpath=config['bin'][pfamily]['tool_paths']['CUTADAPT_PATH'],cparams=config['bin'][pfamily]['tool_parameters']['CUTADAPT_PARAMS'],qtrim='20',indir=config['project']['workpath'],out=config['project']['workpath']+"/fastqs",mem="32G",time="4:00:00",partition="ccr",rname="mir:cutadapt"
        threads: 1
        shell: """
-   	{params.cpath}/cutadapt {params.cparams} -q {params.qtrim} {input} -o {output[0]} --too-short-output={output[1]} > {output[2]}
+       module load cutadapt
+   	cutadapt {params.cparams} -q {params.qtrim} {input} -o {output[0]} --too-short-output={output[1]} > {output[2]}
              """ 
 
 rule mirseq_fastqc_pretrim:
@@ -79,7 +99,8 @@ rule mirseq_fastqc_pretrim:
     threads: 1    
     shell: """
 	mkdir -p {params.out}/{wildcards.x}
-	{params.fastqc}/fastqc -o {params.out}/{wildcards.x} {params.indir}/{wildcards.x}.fastq.gz
+	module load fastqc
+	fastqc -o {params.out}/{wildcards.x} {params.indir}/{wildcards.x}.fastq.gz
            """
 
 rule mirseq_fastqc_posttrim:
@@ -89,7 +110,8 @@ rule mirseq_fastqc_posttrim:
     threads: 1    
     shell: """
 	mkdir -p {params.out}/{wildcards.x}
-	{params.fastqc}/fastqc -o {params.out}/{wildcards.x} {params.indir}/{wildcards.x}.cutadapt.fastq
+	module load fastqc
+	fastqc -o {params.out}/{wildcards.x} {params.indir}/{wildcards.x}.cutadapt.fastq
            """
 
 
@@ -99,9 +121,12 @@ rule mirseq_mirdeep2_mapper:
     params: mirdeep=config['bin'][pfamily]['tool_paths']['MIRDEEP2_PATH'],indir=config['project']['workpath']+"/fastqs",out=config['project']['workpath']+"/mirdeep2",mapper_params=config['bin'][pfamily]['tool_parameters']['MAPPER_PARAMS'],bowtie_ref=config['references'][pfamily]['reference_files']['BOWTIE_REF'],mem="16G",time="4:00:00",partition="ccr",rname="mir:mapper"
     threads: 1
     shell: """
-        export PATH=/data/dwheeler/CAP-miRSEQ/bin:$PATH
+##        export PATH=/home/lobanovav/miniconda3/bin:$PATH
+        export PATH=/home/lobanovav/microRNA/scripts:$PATH
+
 	mkdir -p {params.out}/{wildcards.x}
-	{params.mirdeep}/mapper.pl {input} {params.mapper_params} -p {params.bowtie_ref} -s {params.out}/{wildcards.x}/{wildcards.x}.reads.fa -t {params.out}/{wildcards.x}/{wildcards.x}.reads_vs_genome.arf -o {threads}
+	module load mirdeep
+	mapper.pl {input} {params.mapper_params} -p {params.bowtie_ref} -s {params.out}/{wildcards.x}/{wildcards.x}.reads.fa -t {params.out}/{wildcards.x}/{wildcards.x}.reads_vs_genome.arf -o {threads}
            """
 
 rule mirseq_make_bams:
@@ -110,19 +135,22 @@ rule mirseq_make_bams:
     params: out=config['project']['workpath']+"/bams",bowtie=config['bin'][pfamily]['tool_paths']['BOWTIE_PATH'],bowtie_ref=config['references'][pfamily]['reference_files']['BOWTIE_REF'],bowtie_params=config['bin'][pfamily]['tool_parameters']['BOWTIE_PARAMS'],quals="--phred33-quals",samtools=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],addorreplacereadgroups_params=config['bin'][pfamily]['tool_parameters']['ADDORREPLACEREADGROUPS_PARAMS'],java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],picard_path=config['bin'][pfamily]['tool_paths']['PICARD_PATH'],addorreplacereadgroups_jvm_mem=config['bin'][pfamily]['java_parameters']['ADDORREPLACEREADGROUPS_JVM_MEM'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],mem="32G",time="4:00:00",partition="ccr",rname="mir:bowtie"
     threads: 1    
     shell: """
-	{params.bowtie}/bowtie {params.quals} {params.bowtie_params} --sam-RG ID:{wildcards.x} --sam-RG SM:{wildcards.x} {params.bowtie_ref} {input} {params.out}/{wildcards.x}.aligned.sam 2> {params.out}/{wildcards.x}.bowtie.log
+    module load samtools
+    module load bowtie
+    module load picard  
+	bowtie {params.quals} {params.bowtie_params} --sam-RG ID:{wildcards.x} --sam-RG SM:{wildcards.x} {params.bowtie_ref} {input} {params.out}/{wildcards.x}.aligned.sam 2> {params.out}/{wildcards.x}.bowtie.log
 
-	{params.samtools}/samtools view -SH {params.out}/{wildcards.x}.aligned.sam > {params.out}/{wildcards.x}.aligned.mq.sam
+	samtools view -SH {params.out}/{wildcards.x}.aligned.sam > {params.out}/{wildcards.x}.aligned.mq.sam
 
-	{params.samtools}/samtools view -S {params.out}/{wildcards.x}.aligned.sam | {params.script_path}/dw_setqual.pl >> {params.out}/{wildcards.x}.aligned.mq.sam
+	samtools view -S {params.out}/{wildcards.x}.aligned.sam | {params.script_path}/dw_setqual.pl >> {params.out}/{wildcards.x}.aligned.mq.sam
 	
 	rm {params.out}/{wildcards.x}.aligned.sam
 
 	{params.java_path}/java {params.addorreplacereadgroups_jvm_mem} -jar {params.picard_path}/AddOrReplaceReadGroups.jar INPUT={params.out}/{wildcards.x}.aligned.mq.sam OUTPUT={params.out}/{wildcards.x}.bam SORT_ORDER=coordinate TMP_DIR={params.out} RGID={wildcards.x} RGPU={wildcards.x} RGSM={wildcards.x} {params.addorreplacereadgroups_params}
 
 	rm {params.out}/{wildcards.x}.aligned.mq.sam
-	{params.samtools}/samtools index {params.out}/{wildcards.x}.bam
-        {params.samtools}/samtools flagstat {params.out}/{wildcards.x}.bam >{params.out}/{wildcards.x}.bam.flagstat
+	samtools index {params.out}/{wildcards.x}.bam
+        samtools flagstat {params.out}/{wildcards.x}.bam >{params.out}/{wildcards.x}.bam.flagstat
            """
 
 rule mirseq_make_bams_bwa:
@@ -132,10 +160,12 @@ rule mirseq_make_bams_bwa:
     params: out=config['project']['workpath']+"/bams-bwa",samtools=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],genome=config['references'][pfamily]['reference_files']['REF_GENOME'],mem="32G",time="4:00:00",partition="ccr",rname="mir:bwa"
     threads: 4    
     shell: """
-    /usr/local/apps/bwa/0.7.10/bwa mem -t {threads} {params.genome} {input} > {params.out}/{wildcards.x}.sam
+    module load bwa
+    module load samtools
+    bwa mem -t {threads} {params.genome} {input} > {params.out}/{wildcards.x}.sam
 
-     {params.samtools}/samtools view -Shu {params.out}/{wildcards.x}.sam > {output}
-     {params.samtools}/samtools flagstat {params.out}/{wildcards.x}.bam > {params.out}/{wildcards.x}.bam.flagstat
+     samtools view -Shu {params.out}/{wildcards.x}.sam > {output}
+     samtools flagstat {params.out}/{wildcards.x}.bam > {params.out}/{wildcards.x}.bam.flagstat
 
            """
 
@@ -148,12 +178,17 @@ rule mirseq_mirdeep2:
     threads: 1    
     shell: """
 
-module load viennarna
+###module load viennarna
 module load bowtie/1.1.1
 module load randfold
 module load mirdeep
-export PATH=/data/dwheeler/CAP-miRSEQ/bin:$PATH
-cd {params.out}/{wildcards.x} && {params.script_path}/miRDeep2.pl {wildcards.x}.reads.fa {params.genome} {wildcards.x}.reads_vs_genome.arf {params.mature} {params.mirdeep2_close_species} {params.precursor} {params.mirdeep2_params} 2>&1|tee mirdeep2.log
+
+##export PATH=/home/lobanovav/miniconda3/bin:$PATH
+        export PATH=/home/lobanovav/microRNA/scripts:$PATH
+
+
+##export PATH=/home/lobanovav/miniconda3/bin:$PATH
+cd {params.out}/{wildcards.x} && miRDeep2.pl {wildcards.x}.reads.fa {params.genome} {wildcards.x}.reads_vs_genome.arf {params.mature} {params.mirdeep2_close_species} {params.precursor} {params.mirdeep2_params} 2>&1|tee mirdeep2.log
 
 #	rm -Rf ./dir_prepare_signature*
 #	rm -Rf ./expression_analyses
@@ -163,20 +198,20 @@ cd {params.out}/{wildcards.x} && {params.script_path}/miRDeep2.pl {wildcards.x}.
 
            """
 
-rule mirseq_variants:
-    input: expand("{p}/bams/{x}.bam",x=samples,p=config['project']['workpath'])
-    output: config['project']['workpath']+"/variants/mirna_variants.vcf"
-    params: genome=config['references'][pfamily]['reference_files']['REF_GENOME_IUPAC'],out=config['project']['workpath']+"/variants",script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],mirgff=config['references'][pfamily]['reference_files']['MIRBASE_GFF'],bedpath=config['bin'][pfamily]['tool_paths']['BEDTOOLS_PATH'],gatkjar=config['bin'][pfamily]['tool_paths']['GATK_JAR'],unifiedgenotyper_params=config['bin'][pfamily]['tool_parameters']['UNIFIEDGENOTYPER_PARAMS'],vcftools_path=config['bin'][pfamily]['tool_paths']['VCFTOOLS_PATH'],units=expand("{s}",s=samples),java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],unifiedgenotyper_jvm_mem=config['bin'][pfamily]['java_parameters']['UNIFIEDGENOTYPER_JVM_MEM'],vcftools_perllib=config['bin'][pfamily]['tool_paths']['VCFTOOLS_PERLLIB'],mem="16G",time="4:00:00",partition="ccr",rname="mir:variants"
-    threads: 1    
-    run: 
-        I=" -I "+" -I ".join(input)
-        cmd="""
-        {params.script_path}/dw_makebeds.sh {params.mirgff} {params.out} {params.bedpath}
-        {params.java_path}/java {params.unifiedgenotyper_jvm_mem} -jar {params.gatkjar} -T UnifiedGenotyper -R {params.genome} {I} -L {params.out}/mirbase_precursor.tmp.bed -o {params.out}/mirna_variants.vcf {params.unifiedgenotyper_params}
-        {params.script_path}/dw_annotation_report.sh {params.out} {params.bedpath} {params.vcftools_path} {params.vcftools_perllib}
-
-        {params.script_path}/dw_write_header.sh {params.out} {params.units}
-        {params.script_path}/dw_merge_annotations.sh {params.out}
+##rule mirseq_variants:
+##    input: expand("{p}/bams/{x}.bam",x=samples,p=config['project']['workpath'])
+##    output: config['project']['workpath']+"/variants/mirna_variants.vcf"
+##    params: genome=config['references'][pfamily]['reference_files']['REF_GENOME_IUPAC'],out=config['project']['workpath']+"/variants",script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],mirgff=config['references'][pfamily]['reference_files']['MIRBASE_GFF'],bedpath=config['bin'][pfamily]['tool_paths']['BEDTOOLS_PATH'],gatkjar=config['bin'][pfamily]['tool_paths']['GATK_JAR'],unifiedgenotyper_params=config['bin'][pfamily]['tool_parameters']['UNIFIEDGENOTYPER_PARAMS'],vcftools_path=config['bin'][pfamily]['tool_paths']['VCFTOOLS_PATH'],units=expand("{s}",s=samples),java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],unifiedgenotyper_jvm_mem=config['bin'][pfamily]['java_parameters']['UNIFIEDGENOTYPER_JVM_MEM'],vcftools_perllib=config['bin'][pfamily]['tool_paths']['VCFTOOLS_PERLLIB'],mem="16G",time="4:00:00",partition="ccr",rname="mir:variants"
+##    threads: 1    
+##    run: 
+##        I=" -I "+" -I ".join(input)
+##        cmd="""
+##        {params.script_path}/dw_makebeds.sh {params.mirgff} {params.out} {params.bedpath}
+##        {params.java_path}/java {params.unifiedgenotyper_jvm_mem} -jar {params.gatkjar} -T UnifiedGenotyper -R {params.genome} {I} -L {params.out}/mirbase_precursor.tmp.bed -o {params.out}/mirna_variants.vcf {params.unifiedgenotyper_params}
+##        {params.script_path}/dw_annotation_report.sh {params.out} {params.bedpath} {params.vcftools_path} {params.vcftools_perllib}
+##
+##        {params.script_path}/dw_write_header.sh {params.out} {params.units}
+##        {params.script_path}/dw_merge_annotations.sh {params.out}
 
 #	rm $output_dir/mirbase_precursor.tmp.bed
 #	rm $output_dir/mirbase_mature.tmp.bed
@@ -190,23 +225,23 @@ rule mirseq_variants:
 #	rm $output_dir/mirna_variants.vcf.txt
 #	rm $output_dir/mirna_variants.vcf.txt.bed
 #
-"""
-        shell(cmd)     
+##"""
+##        shell(cmd)     
 
-rule mirseq_gencode_classification:
-    input: config['project']['workpath']+"/bams/{x}.bam"
-    output: config['project']['workpath']+"/qc/other_rna/{x}.gencode.genecount.txt"
-    params: java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],sortsam_jvm_mem=config['bin'][pfamily]['java_parameters']['SORTSAM_JVM_MEM'],picard_path=config['bin'][pfamily]['tool_paths']['PICARD_PATH'],input_dir=config['project']['workpath']+"/bams",out=config['project']['workpath']+"/qc/other_rna",sortsam_params=config['bin'][pfamily]['tool_parameters']['SORTSAM_PARAMS'],htseq_path=config['bin'][pfamily]['tool_paths']['HTSEQ_PATH'],htseq_params=config['bin'][pfamily]['tool_parameters']['HTSEQ_PARAMS'],gencode_gtf=config['references'][pfamily]['reference_files']['GENCODE_GTF'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],python_path=config['bin'][pfamily]['tool_paths']['PYTHON_PATH'],htseq_lib_path=config['bin'][pfamily]['tool_paths']['HTSEQ_LIB_PATH'],samtools_path=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],rscript_path=config['bin'][pfamily]['tool_paths']['RSCRIPT_PATH'],mem="16G",time="4:00:00",partition="ccr",rname="mir:classify"
-    threads: 1    
-    shell: """
+##rule mirseq_gencode_classification:
+##    input: config['project']['workpath']+"/bams/{x}.bam"
+##    output: config['project']['workpath']+"/qc/other_rna/{x}.gencode.genecount.txt"
+##    params: java_path=config['bin'][pfamily]['tool_paths']['JAVA_PATH'],sortsam_jvm_mem=config['bin'][pfamily]['java_parameters']['SORTSAM_JVM_MEM'],picard_path=config['bin'][pfamily]['tool_paths']['PICARD_PATH'],input_dir=config['project']['workpath']+"/bams",out=config['project']['workpath']+"/qc/other_rna",sortsam_params=config['bin'][pfamily]['tool_parameters']['SORTSAM_PARAMS'],htseq_path=config['bin'][pfamily]['tool_paths']['HTSEQ_PATH'],htseq_params=config['bin'][pfamily]['tool_parameters']['HTSEQ_PARAMS'],gencode_gtf=config['references'][pfamily]['reference_files']['GENCODE_GTF'],script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],python_path=config['bin'][pfamily]['tool_paths']['PYTHON_PATH'],htseq_lib_path=config['bin'][pfamily]['tool_paths']['HTSEQ_LIB_PATH'],samtools_path=config['bin'][pfamily]['tool_paths']['SAMTOOLS_PATH'],rscript_path=config['bin'][pfamily]['tool_paths']['RSCRIPT_PATH'],mem="16G",time="4:00:00",partition="ccr",rname="mir:classify"
+##    threads: 1    
+##    shell: """
 
-{params.java_path}/java {params.sortsam_jvm_mem} -jar {params.picard_path}/SortSam.jar INPUT={params.input_dir}/{wildcards.x}.bam OUTPUT={params.out}/{wildcards.x}.queryname.bam SORT_ORDER=queryname TMP_DIR={params.out}/ {params.sortsam_params}
+##{params.java_path}/java {params.sortsam_jvm_mem} -jar {params.picard_path}/SortSam.jar INPUT={params.input_dir}/{wildcards.x}.bam OUTPUT={params.out}/{wildcards.x}.queryname.bam SORT_ORDER=queryname TMP_DIR={params.out}/ {params.sortsam_params}
 
-{params.samtools_path}/samtools view {params.out}/{wildcards.x}.queryname.bam | {params.htseq_path}/htseq-count {params.htseq_params} - {params.gencode_gtf} > {params.out}/{wildcards.x}.gencode.genecount.txt
+##{params.samtools_path}/samtools view {params.out}/{wildcards.x}.queryname.bam | {params.htseq_path}/htseq-count {params.htseq_params} - {params.gencode_gtf} > {params.out}/{wildcards.x}.gencode.genecount.txt
 
-{params.script_path}/dw_gencode.sh {params.python_path} {params.htseq_lib_path} {params.gencode_gtf} {params.out} {wildcards.x} {params.script_path} {params.rscript_path}
+##{params.script_path}/dw_gencode.sh {params.python_path} {params.htseq_lib_path} {params.gencode_gtf} {params.out} {wildcards.x} {params.script_path} {params.rscript_path}
 
-           """
+##           """
 
 rule mirseq_expression_reports:
     input: expand("{out}/mirdeep2/{x}/mirdeep2.log",x=samples,out=config['project']['workpath'])
@@ -263,42 +298,43 @@ rule mirseq_main_document:
        shell("{params.script_path}/dw_main_document.sh {params.out} {params.script_path} {params.flowcell} {params.tool} {params.call_snvs} {params.trim_adapter} {params.diff_expression} {params.diff_expression_analyses} {params.email};perl {params.script_path}/dw_create_igv.pl {params.out}/igv {params.samples} {params.delivery_folder} {params.tool_info} {params.server} {params.genome_build};cp {params.script_path}/IGV_Setup.doc {params.out}/igv;perl {params.script_path}/dw_main_document.pl {params.out}/pfamily.tmp {params.out}/MainDocument.html {params.out}/SampleSummary.xls {snvs} {trim} {diff};cp {params.script_path}/CAP-miRSeq_workflow.png {params.out}")
 
 
-rule mirseq_miRspring_bowtie:
-    input: config['project']['workpath']+"/bams/{x}.bam"
-    output: config['project']['workpath']+"/mirspring/{x}.html"
-    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['project']['workpath'],mirbase_files=config['references'][pfamily]['reference_files']['MIRBASE_FILES'],mem="16G",time="4:00:00",partition="ccr",rname="mir:mirspring"
-    shell: """
-           if [ ! -d {params.output}/mirspring ]
-           then
-           mkdir {params.output}/mirspring
-           fi
+##rule mirseq_miRspring_bowtie:
+##    input: config['project']['workpath']+"/bams/{x}.bam"
+##    output: config['project']['workpath']+"/mirspring/{x}.html"
+##    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['project']['workpath'],mirbase_files=config['references'][pfamily]['reference_files']['MIRBASE_FILES'],mem="16G",time="4:00:00",partition="ccr",rname="mir:mirspring"
+##    shell: """
+##           if [ ! -d {params.output}/mirspring ]
+##           then
+##           mkdir {params.output}/mirspring
+##           fi
 
-           cd {params.script_path} && perl {params.script_path}/BAM_to_Intermediate.pl -ml 0 -s hsa -pre {params.mirbase_files}/hsa.35nt.fasta -gff {params.mirbase_files}/hsa_dw.gff3 -mat {params.mirbase_files}/mature.fa -bam {params.output}/bams/{wildcards.x}.bam -ref 0 -out {params.output}/mirspring/{wildcards.x}.tmp.txt -flank 35
+##           cd {params.script_path} && perl {params.script_path}/BAM_to_Intermediate.pl -ml 0 -s hsa -pre {params.mirbase_files}/hsa.35nt.fasta -gff {params.mirbase_files}/hsa_dw.gff3 -mat {params.mirbase_files}/mature.fa -bam {params.output}/bams/{wildcards.x}.bam -ref 0 -out {params.output}/mirspring/{wildcards.x}.tmp.txt -flank 35
 
-           cd {params.script_path} && perl {params.script_path}/Intermediate_to_miRspring.pl -in {params.output}/mirspring/{wildcards.x}.tmp.txt -s hsa -ref 0 -mat {params.mirbase_files}/mature.fa -out {params.output}/mirspring/{wildcards.x}.html -flank 35
-           """
+##           cd {params.script_path} && perl {params.script_path}/Intermediate_to_miRspring.pl -in {params.output}/mirspring/{wildcards.x}.tmp.txt -s hsa -ref 0 -mat {params.mirbase_files}/mature.fa -out {params.output}/mirspring/{wildcards.x}.html -flank 35
+##           """
 
-rule mirseq_miRspring_bwa:
-    input: config['project']['workpath']+"/bams-bwa/{x}.bam"
-    output: config['project']['workpath']+"/mirspring/{x}_bwa.html"
-    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['project']['workpath'],mirbase_files=config['references'][pfamily]['reference_files']['MIRBASE_FILES'],mem="16G",time="4:00:00",partition="ccr",rname="mir:mirspring"
-    shell: """
-           if [ ! -d {params.output}/mirspring ]
-           then
-           mkdir {params.output}/mirspring
-           fi
+##rule mirseq_miRspring_bwa:
+##    input: config['project']['workpath']+"/bams-bwa/{x}.bam"
+##    output: config['project']['workpath']+"/mirspring/{x}_bwa.html"
+##    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['project']['workpath'],mirbase_files=config['references'][pfamily]['reference_files']['MIRBASE_FILES'],mem="16G",time="4:00:00",partition="ccr",rname="mir:mirspring"
+##    shell: """
+##           if [ ! -d {params.output}/mirspring ]
+##           then
+##           mkdir {params.output}/mirspring
+##           fi
 
-           cd {params.script_path} && perl {params.script_path}/BAM_to_Intermediate.pl -ml 0 -s hsa -pre {params.mirbase_files}/hsa.35nt.fasta -gff {params.mirbase_files}/hsa_dw.gff3 -mat {params.mirbase_files}/mature.fa -bam {params.output}/bams-bwa/{wildcards.x}.bam -ref 0 -out {params.output}/mirspring/{wildcards.x}_bwa.tmp.txt -flank 35
+##           cd {params.script_path} && perl {params.script_path}/BAM_to_Intermediate.pl -ml 0 -s hsa -pre {params.mirbase_files}/hsa.35nt.fasta -gff {params.mirbase_files}/hsa_dw.gff3 -mat {params.mirbase_files}/mature.fa -bam {params.output}/bams-bwa/{wildcards.x}.bam -ref 0 -out {params.output}/mirspring/{wildcards.x}_bwa.tmp.txt -flank 35
 
-           cd {params.script_path} && perl {params.script_path}/Intermediate_to_miRspring.pl -in {params.output}/mirspring/{wildcards.x}_bwa.tmp.txt -s hsa -ref 0 -mat {params.mirbase_files}/mature.fa -out {params.output}/mirspring/{wildcards.x}_bwa.html -flank 35
-           """
-rule mirseq_targetscan:
-    input:
-    output:
-    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['project']['workpath'],target_data=config['references'][pfamily]['reference_files']['TARGET_DATA'],mem="4G",time="4:00:00",partition="ccr",rname="mir:tscan"
-    shell: """
+##           cd {params.script_path} && perl {params.script_path}/Intermediate_to_miRspring.pl -in {params.output}/mirspring/{wildcards.x}_bwa.tmp.txt -s hsa -ref 0 -mat {params.mirbase_files}/mature.fa -out {params.output}/mirspring/{wildcards.x}_bwa.html -flank 35
+##           """
+##rule mirseq_targetscan:
+##    input:
+##    output:
+##    params: script_path=config['bin'][pfamily]['tool_paths']['SCRIPT_PATH'],output=config['project']['workpath'],target_data=config['references'][pfamily]['reference_files']['TARGET_DATA'],mem="4G",time="4:00:00",partition="ccr",rname="mir:tscan"
+##    shell: """
 
-           {params.script_path}/targetscan_70.pl {params.target_data}/miR_Family_info_sample.txt {params.target_data}/UTR_sequences_all.txt {params.output}/targetscan_70_output.txt
+##           {params.script_path}/targetscan_70.pl {params.target_data}/miR_Family_info_sample.txt {params.target_data}/UTR_sequences_all.txt {params.output}/targetscan_70_output.txt
 
 
-           """
+##           """
+

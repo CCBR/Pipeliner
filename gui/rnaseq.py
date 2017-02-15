@@ -91,9 +91,9 @@ class RNASeqFrame( PipelineFrame ) :
         #rMincount.trace('w', lambda a,b,c,x="rmincount": makejson(x))
 
         #Filter out genes < [5] read counts in < [2] samples
-        rminsamplesL = Label(sampleLF, text="Filter out genes  <") # in")
+        rminsamplesL = Label(sampleLF, text="Include genes with >=") # in")
         rmincountE = Entry(sampleLF, bd =2, width=3, textvariable=rMincount)
-        rmincountL = Label(sampleLF, text="read counts in  >")
+        rmincountL = Label(sampleLF, text="read counts in  >=")
         rminsamplesE = Entry(sampleLF, bd =2, width=3, textvariable=rMinsamples)
         rminsamplesR = Label(sampleLF, text="samples")
         
