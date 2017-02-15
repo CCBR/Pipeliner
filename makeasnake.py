@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 import sys,os,re,subprocess
 import json
+from sys import stderr
 #from subprocess import call,Popen, PIPE, STDOUT
 
 #pathprj= os.path.dirname(sys.argv[1])
 pathprj= sys.argv[1]
-print(pathprj)
-print(pathprj+"/project.json")
+print(pathprj, file=stderr)
+print(pathprj+"/project.json", file=stderr)
 
 whereiam=os.popen("pwd").read().strip()
 
