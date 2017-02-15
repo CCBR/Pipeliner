@@ -524,6 +524,7 @@ class PipelineFrame( Frame ) :
             MkaS=os.popen(PIPELINER_HOME+"/makeasnake.py "+PL+" 2>&1 | tee -a "+self.workpath.get()+"/Reports/makeasnake.log").read()
             Out=os.popen("cd "+self.workpath.get()+" && snakemake " + smcommand +" 2>&1").read()
             show(Out,"CCBR Pipeliner: "+ pl + " "+smcommand,dryrunFgColor,dryrunBgColor,200,100)
+            #show(MkaS + "\n" + Out,"CCBR Pipeliner: "+ pl + " "+smcommand,dryrunFgColor,dryrunBgColor,200,100)
             
     def checklist( self ) :
         '''placeholder'''
