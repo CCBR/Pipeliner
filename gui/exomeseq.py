@@ -78,11 +78,11 @@ class ExomeSeqFrame( PipelineFrame ) :
         
         if self.Pipeline.get() == 'exomeseq-somatic' :
             self.add_pairs( self.eframe )
-            self.dry_button.config( state="disabled" )
+            #self.dry_button.config( state="disabled" )
         elif self.Pipeline.get() != 'exomeseq-somatic' :
             self.del_pairs( self.eframe )
-            if self.workpath.get() :
-                self.dry_button.config( state='active' )
+            #if self.workpath.get() :
+            #    self.dry_button.config( state='active' )
                 
     
     def add_pairs( self, parent ) :
@@ -121,10 +121,10 @@ class ExomeSeqFrame( PipelineFrame ) :
             
     def writepair( self ) :
         self.writepaste( 'pairs', self.pairs_text )
-        self.dry_button.config( state='active' )
+        #self.dry_button.config( state='active' )
     
     def readpair( self ) :
         self.readpaste( 'pairs', self.pairs_text )
-        self.dry_button.config( state='active' )
+        #self.dry_button.config( state='active' )
 
 

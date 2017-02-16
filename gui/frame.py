@@ -130,6 +130,10 @@ class PipelineFrame( Frame ) :
         '''
         controls active buttons
         '''
+        pass
+    
+        #blocked for not controlling.
+        """
         print( 'option controller:', self.data_count['text'], 'found!!!' )
         print( 'option controller:', self.workpath.get() )
         if self.data_count['text'] != '0' :
@@ -138,11 +142,12 @@ class PipelineFrame( Frame ) :
         if self.workpath.get() :
             self.dry_button.config( state='active' )
             self.work_entry.config( state='normal' )
+        """
 
     def sel_work_dir( self ) :
         fname = askdirectory( initialdir=USER_HOME, title="Select Work Directory" )
         self.workpath.set(fname)
-        self.work_entry.config( state="normal" )
+        #self.work_entry.config( state="normal" )
         
     def init_work_dir( self ):
         #Getting the work directory user input
@@ -482,7 +487,7 @@ class PipelineFrame( Frame ) :
     
     def dryrun( self ) :
         self.makejson("none")
-        self.run_button.config( state='active' )
+        #self.run_button.config( state='active' )
         return self.cmd( "--dryrun -s %s/Snakefile --rerun-incomplete -d %s" % ( self.workpath.get(), self.workpath.get())) 
     
     def runslurm( self ) :
