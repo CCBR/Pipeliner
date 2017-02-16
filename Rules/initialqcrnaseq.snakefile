@@ -10,7 +10,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
      params: batch='--time=168:00:00'
 #     input: "QC_table.xlsx","Reports/multiqc_report.html",
      input: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx","Reports/multiqc_report.html",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),
+            expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",
             "QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
 
 
@@ -19,7 +19,7 @@ elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
      params: batch='--time=168:00:00'
 #     input: "QC_table.xlsx","Reports/multiqc_report.html",
      input: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx","Reports/multiqc_report.html",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),
+            expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",
             "QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
 
 
@@ -58,6 +58,13 @@ rule fastq_screen:
       threads: 24
       shell:  "module load bowtie; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input}"
 
+rule rawfastqc:
+      input: expand("{name}.R1.fastq.gz", name=samples), expand("{name}.R2.fastq.gz", name=samples)
+      output: "rawQC"
+      priority: 2
+      params: rname='pl:rawfastqc',batch='--cpus-per-task=32 --mem=110g --time=48:00:00',fastqcver=config['bin'][pfamily]['FASTQCVER']
+      threads: 32
+      shell: "mkdir -p {output};module load {params.fastqcver}; fastqc {input} -t {threads} -o {output}"
 
 if config['project']['TRIM'] == "yes":
 
@@ -191,7 +198,8 @@ rule stats:
   output: outstar1="{name}.RnaSeqMetrics.txt", outstar2="{name}.flagstat.concord.txt", outstar3="{name}.InsertSizeMetrics.txt", outstar4="{name}.InsertSizeHisto.pdf"
   params: rname='pl:stats',batch='--mem=24g --time=10:00:00 --gres=lscratch:800',picardver=config['bin'][pfamily]['PICARDVER'],refflat=config['references'][pfamily]['REFFLAT'],rrnalist=config['references'][pfamily]['RRNALIST'],picardstrand=config['bin'][pfamily]['PICARDSTRAND']
 #  shell: "module load {params.picardver}; java -Xmx10g -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar REF_FLAT={params.refflat} INPUT={input.file1} OUTPUT={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY={params.picardstrand} TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT; module load samtools; samtools flagstat {input.file1} > {output.outstar2}; samtools  view -f 0x2 {input.file1} | wc -l >>{output.outstar2}; samtools view {input.file1} | grep -w -c NH:i:1  >>{output.outstar2} "
-  shell: "module load R;module load {params.picardver}; java -Xmx10g -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar REF_FLAT={params.refflat} INPUT={input.file1} OUTPUT={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY={params.picardstrand} TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT; java -Xmx10g -jar $PICARDJARPATH/CollectInsertSizeMetrics.jar INPUT={input.file1} OUTPUT={output.outstar3} HISTOGRAM_FILE={output.outstar4} MINIMUM_PCT=0.5 TMP_DIR=/lscratch/$SLURM_JOBID ;module load samtools; samtools flagstat {input.file1} > {output.outstar2}; samtools  view -f 0x2 {input.file1} | wc -l >>{output.outstar2}; samtools view {input.file1} | grep -w -c NH:i:1  >>{output.outstar2} "
+#  shell: "module load R;module load {params.picardver}; java -Xmx10g -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar REF_FLAT={params.refflat} INPUT={input.file1} OUTPUT={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY={params.picardstrand} TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT; java -Xmx10g -jar $PICARDJARPATH/CollectInsertSizeMetrics.jar INPUT={input.file1} OUTPUT={output.outstar3} HISTOGRAM_FILE={output.outstar4} MINIMUM_PCT=0.5 TMP_DIR=/lscratch/$SLURM_JOBID ;module load samtools; samtools flagstat {input.file1} > {output.outstar2}; samtools  view -f 0x2 {input.file1} | wc -l >>{output.outstar2}; samtools view {input.file1} | grep -w -c NH:i:1  >>{output.outstar2} "
+  shell: "module load R;module load {params.picardver}; java -Xmx10g -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar REF_FLAT={params.refflat} INPUT={input.file1} OUTPUT={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY=SECOND_READ_TRANSCRIPTION_STRAND TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT; java -Xmx10g -jar $PICARDJARPATH/CollectInsertSizeMetrics.jar INPUT={input.file1} OUTPUT={output.outstar3} HISTOGRAM_FILE={output.outstar4} MINIMUM_PCT=0.5 TMP_DIR=/lscratch/$SLURM_JOBID ;module load samtools; samtools flagstat {input.file1} > {output.outstar2}; samtools  view -f 0x2 {input.file1} | wc -l >>{output.outstar2}; samtools view {input.file1} | grep -w -c NH:i:1  >>{output.outstar2} "
 
 
 rule prernaseqc:
