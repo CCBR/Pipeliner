@@ -173,17 +173,17 @@ plotMA(res,ylim=range(x),main=paste("MAplot_",contras[i],"_vs_",contras[i+1],sep
 ##dev.copy(png,paste("DESeq2_MAplot_",contras[i],"_vs_",contras[i+1],".png",sep=""))
 dev.off()
 # Volcano
-log_FC=res1$log2FoldChange
-log_Apval=-log10(res1$padj)
-Significant=rep("NotSignificant",length(log_FC))
-Significant[which(res1$padj<0.05 & abs(res1$padj)>=1)]="Significant&LogFoldChange"
-Significant[which(res1$padj<0.05 & abs(res1$padj)<1)]="Significant"
-Significant[which(res1$padj>=0.05 & abs(res1$padj)>=1)]="LogFoldChange"
-gene=rownames(res1)
-volcano_data=as.data.frame(cbind(gene,log_FC,log_Apval,Significant))
-l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_Apval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Log2_ FC"),yaxis=list(title="Log10_Adj_pvalue"))
-#  %>% layout(annotations = a)
 
+log_FC=res1$log2FoldChange
+log_pval=-log10(res1$pvalue)
+Significant=rep("NotSignificant",length(log_FC))
+Significant[which(res1$pvalue<0.05 & abs(res1$log2FoldChange)>=1)]="Significant&LogFoldChange"
+Significant[which(res1$pvalue<0.05 & abs(res1$log2FoldChange)<1)]="Significant"
+Significant[which(res1$pvalue>=0.05 & abs(res1$log2FoldChange)>=1)]="LogFoldChange"
+gene=rownames(res1)
+volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
+l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Log2_FC",range =c(-10,10)),yaxis=list(title="-Log10_pvalue",range=c(0,10)))
+#  %>% layout(annotations = a)
 }}
 
 colnames(mfc)=paste(cons,"logFC",sep="_")
