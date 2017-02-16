@@ -192,17 +192,15 @@ all.genes.con = topTable(ebayes.fit, coef = i, number=nrow(ebayes.fit))
 ## new staff ------
 
 log_FC=all.genes.con$logFC
-log_Apval=-log10(all.genes.con$adj.P.Val)
+log_pval=-log10(all.genes.con$P.Value)
 Significant=rep("NotSignificant",length(log_FC))
-Significant[which(all.genes.con$adj.P.Val<0.05 & abs(all.genes.con$logFC)>=1)]="Significant&LogFoldChange"
-Significant[which(all.genes.con$adj.P.Val<0.05 & abs(all.genes.con$logFC)<1)]="Significant"
-Significant[which(all.genes.con$adj.P.Val>=0.05 & abs(all.genes.con$logFC)>=1)]="LogFoldChange"
+Significant[which(all.genes.con$P.Value<0.05 & abs(all.genes.con$logFC)>=1)]="Significant&LogFoldChange"
+Significant[which(all.genes.con$P.Value<0.05 & abs(all.genes.con$logFC)<1)]="Significant"
+Significant[which(all.genes.con$P.Value>=0.05 & abs(all.genes.con$logFC)>=1)]="LogFoldChange"
 gene=rownames(all.genes.con)
-volcano_data=as.data.frame(cbind(gene,log_FC,log_Apval,Significant))
-l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_Apval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",cons[i],sep=""),xaxis=list(title="Log2_ FC"),yaxis=list(title="Log10_Adj_pvalue")) 
+volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
+l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",cons[i],sep=""),xaxis=list(title="Log2_FC",range =c(-10,10)),yaxis=list(title="-Log10_pvalue",range =c(0,10)))
 #  %>% layout(annotations = a)
-
-
 
 # DT::datatable(volcano_data)
 #MAplot <- plot(ebayes.fit,coef=i)
