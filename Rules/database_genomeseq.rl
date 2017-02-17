@@ -1,6 +1,6 @@
 rule database_genomeseq:
     input: vcf="combined.vcf",
-           annotation="full_annot.txt.zip"
+           annotation=config['project']['workpath']+"/full_annot.txt.zip"
     output: dbase="variants.database",
             vcf="combined_genotypes.vcf"
     params: regions=config['references'][pfamily]['REFFLAT'],rname="pl:database"
