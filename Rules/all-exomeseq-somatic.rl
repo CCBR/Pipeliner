@@ -97,7 +97,6 @@ else:
             expand(config['project']['workpath']+"/mutect2_out/chrom_files/{p}_chr19.vcf",p=pairs),
             expand(config['project']['workpath']+"/mutect2_out/chrom_files/{p}_chrX.vcf",p=pairs),
             expand(config['project']['workpath']+"/mutect2_out/chrom_files/{p}_chrY.vcf",p=pairs),
-#            expand(config['project']['workpath']+"/mutect2_out/chrom_files/{p}_{chr}.vcf",p=pairs,chr=config['references'][pfamily]['CHROMS']),
             expand(config['project']['workpath']+"/mutect_out/{p}"+".FINAL.vcf",p=pairs),
             expand(config['project']['workpath']+"/mutect2_out/{p}"+".FINALmutect2.vcf",p=pairs),
             expand(config['project']['workpath']+"/strelka_out/{p}"+".vcf",p=pairs),
