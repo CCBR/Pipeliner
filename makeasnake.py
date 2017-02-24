@@ -35,7 +35,7 @@ for S in F.keys():
     T=re.sub("R=/.+","R="+WP,T)
     T=re.sub("D=/.+","D="+whereiam,T)
     T=re.sub("Stats",pipeline+".stats",T)
-    T=re.sub("snakemake ","snakemake %s "%parameters,T)    
+    T=re.sub("snakemake ","snakemake --latency-wait 120 %s "%parameters,T)    
     Q=open(WP+F[S],"w")
     Q.write(T)
     Q.close()
