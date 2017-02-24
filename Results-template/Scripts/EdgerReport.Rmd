@@ -212,14 +212,14 @@ dev.off()
 # volcano
 
 log_FC=final$logFC
-log_Apval=-log10(final$FDR)
+log_pval=-log10(final$PValue)
 Significant=rep("NotSignificant",length(log_FC))
-Significant[which(final$FDR<0.05 & abs(final$logFC)>=1)]="Significant&LogFoldChange"
-Significant[which(final$FDR<0.05 & abs(final$logFC)<1)]="Significant"
-Significant[which(final$FDR>=0.05 & abs(final$logFC)>=1)]="LogFoldChange"
+Significant[which(final$PValue<0.05 & abs(final$logFC)>=1)]="Significant&LogFoldChange"
+Significant[which(final$PValue<0.05 & abs(final$logFC)<1)]="Significant"
+Significant[which(final$PValue>=0.05 & abs(final$logFC)>=1)]="LogFoldChange"
 gene=rownames(final)
-volcano_data=as.data.frame(cbind(gene,log_FC,log_Apval,Significant))
-l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_Apval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Log2_ FC"),yaxis=list(title="Log10_Adj_pvalue"))
+volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
+l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Log2_FC",range =c(-10,10)),yaxis=list(title="-Log10_pvalue",range =c(0,10)))
 #  %>% layout(annotations = a)
 }}
 
