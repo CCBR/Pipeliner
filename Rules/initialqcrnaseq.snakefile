@@ -7,7 +7,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
      params: batch='--time=168:00:00'
      input: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",
-            "QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
+            "QC",expand("FQscreen/{name}_R1_001_trim_paired_screen.txt",name=samples), expand("FQscreen/{name}_R1_001_trim_paired_screen.png",name=samples), expand("FQscreen/{name}_R2_001_trim_paired_screen.txt",name=samples), expand("FQscreen/{name}_R2_001_trim_paired_screen.png",name=samples)
 
 
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
@@ -15,7 +15,7 @@ elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
      params: batch='--time=168:00:00'
      input: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx","Reports/multiqc_report.html",
             expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",
-            "QC",expand("FQscreen/{name}.R1_screen.txt",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.txt",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
+            "QC",expand("FQscreen/{name}_R1_001_trim_paired_screen.txt",name=samples), expand("FQscreen/{name}_R1_001_trim_paired_screen.png",name=samples), expand("FQscreen/{name}_R2_001_trim_paired_screen.txt",name=samples), expand("FQscreen/{name}_R2_001_trim_paired_screen.png",name=samples)
 
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
@@ -173,7 +173,7 @@ rule rnaseqc:
          """
 
 rule rnaseq_multiqc:
-    input: expand("{name}.Rdist.info",name=samples),expand("FQscreen/{name}.R1_screen.png",name=samples),expand("FQscreen/{name}.R2_screen.png",name=samples),expand("{name}.flagstat.concord.txt",name=samples),expand("{name}.RnaSeqMetrics.txt",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
+    input: expand("{name}.Rdist.info",name=samples),expand("FQscreen/{name}_R1_001_trim_paired_screen.png",name=samples),expand("FQscreen/{name}_R2_001_trim_paired_screen.png",name=samples),expand("{name}.flagstat.concord.txt",name=samples),expand("{name}.RnaSeqMetrics.txt",name=samples),expand("{name}.InsertSizeMetrics.txt",name=samples)
     output: "Reports/multiqc_report.html"
 #    params: rname="pl:multiqc",pythonpath=config['bin'][pfamily]['PYTHONPATH'],multiqc=config['bin'][pfamily]['MULTIQC']
     params: rname="pl:multiqc",multiqc=config['bin'][pfamily]['MULTIQC'],qcconfig=config['bin'][pfamily]['CONFMULTIQC']
