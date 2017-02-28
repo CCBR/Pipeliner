@@ -94,6 +94,12 @@ else:
 
 ##############################################
 
+rule get_strandness:
+  input: "groups.tab"
+  output: "strandness.txt"
+  params: rname='pl:get_strandness'
+  shell: "python Scripts/get_strandness.py > strandness.txt"
+
 
 rule rsem:
   input: file1= "{name}.p2.Aligned.toTranscriptome.out.bam"
@@ -103,16 +109,16 @@ rule rsem:
 
 
 rule subread:
-   input:  "{name}.star_rg_added.sorted.dmark.bam"
+   input:  file1="{name}.star_rg_added.sorted.dmark.bam", file2="strandness.txt"
    output: out="{name}.star.count.info.txt", res="{name}.star.count.txt"
-   params: rname='pl:subread',batch='--time=4:00:00',subreadver=config['bin'][pfamily]['SUBREADVER'],stranded=config['bin'][pfamily]['STRANDED'],gtffile=config['references'][pfamily]['GTFFILE']
-   shell: "module load {params.subreadver}; featureCounts -T 16 -s {params.stranded} -p -t exon -R -g gene_id -a {params.gtffile} -o {output.out}  {input}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
+   params: rname='pl:subread',batch='--time=4:00:00',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
+   shell: "module load {params.subreadver}; featureCounts -T 16 -s `cat strandness.txt` -p -t exon -R -g gene_id -a {params.gtffile} -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
 
 rule subreadoverlap:
-   input:  "{name}.star_rg_added.sorted.dmark.bam"
+   input:  file1="{name}.star_rg_added.sorted.dmark.bam", file2="strandness.txt"
    output: out="{name}.star.count.info.overlap.txt", res="{name}.star.count.overlap.txt"
-   params: rname='pl:subreadoverlap',batch='--cpus-per-task=16 --mem=24g --time=48:00:00',subreadver=config['bin'][pfamily]['SUBREADVER'],stranded=config['bin'][pfamily]['STRANDED'],gtffile=config['references'][pfamily]['GTFFILE']
-   shell: "module load {params.subreadver}; featureCounts -T 16 -s {params.stranded} -p -t exon -R -O -g gene_id -a {params.gtffile} -o {output.out}  {input}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
+   params: rname='pl:subreadoverlap',batch='--cpus-per-task=16 --mem=24g --time=48:00:00',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
+   shell: "module load {params.subreadver}; featureCounts -T 16 -s `cat strandness.txt` -p -t exon -R -O -g gene_id -a {params.gtffile} -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
 
 
 rule genecounts: 
