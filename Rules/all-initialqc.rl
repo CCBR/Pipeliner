@@ -14,7 +14,7 @@ rule all_initialqc:
             expand("QC/{s}_run_trimmomatic.err",s=samples),
             expand("QC/{s}.qualimapReport/genome_results.txt",s=samples),
             config['project']['id']+"_"+config['project']['flowcellid']+".xlsx",
-            "exome_targets.bed"
+            config['project']['workpath']+"/exome_targets.bed"
     output:
     params: rname="final"
     shell:  """

@@ -1,6 +1,6 @@
 rule bamstats:
     input:  bam="{x}.dedup.bam",
-            bed="exome_targets.bed"
+            bed=config['project']['workpath']+"/exome_targets.bed"
     output: "{x}.dedup.bam.onTarget.bam_stats",
             temp("{x}.dedup.bam.onTarget.bam"),
             "{x}.dedup.bam.bam_stats"

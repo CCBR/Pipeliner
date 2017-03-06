@@ -14,6 +14,6 @@ else:
            tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
            vcf=config['project']['workpath']+"/mutect_out/{x}.FINAL.vcf",
            dir=config['project']['workpath']+"/mutect_out"
-    output: maf="mutect_out/oncotator_out/{x}.maf"
+    output: maf=config['project']['workpath']+"/mutect_out/oncotator_out/{x}.maf"
     params: rname="pl:oncotator_mutect"
     shell: "echo \"null\" > {output.maf}"

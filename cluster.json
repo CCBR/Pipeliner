@@ -162,7 +162,8 @@
     },
     "picard_headers2":
     {
-        "threads": "1"
+        "threads": "1",
+        "mem": "24g"
     },
     "picard_rnaseqvarheaders":
     {
@@ -271,7 +272,7 @@
     "gatk_rnaseqvar_haplotype_caller":
     {
         "threads": "4",
-        "mem": "96g"
+        "mem": "48g"
     },
     "star_generate":
     {

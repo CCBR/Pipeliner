@@ -1,7 +1,7 @@
 rule cnvkit_somatic:
     input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
            tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
-           targets="cnvkit_targets.bed",
+           targets=config['project']['workpath']+"/cnvkit_targets.bed",
            network=config['project']['workpath']+"/sample_network.bmp",
            outdir=config['project']['workpath']+"/cnvkit_out"
     output: vcf=config['project']['workpath']+"/cnvkit_out/{x}_germpairs.vcf",
