@@ -100,7 +100,19 @@
         "time" : "5-00:00:00",
         "mem": "96g"
     },
+    "gatk_combine_somatic_gvcfs":
+    {
+        "threads": "1",
+        "time" : "5-00:00:00",
+        "mem": "96g"
+    },
     "gatk_genotype_gvcfs":
+    {
+        "threads": "4",
+        "time" : "10-00:00:00",
+        "mem": "120g"
+    },
+    "gatk_genotype_somatic_gvcfs":
     {
         "threads": "4",
         "time" : "10-00:00:00",
@@ -223,7 +235,13 @@
     },
     "script_batchgvcf":
     {
-        "threads": "1"
+        "threads": "1",
+        "mem" : "12g"
+    },
+    "script_somatic_batchgvcf":
+    {
+        "threads": "1",
+        "mem" : "12g"
     },
     "script_bzip2":
     {
