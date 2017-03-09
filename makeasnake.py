@@ -47,10 +47,6 @@ binset=C['project']['binset']
 D=open("rules.json","r")
 E=open(annotation+".json","r")
 F=open(binset+".json","r")
-#H=open("rnaseq.json","r")
-
-
-
 D=eval(D.read())
 E=eval(E.read())
 F=eval(F.read())

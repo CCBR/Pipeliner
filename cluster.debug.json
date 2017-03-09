@@ -1,0 +1,426 @@
+{
+    "__default__" :
+    {
+        "mem" : "64g",
+        "time" : "4:00:00",
+        "partition" : "quick",
+        "threads": "4",
+        "gres":"lscratch:256"
+    },
+    "bicseq":
+    {
+        "threads": "1"
+    },
+    "theta":
+    {
+        "threads": "1",
+        "mem" : "120g"
+    },
+    "manta_germline":
+     {
+        "threads": "8",
+        "mem" : "96g",
+    },
+    "manta_somatic":
+     {
+        "threads": "8",
+        "mem" : "96g",
+    },
+    "manta_wgs":
+    {
+        "threads": "8",
+        "mem" : "96g",
+    },
+    "conpair":
+    {
+        "threads": "1"
+    },
+    "make_germline_network":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
+    "avia_make_bed_germ":
+    {
+        "mem" : "96g"
+    },
+    "make_somatic_network":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
+    "somatic_germline_calls":
+    {
+        "threads": "4",
+        "mem" : "64g"
+    },
+    "multiqc":
+    {
+        "threads": "1"
+    },
+    "fastq_screen":
+    {
+        "threads": "24"
+    },
+    "strelka":
+    {
+        "threads": "4",
+        "mem": "64g"
+    },
+    "bwa_pe":
+    {
+        "threads": "4"
+    },
+    "bwa_mem":
+    {
+        "mem": "48g",
+        "threads": "32"
+    },
+    "fastqc_fastq":
+    {
+        "threads": "8"
+    },
+    "fastqc_trimmed":
+    {
+        "threads": "8"
+    },
+    "gatk_apply_variant_recal":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "gatk_apply_vqsr":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "gatk_combine_gvcfs":
+    {
+        "threads": "1",
+        "time" : "5-00:00:00",
+        "mem": "96g"
+    },
+    "gatk_genotype_gvcfs":
+    {
+        "threads": "4",
+        "time" : "10-00:00:00",
+        "mem": "120g"
+    },
+    "gatk_splitcigar":
+    {
+        "threads": "1",
+        "mem": "96g"
+    },
+    "gatk_genotyping":
+    {
+        "threads": "1",
+    },
+    "gatk_haplotype_caller":
+    {
+        "threads": "4",
+        "mem": "64g"
+    },
+    "gatk_realign":
+    {
+        "threads": "1",
+        "gres":"lscratch:500",
+        "mem": "64g"
+    },
+    "gatk_recal":
+    {
+        "threads": "32",
+        "mem": "64g"
+    },
+    "gatk_variant_annnotator":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "gatk_variant_recal":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "ngsqc":
+    {
+        "threads": "1"
+    },
+    "novocraft_novoalign":
+    {
+        "time" : "6-00:00:00",    
+        "threads": "32"
+    },
+    "novocraft_sort":
+    {
+        "threads": "8",
+        "mem": "120g"
+    },
+    "novo_sort":
+    {
+        "threads": "8",
+        "mem": "120g"
+    },
+    "picard_headers2":
+    {
+        "threads": "1"
+    },
+    "picard_rnaseqvarheaders":
+    {
+        "threads": "1"
+    },
+    "picard_rnaseqvar_markdups":
+    {
+        "threads": "1"
+    },
+    "picard_index_bam":
+    {
+        "threads": "1",
+        "time": "01:00:00"
+    },
+    "picard_headers":
+    {
+        "threads": "1"
+    },
+    "picard_markdups":
+    {
+        "threads": "12"
+    },
+    "qualimap":
+    {
+        "threads": "8",
+        "mem": "96g"
+    },
+    "qualimap_rna":
+    {
+        "threads": "8",
+        "mem": "96g"
+    },
+    "qualimap_wgs":
+    {
+        "threads": "8",
+        "mem": "96g"
+    },
+    "samtools_flagstats_dedup":
+    {
+        "threads": "1"
+    },
+    "samtools_flagstats":
+    {
+        "threads": "1"
+    },
+    "samtools_mpileup":
+    {
+        "threads": "1"
+    },
+    "samtools_sam2bam":
+    {
+        "threads": "1"
+    },
+    "samtools_sort":
+    {
+        "threads": "1"
+    },
+    "script_batchgvcf":
+    {
+        "threads": "1"
+    },
+    "script_bzip2":
+    {
+        "threads": "1"
+    },
+    "script_checkqc":
+    {
+        "threads": "1"
+    },
+    "script_coverage_qc":
+    {
+        "threads": "1"
+    },
+    "script_split_gvcfs":
+    {
+        "threads": "1"
+    },
+    "snpeff_dbnsfp":
+    {
+        "threads": "1"
+    },
+    "snpeff":
+    {
+        "threads": "1"
+    },
+    "star_align_2":
+    {
+        "threads": "32",
+        "mem" : "64g"
+    },
+    "star_align_1":
+    {
+        "threads": "32",
+        "mem" : "64g"
+    },
+    "germline_filter_rnaseqvar":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "gatk_select_variants_rnaseqvar":
+    {
+        "threads": "1",
+        "mem": "64g"
+    },
+    "gatk_rnaseqvar_haplotype_caller":
+    {
+        "threads": "4",
+        "mem": "96g"
+    },
+    "star_generate":
+    {
+        "threads": "1"
+    },
+    "trimmomatic":
+    {
+        "threads": "32"
+    },
+    "varscan":
+    {
+        "threads": "1"
+    },
+    "gatk_chrom_mutect2":
+    {
+        "time": "6-00:00:00",
+        "threads": "2"
+    },
+    "gatk_mutect2":
+    {
+        "time": "10-00:00:00",
+        "threads": "2",
+        "mem": "120g"
+    },
+    "trimmomatic_pe":
+    {
+        "threads": "32",
+        "mem": "110g"
+    },
+    "fastqc":
+    {
+        "threads": "32",
+        "mem": "110g"
+    },
+    "star1p":
+    {
+        "threads": "32",
+        "mem": "110g"
+    },
+    "star2p":
+    {
+        "threads": "32",
+        "mem": "110g"
+    },
+    "rsem":
+    {
+        "threads": "16"
+    },
+    "salmon":
+    {
+        "threads": "6",
+        "mem": "110g"
+    },
+    "sleuth":
+    {
+        "threads": "4",
+        "mem": "110g"
+    },
+    "EBSeq":
+    {
+        "threads": "4",
+        "mem": "110g"
+    },
+    "mirseq_init":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "cutadapt":
+    {
+        "threads": "1",
+        "mem": "32g"
+    },
+    "fastqc_pretrim":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "fastqc_posttrim":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirdeep2_mapper":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_make_bams":
+    {
+        "threads": "1",
+        "mem": "32g"
+    },
+    "mirseq_make_bams_bwa":
+    {
+        "threads": "1",
+        "mem": "32g"
+    },
+    "mirdeep2":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_variants":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_gencode_classification":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "expression_reports":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "differential_expression":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_summarize":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_main_document":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_miRspring_bowtie":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    "mirseq_miRspring_bwa":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+
+    "mirseq_targetscan":
+    {
+        "threads": "1",
+        "mem": "16g"
+    },
+    
+
+}
