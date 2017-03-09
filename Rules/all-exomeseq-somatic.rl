@@ -2,6 +2,7 @@ if config['project']['annotation'] == "hg19":
 
   rule all_exomeseq_somatic:
     input:  expand("{s}"+".recal.bam",s=samples),
+            expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect_out/{p}"+".FINAL.vcf",p=pairs),
             expand(config['project']['workpath']+"/mutect2_out/{p}"+".FINALmutect2.vcf",p=pairs),
             expand(config['project']['workpath']+"/strelka_out/{p}"+".vcf",p=pairs),
