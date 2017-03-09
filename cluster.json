@@ -21,6 +21,11 @@
         "threads": "8",
         "mem" : "96g",
     },
+    "cnvkit_somatic":
+     {
+        "threads": "4",
+        "mem" : "48g",
+    },
     "manta_somatic":
      {
         "threads": "8",

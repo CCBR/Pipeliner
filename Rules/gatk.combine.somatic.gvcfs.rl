@@ -1,6 +1,6 @@
 rule gatk_combine_somatic_gvcfs:
-    input: expand(config['project']['workpath']+"/xa{batches}"
-    output: temp(expand(config['project']['workpath']+"/xa{batches}.gvcf")
+    input: "xa{batches}"
+    output: temp("xa{batches}.gvcf")
     params: batch ="-l nodes=1:gpfs -q ccr",gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],rname="pl:combgvcfs"
     run: 
        F=open(input[0],"r")
@@ -9,5 +9,3 @@ rule gatk_combine_somatic_gvcfs:
        var=" --variant "+" --variant ".join(fl)
        cmd="{params.gatk} -R {params.genome} -T CombineGVCFs -o "+output[0]+ var
        shell(cmd)
-
-

@@ -1,5 +1,5 @@
 rule gatk_genotype_somatic_gvcfs:
-    input: expand(config['project']['workpath']+"/xa{x}.gvcf",x=batches)
+    input: expand("xa{x}.gvcf",x=batches)
     output: config['project']['workpath']+"/germline_vcfs/combined.vcf"
     params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
     threads: 4

@@ -1,7 +1,7 @@
 bch=str(BS) # combinegvcf batchsize
 rule script_somatic_batchgvcf:
-    input: expand(config['project']['workpath']+"/{s}.g.vcf",s=samples)
-    output: expand(config['project']['workpath']+"/xa{x}",x=batches),"all.g.vcf"
+    input: expand("{s}.g.vcf",s=samples)
+    output: expand("xa{x}",x=batches),"all.g.vcf"
     params: rname="pl:batchgvcf"
     run:
         # o=os.popen("rm all.g.vcf x*")
