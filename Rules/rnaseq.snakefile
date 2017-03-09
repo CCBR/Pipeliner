@@ -98,8 +98,21 @@ rule get_strandness:
   input: "groups.tab"
   output: "strandness.txt"
   params: rname='pl:get_strandness'
-  shell: "python Scripts/get_strandness.py > strandness.txt"
-
+#  shell: "python Scripts/get_strandness.py > strandness.txt"
+  run:
+  import os
+  os.system("python Scripts/get_strandness.py > strandness.txt")
+  strandfile=open("strandness.txt",'r')
+  strandness=strandfile.readline().strip()
+  strandfile.close()
+  A=open("run.json",'r')
+  a=eval(A.read())
+  A.close()
+  config=dict(a.items())
+  config['project']['STRANDED']=strandness
+  with open('run.json','w') as F:
+    json.dump(config, F, sort_keys = True, indent = 4,ensure_ascii=False)
+  F.close()
 
 rule rsem:
   input: file1= "{name}.p2.Aligned.toTranscriptome.out.bam"
