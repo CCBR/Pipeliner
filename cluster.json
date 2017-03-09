@@ -21,6 +21,11 @@
         "threads": "8",
         "mem" : "96g",
     },
+    "cnvkit_somatic":
+     {
+        "threads": "4",
+        "mem" : "48g",
+    },
     "manta_somatic":
      {
         "threads": "8",
@@ -100,7 +105,19 @@
         "time" : "5-00:00:00",
         "mem": "96g"
     },
+    "gatk_combine_somatic_gvcfs":
+    {
+        "threads": "1",
+        "time" : "5-00:00:00",
+        "mem": "96g"
+    },
     "gatk_genotype_gvcfs":
+    {
+        "threads": "4",
+        "time" : "10-00:00:00",
+        "mem": "120g"
+    },
+    "gatk_genotype_somatic_gvcfs":
     {
         "threads": "4",
         "time" : "10-00:00:00",
@@ -162,7 +179,8 @@
     },
     "picard_headers2":
     {
-        "threads": "1"
+        "threads": "1",
+        "mem": "24g"
     },
     "picard_rnaseqvarheaders":
     {
@@ -222,7 +240,13 @@
     },
     "script_batchgvcf":
     {
-        "threads": "1"
+        "threads": "1",
+        "mem" : "12g"
+    },
+    "script_somatic_batchgvcf":
+    {
+        "threads": "1",
+        "mem" : "12g"
     },
     "script_bzip2":
     {
@@ -271,7 +295,7 @@
     "gatk_rnaseqvar_haplotype_caller":
     {
         "threads": "4",
-        "mem": "96g"
+        "mem": "48g"
     },
     "star_generate":
     {
