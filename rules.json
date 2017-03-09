@@ -2,6 +2,9 @@
     "rules": {
         "avia": ["wgslow","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","exomeseq-somatic","rnaseqvargerm"],
         "germline_filter_wgs": ["wgslow"],
+        "gatk.genotype.somatic.gvcfs": ["exomeseq-somatic"],
+        "gatk.combine.somatic.gvcfs": ["exomeseq-somatic"],
+        "script.somatic.batchgvcf": ["exomeseq-somatic"],
         "manta_germline": ["exomeseq-germline"],
 #        "manta_somatic": ["exomeseq-somatic"],
         "manta_wgs": ["wgslow"],

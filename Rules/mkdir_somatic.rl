@@ -2,6 +2,7 @@ rule mkdir_somatic:
         input:  expand("{s}.dedup.bam", s=samples)
         output: mutect_dir=config['project']['workpath']+"/mutect_out",
                 mutect2_dir=config['project']['workpath']+"/mutect2_out",
+                mut2chrom_dir=config['project']['workpath']+"/mutect2_out/chrom_files",
                 cnvkit_dir=config['project']['workpath']+"/cnvkit_out",
                 strelka_dir=config['project']['workpath']+"/strelka_out",
                 delly_dir=config['project']['workpath']+"/delly_out",
