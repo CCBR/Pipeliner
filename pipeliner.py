@@ -511,7 +511,7 @@ def makejson(*args):
         key=re.sub(".dedup","",key)
         key=re.sub(".sorted","",key)
         key=re.sub(".fin","",key)
-        key=re.sub(".R[12]","",key)
+        key=re.sub("\.R[12]","",key)
         key=re.sub("_R[12]","",key)
         key=re.sub(".fastq","",key)
         key=re.sub(".gz","",key)                                
@@ -624,7 +624,7 @@ def symlink(data):
            p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
            Out = p.stdout.read()
         else:
-           cmd="for f in `ls {0}*[._]{1}`;do ln -s $f {2};done".format(data,FT,workpath.get())        
+           cmd="for f in `ls {0}*[\._]{1}`;do ln -s $f {2};done".format(data,FT,workpath.get())        
            p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
            Out = p.stdout.read()
 

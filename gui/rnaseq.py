@@ -292,7 +292,7 @@ class RNASeqFrame( PipelineFrame ) :
             key=re.sub(".dedup","",key)
             key=re.sub(".sorted","",key)
             key=re.sub(".fin","",key)
-            key=re.sub(".R[12]","",key)
+            key=re.sub("\.R[12]","",key)
             key=re.sub("_R[12]","",key)
             key=re.sub(".fastq","",key)
             key=re.sub(".gz","",key)                                
