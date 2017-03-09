@@ -1,8 +1,7 @@
 rule delly_somatic:
     params: exclusions=config['references'][pfamily]['DELLY_EXCLUSIONS'],workdir=config['project']['workpath'],genome=config['references'][pfamily]['GENOME'],rname="pl:delly"
     input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
-           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
-           dir=config['project']['workpath']+"/delly_out"
+           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam"
     output: deletion=config['project']['workpath']+"/delly_out/{x}_del.bcf",
             ins=config['project']['workpath']+"/delly_out/{x}_ins.bcf",
             dup=config['project']['workpath']+"/delly_out/{x}_dup.bcf",
