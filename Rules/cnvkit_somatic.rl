@@ -3,8 +3,7 @@ rule cnvkit_somatic:
            tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
            normalgvcf=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".g.vcf",
            tumorgvcf=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".g.vcf",
-           targets=config['project']['workpath']+"/cnvkit_targets.bed",
-           outdir=config['project']['workpath']+"/cnvkit_out"
+           targets=config['project']['workpath']+"/cnvkit_targets.bed"
     output: vcf=config['project']['workpath']+"/cnvkit_out/{x}_germpairs.vcf",
             filtvcf=config['project']['workpath']+"/cnvkit_out/{x}_filtGermpairs.vcf",
             calls=config['project']['workpath']+"/cnvkit_out/{x}_calls.cns",
