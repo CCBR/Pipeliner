@@ -60,7 +60,7 @@ class RNASeqFrame( PipelineFrame ) :
         self.rReadlen = rReadlen = StringVar()
         rReadlen.set(rReadlens[2])        
         self.om2 = OptionMenu(eframe, rReadlen, *rReadlens, command=self.option_controller)
-        self.om2.grid(row=4,column=1,sticky=W,padx=10,pady=5)
+        #self.om2.grid(row=4,column=1,sticky=W,padx=10,pady=5)
 
         rStrands = ['0, Reads are Unstranded',
                                     '1, Reads are from Sense Strand',
@@ -68,7 +68,7 @@ class RNASeqFrame( PipelineFrame ) :
         self.rStrand = rStrand = StringVar()
         rStrand.set(rStrands[0])
         self.om3 = OptionMenu(eframe, rStrand, *rStrands, command=self.option_controller)
-        self.om3.grid(row=5,column=1,sticky=W,padx=10,pady=5)
+        #self.om3.grid(row=5,column=1,sticky=W,padx=10,pady=5)
         
         rDegs = ["no, Do not Report Differentially Expressed Genes",
                               "yes, Report Differentially Expressed Genes"]
