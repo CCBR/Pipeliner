@@ -1,6 +1,7 @@
  {"references": {
     "exomeseq": {
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
+    "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_dbSNP_allStrains_compSet.vcf.gz",
     "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
     "CHROMS": ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10","chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19","chrX","chrY","chrM"],
     "INDELSITES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_known_indels.vcf.gz",
