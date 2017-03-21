@@ -9,7 +9,7 @@ cd $SLURM_SUBMIT_DIR
 D=/data/CCBR/dev/Pipeline/Pipeliner
 R=/scratch/dwheeler/test2
 
-snakemake  -s $R/Snakefile -d $R --printshellcmds --cluster-config $D/cluster.json --cluster "sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem}" -j 50 --rerun-incomplete --stats $R/Reports/initialqc.stats -T 2>&1|tee -a $R/Reports/snakemake.log
+snakemake  -s $R/Snakefile -d $R --printshellcmds --cluster-config $D/cluster.json --cluster "sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem}" -j 50 --rerun-incomplete --keep-going --stats $R/Reports/initialqc.stats -T 2>&1|tee -a $R/Reports/snakemake.log
 
 
 
