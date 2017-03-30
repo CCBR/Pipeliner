@@ -1,6 +1,6 @@
  {
     "rules": {
-        "avia": ["wgslow","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","exomeseq-somatic","rnaseqvargerm"],
+        "avia": ["wgslow","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","rnaseqvargerm"],
         "germline_filter_wgs": ["wgslow"],
         "gatk.genotype.somatic.gvcfs": ["exomeseq-somatic"],
         "gatk.combine.somatic.gvcfs": ["exomeseq-somatic"],
@@ -77,12 +77,12 @@
         "gatk.merge.mutect2.chrom": ["exomeseq-somatic"],
         "gatk.merge.somatic.vcfs": ["exomeseq-somatic"],
         "snpeff_somatic": ["exomeseq-somatic"],
-        "avia.make.bed.somatic": ["exomeseq-somatic"],
+        "avia.make.bed.somatic": ["none"],
         "avia.make.bed.germ": ["exomeseq-germline","rnaseqvargerm"],
         "avia.make.bed.genomeseq": ["wgslow"],
         "database_germline": ["exomeseq-germline","rnaseqvargerm"],
         "database_genomeseq": ["wgslow"],
-        "database_somatic": ["exomeseq-somatic"],
+        "database_somatic": ["none"],
         "svdetect": ["none"],
         "bicseq": ["none"],
         "generate_QC_table": ["initialqc"],

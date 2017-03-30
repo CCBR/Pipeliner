@@ -9,7 +9,7 @@ if config['project']['annotation'] == "hg19":
             expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{p}"+".maf",p=pairs),
             expand(config['project']['workpath']+"/strelka_out/oncotator_out/{p}"+".maf",p=pairs),
             expand(config['project']['workpath']+"/mutect_out/oncotator_out/{p}"+".maf",p=pairs),
-            config['project']['workpath']+"/mutect_variants_alview.input",
+#            config['project']['workpath']+"/mutect_variants_alview.input",
             config['project']['workpath']+"/strelka_out",
             config['project']['workpath']+"/mutect2_out",
             config['project']['workpath']+"/cnvkit_out",
@@ -22,7 +22,7 @@ if config['project']['annotation'] == "hg19":
             expand(config['project']['workpath']+"/delly_out/{p}_dup.bcf", p=pairs),
             expand(config['project']['workpath']+"/delly_out/{p}_tra.bcf", p=pairs),
             expand(config['project']['workpath']+"/delly_out/{p}_inv.bcf", p=pairs),
-            expand(config['project']['workpath']+"/theta_out/{p}/{p}.input", p=pairs),
+            expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs),
             expand(config['project']['workpath']+"/conpair_out/{p}.conpair", p=pairs),
             config['project']['workpath']+"/mutect_out/merged_somatic.vcf",
             config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
@@ -30,10 +30,10 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/strelka_out/merged_somatic_snpEff.vcf",
 #            config['project']['workpath']+"/mutect2_out/merged_somatic.vcf",
 #            config['project']['workpath']+"/mutect2_out/merged_somatic_snpEff.vcf",
-            config['project']['workpath']+"/variants.bed",
-            config['project']['workpath']+"/full_annot.txt.zip",
+#            config['project']['workpath']+"/variants.bed",
+#            config['project']['workpath']+"/full_annot.txt.zip",
             config['project']['workpath']+"/sample_network.bmp",
-            config['project']['workpath']+"/variants.database",
+#            config['project']['workpath']+"/variants.database",
             config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf",
             config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/strelka_out/oncotator_out/strelka_variants.maf",
@@ -45,7 +45,7 @@ if config['project']['annotation'] == "hg19":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped *.avia_status.txt *.avia.log *_genotypes.vcf logfiles/
+             module load multiqc; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 
@@ -59,7 +59,7 @@ else:
             expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{p}"+".maf",p=pairs),
             expand(config['project']['workpath']+"/strelka_out/oncotator_out/{p}"+".maf",p=pairs),
             expand(config['project']['workpath']+"/mutect_out/oncotator_out/{p}"+".maf",p=pairs),
-            config['project']['workpath']+"/mutect_variants_alview.input",
+#            config['project']['workpath']+"/mutect_variants_alview.input",
             config['project']['workpath']+"/strelka_out",
             config['project']['workpath']+"/mutect2_out",
             config['project']['workpath']+"/cnvkit_out",
@@ -72,7 +72,7 @@ else:
             expand(config['project']['workpath']+"/delly_out/{p}_dup.bcf", p=pairs),
             expand(config['project']['workpath']+"/delly_out/{p}_tra.bcf", p=pairs),
             expand(config['project']['workpath']+"/delly_out/{p}_inv.bcf", p=pairs),
-            expand(config['project']['workpath']+"/theta_out/{p}/{p}.input", p=pairs),
+            expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs),
             expand(config['project']['workpath']+"/conpair_out/{p}.conpair", p=pairs),
             config['project']['workpath']+"/mutect_out/merged_somatic.vcf",
             config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
@@ -80,10 +80,10 @@ else:
             config['project']['workpath']+"/strelka_out/merged_somatic_snpEff.vcf",
 #            config['project']['workpath']+"/mutect2_out/merged_somatic.vcf",
 #            config['project']['workpath']+"/mutect2_out/merged_somatic_snpEff.vcf",
-            config['project']['workpath']+"/variants.bed",
-            config['project']['workpath']+"/full_annot.txt.zip",
+#            config['project']['workpath']+"/variants.bed",
+#            config['project']['workpath']+"/full_annot.txt.zip",
             config['project']['workpath']+"/sample_network.bmp",
-            config['project']['workpath']+"/variants.database",
+#            config['project']['workpath']+"/variants.database",
             config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf",
             config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/strelka_out/oncotator_out/strelka_variants.maf",
@@ -95,6 +95,6 @@ else:
     output:
     params: rname="final"
     shell:  """
-             module load multiqc; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped *.avia_status.txt *.avia.log *_genotypes.vcf logfiles/
+             module load multiqc; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
