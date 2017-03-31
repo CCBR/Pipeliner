@@ -14,7 +14,7 @@
     "theta":
     {
         "threads": "1",
-        "mem" : "120g"
+        "mem" : "48g"
     },
     "manta_germline":
      {
