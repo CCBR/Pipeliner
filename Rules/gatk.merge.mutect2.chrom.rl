@@ -63,7 +63,7 @@ else:
             vcfX=config['project']['workpath']+"/mutect2_out/chrom_files/{x}_X.vcf",
             vcfY=config['project']['workpath']+"/mutect2_out/chrom_files/{x}_Y.vcf",
             targets=config['project']['workpath']+"/exome_targets.bed"
-    output: vcf=config['project']['workpath']+"/mutect2_out/{x})_mutect2.vcf",
+    output: vcf=config['project']['workpath']+"/mutect2_out/{x}_mutect2.vcf",
             snps=config['project']['workpath']+"/mutect2_out/{x}.SNPs.vcf",
             indels=config['project']['workpath']+"/mutect2_out/{x}.INDELs.vcf",
             flagsnps=config['project']['workpath']+"/mutect2_out/{x}.flaggedSNPs.vcf",
