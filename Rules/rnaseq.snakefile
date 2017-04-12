@@ -47,7 +47,7 @@ elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
             "RawCountFile_genejunctions_filtered.txt",
             expand("{name}.star.count.overlap.txt",name=samples),
             "RawCountFileOverlap.txt","RawCountFileStar.txt",
-#            expand("{name}.rsem.genes.results",name=samples),
+            expand("{name}.rsem.genes.results",name=samples),
             "DEG_genes/PcaReport.html","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html"
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
@@ -195,23 +195,23 @@ rule deseq2:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
   ## input: "sampletable.txt"
   output: "DEG{dtype}/deseq2_pca.png"
-  params: rname='pl:deseq2',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}"
+  params: rname='pl:deseq2',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", refer=config['project']['annotation']
 ##  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/deseq2.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.annotate}' '{params.contrasts}'"
-  shell: "mkdir -p DEG{params.dtype}; cp Scripts/Deseq2Report.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/deseq2call.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}'"
+  shell: "mkdir -p DEG{params.dtype}; cp Scripts/Deseq2Report.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/deseq2call.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}'"
 
 rule edgeR:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
   output: "DEG{dtype}/edgeR_prcomp.png"
-  params: rname='pl:edgeR',batch='--mem=24g --time=10:00:00', dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}"
+  params: rname='pl:edgeR',batch='--mem=24g --time=10:00:00', dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", refer=config['project']['annotation']
 ##  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/edgeR.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.annotate}' '{params.contrasts}'"
-  shell: "mkdir -p DEG{params.dtype}; cp Scripts/EdgerReport.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/edgeRcall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}'"
+  shell: "mkdir -p DEG{params.dtype}; cp Scripts/EdgerReport.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/edgeRcall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}'"
 
 rule limmavoom:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
   output: "DEG{dtype}/Limma_MDS.png"
-  params: rname='pl:limmavoom',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}"
+  params: rname='pl:limmavoom',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", refer=config['project']['annotation']
 ##  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/limmavoom.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}'"
-  shell: "mkdir -p DEG{params.dtype}; cp Scripts/LimmaReport.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/limmacall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}'"
+  shell: "mkdir -p DEG{params.dtype}; cp Scripts/LimmaReport.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/limmacall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}'"
 
 rule pca:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
