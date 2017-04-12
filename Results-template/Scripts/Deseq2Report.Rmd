@@ -7,6 +7,7 @@ params:
   sampleinfo: sampletable.txt
   data: RawCountFile_genes_filtered.txt
   contrasts: "GN GP"
+  species: hg19
 ---
 
 ## **Histogram after normalization**
@@ -48,7 +49,7 @@ DIR <- params$folder
 FILE1 <- params$sampleinfo
 FILE2 <- params$data
 CONTRASTS <- params$contrasts
-
+SPECIES <-params$species
 # ANNOTATE <- args[4]
 
 #
@@ -68,7 +69,7 @@ colnames(ndata)=colnames(x)
 write.table(ndata,file="Deseq2_normalized_counts.txt",sep="\t",col.names=NA)
 #png("HistDesq2normFilter.png")
 df.m <- melt(as.data.frame(ndata))
-print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='top') + scale_x_log10())
+print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
 # dev.off() 
 #
 ## transformation
@@ -77,6 +78,8 @@ rldm=assay(rld)
 colnames(rldm)=colnames(x)
 write.table(rldm,file="Deseq2_normalized_rld.txt",sep="\t",col.names=NA)
 
+```
+```{r, echo=FALSE, warning=FALSE,message=FALSE,include=FALSE}
 png("deseq2_pca.png")
 print(plotPCA(rld, intgroup=c("condition")))
 ## dev.copy(png,"deseq2_pca.png")
@@ -117,8 +120,8 @@ rgl.postscript("pca3d_deseq2.pdf","pdf")
 
 ```
 ## **Similarity Heatmap**
-```{r, echo=FALSE,warning=FALSE,message=FALSE}
 
+```{r, echo=FALSE, warning=FALSE,message=FALSE,include=FALSE}
 ## clustering / heatmap
 hmcol <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
 distsRL <- dist(t(assay(rld)))
@@ -129,7 +132,9 @@ png("deseq2_heatmaps_samplebysample.png")
 heatmap.2(mat, trace="none", col = rev(hmcol), margin=c(16, 16))
 ## dev.copy(png,"deseq2_heatmaps_samplebysample.png")
 dev.off()
+```
 
+```{r, echo=FALSE,warning=FALSE,message=FALSE}
 d=Dist(tedf,method="pearson",diag=TRUE)
 m=as.matrix(d)
 
@@ -139,7 +144,7 @@ heatmap(m,symm=TRUE,col=new.palette(20))
 
 ```
 
-## **DEG and Volcano plots**
+## **Differentially expressed genes (DEG) for all contrasts: Volcano plots, Pathways and DEG tables**
 
 ```{r, echo=FALSE, warning=F,message=F}
 
@@ -150,23 +155,74 @@ mfc=c()
 mpval=c()
 cons=c()
 l <- htmltools::tagList()
+pup = htmltools::tagList()
+pdw = htmltools::tagList()
+
 for(i in seq(1, length(contras), by = 2))
 {{
 res<-results(dds,contrast=c("condition",as.character(contras[i]),as.character(contras[i+1])))
 ## res<-res[order(res$padj),] for now
 res1=as.data.frame(res)
-mfc=cbind(mfc,res1$log2FoldChange)
-mpval=cbind(mpval,res1$pvalue)
+# mfc=cbind(mfc,res1$log2FoldChange)
+# mpval=cbind(mpval,res1$pvalue)
 cons=c(cons,paste(contras[i],"-",contras[i+1],sep=""))
 
 restmp=res1
 restmp$FoldChange <- ifelse(restmp$log2FoldChange<0, -1/(2^restmp$log2FoldChange), 2^restmp$log2FoldChange)
-
+mfc=cbind(mfc,restmp$FoldChange)
+mpval=cbind(mpval,restmp$pvalue)
+final=restmp
 x=rownames(restmp)
 ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
 gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 restmp=cbind(ensID,gene,restmp)
 write.table(restmp,file=paste("DESeq2_deg_",contras[i],"_vs_",contras[i+1],".txt",sep=""),sep="\t",col.names=NA) 
+
+## pathway enrichment --------------------------------------------
+if (SPECIES=="hg19")
+{
+iup=which(final$pvalue<0.05 & final$FoldChange >=0)
+idw=which(final$pvalue<0.05 & final$FoldChange <0)
+fin.up=final[iup,]
+if (length(iup) > 500)
+  {
+   fin.up=fin.up[order(fin.up$pvalue),]
+   fin.up=fin.up[1:500,]
+  }
+x2=rownames(fin.up)
+gup=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+
+fin.dw=final[idw,]
+if (length(idw) > 500)
+  {
+   fin.dw=fin.dw[order(fin.dw$pvalue),]
+   fin.dw=fin.dw[1:500,]
+  }
+x2=rownames(fin.dw)
+gdw=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+
+extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
+write.table(gup,paste0("deseq2_gene_up_path",extension),quote=F,row.names=F,col.names=F)
+write.table(gdw,paste0("deseq2_gene_dw_path",extension),quote=F,row.names=F,col.names=F)
+# extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
+system(paste0("cat deseq2_gene_up_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >deseq2_res_path_up",extension))
+system(paste0("cat deseq2_gene_dw_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >deseq2_res_path_dw",extension))
+
+mup=read.delim(paste0("deseq2_res_path_up",extension),header=F)
+mdw=read.delim(paste0("deseq2_res_path_dw",extension),header=F)
+colnames(mup)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
+colnames(mdw)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
+
+mup=mup[which(mup[,1]<0.05),]
+mdw=mdw[which(mdw[,1]<0.05),]
+
+pup[[i]] <- DT::datatable(mup, caption=htmltools::tags$caption(paste0("Pathways for top 500 up-regulated genes ",contras[i],"_vs_",contras[i+1]) ,style="color:red; font-size: 18px" ))
+pdw[[i]] <- DT::datatable(mdw, caption=htmltools::tags$caption(paste0("Pathways for top 500 down-regulated genes ",contras[i],"_vs_",contras[i+1]) ,style="color:green; font-size: 18px" ) )
+
+}
+## ------------------------------------------------------------------
+
+
 x=res1$log2FoldChange[which(!is.na(res1$log2FoldChange))] 
 png(paste("MAplot_",contras[i],"_vs_",contras[i+1],".png",sep=""))
 plotMA(res,ylim=range(x),main=paste("MAplot_",contras[i],"_vs_",contras[i+1],sep=""))
@@ -182,16 +238,30 @@ Significant[which(res1$pvalue<0.05 & abs(res1$log2FoldChange)<1)]="Significant"
 Significant[which(res1$pvalue>=0.05 & abs(res1$log2FoldChange)>=1)]="LogFoldChange"
 gene=rownames(res1)
 volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
-l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Log2_FC",range =c(-10,10)),yaxis=list(title="-Log10_pvalue",range=c(0,10)))
+l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 pvalue",range =c(0,10)))
+
+#l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Log2_FC",range =c(-10,10)),yaxis=list(title="-Log10_pvalue",range=c(0,10)))
 #  %>% layout(annotations = a)
 }}
 
-colnames(mfc)=paste(cons,"logFC",sep="_")
+colnames(mfc)=paste(cons,"FC",sep="_")
 colnames(mpval)=paste(cons,"pval",sep="_")
 res=as.data.frame(cbind(mfc,mpval))
 rownames(res)=rownames(res1)
 write.table(res,file="DESeq2_res_all_contrasts.txt",sep="\t",col.names=NA)
-DT::datatable(res)
 
 l
+
+pup
+
+pdw
+
+DT::datatable(res, caption=htmltools::tags$caption("DEG for all contrasts",style="color:blue; font-size: 18px" ))
 ```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+
+sessionInfo()
+
+```
+
