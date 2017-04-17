@@ -117,11 +117,11 @@ class PipelineFrame( Frame ) :
     def set_data_directory( self ):
         fname = askdirectory( initialdir = USER_HOME, 
                              title="Select Data Directory")
+        
         self.datapath.set(fname)                                    
-        #count number
-        self.data_count['text'] = str(
-            len([fn for fn in listdir(fname) if fn.endswith(filetype)] )
-        ) 
+        self.datafiles = [fn for fn in listdir(fname) if fn.endswith(filetype)]
+        self.data_count['text'] = str( len(self.datafiles) ) 
+        
         print( "Found", self.data_count['text'], filetype, "files!" )
         
         self.option_controller()
@@ -200,7 +200,43 @@ class PipelineFrame( Frame ) :
         else :
             showerror( "Symlink failed", "" )
     
-    
+    def popup_window( self, text, filename ) :
+        top = Toplevel()
+  
+        info = LabelFrame(top, text=text )#"Group Information")
+        info_text = Text(info,
+                              width=50,
+                              height=8,
+                              #bg=projectBgColor,
+                              #fg=projectFgColor,
+                              font=("nimbus mono bold","11")
+                             )
+        
+        def savefunc() :
+            self.writepaste( filename, info_text ) 
+        
+        def loadfunc() :
+            self.readpaste( filename, info_text ) 
+        
+        info_save_button = Button(info, 
+                                  text="Save", 
+                                  command = savefunc )
+        info_load_button = Button(info,
+                                  text="Load",
+                                  command = loadfunc )
+
+        #self.pairs_load_button.pack( side=BOTTOM, padx=5, pady=5 )
+        #self.pairs_save_button.pack( side=BOTTOM, padx=5, pady=5 )
+
+        info_load_button.grid( row=5, column=5, padx=10, pady=5 )
+        info_save_button.grid( row=5, column=6, padx=10, pady=5 )
+        info_text.grid(row=1,  rowspan=3, 
+                       column=1,  columnspan=7,
+                       padx=5, pady=5 )
+
+        info.grid(row=7,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+        top.focus_force()
+        
         
     def makejson(self, *args):
         #print(args[0])
@@ -396,66 +432,45 @@ class PipelineFrame( Frame ) :
         pl = self.pipeline_name
         data = self.datapath.get()
         
-        if pl != 'ChIPSeq' :
-            data=data+"/"
-            data=re.sub("/+$","/",data)
-            FT=filetype
-            try:
-                #cmd="for f in `ls "+data+"*.fastq`;do ln -s $f;done"
-        #        cmd="for f in `ls "+data+"*."+FT+"`;do ln -s $f ../;done"
-                labelfile=Path(self.datapath.get()+"/labels.txt")
-                if labelfile.is_file():
-                    cmd="perl {3}/symfiles.pl {0} {1} {2}".format( 
-                        self.datapath.get(), self.datapath.get() + "/labels.txt", self.workpath.get(), PIPELINER_HOME )
+        data=data+"/"
+        data=re.sub("/+$","/",data)
+        FT=filetype
+        try:
+            #cmd="for f in `ls "+data+"*.fastq`;do ln -s $f;done"
+    #        cmd="for f in `ls "+data+"*."+FT+"`;do ln -s $f ../;done"
+            labelfile=Path(self.datapath.get()+"/labels.txt")
+            if labelfile.is_file():
+                cmd="perl {3}/symfiles.pl {0} {1} {2}".format( 
+                    self.datapath.get(), self.datapath.get() + "/labels.txt", self.workpath.get(), PIPELINER_HOME )
+                p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                Out = p.stdout.read()
+            else:
+                cmd="for f in `ls {0}*[._]{1}`;do ln -s $f {2};done".format(data,FT, self.workpath.get())        
+                p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                Out = p.stdout.read()
+
+        except Exception as e: 
+            showerror("Error",str(e))
+            if str(Out).find("No such file")==-1:
+                showinfo(FT,"Symlinks Created")
+            else:
+                showerror("Error","Symlinks Not Created")
+            if re.sub("bam","",FT):
+                FT2=re.sub("bam","",FT)
+                try:
+                    cmd="for f in `ls "+data+"*."+FT2+"bai`;do ln -s $f %s;done"%self.workpath.get()
                     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
                     Out = p.stdout.read()
-                else:
-                    cmd="for f in `ls {0}*[._]{1}`;do ln -s $f {2};done".format(data,FT, self.workpath.get())        
-                    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-                    Out = p.stdout.read()
+                except Exception as e:
+                    showerror("Error",str(e))
+                if str(Out).find("No such file")==-1:    
+                    showinfo(FT2+"bai","Symlinks Created")
+            #else:
+                #tkinter.messagebox.showinfo(FT2+"bai","Index Symlinks Not Created")
+        p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f | sed s/_fastq/.fastq/g` ; done ".format( self.workpath.get() ))
+        p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f|sed s/_R1.fastq/.R1.fastq/g`; done ".format( self.workpath.get() ))
+        p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f|sed s/_R2.fastq/.R2.fastq/g`; done ".format( self.workpath.get() ))
 
-            except Exception as e: 
-                showerror("Error",str(e))
-                if str(Out).find("No such file")==-1:
-                    showinfo(FT,"Symlinks Created")
-                else:
-                    showerror("Error","Symlinks Not Created")
-                if re.sub("bam","",FT):
-                    FT2=re.sub("bam","",FT)
-                    try:
-                        cmd="for f in `ls "+data+"*."+FT2+"bai`;do ln -s $f %s;done"%self.workpath.get()
-                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-                        Out = p.stdout.read()
-                    except Exception as e:
-                        showerror("Error",str(e))
-                    if str(Out).find("No such file")==-1:    
-                        showinfo(FT2+"bai","Symlinks Created")
-                #else:
-                    #tkinter.messagebox.showinfo(FT2+"bai","Index Symlinks Not Created")
-            p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f | sed s/_fastq/.fastq/g` ; done ".format( self.workpath.get() ))
-            p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f|sed s/_R1.fastq/.R1.fastq/g`; done ".format( self.workpath.get() ))
-            p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f|sed s/_R2.fastq/.R2.fastq/g`; done ".format( self.workpath.get() ))
-        else :
-            from glob import glob
-            from os.path import basename
-            from os import symlink
-            fastq_files = glob(data+'/*.fastq*')
-            files = []
-
-            for fastq in fastq_files :
-                try :
-                    src = fastq
-                    trg = self.workpath.get() +"/"+ basename(fastq)
-                    symlink( src, trg )
-                    files.append( trg )
-                except :
-                    showerror( "ChIPSeq", "Error in Making symlink %s -> %s!"%(src,trg) )
-                    return
-
-            symlink(PIPELINER_HOME + '/../ChIP-Seq-Pipeline/main.nf', self.workpath.get() + '/main.nf')
-            showinfo( "ChIPSeq", "ChIP-seq input files:\n%s" % "\n".join(files) )
-
-        #self.makejson("none")
         return True
         
     def writepaste( self, ftype, comments ) :
@@ -500,18 +515,11 @@ class PipelineFrame( Frame ) :
         if self.checklist()==1:
             return
 
-        if pl == 'ChIPSeq' :
-            showinfo('ChIPSeq', "Starting Nextflow Run "+pl+"\n")
-            cmd = "nextflow run ../ChIP-Seq-Pipeline/main.nf --reads='%s/*.fastq*' --macsconfig='%s/peakcallinfo.csv' -config ../ChIP-Seq-Pipeline/config --genome='hg19' &" %(  self.workpath.get(), self.workpath.get() )
-            print( cmd )
-            showinfo('ChIPSeq', "Starting Nextflow Run:\n"+"%s\n"+cmd)
-            os.system(cmd)
-        else :
-            MkaS=os.popen(PIPELINER_HOME+"/makeasnake.py "+PL+" 2>&1 | tee -a "+self.workpath.get()+"/Reports/makeasnake.log").read()
-            showinfo("Slurm","Starting Slurm Snakemake Run "+pl+"\n")
-            #snakemakeRun=Popen("../qsub.sh")
-            snakemakeRun=Popen(self.workpath.get()+"/submit_slurm.sh")    
-            #seelog()    
+        MkaS=os.popen(PIPELINER_HOME+"/makeasnake.py "+PL+" 2>&1 | tee -a "+self.workpath.get()+"/Reports/makeasnake.log").read()
+        showinfo("Slurm","Starting Slurm Snakemake Run "+pl+"\n")
+        #snakemakeRun=Popen("../qsub.sh")
+        snakemakeRun=Popen(self.workpath.get()+"/submit_slurm.sh")    
+        #seelog()    
             
     def cmd(self, smcommand):
         pl=self.pipeline_name
@@ -523,13 +531,10 @@ class PipelineFrame( Frame ) :
             return
         self.saveproject(self.global_info.jsonconf.get("1.0",END))
         #MkaS=os.popen("./makeasnake.py 2>&1 | tee -a "+workpath.get()+"/Reports/makeasnake.log").read()
-        if pl == 'ChIPSeq' :
-            showinfo('ChIPSeq', "Testing "+pl+"\n")
-        else :
-            MkaS=os.popen(PIPELINER_HOME+"/makeasnake.py "+PL+" 2>&1 | tee -a "+self.workpath.get()+"/Reports/makeasnake.log").read()
-            Out=os.popen("cd "+self.workpath.get()+" && snakemake " + smcommand +" 2>&1").read()
-            show(Out,"CCBR Pipeliner: "+ pl + " "+smcommand,dryrunFgColor,dryrunBgColor,200,100)
-            #show(MkaS + "\n" + Out,"CCBR Pipeliner: "+ pl + " "+smcommand,dryrunFgColor,dryrunBgColor,200,100)
+        MkaS=os.popen(PIPELINER_HOME+"/makeasnake.py "+PL+" 2>&1 | tee -a "+self.workpath.get()+"/Reports/makeasnake.log").read()
+        Out=os.popen("cd "+self.workpath.get()+" && snakemake " + smcommand +" 2>&1").read()
+        show(Out,"CCBR Pipeliner: "+ pl + " "+smcommand,dryrunFgColor,dryrunBgColor,200,100)
+        #show(MkaS + "\n" + Out,"CCBR Pipeliner: "+ pl + " "+smcommand,dryrunFgColor,dryrunBgColor,200,100)
             
     def checklist( self ) :
         '''placeholder'''

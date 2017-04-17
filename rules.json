@@ -109,11 +109,14 @@
         "rnaseqvar-qc": "all-rnaseqvar-qc",
         "rnaseqvar-germline": "all-rnaseqvar-germline.rl",
         "rnaseqvar-somatic": "all-rnaseqvar-somatic.rl",
+
     "rnaseq": "rnaseq.snakefile",
     "initialqcrnaseq": "initialqcrnaseq.snakefile",
     "CAPmirseq-plus": "CAPmirseq-plus.snakefile",	
-        }
 
+    "InitialChIPseqQC":"InitialChIPseqQC.snakefile", 
+    "ChIPseq":"ChIPseq.snakefile", 
+        }
  }
 
 

@@ -133,7 +133,7 @@ class PipelinerGUI(Tk):
         om["menu"].config() #bg = widgetBgColor,fg=widgetFgColor)
         om.grid(row=1,column=2,sticky=W,padx=10,pady=10)
         
-        pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'chipseq']
+        pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'ChIPseq']
         self.pfamily = pfamily = StringVar()
         pfamily.set('Select a pipeline')
         om = OptionMenu(pipeline_panel, pfamily, *pfamilys, command=self.set_pipeline)
@@ -269,8 +269,8 @@ class PipelinerGUI(Tk):
                                                'miR-Seq', #self.pfamily.get(), 
                                                self.annotation, global_info=self )
      
-        elif self.pfamily.get() == 'chipseq' :
-            print( 'chipseq' )
+        elif self.pfamily.get() == 'ChIPseq' :
+            print( 'ChIPseq' )
             self.pipelineframe = ChIPSeqFrame( self.notebook, 
                                                'ChIPseq',#self.pfamily.get(), 
                                                self.annotation, global_info=self )
