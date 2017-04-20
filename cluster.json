@@ -65,7 +65,8 @@
     },
     "fastq_screen":
     {
-        "threads": "24"
+        "threads": "24",
+        "mem": "24g"
     },
     "strelka":
     {
@@ -85,11 +86,13 @@
     },
     "fastqc_fastq":
     {
-        "threads": "8"
+        "threads": "8",
+        "mem": "24g"
     },
     "fastqc_trimmed":
     {
-        "threads": "8"
+        "threads": "8",
+        "mem": "24g"
     },
     "gatk_apply_variant_recal":
     {
@@ -305,7 +308,8 @@
     },
     "trimmomatic":
     {
-        "threads": "32"
+        "threads": "32",
+        "mem": "24g"
     },
     "varscan":
     {
@@ -325,12 +329,12 @@
     "trimmomatic_pe":
     {
         "threads": "32",
-        "mem": "110g"
+        "mem": "24g"
     },
     "fastqc":
     {
         "threads": "32",
-        "mem": "110g"
+        "mem": "24g"
     },
     "star1p":
     {
