@@ -42,7 +42,7 @@ class RNASeqFrame( PipelineFrame ) :
         
         label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
         label.grid(row=3,column=0,sticky=W,padx=10,pady=5)
-        Pipelines=["initialqcrnaseq","rnaseq"]
+        Pipelines=["initialqcrnaseq","rnaseq","rnaseqvargerm"]
         Pipeline = self.Pipeline = StringVar()
         Pipeline.set(Pipelines[0])        
         om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.option_controller)
@@ -115,9 +115,15 @@ class RNASeqFrame( PipelineFrame ) :
         if self.Pipeline.get() == 'initialqcrnaseq' :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
+            self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+        elif self.Pipeline.get() == 'rnaseqvargerm' :
+            self.om4.grid_forget()
+            self.sampleLF.grid_forget()
+            self.info.grid_forget()
         else :
             self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
             self.sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
+            self.info.grid_forget()
             
             
     def makejson_wrapper( self, *args, **kwargs ) :
@@ -140,7 +146,6 @@ class RNASeqFrame( PipelineFrame ) :
             self.groups_button.grid( row=5, column=5, padx=10, pady=5 )
             self.contrasts_button.grid( row=5, column=6, padx=10, pady=5 )
 
-        self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
    
     def popup_groups( self ) :
         self.popup_window( "Groups Information", "groups.tab" )
