@@ -42,10 +42,16 @@ class RNASeqFrame( PipelineFrame ) :
         
         label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
         label.grid(row=3,column=0,sticky=W,padx=10,pady=5)
-        Pipelines=["Quality Control Analysis","Differential Expression Analysis","Fusion Detection","Variant Calling" ]
-        Pipeline = self.Pipeline = StringVar()
-        Pipeline.set(Pipelines[0])        
-        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.option_controller)
+        PipelineLabels=["Quality Control Analysis","Differential Expression Analysis","Fusion Detection","Variant Calling" ]
+        Pipelines=["initialqcrnaseq","rnaseq","rnaseqfusion", "rnaseqvargerm"]
+
+        self.label2pipeline = { k:v for k,v in zip(PipelineLabels, Pipelines)}
+        
+        PipelineLabel = self.PipelineLabel = StringVar()
+        self.Pipeline = StringVar()
+
+        PipelineLabel.set(PipelineLabels[0])        
+        om = OptionMenu(eframe, PipelineLabel, *PipelineLabels, command=self.option_controller)
         om.config()#bg = widgetBgColor,fg=widgetFgColor)
         om["menu"].config()#bg = widgetBgColor,fg=widgetFgColor)
         #om.pack(side=LEFT,padx=20,pady=5)
@@ -111,20 +117,26 @@ class RNASeqFrame( PipelineFrame ) :
         self.option_controller()
     
     def option_controller( self, *args, **kwargs ) :
+
         PipelineFrame.option_controller( self )
-        if self.Pipeline.get() == 'Quality Control Analysis' :
+
+        self.Pipeline.set( self.label2pipeline[self.PipelineLabel.get()] )
+        print( self.Pipeline.get() )
+
+        if self.Pipeline.get() == 'initialqcrnaseq' :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
             self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
-        elif self.Pipeline.get() == 'Differential Expression Analysis' :
+        elif self.Pipeline.get() == 'rnaseq' :
+            self.info.grid_forget()
             self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
             self.sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
-            self.info.grid_forget()
         else :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
             self.info.grid_forget()
-            
+
+
             
     def makejson_wrapper( self, *args, **kwargs ) :
         self.makejson(*args, **kwargs)
