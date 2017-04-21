@@ -42,7 +42,7 @@ class RNASeqFrame( PipelineFrame ) :
         
         label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
         label.grid(row=3,column=0,sticky=W,padx=10,pady=5)
-        Pipelines=["initialqcrnaseq","rnaseq","rnaseqvargerm"]
+        Pipelines=["initialqcrnaseq","rnaseq","rnaseqfusion","rnaseqvar" ]
         Pipeline = self.Pipeline = StringVar()
         Pipeline.set(Pipelines[0])        
         om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.option_controller)
@@ -116,13 +116,13 @@ class RNASeqFrame( PipelineFrame ) :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
             self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
-        elif self.Pipeline.get() == 'rnaseqvargerm' :
-            self.om4.grid_forget()
-            self.sampleLF.grid_forget()
-            self.info.grid_forget()
-        else :
+        elif self.Pipeline.get() == 'rnaseq' :
             self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
             self.sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
+            self.info.grid_forget()
+        else :
+            self.om4.grid_forget()
+            self.sampleLF.grid_forget()
             self.info.grid_forget()
             
             
