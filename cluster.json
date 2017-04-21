@@ -11,6 +11,26 @@
     {
         "threads": "1"
     },
+    "fusioncatcher":
+    {
+        "threads": "16",
+        "mem" : "96g",
+    },
+    "starfusion":
+    {
+        "threads": "1",
+        "mem" : "48g",
+    },
+    "fusioninspector":
+    {
+        "threads": "1",
+        "mem" : "48g",
+    },
+    "oncofuse":
+    {
+        "threads": "1",
+        "mem" : "48g",
+    },
     "theta":
     {
         "threads": "1",
@@ -278,12 +298,12 @@
     "star_align_2":
     {
         "threads": "32",
-        "mem" : "64g"
+        "mem" : "96g"
     },
     "star_align_1":
     {
         "threads": "32",
-        "mem" : "64g"
+        "mem" : "96g"
     },
     "germline_filter_rnaseqvar":
     {
