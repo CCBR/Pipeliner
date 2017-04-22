@@ -18,6 +18,10 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
             "sampletable.txt",
             "DEG_genes/deseq2_pca.png",
             "DEG_genes/edgeR_prcomp.png",
+            "DEG_rsemgenes/deseq2_pca.png",
+            "DEG_rsemgenes/edgeR_prcomp.png",
+            "RawCountFile_rsemgenes_filtered.txt", 
+            "DEG_rsemgenes/Limma_MDS.png",
             "RawCountFile_genes_filtered.txt",
             "DEG_genes/Limma_MDS.png",
             "DEG_junctions/deseq2_pca.png",
@@ -31,7 +35,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
             expand("{name}.star.count.overlap.txt",name=samples),
             "RawCountFileOverlap.txt",
             "RawCountFileStar.txt",expand("{name}.rsem.genes.results",name=samples),
-            "DEG_genes/PcaReport.html","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html"
+            "DEG_genes/PcaReport.html","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html","DEG_rsemgenes/PcaReport.html"
             
         
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
@@ -48,7 +52,7 @@ elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
             expand("{name}.star.count.overlap.txt",name=samples),
             "RawCountFileOverlap.txt","RawCountFileStar.txt",
             expand("{name}.rsem.genes.results",name=samples),
-            "DEG_genes/PcaReport.html","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html"
+            "DEG_genes/PcaReport.html","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html","DEG_rsemgenes/PcaReport.html"
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
@@ -119,6 +123,12 @@ rule rsem:
   output: out1="{name}.rsem.genes.results",out2="{name}.rsem.isoforms.results"
   params: rname='pl:rsem',prefix="{name}.rsem",batch='--cpus-per-task=16 --mem=32g --time=24:00:00',rsemref=config['references'][pfamily]['RSEMREF'],rsem=config['bin'][pfamily]['RSEM']
   shell: "{params.rsem}/rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p 16  {input.file1} {params.rsemref} {params.prefix}"
+
+rule rsemcounts:
+   input: files=expand("{name}.rsem.genes.results", name=samples)
+   output: "RawCountFile_rsemgenes_filtered.txt"
+   params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
+   shell: "module load R; Rscript Scripts/rsemcounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
 
 
 rule subread:
