@@ -168,7 +168,7 @@
         "ANNOVAR1": "/usr/local/apps/ANNOVAR/2015-03-22/convert2annovar.pl",
         "ANNOVAR2": "/usr/local/apps/ANNOVAR/2015-03-22/table_annovar.pl",
         "INDEXBAM": "java -jar /usr/local/apps/picard/1.129/picard.jar BuildBamIndex", 
-        "GATK": "java -Xmx64g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar /usr/local/apps/GATK/3.6-0/GenomeAnalysisTK.jar",
+        "GATK": "java -Xmx64g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar /usr/local/apps/GATK/3.6/GenomeAnalysisTK.jar",
         "MARKDUPS": "module load picard/2.1.1; java -Xmx16g -XX:ParallelGCThreads=12 -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $PICARDJARPATH/picard.jar MarkDuplicates",
         "PICARD1": "module load picard/2.1.1; java -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $PICARDJARPATH/picard.jar AddOrReplaceReadGroups",
         "PICARD2": "module load picard/2.1.1; java -Xmx4G -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $PICARDJARPATH/picard.jar CollectInsertSizeMetrics",
