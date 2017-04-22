@@ -8,4 +8,4 @@ rule rnafusionmkdir:
                 fusioninspstar=config['project']['workpath']+"/starfusion/fusioninspector",
                 oncofusestar=config['project']['workpath']+"/starfusion/oncofuse",
         params: rname="pl:mkdir"
-        shell:  "mkdir -p {output.fusioncatcher}; mkdir -p {output.starfusion}; mkdir -p {output.fusioninspcatch}; mkdir -p {output.oncofusecatch}; mkdir -p {fusioninspstar}; mkdir -p {oncofusestar}
+        shell:  "mkdir -p {output.fusioncatcher}; mkdir -p {output.starfusion}; mkdir -p {output.fusioninspcatch}; mkdir -p {output.oncofusecatch}; mkdir -p {fusioninspstar}; mkdir -p {oncofusestar}"
