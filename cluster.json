@@ -318,7 +318,7 @@
     "gatk_rnaseqvar_haplotype_caller":
     {
         "threads": "4",
-        "mem": "48g"
+        "mem": "96g"
     },
     "star_generate":
     {

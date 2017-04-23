@@ -14,7 +14,7 @@ rule all_rnaseqvargerm:
 #           expand("{s}.dedup.bam.onTarget.bam",s=samples),
 #           expand("{s}.dedup.bam.bam_stats",s=samples),
             expand("QC/{s}_run_trimmomatic.err",s=samples),
-            expand("QC/{s}.qualimapReport/genome_results.txt",s=samples),
+#            expand("QC/{s}.qualimapReport/genome_results.txt",s=samples),
 #            config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
     output: 
     params: rname="final"
