@@ -18,7 +18,6 @@ my $input = '';
 my $infile= 'fusioncatcher/fusioninspector/' . $sample . '/' . $sample . "_fusionInspector.input";
 open I, ">$infile";
 $input = 'fusioncatcher/' . $sample . '/final-list_candidate-fusion-genes.txt';
-my @fusion = ();
 	
 open (J, $input);
 while (<J>) {
