@@ -5,7 +5,7 @@ if config['project']['annotation'] == "hg19":
            vcfb=config['project']['workpath']+"/mutect2_out/{x}.FINALmutect2.vcf"
     output: maf=config['project']['workpath']+"/mutect2_out/oncotator_out/{x}.maf"
     params: rname="pl:oncotator_mutect2"
-    shell: "module load oncotator; oncotator -v -o TCGAMAF -i VCF -c $ONCOTATOR_DATASOURCE/tx_exact_uniprot_matches.txt -a Tumor_Sample_Barcode:{input.tumor} -a Matched_Norm_Sample_Barcode:{input.normal} --skip-no-alt --db-dir /fdb/oncotator/oncotator_v1_ds_Jan262015 {input.vcfb} {output.maf} hg19"
+    shell: "module load oncotator; oncotator -v -o TCGAMAF -i VCF -c /fdb/oncotator/oncotator_v1_ds_Jan262015/tx_exact_uniprot_matches.txt -a Tumor_Sample_Barcode:{input.tumor} -a Matched_Norm_Sample_Barcode:{input.normal} --skip-no-alt --db-dir /fdb/oncotator/oncotator_v1_ds_Jan262015 {input.vcfb} {output.maf} hg19"
 
 else:
   rule oncotator_mutect2:
