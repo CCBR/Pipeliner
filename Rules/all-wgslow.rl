@@ -6,7 +6,9 @@ rule all_wgslow:
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),           
            "combined.snpeff.vcf",
            "combined.strictFilter.vcf",
-           "manta_out/results/variants/diploidSV.vcf.gz"
+           "manta_out/results/variants/diploidSV.vcf.gz",
+           config['project']['workpath']+"/delly_out/deletions.bcf",
+           "pindel_out/pindel_calls"
     output: 
     params: rname="final"
     shell:  """
