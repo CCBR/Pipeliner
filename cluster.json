@@ -86,6 +86,11 @@
         "threads": "8",
         "mem" : "64g",
     },
+    "breakdancer_germline":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
     "make_somatic_network":
     {
         "threads": "1",

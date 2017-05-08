@@ -1,10 +1,6 @@
-rule manta_germline:
+rule breakdancer_germline:
      input: expand("{x}.recal.bam", x=samples)
      output: "breakdancer_out/file.ctx"
-     params: gres="lscratch:100",gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:manta"
+     params: genome=config['references'][pfamily]['GENOME'],rname="breakdancer"
      threads: 8
-     run:
-      fl=os.popen("ls *.recal.bam").read().split()      
-      var=" --bam "+" --bam ".join(fl)
-      cmd="mkdir -p breakdancer_out; module load breakdancer/1.4.5; bam2cfg.pl "+var"; breakdancer-max config_file.cfg > {output}"
-      print(cmd)
+     shell: "mkdir -p breakdancer_out; module load breakdancer/1.4.5; cd breakdancer_out; bam2cfg.pl -g -h {input} > config_file.cfg; breakdancer-max config_file.cfg -g support.bed > {output}"
