@@ -8,7 +8,10 @@ rule all_wgslow:
            "combined.strictFilter.vcf",
            "manta_out/results/variants/diploidSV.vcf.gz",
            config['project']['workpath']+"/delly_out/deletions.bcf",
-           "pindel_out/pindel_calls"
+           "pindel_out/pindel_calls_INV",
+           "cnvkit_out/germline_cnvkit.heatmap",
+           "breakdancer_out/file.ctx",
+           config['project']['workpath']+"/svaba_out/svaba.log",
     output: 
     params: rname="final"
     shell:  """
