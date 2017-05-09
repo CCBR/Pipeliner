@@ -20,6 +20,6 @@ rule all_rnafusion:
     output: 
     params: rname="final"
     shell:  """
-             module load multiqc; multiqc -f -e featureCounts .; mv *.out slurmfiles/
+             module load multiqc/0.9dev0; multiqc -f -e featureCounts .; mv *.out slurmfiles/
 
             """
