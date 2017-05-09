@@ -48,6 +48,11 @@
         "threads": "1",
         "mem" : "48g",
     },
+    "cnvkit_germline":
+     {
+        "threads": "12",
+        "mem" : "64g",
+    },
     "manta_somatic":
      {
         "threads": "8",
