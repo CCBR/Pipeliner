@@ -9,7 +9,7 @@ rule all_wgslow:
            "manta_out/results/variants/diploidSV.vcf.gz",
            config['project']['workpath']+"/delly_out/deletions.bcf",
            "pindel_out/pindel_calls_INV",
-           "cnvkit_out/germline_cnvkit.heatmap",
+           "cnvkit_out/cnvkit_heatmap.pdf",
            "breakdancer_out/file.ctx",
            config['project']['workpath']+"/svaba_out/svaba.log",
     output: 
