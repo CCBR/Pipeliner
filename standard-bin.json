@@ -107,7 +107,7 @@
         "TRAILINGQUALITY": 10,
         "CROPLENGTH": 0,
         "HEADCROPLENGTH": 0,
-        "MINLEN": 20,
+        "MINLEN": 35,
         "TARGETLENGTH": 50,
         "STRICTNESS": 0.97,
         "WINDOWSIZE": 4,
