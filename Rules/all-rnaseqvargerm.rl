@@ -19,6 +19,6 @@ rule all_rnaseqvargerm:
     output: 
     params: rname="final"
     shell:  """
-             module load multiqc; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; rm *sorted.bam.bai; mv *sorted.txt logfiles/; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped *.avia_status.txt *.avia.log *_genotypes.vcf logfiles/
+             module load multiqc/0.9dev0; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; rm *sorted.bam.bai; mv *sorted.txt logfiles/; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped *.avia_status.txt *.avia.log *_genotypes.vcf logfiles/
 
             """

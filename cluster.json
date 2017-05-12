@@ -17,6 +17,12 @@
         "mem" : "96g",
         "time" : "10-00:00:00",
     },
+    "svaba_germline":
+    {
+        "threads": "32",
+        "mem" : "96g",
+        "time" : "10-00:00:00",
+    },
     "starfusion":
     {
         "threads": "1",
@@ -48,6 +54,11 @@
         "threads": "1",
         "mem" : "48g",
     },
+    "cnvkit_germ":
+     {
+        "threads": "12",
+        "mem" : "64g",
+    },
     "manta_somatic":
      {
         "threads": "8",
@@ -70,6 +81,26 @@
     "avia_make_bed_germ":
     {
         "mem" : "96g"
+    },
+    "delly_germline":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
+    "delly_somatic":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
+    "pindel_germline":
+    {
+        "threads": "8",
+        "mem" : "64g",
+    },
+    "breakdancer_germline":
+    {
+        "threads": "1",
+        "mem" : "64g",
     },
     "make_somatic_network":
     {
