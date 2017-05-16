@@ -140,6 +140,11 @@
         "threads": "8",
         "mem": "24g"
     },
+    "fastqc_rnaseqvar":
+    {
+        "threads": "8",
+        "mem": "24g"
+    },
     "fastqc_trimmed":
     {
         "threads": "8",
