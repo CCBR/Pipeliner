@@ -223,7 +223,7 @@ if (length(idw) > 500)
 x2=rownames(fin.dw)
 gdw=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 
-extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
+extension=paste0("_",cons[i],".txt")
 write.table(gup,paste0("limma_gene_up_path",extension),quote=F,row.names=F,col.names=F)
 write.table(gdw,paste0("limma_gene_dw_path",extension),quote=F,row.names=F,col.names=F)
 # extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
@@ -247,8 +247,8 @@ mup=mup[,c(8,9,10,11,1:7,12)]
 mdw=mdw[,c(8,9,10,11,1:7,12)]
 
 
-pup[[i]] <- DT::datatable(mup, caption=htmltools::tags$caption(paste0("Pathways for top 500 up-regulated genes ",contras[i],"_vs_",contras[i+1]) ,style="color:red; font-size: 18px" ),rownames=F)
-pdw[[i]] <- DT::datatable(mdw, caption=htmltools::tags$caption(paste0("Pathways for top 500 down-regulated genes ",contras[i],"_vs_",contras[i+1]) ,style="color:green; font-size: 18px" ),rownames=F )
+pup[[i]] <- DT::datatable(mup, caption=htmltools::tags$caption(paste0("Pathways for top 500 up-regulated genes ",cons[i]) ,style="color:red; font-size: 18px" ),rownames=F)
+pdw[[i]] <- DT::datatable(mdw, caption=htmltools::tags$caption(paste0("Pathways for top 500 down-regulated genes ",cons[i]) ,style="color:green; font-size: 18px" ),rownames=F )
 
 }
 ## ------------------------------------------------------------------
@@ -263,7 +263,7 @@ Significant[which(all.genes.con$P.Value<0.05 & abs(all.genes.con$logFC)<1)]="Sig
 Significant[which(all.genes.con$P.Value>=0.05 & abs(all.genes.con$logFC)>=1)]="LogFoldChange"
 gene=rownames(all.genes.con)
 volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
-l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 pvalue",range =c(0,10)))
+l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",cons[i],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 pvalue",range =c(0,10)))
 
 #l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",cons[i],sep=""),xaxis=list(title="Log2_FC",range =c(-10,10)),yaxis=list(title="-Log10_pvalue",range =c(0,10)))
 #  %>% layout(annotations = a)
