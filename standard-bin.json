@@ -85,7 +85,7 @@
         "CHKQCVER": " /data/CCBR_Pipeliner/dev/RNA-Seq-pipeline/ver2/summarizeFastQCver2",
         "STARVER": "STAR/2.5.2b",
         "PICARDVER": "picard/1.119",
-        "SUBREADVER": "subread/1.4.6",
+        "SUBREADVER": "subread/1.5.1",
         "BWAVER": "bwa/0.7.10",
         "RNASEQCVER": "/usr/local/apps/rnaseqc/1.1.8/RNA-SeQC_v1.1.8.jar",
         "IOoptions": "--------------------------- Output and input locations ---------------------------------------------------------",
