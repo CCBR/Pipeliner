@@ -12,6 +12,8 @@ setwd(DIR) # new
     sampleinfo = args[2],
     data = args[3],
     contrasts = args[4],
-    species = args[5]
+    species = args[5],
+    projectId = args[6],
+    projectDesc = args[7]
   ))
 
