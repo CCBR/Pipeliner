@@ -134,14 +134,14 @@ rule rsemcounts:
 rule subread:
    input:  file1="{name}.star_rg_added.sorted.dmark.bam", file2="strandness.txt"
    output: out="{name}.star.count.info.txt", res="{name}.star.count.txt"
-   params: rname='pl:subread',batch='--time=4:00:00',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
-   shell: "module load {params.subreadver}; featureCounts -T 16 -s `cat strandness.txt` -p -t exon -R -g gene_id -a {params.gtffile} -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
+   params: rname='pl:subread',batch='--time=4:00:00 --gres=lscratch:800',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
+   shell: "module load {params.subreadver}; featureCounts -T 16 -s `cat strandness.txt` -p -t exon -R -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
 
 rule subreadoverlap:
    input:  file1="{name}.star_rg_added.sorted.dmark.bam", file2="strandness.txt"
    output: out="{name}.star.count.info.overlap.txt", res="{name}.star.count.overlap.txt"
-   params: rname='pl:subreadoverlap',batch='--cpus-per-task=16 --mem=24g --time=48:00:00',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
-   shell: "module load {params.subreadver}; featureCounts -T 16 -s `cat strandness.txt` -p -t exon -R -O -g gene_id -a {params.gtffile} -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
+   params: rname='pl:subreadoverlap',batch='--cpus-per-task=16 --mem=24g --time=48:00:00 --gres=lscratch:800',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
+   shell: "module load {params.subreadver}; featureCounts -T 16 -s `cat strandness.txt` -p -t exon -R -O -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
 
 
 rule genecounts: 
