@@ -8,7 +8,27 @@ params:
   data: RawCountFile_genes_filtered.txt
   contrasts: "GN GP"
   species: hg19
+  projectId: "<projectId>"
+  projectDesc: "<desc>"
 ---
+
+```{r, include=FALSE, warning=FALSE, message=FALSE}
+countMethod <- "subread"
+if(grepl("rsem",params$data)){
+  countMethod <- "rsem"
+}
+projectId<-params$projectId
+projectDesc<-params$projectDesc
+dateandtime<-format(Sys.time(), "%a %b %d %Y - %X")
+```
+### **Project:**
+####    *`r projectId`*
+### **Description:** 
+####    *`r projectDesc`*
+###  **Count method:** 
+####    *`r countMethod`* 
+### **Report generated:** 
+####    *`r dateandtime`* 
 
 ## **Histogram after normalization**
 

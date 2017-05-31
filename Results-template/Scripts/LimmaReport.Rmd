@@ -8,7 +8,28 @@ params:
   data: RawCountFile_genes_filtered.txt
   contrasts: "GN GP"
   species: hg19
+  projectId: "<projectId>"
+  projectDesc: "<desc>"
+  gtffile: "gencode.v19.annotation.gtf"
 ---
+
+```{r, include=FALSE, warning=FALSE, message=FALSE}
+countMethod <- "subread"
+if(grepl("rsem",params$data)){
+  countMethod <- "rsem"
+}
+projectId<-params$projectId
+projectDesc<-params$projectDesc
+dateandtime<-format(Sys.time(), "%a %b %d %Y - %X")
+```
+### **Project:**
+####    *`r projectId`*
+### **Description:** 
+####    *`r projectDesc`*
+###  **Count method:** 
+####    *`r countMethod`* 
+### **Report generated:** 
+####    *`r dateandtime`* 
 
 ## **Histogram after normalization**
 
@@ -163,7 +184,7 @@ heatmap(m,symm=TRUE,col=new.palette(20))
 
 ## **Differentially expressed genes (DEG) for all contrasts: Volcano plots, Pathways and DEG tables**
 
-```{r, echo=FALSE, warning=F,message=F}
+```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
 library(ggplot2)
 library(plotly)
 ## DEG
@@ -182,11 +203,19 @@ ebayes.fit=eBayes(fitb)
 #write.table(res,file="Limma_res_all_contrasts.txt",sep="\t",col.names=NA)
 #DT::datatable(res)
 
+kp1 = htmltools::tagList()
+kp2 = htmltools::tagList()
 l <- htmltools::tagList()
 pup = htmltools::tagList()
 pdw = htmltools::tagList()
 mfc=c()
 mpval=c()
+
+if (grepl("hg",SPECIES)||grepl("mm",SPECIES))
+{
+system(paste0("cd ",getwd(),"; perl ../Scripts/gtf2bed.pl ",params$gtffile," |sort -k1,1 -k2,2n > karyobed.bed"))
+system(paste0("cd ",getwd(),"; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {print}}\' > karyobed.${a}.bed;done < chrs.txt"))
+}
 
 for (i in 1:nb)
 {{
@@ -283,6 +312,22 @@ ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
 gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 all.genes.con=cbind(ensID,gene,all.genes.con)
 write.table(all.genes.con,file=paste("Limma_deg_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
+if (grepl("hg",SPECIES)||grepl("mm",SPECIES))
+{
+system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py Limma_deg_",cons[i],"_all_genes.txt 2 3 ",SPECIES," > Limma_deg_",cons[i],".input.karyo"))
+system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py Limma_deg_",cons[i],".input.karyo ",SPECIES))
+ki1=paste0("Limma_deg_",cons[i],".input.karyo1.png")
+ki2=paste0("Limma_deg_",cons[i],".input.karyo2.png")
+cat("\n###KARYO PLOT",cons[i],"\n")
+cat("![](",ki1,")")
+#kp1[[i]]<-knitr::include_graphics(paste0("Limma_deg_",cons[i],".input.karyo1.png"))
+cat("\n")
+cat("![](",ki2,")")
+#kp2[[i]]<-knitr::include_graphics(paste0("Limma_deg_",cons[i],".input.karyo2.png"))
+cat("\n\n")
+}
+
+
 }}
 
 # add DEG  table
@@ -291,6 +336,9 @@ colnames(mpval)=paste(cons,"pval",sep="_")
 res=as.data.frame(cbind(mfc,mpval))
 rownames(res)=rownames(all.genes.con)
 write.table(res,file="limma_res_all_contrasts.txt",sep="\t",col.names=NA)
+
+#kp1[[i]]
+#kp2[[i]]
 
 l
 
