@@ -188,7 +188,7 @@ rule rnaseq_multiqc:
 rule samplecondition:
    input: files=expand("{name}.star.count.txt", name=samples)
    output: out1= "sampletable.txt"
-   params: rname='pl:samplecondition',batch='--mem=4g --time=10:00:00', groups=config['project']['groups']['rgroups'], labels=config['project']['groups']['rlabels']
+   params: rname='pl:samplecondition',batch='--mem=4g --time=10:00:00', groups=config['project']['groups']['rgroups'], labels=config['project']['groups']['rlabels'],gtffile=config['references'][pfamily]['GTFFILE']
    run:
         with open(output.out1, "w") as out:
             out.write("sampleName\tfileName\tcondition\tlabel\n")
@@ -200,6 +200,9 @@ rule samplecondition:
                 out.write("%s\n" % params.labels[i])                
                 i=i+1
             out.close()
+        os.system("mkdir -p bedfiles")
+        os.system("cd bedfiles; perl ../Scripts/gtf2bed.pl "+params.gtffile+" |sort -k1,1 -k2,2n > karyobed.bed")
+        os.system("cd bedfiles; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {{print}}\' > karyobed.${{a}}.bed;done < chrs.txt")
 
 rule deseq2:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"

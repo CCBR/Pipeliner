@@ -28,7 +28,7 @@ chrs=[ "chr"+a for a in chr_numbers ]
 binsize=50
 list_genes=1 #Changeable
 for chrom in chrs:
-	bedfile="karyobed."+chrom+".bed"
+	bedfile="../bedfiles/karyobed."+chrom+".bed"
 	lines=list(map(lambda x:x.strip().split("\t"),open(bedfile).readlines()))
 	genelist={a[4]:"###".join([ a[0], a[1], a[2]]) for a in lines}
 	datapoints=[]

@@ -204,19 +204,19 @@ ebayes.fit=eBayes(fitb)
 #write.table(res,file="Limma_res_all_contrasts.txt",sep="\t",col.names=NA)
 #DT::datatable(res)
 
-kp1 = htmltools::tagList()
-kp2 = htmltools::tagList()
+#kp1 = htmltools::tagList()
+#kp2 = htmltools::tagList()
 l <- htmltools::tagList()
 pup = htmltools::tagList()
 pdw = htmltools::tagList()
 mfc=c()
 mpval=c()
 
-if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(params$dtype=="genes"||params$dtype=="genes"))
-{
-system(paste0("cd ",getwd(),"; perl ../Scripts/gtf2bed.pl ",params$gtffile," |sort -k1,1 -k2,2n > karyobed.bed"))
-system(paste0("cd ",getwd(),"; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {print}}\' > karyobed.${a}.bed;done < chrs.txt"))
-}
+#if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(params$dtype=="genes"||params$dtype=="genes"))
+#{
+#system(paste0("cd ",getwd(),"; perl ../Scripts/gtf2bed.pl ",params$gtffile," |sort -k1,1 -k2,2n > karyobed.bed"))
+#system(paste0("cd ",getwd(),"; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {print}}\' > karyobed.${a}.bed;done < chrs.txt"))
+#}
 
 for (i in 1:nb)
 {{
@@ -313,6 +313,7 @@ ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
 gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 all.genes.con=cbind(ensID,gene,all.genes.con)
 write.table(all.genes.con,file=paste("Limma_deg_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
+
 if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(params$dtype=="genes"||params$dtype=="genes"))
 {
 system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py Limma_deg_",cons[i],"_all_genes.txt 2 3 ",SPECIES," > Limma_deg_",cons[i],".input.karyo"))
