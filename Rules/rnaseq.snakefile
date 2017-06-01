@@ -202,7 +202,7 @@ rule samplecondition:
             out.close()
         os.system("mkdir -p bedfiles")
         os.system("cd bedfiles; perl ../Scripts/gtf2bed.pl "+params.gtffile+" |sort -k1,1 -k2,2n > karyobed.bed")
-        os.system("cd bedfiles; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {print}\' > karyobed.${a}.bed;done < chrs.txt")
+        os.system("cd bedfiles; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {print}}\' > karyobed.${a}.bed;done < chrs.txt")
 
 rule deseq2:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
