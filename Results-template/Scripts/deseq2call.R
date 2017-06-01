@@ -14,6 +14,8 @@ setwd(DIR) # new
     contrasts = args[4],
     species = args[5],
     projectId = args[6],
-    projectDesc = args[7]
+    projectDesc = args[7],
+    gtffile = args[8],
+    dtype = args[9]
   ))
 
