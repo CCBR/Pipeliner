@@ -202,7 +202,7 @@ heatmap(m,symm=TRUE,col=new.palette(20))
 ## **Differentially expressed genes (DEG) for all contrasts: Volcano plots, Pathways and DEG tables**
 
 
-```{r, echo=FALSE, warning=F,message=F}
+```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
 
 ## differentially expressed genes -----
 contras=unlist(strsplit(CONTRASTS, split=" "))        
