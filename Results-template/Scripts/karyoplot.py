@@ -23,6 +23,9 @@ def karyoplot(karyo_filename, metadata={}, part=1):
 	karyo_dict={}
 	with open(karyo_filename) as karyo_f:
 		lines = [x.replace(os.linesep, '').split() for x in karyo_f.readlines()]
+		autosomes = range(1,20)
+		if "hg" in species:
+			autosomes = range(1,23)
 		for chromosome in [str(x) for x in range(1,23)] + ['X', 'Y']:
 			karyo_dict[chromosome] = [[y[0], int(y[1]), int(y[2]), y[3], y[4]] for y in [x for x in lines if x[0] == 'chr' + chromosome]]
 	scores=[]
