@@ -300,7 +300,7 @@ boxplot(value~variable,las=2,data=limma.dfm,main="Limma",ylab="Counts",col=as.nu
 
 ### Before Normalization
 
-```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fid.width=200, fig.height=.25*length(sampleinfo$label)}
+```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fid.width=500, fig.height=length(sampleinfo$label)}
 
 hmcol <- colorRampPalette(c("black","red","yellow","white"),space="rgb")(100)
 before.distrawlog2=amap::Dist(t(rawlog2),method="pearson")
@@ -310,7 +310,7 @@ heatmap.2(before.mat, trace="none", col = rev(hmcol), labCol=FALSE, colRow=as.nu
 
 ### TMM
 
-```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fid.width=200, fig.height=.25*length(sampleinfo$label)}
+```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fid.width=500, fig.height=length(sampleinfo$label)}
 
 edgeR.distylog2=amap::Dist(t(ylog2),method="pearson")
 edgeR.mat = as.matrix(edgeR.distylog2)
@@ -319,7 +319,7 @@ heatmap.2(edgeR.mat, trace="none", col = rev(hmcol), labCol=FALSE, colRow=as.num
 
 ### DESeq2
 
-```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fid.width=200, fig.height=.25*length(sampleinfo$label)}
+```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fid.width=500, fig.height=length(sampleinfo$label)}
 
 deseq2.dists <- amap::Dist(t(ddslog2),method="pearson")
 deseq2.mat <- as.matrix(deseq2.dists)
@@ -328,7 +328,7 @@ heatmap.2(deseq2.mat, trace="none", col = rev(hmcol), labCol=FALSE, colRow=as.nu
 
 ### Limma
 
-```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fid.width=200, fig.height=.25*length(sampleinfo$label)}
+```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fid.width=500, fig.height=length(sampleinfo$label)}
 
 limma.dists <- amap::Dist(t(limma.edf),method="pearson")
 limma.mat <- as.matrix(limma.dists)
