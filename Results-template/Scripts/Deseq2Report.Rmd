@@ -181,7 +181,7 @@ l <- htmltools::tagList()
 pup = htmltools::tagList()
 pdw = htmltools::tagList()
 
-#if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(params$dtype=="genes"||params$dtype=="genes"))
+#if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype))
 #{
 #system(paste0("cd ",getwd(),"; perl ../Scripts/gtf2bed.pl ",params$gtffile," |sort -k1,1 -k2,2n > karyobed.bed"))
 #system(paste0("cd ",getwd(),"; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {print}}\' > karyobed.${a}.bed;done < chrs.txt"))
@@ -281,7 +281,7 @@ l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mo
 #l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Log2_FC",range =c(-10,10)),yaxis=list(title="-Log10_pvalue",range=c(0,10)))
 #  %>% layout(annotations = a)
 
-if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(params$dtype=="genes"||params$dtype=="genes"))
+if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype))
 {
 system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py DESeq2_deg_",cons[i],"_all_genes.txt 2 4 ",SPECIES," > DESeq2_deg_",cons[i],".input.karyo"))
 system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py DESeq2_deg_",cons[i],".input.karyo ",SPECIES))
