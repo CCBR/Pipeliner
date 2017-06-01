@@ -214,7 +214,7 @@ l <- htmltools::tagList()
 pup = htmltools::tagList()
 pdw = htmltools::tagList()
 
-#if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(params$dtype=="genes"||params$dtype=="genes"))
+#if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype))
 #{
 #system(paste0("cd ",getwd(),"; perl ../Scripts/gtf2bed.pl ",params$gtffile," |sort -k1,1 -k2,2n > karyobed.bed"))
 #system(paste0("cd ",getwd(),"; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {print}}\' > karyobed.${a}.bed;done < chrs.txt"))
@@ -322,7 +322,7 @@ volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
 #  %>% layout(annotations = a)
 l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 pvalue",range =c(0,10)))
 
-if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(params$dtype=="genes"||params$dtype=="genes"))
+if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype))
 {
 system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py EdgeR_deg_",cons[i],"_all_genes.txt 2 3 ",SPECIES," > EdgeR_deg_",cons[i],".input.karyo"))
 system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py EdgeR_deg_",cons[i],".input.karyo ",SPECIES))
