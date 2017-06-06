@@ -518,7 +518,7 @@ class PipelineFrame( Frame ) :
         MkaS=os.popen(PIPELINER_HOME+"/makeasnake.py "+PL+" 2>&1 | tee -a "+self.workpath.get()+"/Reports/makeasnake.log").read()
         showinfo("Slurm","Starting Slurm Snakemake Run "+pl+"\n")
         #snakemakeRun=Popen("../qsub.sh")
-        snakemakeRun=Popen(self.workpath.get()+"/submit_slurm.sh")    
+        snakemakeRun=Popen([self.workpath.get()+"/submit_slurm.sh", self.global_info.eprojectid.get()])    
         #seelog()    
             
     def cmd(self, smcommand):

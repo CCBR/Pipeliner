@@ -72,6 +72,8 @@
         "threads": "4",
         "mem": "64g"
     },
+        
+       
     "bwa_pe":
     {
         "threads": "4"
@@ -446,5 +448,16 @@
         "mem": "16g"
     },
     
-
+    'BWA':
+    {
+        'mem': '32g',
+        'threads': '32'
+    },
+        
+    'MEMEChIP':
+    {
+        'mem': '64g',
+        'threads': '32'
+    },
+        
 }
