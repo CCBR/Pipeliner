@@ -18,6 +18,10 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
             "sampletable.txt",
             "DEG_genes/deseq2_pca.png",
             "DEG_genes/edgeR_prcomp.png",
+            "DEG_rsemgenes/deseq2_pca.png",
+            "DEG_rsemgenes/edgeR_prcomp.png",
+            "RawCountFile_rsemgenes_filtered.txt", 
+            "DEG_rsemgenes/Limma_MDS.png",
             "RawCountFile_genes_filtered.txt",
             "DEG_genes/Limma_MDS.png",
             "DEG_junctions/deseq2_pca.png",
@@ -31,7 +35,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
             expand("{name}.star.count.overlap.txt",name=samples),
             "RawCountFileOverlap.txt",
             "RawCountFileStar.txt",expand("{name}.rsem.genes.results",name=samples),
-            "DEG_genes/PcaReport.html","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html"
+            "DEG_genes/PcaReport.html","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html","DEG_rsemgenes/PcaReport.html"
             
         
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
@@ -47,8 +51,8 @@ elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
             "RawCountFile_genejunctions_filtered.txt",
             expand("{name}.star.count.overlap.txt",name=samples),
             "RawCountFileOverlap.txt","RawCountFileStar.txt",
-#            expand("{name}.rsem.genes.results",name=samples),
-            "DEG_genes/PcaReport.html","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html"
+            expand("{name}.rsem.genes.results",name=samples),
+            "DEG_genes/PcaReport.html","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html","DEG_rsemgenes/PcaReport.html"
 
 elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
@@ -120,18 +124,24 @@ rule rsem:
   params: rname='pl:rsem',prefix="{name}.rsem",batch='--cpus-per-task=16 --mem=32g --time=24:00:00',rsemref=config['references'][pfamily]['RSEMREF'],rsem=config['bin'][pfamily]['RSEM']
   shell: "{params.rsem}/rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p 16  {input.file1} {params.rsemref} {params.prefix}"
 
+rule rsemcounts:
+   input: files=expand("{name}.rsem.genes.results", name=samples)
+   output: "RawCountFile_rsemgenes_filtered.txt"
+   params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
+   shell: "module load R; Rscript Scripts/rsemcounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
+
 
 rule subread:
    input:  file1="{name}.star_rg_added.sorted.dmark.bam", file2="strandness.txt"
    output: out="{name}.star.count.info.txt", res="{name}.star.count.txt"
-   params: rname='pl:subread',batch='--time=4:00:00',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
-   shell: "module load {params.subreadver}; featureCounts -T 16 -s `cat strandness.txt` -p -t exon -R -g gene_id -a {params.gtffile} -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
+   params: rname='pl:subread',batch='--time=4:00:00 --gres=lscratch:800',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
+   shell: "module load {params.subreadver}; featureCounts -T 16 -s `cat strandness.txt` -p -t exon -R -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
 
 rule subreadoverlap:
    input:  file1="{name}.star_rg_added.sorted.dmark.bam", file2="strandness.txt"
    output: out="{name}.star.count.info.overlap.txt", res="{name}.star.count.overlap.txt"
-   params: rname='pl:subreadoverlap',batch='--cpus-per-task=16 --mem=24g --time=48:00:00',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
-   shell: "module load {params.subreadver}; featureCounts -T 16 -s `cat strandness.txt` -p -t exon -R -O -g gene_id -a {params.gtffile} -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
+   params: rname='pl:subreadoverlap',batch='--cpus-per-task=16 --mem=24g --time=48:00:00 --gres=lscratch:800',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
+   shell: "module load {params.subreadver}; featureCounts -T 16 -s `cat strandness.txt` -p -t exon -R -O -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
 
 
 rule genecounts: 
@@ -195,23 +205,23 @@ rule deseq2:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
   ## input: "sampletable.txt"
   output: "DEG{dtype}/deseq2_pca.png"
-  params: rname='pl:deseq2',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}"
+  params: rname='pl:deseq2',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", refer=config['project']['annotation']
 ##  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/deseq2.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.annotate}' '{params.contrasts}'"
-  shell: "mkdir -p DEG{params.dtype}; cp Scripts/Deseq2Report.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/deseq2call.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}'"
+  shell: "mkdir -p DEG{params.dtype}; cp Scripts/Deseq2Report.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/deseq2call.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}'"
 
 rule edgeR:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
   output: "DEG{dtype}/edgeR_prcomp.png"
-  params: rname='pl:edgeR',batch='--mem=24g --time=10:00:00', dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}"
+  params: rname='pl:edgeR',batch='--mem=24g --time=10:00:00', dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", refer=config['project']['annotation']
 ##  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/edgeR.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.annotate}' '{params.contrasts}'"
-  shell: "mkdir -p DEG{params.dtype}; cp Scripts/EdgerReport.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/edgeRcall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}'"
+  shell: "mkdir -p DEG{params.dtype}; cp Scripts/EdgerReport.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/edgeRcall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}'"
 
 rule limmavoom:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
   output: "DEG{dtype}/Limma_MDS.png"
-  params: rname='pl:limmavoom',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}"
+  params: rname='pl:limmavoom',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", refer=config['project']['annotation']
 ##  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/limmavoom.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}'"
-  shell: "mkdir -p DEG{params.dtype}; cp Scripts/LimmaReport.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/limmacall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}'"
+  shell: "mkdir -p DEG{params.dtype}; cp Scripts/LimmaReport.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/limmacall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}'"
 
 rule pca:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
