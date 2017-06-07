@@ -279,10 +279,10 @@ write.table(gdw,paste0("edgeR_gene_dw_path",extension),quote=F,row.names=F,col.n
 }
 else
 {
-write.table(gup,"temp_up.txt",quote=F,row.names=F,col.names=F)
-write.table(gdw,"temp_dw.txt",quote=F,row.names=F,col.names=F)
-system(paste0("cat temp_up.txt | grep -v "^NA" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d" "  >edgeR_gene_up_path",extension))
-system(paste0("cat temp_dw.txt | grep -v "^NA" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d" "  >edgeR_gene_dw_path",extension))
+write.table(gup,"edgeR_temp_up.txt",quote=F,row.names=F,col.names=F)
+write.table(gdw,"edgeR_temp_dw.txt",quote=F,row.names=F,col.names=F)
+system(paste0("cat edgeR_temp_up.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >edgeR_gene_up_path",extension))
+system(paste0("cat edgeR_temp_dw.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >edgeR_gene_dw_path",extension))
 }
 # extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
 system(paste0("cat edgeR_gene_up_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >edgeR_res_path_up",extension))
