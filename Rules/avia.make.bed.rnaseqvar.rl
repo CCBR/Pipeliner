@@ -1,9 +1,10 @@
 rule avia_make_bed_rnaseqvar:
-    input: "targets.strictFilter.vcf"
-    output: bed=config['project']['workpath']+"/variants.bed"
-    params: genome=config['references'][pfamily]['GENOME'],batch ="-l nodes=1:gpfs -q ccr",rname="make_bed"
+    input: "combined.vcf"
+    output: bed="variants.bed",
+            vcf="exome.recode.vcf"
+    params: regions="exome_targets.bed",genome=config['references'][pfamily]['GENOME'],batch ="-l nodes=1:gpfs -q ccr",rname="make_bed"
     shell: """
-         perl Scripts/avia_make_bed.pl {input}
+         module load GATK/3.5-0; GATK -m 24G SelectVariants -V combined.vcf -o {output.vcf} -L {params.regions} -R {params.genome} -nt 8; perl Scripts/avia_make_bed.pl exome.recode.vcf; mkdir -p sample_vcfs
 
            """
 

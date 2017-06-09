@@ -1,14 +1,11 @@
-rule all_exomeseq_germline:
+rule all_exomeseq_somatic:
     input: "combined.vcf",
-           "exome.recode.vcf",
-           config['project']['workpath']+"/full_annot.txt.zip",
+           "full_annot.txt.zip",
            "variants.database",
            "sample_network.bmp",
-           "exome.snpeff.vcf",
+           "targets.snpeff.vcf",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),
-           "exome_targets.bed",
-           "exome.strictFilter.vcf",
-           "manta_out/results/variants/diploidSV.vcf.gz"
+           "targets.strictFilter.vcf"
     output: 
     params: rname="final"
     shell:  """
