@@ -11,6 +11,11 @@ setwd(DIR) # new
     folder = args[1],
     sampleinfo = args[2],
     data = args[3],
-    contrasts = args[4]
+    contrasts = args[4],
+    species = args[5],
+    projectId = args[6],
+    projectDesc = args[7],
+    gtffile = args[8],
+    dtype = args[9]
   ))
 

@@ -1,5 +1,5 @@
 rule picard_rnaseqvarheaders:
-     input:  "{x}.p2.Aligned.sortedByCoord.out.bam",
+     input:  "{x}.p2Aligned.sortedByCoord.out.bam",
      output: temp("{x}.sorted.bam")
      params: picard1=config['bin'][pfamily]['PICARD1'],rname="pl:rnahead"
      threads: 1
