@@ -133,8 +133,10 @@
     "rnaseq": "rnaseq.snakefile",
     "initialqcrnaseq": "initialqcrnaseq.snakefile",
     "CAPmirseq-plus": "CAPmirseq-plus.snakefile",
-        }
 
+    "InitialChIPseqQC":"InitialChIPseqQC.snakefile", 
+    "ChIPseq":"ChIPseq.snakefile", 
+        }
  }
 
 

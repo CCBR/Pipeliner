@@ -206,7 +206,23 @@
     "MUTECTCOSMIC": "",
     "MUTECTSNP": ""
 },
+        "ChIPseq":{
+            "BWA": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
+            "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
+            "CHROMS": ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10",
+                       "chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19",
+                       "chrX","chrY","chrM"],
+            "EXONS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_UCSCexons.bed",
+            "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
+            "GENOMEFILE": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/ref.fa",	 
+            "GTFFILE": "/fdb/STAR_2.4.2a/UCSC/mm10/genes.gtf",
+            "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/dev/Mm10_genes.txt",
+            "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/lib/SS_mouse_exome_mm10_reformat.bed",
+            "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCm38_mm10_RefSeq.bed",
+            "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Mm10.rRNA.interval_list_M12"
+        }, 
 
- }
+
+  }
 
  }

@@ -1,0 +1,128 @@
+---
+title: "ChIPseeker"
+author: "CCBR"
+output: html_document
+params:
+    bedFile:
+        value: "/home/kopardevn/test_ChIPSeqRscript/HUVEC_hg19_CTCF_rep1.bed"
+    genome:
+        value: "hg19"
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r show_input}
+print(paste("GENOME:",params$genome,sep = "\t"))
+print(paste("BEDFILE:",params$bedFile,sep="\t"))
+```
+Setting up work environment and loading files:
+
+```{r Reading_Data, warning=FALSE, message=FALSE, echo=FALSE}
+
+librarylocation=NULL #"/data/CCBR_Pipeliner/db/PipeDB/Rlibrary"
+library("DOSE") #,lib.loc=librarylocation)
+library("ChIPseeker") #,lib.loc=librarylocation)
+library("UpSetR") # ,lib.loc=librarylocation)
+library("clusterProfiler" , lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary" )
+library("ReactomePA", lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary")
+
+
+if(params$genome=="hg19"){
+  txdb="TxDb.Hsapiens.UCSC.hg19.knownGene"
+  annodb="org.Hs.eg.db"
+} else if (params$genome=="mm10") {
+  txdb="TxDb.Mmusculus.UCSC.mm10.knownGene"
+  annodb="org.Mm.eg.db"
+} else if (params$genome=='mm9') {
+  txdb="TxDb.Mmusculus.UCSC.mm10.knownGene"
+  annodb="org.Mm.eg.db"
+}
+else {
+  quit()
+}
+
+library(txdb,lib.loc=librarylocation,character.only=TRUE)
+library(annodb,lib.loc=librarylocation,character.only=TRUE)
+
+#### if not available:
+## try http:// if https:// URLs are not supported
+## source("https://bioconductor.org/biocLite.R")
+## biocLite("TxDb.Hsapiens.UCSC.hg19.knownGene",lib="/scratch/Rlibrary")
+## biocLite("org.Hs.eg.db",lib="/scratch/Rlibrary")
+## biocLite("TxDb.Mmusculus.UCSC.mm10.knownGene",lib="/scratch/Rlibrary")
+## biocLite("org.Mm.eg.db",lib="/scratch/Rlibrary")
+## biocLite("ChIPseeker",lib="/scratch/Rlibrary")
+## biocLite("DOSE",lib="/scratch/Rlibrary")
+## biocLite("clusterProfiler",lib="/scratch/Rlibrary")
+## biocLite("ReactomePA",lib="/scratch/Rlibrary")
+
+
+### Reading data
+peakInc <- readPeakFile(params$bedFile, header=FALSE)
+peakInc
+
+#Getting promoters for hg19
+promoter <- getPromoters(eval(as.name(txdb)), upstream=3000, downstream=3000)
+tagMatrixInc <- getTagMatrix(peakInc, windows=promoter)
+```
+
+## Peaks location:
+####  islands
+
+```{r IncChromosomes, echo=FALSE, warning=FALSE}
+covplot(peakInc)
+
+##covplot(peak, weightCol="V5")
+```
+
+
+
+## Heatmaps and Read Count Frequencies for TSS:
+####  islands
+```{r IncHeatmaps, echo=FALSE, warning=FALSE}
+
+tagHeatmap(tagMatrixInc, xlim=c(-3000, 3000), color="red")
+plotAvgProf(tagMatrixInc, xlim=c(-3000, 3000), xlab="Genomic Region (5'->3')", ylab = "Read Count Frequency")
+##plotAvgProf(tagMatrixInc, xlim=c(-3000, 3000), conf = 0.95, resample = 1000)
+```
+
+## Pie diagram for peaks location:
+####  islands 
+
+```{r IncPies, echo=FALSE, warning=FALSE, message=FALSE} 
+
+peakAnnoFile <- peakInc
+peakAnnoInc <- annotatePeak(peakAnnoFile, tssRegion=c(-3000, 3000), TxDb=eval(as.name(txdb)), annoDb=annodb)
+plotAnnoPie(peakAnnoInc)
+upsetplot(peakAnnoInc)
+
+``` 
+
+## GO analysis:
+####  islands 
+ 
+```{r IncGO, echo=FALSE, warning=FALSE} 
+plotDistToTSS(peakAnnoInc, title="Distribution of transcription factor-binding loci\nrelative to TSS")
+bpInc <- enrichGO(as.data.frame(peakAnnoInc)$geneId, OrgDb=annodb, ont="BP", readable=TRUE)
+head(as.data.frame(bpInc), n=10)
+```
+
+
+##Functional enrichment analysis:
+
+```{r IncFEA, echo=FALSE, warning=FALSE} 
+if (params$genome=="hg19") {
+    pathway1 <- enrichPathway(as.data.frame(peakAnnoInc)$geneId)
+    head(pathway1, 2)
+    gene <- seq2gene(peakInc, tssRegion = c(-1000, 1000), flankDistance = 3000, TxDb=eval(as.name(txdb)))
+    pathway2 <- enrichPathway(gene)
+    head(pathway2, 2)
+    dotplot(pathway2)
+}
+```
+
+##Session Info:
+```{r Info, echo=FALSE, warning=FALSE} 
+sessionInfo()
+```

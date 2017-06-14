@@ -3,6 +3,18 @@
 
 cd $SLURM_SUBMIT_DIR
 
+PrjName=$1
+
+if [[ -z "${param// }" ]];
+then
+	Slrm_J="-J $PrjName"
+	echo "Setting an slurm job submission name option: $Slrm_J"
+else 
+	Slrm_J=""
+	echo "No slurm job submission name set! PrjName=$PrjName"
+fi
+
+
 #. /usr/local/Modules/default/init/bash
 
 module load python/3.5
@@ -17,7 +29,7 @@ mv $R/Reports/makeasnake.log $R/Reports/makeasnake.log.$modtime2
 touch $R/Reports/makeasnake.log
 touch $R/Reports/snakemake.log
 
-sbatch --partition=ccr,norm --gres=lscratch:200 --time=10-00:00:00 --mail-type=BEGIN,END,FAIL $R/pipeline_ctrl.sh
+sbatch $Slrm_J --partition=ccr,norm --gres=lscratch:200 --time=120:00:00 --mail-type=BEGIN,END,FAIL $R/pipeline_ctrl.sh
 # sbatch --partition=ccr,norm --gres=lscratch:200 --time=120:00:00  $R/pipeline_ctrl.sh
 
 

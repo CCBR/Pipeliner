@@ -282,27 +282,39 @@
 #    "PORTAL_PROJECT_NAME": "NA"
 },
 
-    "reference_files": {
-    "BOWTIE_REF": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/genome",
-    "GENCODE_GTF": "/fdb/GENCODE/GRCh38/21/GTF/gencode.v21.annotation.gtf",
-    "MIRBASE_GFF": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/hsa.gff3",
-    "MIRBASE_HAIRPIN": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/hairpin.fa",
-    "MIRBASE_MATURE": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/mature.fa",
-# For miRspring which uses its own set of files        
-    "MIRBASE_FILES": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References",
-#    "MIRBASE_GFF": "/data/dwheeler/miRspring/miRbase_Files/hsa.gff2",
-#    "MIRBASE_HAIRPIN": "/data/dwheeler/miRspring/miRbase_Files/hsa.nt35.fa",
-#    "MIRBASE_MATURE": "/data/dwheeler/miRspring/miRbase_Files/mature.fa",
-#    "MIRBASE_FILES": "/data/dwheeler/miRspring/miRbase_Files/",
-    "REF_GENOME": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/genome.fa",
-    "REF_GENOME_IUPAC": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/genome-iupac.fa",
-    "TARGET_DATA": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References",
+            "reference_files": {
+                "BOWTIE_REF": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/genome",
+                "GENCODE_GTF": "/fdb/GENCODE/GRCh38/21/GTF/gencode.v21.annotation.gtf",
+                "MIRBASE_GFF": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/hsa.gff3",
+                "MIRBASE_HAIRPIN": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/hairpin.fa",
+                "MIRBASE_MATURE": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/mature.fa",
+            # For miRspring which uses its own set of files        
+                "MIRBASE_FILES": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References",
+            #    "MIRBASE_GFF": "/data/dwheeler/miRspring/miRbase_Files/hsa.gff2",
+            #    "MIRBASE_HAIRPIN": "/data/dwheeler/miRspring/miRbase_Files/hsa.nt35.fa",
+            #    "MIRBASE_MATURE": "/data/dwheeler/miRspring/miRbase_Files/mature.fa",
+            #    "MIRBASE_FILES": "/data/dwheeler/miRspring/miRbase_Files/",
+                "REF_GENOME": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/genome.fa",
+                "REF_GENOME_IUPAC": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/genome-iupac.fa",
+                "TARGET_DATA": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References",
 
-    },
-     
-     },
+            },
+         },
 
-     "chipseq":{},
-     
+        "ChIPseq":{
+            "BWA": "/fdb/igenomes/Homo_sapiens/UCSC/hg19/Sequence/BWAIndex/genome.fa",
+            "CHROMS": ["1","2","3","4","5","6","7","8","9","10",
+                       "11","12","13","14","15","16","17","18","19","20",
+                       "21","22","X","Y","MT"],
+            "GENOME": "/fdb/igenomes/Homo_sapiens/UCSC/hg19/Sequence/BWAIndex/genome.fa",
+            "EXONS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19.exons.bed",
+            "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
+            "GENOMEFILE": "/fdb/GENCODE/Gencode_human/release_19/GRCh37.p13.genome.fa",
+            "GTFFILE": "/fdb/GENCODE/Gencode_human/release_19/gencode.v19.annotation.gtf",
+            "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg19_genes.txt",
+            "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/dev/refFlatHg19.txt",
+            "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_GENCODE_GENE_V19_comprehensive.bed", 
+            "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg19.rRNA.interval_list_v3",
+        },
     }
 }
