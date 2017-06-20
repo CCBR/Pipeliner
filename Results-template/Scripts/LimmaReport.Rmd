@@ -229,7 +229,7 @@ mfc=cbind(mfc,final$FC)
 mpval=cbind(mpval,final$P.Value)
 
 ## pathway enrichment --------------------------------------------
-if (SPECIES=="hg19" | SPECIES=="mm10")
+if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38")
 {
 #gup=gene[which(final$PValue<0.05 & final$FC >=1.5)]
 #gdw=gene[which(final$PValue<0.05 & final$FC <=-1.5)]
@@ -254,7 +254,7 @@ x2=rownames(fin.dw)
 gdw=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 
 extension=paste0("_",cons[i],".txt")
-if (SPECIES=="hg19")
+if (SPECIES=="hg19" | SPECIES=="hg38")
 {
 write.table(gup,paste0("limma_gene_up_path",extension),quote=F,row.names=F,col.names=F)
 write.table(gdw,paste0("limma_gene_dw_path",extension),quote=F,row.names=F,col.names=F)

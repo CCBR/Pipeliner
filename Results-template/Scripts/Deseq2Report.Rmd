@@ -208,7 +208,7 @@ restmp=cbind(ensID,gene,restmp)
 write.table(restmp,file=paste("DESeq2_deg_",contras[i],"_vs_",contras[i+1],".txt",sep=""),sep="\t",col.names=NA) 
 
 ## pathway enrichment --------------------------------------------
-if (SPECIES=="hg19" | SPECIES=="mm10")
+if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38")
 {
 iup=which(final$pvalue<0.05 & final$FoldChange >=0)
 idw=which(final$pvalue<0.05 & final$FoldChange <0)
@@ -231,7 +231,7 @@ x2=rownames(fin.dw)
 gdw=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 
 extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
-if (SPECIES=="hg19")
+if (SPECIES=="hg19" | SPECIES=="hg38")
 {
 write.table(gup,paste0("deseq2_gene_up_path",extension),quote=F,row.names=F,col.names=F)
 write.table(gdw,paste0("deseq2_gene_dw_path",extension),quote=F,row.names=F,col.names=F)
