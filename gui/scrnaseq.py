@@ -317,7 +317,7 @@ class scRNASeqFrame( PipelineFrame ) :
                 'efiletype': efiletype, 
                 'workpath': self.workpath.get(), 
                 "description": gi.description.get('1.0',END), 
-                "technique" : gi.technique.get(), s,
+                "technique" : gi.technique.get(),
                 "EXPECTED": self.scrExpected.get(),
                 "RESOLUTION": self.scrRes.get(),
                 "PCS": self.scrPCs.get()
