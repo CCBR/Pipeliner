@@ -80,16 +80,15 @@ class scRNASeqFrame( PipelineFrame ) :
                                               text="CellRanger Settings" )
         self.scrExpected = scrExpected = StringVar()
         scrExpected.set("3000")
-
         
-        self.clusterOpts = clusterOpts = LabelFrame( eframe, 
-                                              text="Clustering and tSNE Options" )
-        
-        screxpectedL = Label(clusterOpts, text="Expected number of cells: ")
-        screxpectedE = Entry(clusterOpts, bd =2, width=8, textvariable=scrExpected)
+        screxpectedL = Label(crOpts, text="Expected number of cells: ")
+        screxpectedE = Entry(crOpts, bd =2, width=8, textvariable=scrExpected)
 
         screxpectedL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
         screxpectedE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
+        
+        self.clusterOpts = clusterOpts = LabelFrame( eframe, 
+                                              text="Clustering and tSNE Options" )
 
         self.scrPCs = scrPCs = StringVar()
         scrPCs.set("12")
