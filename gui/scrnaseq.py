@@ -108,7 +108,6 @@ class scRNASeqFrame( PipelineFrame ) :
         scrpcsE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
         scrresL.grid(row=9,column=3,sticky=W,padx=5,pady=5)
         scrresE.grid(row=9,column=4,sticky=W,padx=0,pady=5)
-        scrResR.grid(row=9,column=5,sticky=W,padx=10,pady=5)
         #scrRes.trace('w', lambda a,b,c,x="scrPCs": makejson(x))
         
         clusterOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
