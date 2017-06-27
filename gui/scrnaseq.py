@@ -59,7 +59,7 @@ class scRNASeqFrame( PipelineFrame ) :
         
         self.crOpts = crOpts = LabelFrame( eframe, 
                                               text="CellRanger Settings" )
-        self.scrCRID = scrExpected = StringVar()
+        self.scrCRID = scrCRID = StringVar()
         scrCRID.set("SPECIFY_PREFIX_HERE")
         self.scrExpected = scrExpected = StringVar()
         scrExpected.set("3000")
