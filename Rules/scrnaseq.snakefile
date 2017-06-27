@@ -2,18 +2,18 @@ from snakemake.utils import R
 
 configfile: "run.json"
 
-if config['project']['pfamily'] == "cellranger":
+if config['project']['pipeline'] == "cellranger":
   rule all:
      params: batch='--time=168:00:00',crid=config['project']['CRID']
      input: "{params.crid}/outs/web_summary.html"
             
         
-elif config['project']['pfamily'] == "scrnaseqinit":
+elif config['project']['pipeline'] == "scrnaseqinit":
   rule all:
      params: batch='--time=168:00:00'
      input: "scrna_initial.html", "scrna_jackstraw.html"
 
-elif config['project']['pfamily'] == "scrnaseqcluster":
+elif config['project']['pipeline'] == "scrnaseqcluster":
   rule all:
      params: batch='--time=168:00:00'
      input: "scrna_cluster.html"
