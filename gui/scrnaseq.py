@@ -57,30 +57,11 @@ class scRNASeqFrame( PipelineFrame ) :
         #om.pack(side=LEFT,padx=20,pady=5)
         om.grid(row=3,column=1,sticky=W,padx=10,pady=5)
         
-        rReadlens= ['Read Length is 50',
-                                     'Read Length is 75',
-                                     'Read Length is 100',
-                                     'Read Length is 125',
-                                     'Read Length is 150', 
-                                     'Read Length is 250']
-        self.rReadlen = rReadlen = StringVar()
-        rReadlen.set(rReadlens[2])        
-        self.om2 = OptionMenu(eframe, rReadlen, *rReadlens, command=self.option_controller)
-        #self.om2.grid(row=4,column=1,sticky=W,padx=10,pady=5)
-
-        rStrands = ['0, Reads are Unstranded',
-                                    '1, Reads are from Sense Strand',
-                                    '2, Reads are from Anti-Sense Strand']
-        self.rStrand = rStrand = StringVar()
-        rStrand.set(rStrands[0])
-        self.om3 = OptionMenu(eframe, rStrand, *rStrands, command=self.option_controller)
-        #self.om3.grid(row=5,column=1,sticky=W,padx=10,pady=5)
-        
         self.crOpts = crOpts = LabelFrame( eframe, 
                                               text="CellRanger Settings" )
         self.scrExpected = scrExpected = StringVar()
         scrExpected.set("3000")
-        
+
         screxpectedL = Label(crOpts, text="Expected number of cells: ")
         screxpectedE = Entry(crOpts, bd =2, width=8, textvariable=scrExpected)
 
@@ -139,139 +120,6 @@ class scRNASeqFrame( PipelineFrame ) :
 
     def makejson(self, *args):
         #print(args[0])
-        caller=args[0]
-        #global PD
-        #global UnitsBak
-        #global RGbak
-        D=dict()
-        try:
-            F=open(self.workpath.get()+"/samples","r")
-            f=F.read().split("\n")
-            F.close()
-            for line in f:
-                L=line.split()
-                a=L.pop(0)
-                D[a]=L
-                samples=D
-        except:
-            samples={"na":"na"}
-            
-        D=dict()
-        try:
-            F=open(self.workpath.get()+"/pairs","r")
-            f=F.read().split()
-            F.close()
-            for i in range(0,len(f),2):
-    #            a=f[i].split(".")[0]
-    #            b=f[i+1].split(".")[0]
-                a=f[i]
-                b=f[i+1]
-
-                D[a+"+"+b]=[a,b]
-
-            pairs=D
-        except:
-            pairs={"na":"na"}   
-
-        D=dict()
-        try:
-            F=open(self.workpath.get()+"/contrasts.tab","r")
-    #        f=F.read().split('\n')
-    #        F.close()
-    #        D["rsamps"]=f[0].split()
-    #        D["rgroups"]=f[1].split()
-    #        D["rcontrasts"]=f[2].split()
-    #        D["rlabels"]=f[3].split()        
-            f=F.readlines()
-            F.close()
-    ##        sampl=[]
-    ##        grp=[]
-            cont=[]
-    ##        lbl=[]
-            for x in f:
-                  if len(x.split()) == 2:
-                     cont.append(x.split()[0])
-                     cont.append(x.split()[1])
-            D["rcontrasts"]=cont
-    #        contrasts["rcontrasts"]=cont
-            contrasts=D
-        except:
-            contrasts={"rcontrasts":"na"}
-    ##        contrasts={"rsamps":"na","rgroups":"na","rcontrasts":"na","rlabels":"na"}   
-    ##------
-        D=dict()
-        try:
-            F=open(self.workpath.get()+"/groups.tab","r")
-            f=F.readlines()
-            F.close()
-            sampl=[]
-            grp=[]
-    #        cont=[]
-            lbl=[]
-            for x in f:
-    #           if len(x.split()) == 4 or len(x.split()) == 3:
-                if len(x.split()) == 3:  
-                    sampl.append(x.split()[0])
-                    grp.append(x.split()[1])
-                    lbl.append(x.split()[2])
-            D["rsamps"]=sampl
-            D["rgroups"]=grp
-            D["rlabels"]=lbl
-    #        D["rcontrasts"]="na"
-    #        contrasts=D
-            groups=D
-        except:
-    #        contrasts={"rsamps":"na","rgroups":"na","rcontrasts":"na","rlabels":"na"}
-            groups={"rsamps":"na","rgroups":"na","rlabels":"na"}          
-    ##------   
-        D=dict() 
-        FT = filetype#.get()
-    #    p = Popen("ls "+workpath.get()+"/*."+FT, shell=True, stdin=PIPE, stdout=PIPE, stderr=DEVNULL, close_fds=True)
-        p = Popen("find "+self.workpath.get()+" -maxdepth 1 -type l -printf '%f\n' ", shell=True, stdin=PIPE, stdout=PIPE, stderr=DEVNULL, close_fds=True)
-        a = p.stdout.read().decode(encoding='UTF-8').split("\n")
-
-        RG=dict()   
-        b=a.pop()
-    #    tkinter.messagebox.showerror("",a)
-    #    if freezeunits.get()=="no":
-        for i in a:
-
-            key=re.sub(".realign","",i.split("/")[-1])
-            key=re.sub(".bai","",key)
-            key=re.sub(".bam","",key)
-            key=re.sub(".sam","",key)        
-            key=re.sub(".recal","",key)
-            key=re.sub(".dedup","",key)
-            key=re.sub(".sorted","",key)
-            key=re.sub(".fin","",key)
-            key=re.sub("\.R[12]","",key)
-            key=re.sub("_R[12]","",key)
-            key=re.sub(".fastq","",key)
-            key=re.sub(".gz","",key)                                
-    #        key=re.sub("[\._](R[12]\.)*"+FT+"$","",i.split("/")[-1])        
-    #        key=re.sub(".R[12]."+FT+"$","",i.split("/")[-1])
-    #        key=re.sub("([._]R[12][._])*([fin|sorted|dedup|recal|realign])*\.{0}$".format(FT),"",i.split("/")[-1])
-            D[key]=key
-            RG[key]={'rgsm':key,'rglb':'na','rgpu':'na','rgpl':'ILLUMINA','rgcn':'na'}
-        units=D
-        UnitsBak=D
-
-        try:
-            F=open(self.workpath.get()+"/rg.tab","r")
-            f=F.read().splitlines()
-            F.close()
-            for theLine in f:
-                if not re.match("^ID",theLine):
-                    (rgid,rgsm,rglb,rgpl,rgpu,rgcn)=theLine.split("\t")
-                    RG[rgid]={'rgsm':rgsm,'rglb':rglb,'rgpu':rgpu,'rgpl':rgpl,'rgcn':rgcn}
-        except:
-            pass
-        
-        RGbak=RG
-    #     else:
-    #         units=UnitsBak
-    #         RG=RGbak
-    # 
         PD=dict()
 
         smparams=[]
@@ -286,16 +134,10 @@ class scRNASeqFrame( PipelineFrame ) :
                            ), "r"
                      ).read()
                )
-        
-        SD=AD['references']['rnaseq']['STARDIR']
-    #    tkinter.messagebox.showinfo("initLock","SD={0}".format(SD))
         gi = self.global_info 
         PD={
             'project': {
                 'pfamily': gi.pfamily.get(),
-                'units': units, 
-                'samples': samples, 
-                'pairs': pairs,
                 'id': gi.eprojectid.get(), 
                 'pi': gi.epi.get(), 
                 'organism': gi.eorganism.get(), 
@@ -314,6 +156,8 @@ class scRNASeqFrame( PipelineFrame ) :
                 'custom': customRules, 
                 'efiletype': efiletype, 
                 'workpath': self.workpath.get(), 
+                "smparams": smparams,
+                "cluster": "cluster_medium.json", 
                 "description": gi.description.get('1.0',END), 
                 "technique" : gi.technique.get(),
                 "EXPECTED": self.scrExpected.get(),
