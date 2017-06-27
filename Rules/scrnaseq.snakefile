@@ -19,13 +19,13 @@ elif config['project']['pipeline'] == "scrnaseqcluster":
      input: "scrna_cluster.html"
 
 rule cellranger: 
-   params: rname='pl:cellranger',batch='--cpus-per-task=40 --mem=110g --time=48:00:00',crid=config['project']['CRID'],refer=config['project']['annotation'],dir=config['project']['workpath'],expected=config['project']['EXPECTED'],projectId=config['project']['id']
+   params: rname='pl:cellranger',batch='--cpus-per-task=40 --mem=110g --time=48:00:00',crid=config['project']['CRID'],refer=config['project']['annotation'],datapath=config['project']['datapath'],dir=config['project']['workpath'],expected=config['project']['EXPECTED'],projectId=config['project']['id']
    output: "{crid}/outs/web_summary.html".format(crid=config['project']['CRID'])
    shell: """
           module load cellranger;
           cellranger count --id={params.projectId} \
                    --transcriptome=$CELLRANGER_REF/{params.refer} \
-                   --fastqs={params.dir} \
+                   --fastqs={params.datapath} \
                    --sample={params.crid} \
                    --localcores=32 \
                    --localmem=100 \
