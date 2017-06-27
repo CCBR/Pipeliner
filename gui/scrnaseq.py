@@ -110,13 +110,13 @@ class scRNASeqFrame( PipelineFrame ) :
                              text="Open Directory", 
                              command=self.set_count_directory )
         count_button.grid( row=9, column=5 )
-        def set_count_directory( self ):
-            fname = askdirectory( initialdir = USER_HOME, 
-                                 title="Select Data Directory")
-            self.countpath.set(fname)
         #####################
         
         self.option_controller()
+    def set_count_directory( self ):
+        fname = askdirectory( initialdir = USER_HOME, 
+                             title="Select Data Directory")
+        self.countpath.set(fname)
     
     def option_controller( self, *args, **kwargs ) :
 
