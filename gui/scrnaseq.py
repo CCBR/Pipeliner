@@ -59,15 +59,21 @@ class scRNASeqFrame( PipelineFrame ) :
         
         self.crOpts = crOpts = LabelFrame( eframe, 
                                               text="CellRanger Settings" )
+        self.scrCRID = scrExpected = StringVar()
+        scrCRID.set("SPECIFY_PREFIX_HERE")
         self.scrExpected = scrExpected = StringVar()
         scrExpected.set("3000")
 
+        scrcridL = Label(crOpts, text="CellRanger Sample ID: ")
+        scrcridE = Entry(crOpts, bd =2, width=25, textvariable=scrCRID)
+        scrcridL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
+        scrcridE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
+        
         screxpectedL = Label(crOpts, text="Expected number of cells: ")
         screxpectedE = Entry(crOpts, bd =2, width=8, textvariable=scrExpected)
+        screxpectedL.grid(row=10,column=1,sticky=W,padx=10,pady=5)
+        screxpectedE.grid(row=10,column=2,sticky=W,padx=0,pady=5)
 
-        screxpectedL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
-        screxpectedE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
-        
         self.clusterOpts = clusterOpts = LabelFrame( eframe, 
                                               text="Clustering and tSNE Options" )
 
@@ -94,7 +100,7 @@ class scRNASeqFrame( PipelineFrame ) :
         
         self.qcOpts = qcOpts = LabelFrame( eframe, 
                                               text="Initial Settings" )
-        countL = Label( qcOpts, text="Data Directory:" )
+        countL = Label( qcOpts, text="Counts/Matrix Dir:" )
         countL.grid(row=9, column=1, sticky=W, padx=10, pady=5 )
         countpath=StringVar()  
         self.countpath = countpath
@@ -117,7 +123,7 @@ class scRNASeqFrame( PipelineFrame ) :
         fname = askdirectory( initialdir = USER_HOME, 
                              title="Select Data Directory")
         self.countpath.set(fname)
-    
+
     def option_controller( self, *args, **kwargs ) :
 
         PipelineFrame.option_controller( self )
@@ -186,6 +192,7 @@ class scRNASeqFrame( PipelineFrame ) :
                 "cluster": "cluster_medium.json", 
                 "description": gi.description.get('1.0',END), 
                 "technique" : gi.technique.get(),
+                "CRID": self.scrCRID.get(),
                 "EXPECTED": self.scrExpected.get(),
                 "COUNTSPATH": self.countpath.get(),
                 "RESOLUTION": self.scrRes.get(),
