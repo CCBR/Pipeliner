@@ -5,7 +5,7 @@ configfile: "run.json"
 if config['project']['pipeline'] == "cellranger":
   rule all:
      params: batch='--time=168:00:00',crid=config['project']['CRID']
-     input: "{params.crid}/outs/web_summary.html"
+     input: "{crid}/outs/web_summary.html".format(crid=config['project']['CRID'])
             
         
 elif config['project']['pipeline'] == "scrnaseqinit":
