@@ -91,6 +91,29 @@ class scRNASeqFrame( PipelineFrame ) :
         #scrRes.trace('w', lambda a,b,c,x="scrPCs": makejson(x))
         
         clusterOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
+        
+        self.qcOpts = qcOpts = LabelFrame( eframe, 
+                                              text="Initial Settings" )
+        countL = Label( qcOpts, text="Data Directory:" )
+        countL.grid(row=9, column=1, sticky=W, padx=10, pady=5 )
+        countpath=StringVar()  
+        self.countpath = countpath
+        count_entry = Entry(qcOpts, 
+                           bd =2, 
+                           width = 50, 
+                           #bg = entryBgColor, 
+                           #fg = entryFgColor, 
+                           textvariable = countpath, state='normal'
+                          )
+        count_entry.grid( row=9, column=2, columnspan=3 )
+        self.count_button = count_button = Button( qcOpts, 
+                             text="Open Directory", 
+                             command=self.set_count_directory )
+        count_button.grid( row=9, column=5 )
+        def set_count_directory( self ):
+            fname = askdirectory( initialdir = USER_HOME, 
+                                 title="Select Data Directory")
+            self.countpath.set(fname)
         #####################
         
         self.option_controller()
@@ -105,12 +128,15 @@ class scRNASeqFrame( PipelineFrame ) :
         if self.Pipeline.get() == 'cellranger' :
             self.clusterOpts.grid_forget()
             self.crOpts.grid(row=8,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+            self.qcOpts.grid_forget()
         elif self.Pipeline.get() == 'scrnaseqcluster' :
             self.clusterOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
             self.crOpts.grid_forget()
+            self.qcOpts.grid_forget()
         elif self.Pipeline.get() == 'scrnaseqinit' :
             self.clusterOpts.grid_forget()
             self.crOpts.grid_forget()
+            self.qcOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
 
 
             
@@ -161,6 +187,7 @@ class scRNASeqFrame( PipelineFrame ) :
                 "description": gi.description.get('1.0',END), 
                 "technique" : gi.technique.get(),
                 "EXPECTED": self.scrExpected.get(),
+                "COUNTSPATH": self.countpath.get(),
                 "RESOLUTION": self.scrRes.get(),
                 "PCS": self.scrPCs.get()
              }

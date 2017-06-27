@@ -132,6 +132,9 @@
 #        "rnaseqvar-somatic": "all-rnaseqvar-somatic.rl",
     "rnaseq": "rnaseq.snakefile",
     "initialqcrnaseq": "initialqcrnaseq.snakefile",
+    "cellranger": "scrnaseq-cellranger.snakefile",
+    "scrnaseqinit": "scrnaseq-scrnaseqinit.snakefile",
+    "scrnaseqcluster": "scrnaseq-scrnaseqcluster.snakefile",
     "CAPmirseq-plus": "CAPmirseq-plus.snakefile",
 
     "InitialChIPseqQC":"InitialChIPseqQC.snakefile", 
