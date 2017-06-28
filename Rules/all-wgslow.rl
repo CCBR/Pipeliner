@@ -38,7 +38,7 @@ if config['project']['annotation'] == "hg19":
            "pindel_out/pindel_calls_chrX_INT_final",
            "pindel_out/pindel_calls_chrY_INT_final",
            "cnvkit_out/cnvkit_heatmap.pdf",
-           "breakdancer_out/file.ctx",
+#           "breakdancer_out/file.ctx",
            config['project']['workpath']+"/svaba_out/svaba.log",
     output: 
     params: rname="final"
@@ -85,7 +85,7 @@ else:
            "pindel_out/pindel_calls_chrX_INT_final",
            "pindel_out/pindel_calls_chrY_INT_final",
            "cnvkit_out/cnvkit_heatmap.pdf",
-           "breakdancer_out/file.ctx",
+#           "breakdancer_out/file.ctx",
            config['project']['workpath']+"/svaba_out/svaba.log",
     output: 
     params: rname="final"
