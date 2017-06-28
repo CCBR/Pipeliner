@@ -20,7 +20,7 @@ elif config['project']['pipeline'] == "scrnaseqcluster":
 
 rule cellranger: 
    params: rname='pl:cellranger',batch='--cpus-per-task=40 --mem=110g --time=48:00:00',crid=config['project']['CRID'],refer=config['project']['annotation'],datapath=config['project']['datapath'],dir=config['project']['workpath'],expected=config['project']['EXPECTED'],projectId=config['project']['id']
-   output: "{crid}/outs/web_summary.html".format(crid=config['project']['CRID'])
+   output: "{projectId}/outs/web_summary.html".format(projectId=config['project']['id'])
    shell: """
           module load cellranger;
           cellranger count --id={params.projectId} \
