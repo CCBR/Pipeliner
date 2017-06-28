@@ -57,7 +57,7 @@ for(i in 1:nclusts){
 }
 ```
 
-### **Top 5 Gene Markers**
+### **Gene Lists**
 
 ```{r Seurat_genes_table, echo=FALSE,warning=FALSE,message=FALSE,results='asis'}
 tables
