@@ -275,10 +275,10 @@ PCElbowPlot(so)
 ```
 
 ```{r Seurat_save_rds, echo=FALSE,warning=FALSE,message=FALSE}
-gdata::keep(so, species, projectId, sure=TRUE) ## memory optimizations
+gdata::keep(so, params, species, projectId, sure=TRUE) ## memory optimizations
 saveRDS(so, paste0(projectId,"_seurat_object.rds")) ## output SO
 exprs <- as.matrix(so@data) ## only need expression matrix for next step
-gdata::keep(exprs, species, sure=TRUE)
+gdata::keep(exprs, params, species, sure=TRUE)
 ```
 
 ### **GSVA Heatmap**
