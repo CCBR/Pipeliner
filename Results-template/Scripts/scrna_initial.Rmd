@@ -38,6 +38,7 @@ library(GSEABase)
 library(genefilter)
 library(org.Hs.eg.db)
 library(gplots)
+library(gdata)
 
 # knit_hooks$set(rgl = function(before, options, envir) {
 #   if (!before) {
@@ -273,11 +274,17 @@ PCHeatmap(so, pc.use = 18:20, cells.use = 500, do.balanced = TRUE, label.columns
 PCElbowPlot(so)
 ```
 
+```{r Seurat_save_rds, echo=FALSE,warning=FALSE,message=FALSE}
+gdata::keep(so, species, sure=TRUE) ## memory optimizations
+saveRDS(so, paste0(projectId,"_seurat_object.rds")) ## output SO
+exprs <- as.matrix(so@data) ## only need expression matrix for next step
+gdata::keep(exprs, species, sure=TRUE)
+```
+
 ### **GSVA Heatmap**
 
 ```{r gsva_heatmap, echo=FALSE,warning=FALSE,message=FALSE,results='hide',fig.keep='all',fig.height=10}
 if(grepl("hg",species)|grepl("mm",species)){
-  exprs <- as.matrix(so@data)
   eset <- ExpressionSet(assayData=exprs)
   eset_filtered <- varFilter(eset,var.func=IQR, var.cutoff=0.5, filterByQuantile=TRUE)
   if(grepl("hg",species)){
@@ -291,8 +298,4 @@ if(grepl("hg",species)|grepl("mm",species)){
   top <- myscores[names(head(rev(sort((rowSds(myscores)))),50)),]
   heatmap.2(top,trace="none",labRow=NULL,margins=c(1,20),cexRow=0.7)
 }
-```
-
-```{r Seurat_save_rds, echo=FALSE,warning=FALSE,message=FALSE}
-saveRDS(so, paste0(projectId,"_seurat_object.rds"))
 ```
