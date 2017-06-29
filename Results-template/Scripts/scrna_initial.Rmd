@@ -287,10 +287,10 @@ if(grepl("hg",species)|grepl("mm",species)){
   eset <- ExpressionSet(assayData=exprs)
   eset_filtered <- varFilter(eset,var.func=IQR, var.cutoff=0.5, filterByQuantile=TRUE)
   if(grepl("hg",species)){
-    gsets <- getGmt("/data/ngs/public/msigdb/msigdb.v4.0.symbols.gmt")
+    gsets <- getGmt("/data/CCBR_Pipeliner/db/PipeDB/MSigDB/c2.cp.kegg.v6.0.symbols.gmt")
   }
   if(grepl("mm",species)){
-    gsets <- getGmt("/data/ngs/public/msigdb/msigdb.v4.0.symbols.gmt")
+    gsets <- getGmt("/data/CCBR_Pipeliner/db/PipeDB/MSigDB/c2.cp.kegg.v6.0.symbols_mouse.gmt")
   }
   scores <- gsva(exprs(eset_filtered),gsets,,min.sz=10,max.sz=500,verbose=TRUE)
   myscores <- scores$es.obs[unlist(lapply(rownames(scores$es.obs),function(x){grepl("^REACTOME_",x)|grepl("^KEGG_",x)|grepl("^BIOCARTA_",x)})),]
