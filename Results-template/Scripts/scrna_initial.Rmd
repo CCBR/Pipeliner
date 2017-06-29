@@ -196,9 +196,8 @@ so <- AddMetaData(so, metadata)
 so_temp <- RegressOut(so, latent.vars = c("nUMI", "percent.mito"))
 so_temp <- MeanVarPlot(so_temp ,fxn.x = expMean, fxn.y = logVarDivMean, x.low.cutoff = 0.0125, x.high.cutoff = 3, y.cutoff = 0.5, do.contour = F, do.plot=F)
 so_temp <- PCA(so_temp, pc.genes = so_temp@var.genes, do.print = FALSE)
-so_temp <- ProjectPCA(so_temp,do.print=F)
+#so_temp <- ProjectPCA(so_temp,do.print=F)
 PCAPlot(so_temp, 1, 2, group.by="stage",cols.use=c(rgb(1, 0, 0, 0.7),rgb(0, 1, 0, 0.3),rgb(0, 0, 1, 0.7),rgb(0, 0, 0, 0.7)))
-so <- RegressOut(so, latent.vars = c("nUMI", "percent.mito", "G1.score", "G2M.score"))
 ```
 
 ### **PCA 1:2 After Regressing by G1/G2M Scores**
@@ -207,7 +206,7 @@ so <- RegressOut(so, latent.vars = c("nUMI", "percent.mito", "G1.score", "G2M.sc
 so <- RegressOut(so, latent.vars = c("nUMI", "percent.mito", "G1.score", "G2M.score"))
 so <- MeanVarPlot(so ,fxn.x = expMean, fxn.y = logVarDivMean, x.low.cutoff = 0.0125, x.high.cutoff = 3, y.cutoff = 0.5, do.contour = F, do.plot=F)
 so <- PCA(so, pc.genes = so@var.genes, do.print = FALSE)
-so <- ProjectPCA(so,do.print=F)
+#so <- ProjectPCA(so,do.print=F)
 PCAPlot(so, 1, 2, group.by="stage",cols.use=c(rgb(1, 0, 0, 0.7),rgb(0, 1, 0, 0.3),rgb(0, 0, 1, 0.7),rgb(0, 0, 0, 0.7)))
 ```
 
