@@ -101,6 +101,7 @@
             "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/dev/Mm10_M12_genes.txt",
             "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/dev/refFlatMm10_M12.txt",
             "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCm38_mm10_RefSeq.bed",
+            "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/dev/mm.vM12.gencode.gtf.pre.bed",
             # "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/dev/rsemref/mouse_gencode",
             "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/rsem1.3.0/mouse_gencode",
             # "SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/dev/rsemref/mouse_gencode.transcripts.fa",
