@@ -104,7 +104,7 @@ plot(density(sce$pct_counts_feature_controls_Mt),col="red", xlab="Mitochondrial 
 
 
 ```{r filter_metrics, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
-kable(data.frame(ByLibSize=sum(libsize.drop), ByFeature=sum(feature.drop), ByMito=sum(mito.drop), Remaining=ncol(sce)))
+kable(data.frame(ByLibSize=sum(libsize.drop), ByFeature=sum(feature.drop), ByMito=sum(mito.drop), Remaining=ncol(sce_filtered)))
 cat("  \n")
 cat(unlist(droppedcells))
 cat("  \n")
