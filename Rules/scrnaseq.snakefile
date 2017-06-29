@@ -16,7 +16,7 @@ elif config['project']['pipeline'] == "scrnaseqinit":
 elif config['project']['pipeline'] == "scrnaseqcluster":
   rule all:
      params: batch='--time=168:00:00'
-     input: "scrna_cluster.html"
+     input: "scrna_cluster_{pcs}_{resolution}.html".format(pcs=config['project']['PCS'],resolution=config['project']['RESOLUTION'])
 
 rule cellranger: 
    params: rname='pl:cellranger',batch='--cpus-per-task=40 --mem=110g --time=48:00:00',crid=config['project']['CRID'],refer=config['project']['annotation'],datapath=config['project']['datapath'],dir=config['project']['workpath'],expected=config['project']['EXPECTED'],projectId=config['project']['id']
@@ -46,5 +46,5 @@ rule scrna_jackstraw:
 rule scrna_cluster: 
    params: rname='pl:scrnacluster',batch='--partition=largemem --cpus-per-task=32 --mem=1000g --time=48:00:00',dir=config['project']['workpath'],pcs=config['project']['PCS'],resolution=config['project']['RESOLUTION'],projDesc=config['project']['description'],projectId=config['project']['id']
    input: so="{projectId}_seurat_object.rds".format(projectId=config['project']['id'])
-   output: "scrna_cluster.html"
+   output: "scrna_cluster_{pcs}_{resolution}.html".format(pcs=config['project']['PCS'],resolution=config['project']['RESOLUTION'])
    shell: "cp Scripts/scrna_cluster.Rmd {params.dir}/; module load R/3.4.0_gcc-6.2.0; Rscript Scripts/scrna_cluster_call.R '{params.dir}' '{input.so}' '{params.pcs}' '{params.resolution}' '{params.projectId}' '{params.projDesc}'"

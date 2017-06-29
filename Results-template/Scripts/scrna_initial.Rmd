@@ -131,6 +131,29 @@ scater::plotPCA(sce,
                 detect_outliers = FALSE,
                 return_SCESet = FALSE)
 sce<-sce_filtered
+is.mito <- grepl("^MT-",fData(sce)$symbol)|grepl("^mt-",fData(sce)$symbol)
+sce <- calculateQCMetrics(sce, feature_controls=list(Mt=is.mito))
+```
+
+### **Post-Filter Histograms**
+
+```{r histograms_4, echo=FALSE,warning=FALSE,message=FALSE}
+par(mfrow=c(1,2))
+hist(sce$total_counts, xlab="Library size", main="", 
+    breaks=20, col="grey80", ylab="Number of cells")
+plot(density(sce$total_counts),col="red", xlab="Library size", main="")
+```
+```{r histograms_5, echo=FALSE,warning=FALSE,message=FALSE}
+par(mfrow=c(1,2))
+hist(sce$total_features, xlab="Number of expressed genes", main="", 
+    breaks=20, col="grey80", ylab="Number of cells")
+plot(density(sce$total_features),col="red", xlab="Number of expressed genes", main="")
+```
+```{r histograms_6, echo=FALSE,warning=FALSE,message=FALSE}
+par(mfrow=c(1,2))
+hist(sce$pct_counts_feature_controls_Mt, xlab="Mitochondrial proportion (%)", 
+    ylab="Number of cells", breaks=20, main="", col="grey80")
+plot(density(sce$pct_counts_feature_controls_Mt),col="red", xlab="Mitochondrial proportion (%)", main="")
 ```
 
 ```{r rle_plot, echo=FALSE,message=FALSE,warning=FALSE,results='hide',fig.keep='all'}
@@ -166,10 +189,10 @@ if(grepl("hg",species)|grepl("mm",species)){
     col = ifelse((assignments$score$G1>=0.5)&(assignments$score$G2M<0.5),'green','orange'))
   abline(h=0.5,col="red")
   abline(v=0.5,col="red")
-  legend("topleft", "[G2/M]", bty="n", text.col="red")
-  legend("topright", "[?]", bty="n", text.col="red")
-  legend("bottomleft", "[S]", bty="n", text.col="red")
-  legend("bottomright", "[G1]", bty="n", text.col="red")
+  legend("topleft", paste0("[G2/M] ",length(which(assignments$score$G2M >= 0.5))), bty="n", text.col="red")
+  legend("topright", paste0("[?] ",length(which(assignments$score$G1 >= 0.5 & assignments$score$G2M >= 0.5))), bty="n", text.col="red")
+  legend("bottomleft", paste0("[S] ",length(which(assignments$score$G1 < 0.5 & assignments$score$G2M < 0.5))), bty="n", text.col="red")
+  legend("bottomright", paste0("[G1] ",length(which(assignments$score$G1 >= 0.5))), bty="n", text.col="red")
 }
 sce$G1score <- assignments$score$G1
 sce$G2Mscore <- assignments$score$G2M
@@ -292,7 +315,7 @@ if(grepl("hg",species)|grepl("mm",species)){
   if(grepl("mm",species)){
     gsets <- getGmt("/data/CCBR_Pipeliner/db/PipeDB/MSigDB/c2.cp.kegg.v6.0.symbols_mouse.gmt")
   }
-  scores <- gsva(exprs(eset_filtered),gsets,,min.sz=10,max.sz=500,verbose=TRUE)
+  scores <- gsva(exprs(eset_filtered),gsets,min.sz=10,max.sz=500,verbose=TRUE)
   myscores <- scores$es.obs[unlist(lapply(rownames(scores$es.obs),function(x){grepl("^REACTOME_",x)|grepl("^KEGG_",x)|grepl("^BIOCARTA_",x)})),]
   top <- myscores[names(head(rev(sort((rowSds(myscores)))),50)),]
   heatmap.2(top,trace="none",labRow=NULL,margins=c(1,20),cexRow=0.7)
