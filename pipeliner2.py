@@ -59,6 +59,7 @@ from gui.genomeseq import GenomeSeqFrame
 from gui.mirseq import MiRSeqFrame
 from gui.epigenomeseq import ChIPSeqFrame
 from gui.exomeseq import ExomeSeqFrame
+from gui.scrnaseq import scRNASeqFrame
 
 from gui.menu import add_menubar
 
@@ -133,7 +134,7 @@ class PipelinerGUI(Tk):
         om["menu"].config() #bg = widgetBgColor,fg=widgetFgColor)
         om.grid(row=1,column=2,sticky=W,padx=10,pady=10)
         
-        pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'ChIPseq']
+        pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'ChIPseq', 'scrnaseq']
         self.pfamily = pfamily = StringVar()
         pfamily.set('Select a pipeline')
         om = OptionMenu(pipeline_panel, pfamily, *pfamilys, command=self.set_pipeline)
@@ -278,6 +279,11 @@ class PipelinerGUI(Tk):
             print( 'rnaseq' )
             self.pipelineframe = RNASeqFrame( self.notebook, 
                                                'RNAseq',#self.pfamily.get(), 
+                                               self.annotation, global_info=self )
+        elif self.pfamily.get() == 'scrnaseq' :
+            print( 'scrnaseq' )
+            self.pipelineframe = scRNASeqFrame( self.notebook, 
+                                               'scRNAseq',#self.pfamily.get(), 
                                                self.annotation, global_info=self )
         else :
             return

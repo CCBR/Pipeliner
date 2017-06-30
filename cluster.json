@@ -521,5 +521,28 @@
         'mem': '64g',
         'threads': '32'
     },
-        
+
+    "cellranger":
+    {
+        "threads": "40",
+        "mem": "110g"
+    },
+    "scrna_initial":
+    {
+        "partition" : "largemem",
+        "threads": "32",
+        "mem": "1000g"
+    },
+    "scrna_jackstraw":
+    {
+        "partition" : "largemem",
+        "threads": "32",
+        "mem": "1000g"
+    },
+    "scrna_cluster":
+    {
+        "partition" : "largemem",
+        "threads": "32",
+        "mem": "1000g"
+    }  
 }
