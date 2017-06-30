@@ -307,7 +307,7 @@ hmapheight = 8
 
 ### Before Normalization
 
-```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fig.width=500, fig.height=hmapheight}
+```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fig.height=hmapheight}
 
 hmcol <- colorRampPalette(c("black","red","yellow","white"),space="rgb")(100)
 before.distrawlog2=amap::Dist(t(rawlog2),method="pearson")
@@ -317,7 +317,7 @@ heatmap.2(before.mat, trace="none", col = rev(hmcol), labCol=FALSE, colRow=as.nu
 
 ### TMM
 
-```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fig.width=500, fig.height=hmapheight}
+```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fig.height=hmapheight}
 
 edgeR.distylog2=amap::Dist(t(ylog2),method="pearson")
 edgeR.mat = as.matrix(edgeR.distylog2)
@@ -326,7 +326,7 @@ heatmap.2(edgeR.mat, trace="none", col = rev(hmcol), labCol=FALSE, colRow=as.num
 
 ### DESeq2
 
-```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fig.width=500, fig.height=hmapheight}
+```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fig.height=hmapheight}
 
 deseq2.dists <- amap::Dist(t(ddslog2),method="pearson")
 deseq2.mat <- as.matrix(deseq2.dists)
@@ -335,7 +335,7 @@ heatmap.2(deseq2.mat, trace="none", col = rev(hmcol), labCol=FALSE, colRow=as.nu
 
 ### Limma
 
-```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fig.width=500, fig.height=hmapheight}
+```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fig.height=hmapheight}
 
 limma.dists <- amap::Dist(t(limma.edf),method="pearson")
 limma.mat <- as.matrix(limma.dists)
@@ -345,7 +345,7 @@ heatmap.2(limma.mat, trace="none", col = rev(hmcol), labCol=FALSE, colRow=as.num
 
 ## **MD Plots** (sample by sample mean vs fold change of expression)
 
-```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fig.width=200, fig.height=3.3*length(sampleinfo$label)}
+```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fig.height=3.3*length(sampleinfo$label)}
 par(mfcol=c(length(sampleinfo$label),4))
 for(i in 1:length(sampleinfo$label)){
   plotMD(rawlog2,column=i, main=paste0("Raw ",sampleinfo$label[i]), xlim=c(-5,15), ylim=c(-15,15))
