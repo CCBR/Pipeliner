@@ -52,7 +52,7 @@ glist <- list()
 tables <- htmltools::tagList()
 for(i in 1:nclusts){
 	glist[[i]]<-FindMarkers(so,ident.1=i-1,min.pct=0.25)
-	tables[[i]] <- DT::datatable(glist[[i]][1:100,], caption=htmltools::tags$caption(paste0("Top 10 gene markers for cluster #",(i-1)) ,style="color:red; font-size: 12px" ),rownames=T)
+	tables[[i]] <- DT::datatable(glist[[i]][1:100,], caption=htmltools::tags$caption(paste0("Top 100 gene markers for cluster #",(i-1)) ,style="color:red; font-size: 12px" ),rownames=T)
 	write.table(glist[[i]],file=paste0("Seurat_",pcs,"_",res,"_cluster_",(i-1),".txt"),sep="\t",quote=F)
 }
 ```
