@@ -153,6 +153,7 @@
     "nextera1": "CTGTCTCTTATACACATCTCCGAGCCCACGAGAC",
     "nextera2": "CTGTCTCTTATACACATCTGACGCTGCCGACGA",
     "REGULOMEDB": "/data/CCBR_Pipeliner/db/PipeDB/lib/snpEff_db/RegulomeDB.bed",
+    "ONCOFUSEBUILD": "hg38",
     },
     "rnaseqvargerm": {
     "GENOMEFILE": "/fdb/GENCODE/Gencode_human/release_19/GRCh37.p13.genome.fa",

@@ -156,6 +156,7 @@
     "THETASNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_theta_SNPfile.txt",
     "INDELSITES2": "/fdb/GATK_resource_bundle/b37/1000G_phase1.indels.b37.vcf",
     "ALVIEWGENOME": "hg19",
+    "ONCOFUSEBUILD": "hg19",
     "EXONS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19.exons.bed",
     "ANNDIR": "/data/CCBR_Pipeliner/db/PipeDB/AnnovarDB/",
     "STRELKA_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/strelka_demo_config.ini",
