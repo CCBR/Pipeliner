@@ -17,6 +17,7 @@ rmarkdown::render("LimmaReport.Rmd", params = list(
     projectId = args[6],
     projectDesc = args[7],
     gtffile = args[8],
-    dtype = args[9]
+    dtype = args[9],
+    karyobeds = args[10]
   ))
 
