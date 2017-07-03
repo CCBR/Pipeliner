@@ -142,6 +142,7 @@
     "STARDIR": "/fdb/STAR_current/GENCODE/Gencode_human/release_19/genes-",
     "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg19.rRNA.interval_list_v3",
     "STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh37_gencode_v19_CTAT_lib_July272016_prebuilt",
+    "FUSCATCHDAT": "/usr/local/apps/fusioncatcher/0.99.7b/fusioncatcher/data/ensembl_v86",
     "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
     "STARREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/Star_refs/hs37d5/genes-",
     "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
