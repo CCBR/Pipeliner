@@ -1,5 +1,5 @@
 rule fusioninsp_fuscatch:
-     input:  fusions="fusioncatcher/{x}/final-list_candidate-fusion-genes.GRCh37.txt",file1="{x}.R1.trimmed.fastq.gz",file2="{x}.R2.trimmed.fastq.gz"
+     input:  fusions="fusioncatcher/{x}/final-list_candidate-fusion-genes.txt",file1="{x}.R1.trimmed.fastq.gz",file2="{x}.R2.trimmed.fastq.gz"
      output: "fusioncatcher/fusioninspector/{x}/{x}.fusion_predictions.final"
      params: rname='fusioninsp',sample="{x}",starlib=config['references'][pfamily]['STARFUSIONLIB']
      threads: 8
