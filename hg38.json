@@ -154,6 +154,8 @@
     "nextera2": "CTGTCTCTTATACACATCTGACGCTGCCGACGA",
     "REGULOMEDB": "/data/CCBR_Pipeliner/db/PipeDB/lib/snpEff_db/RegulomeDB.bed",
     "ONCOFUSEBUILD": "hg38",
+    "FUSCATCHCONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_hg38_configuration.cfg",
+    "FUSCATCHDAT": "/usr/local/apps/fusioncatcher/0.99.7b/fusioncatcher/data/ensembl_v86",
     },
     "rnaseqvargerm": {
     "GENOMEFILE": "/fdb/GENCODE/Gencode_human/release_19/GRCh37.p13.genome.fa",

@@ -109,6 +109,8 @@
 "STARREF": "/fdb/STAR_2.4.2a/UCSC/mm10/genes-",
 "STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_gencode_vM12_TrinityResource",
 "FUSCATCHDAT": "/fdb/fusioncatcher/mus_musculus",
+"FUSCATCHCONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fusioncatcher_mm10_configuration.cfg",
+"ONCOFUSEBUILD": "mm10",
 "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Mm10.rRNA.interval_list_M12",
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
     "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
