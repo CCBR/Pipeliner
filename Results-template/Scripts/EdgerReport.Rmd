@@ -12,6 +12,7 @@ params:
   projectDesc: "<desc>"
   gtffile: "gencode.v19.annotation.gtf"
   dtype: "<count type>"
+  karyobeds: "path/to/karyobedfiles"
 ---
 
 ```{r, include=FALSE, warning=FALSE, message=FALSE}
@@ -72,6 +73,7 @@ FILE1 <- params$sampleinfo
 FILE2 <- params$data
 CONTRASTS <- params$contrasts
 SPECIES <-params$species
+KARYOBEDS <-params$karyobeds
 # ANNOTATE <- args[4]
 
 #
@@ -357,7 +359,7 @@ l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mo
 
 if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype)))
 {
-system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py EdgeR_deg_",cons[i],"_all_genes.txt 2 3 ",SPECIES," > EdgeR_deg_",cons[i],".input.karyo"))
+system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py EdgeR_deg_",cons[i],"_all_genes.txt 2 3 ",SPECIES," ",KARYOBEDS," > EdgeR_deg_",cons[i],".input.karyo"))
 system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py EdgeR_deg_",cons[i],".input.karyo ",SPECIES))
 ki1=paste0("EdgeR_deg_",cons[i],".input.karyo1.png")
 ki2=paste0("EdgeR_deg_",cons[i],".input.karyo2.png")
