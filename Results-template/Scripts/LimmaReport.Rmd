@@ -12,6 +12,7 @@ params:
   projectDesc: "<desc>"
   gtffile: "gencode.v19.annotation.gtf"
   dtype: "<count type>"
+  karyobeds: "path/to/karyobedfiles"
 ---
 
 ```{r, include=FALSE, warning=FALSE, message=FALSE}
@@ -76,6 +77,7 @@ FILE1 <- params$sampleinfo
 FILE2 <- params$data
 CONTRASTS <- params$contrasts
 SPECIES <-params$species
+KARYOBEDS <-params$karyobeds
 
  
 # read files
@@ -326,7 +328,7 @@ write.table(all.genes.con,file=paste("Limma_deg_",cons[i],"_all_genes.txt",sep="
 
 if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype)))
 {
-system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py Limma_deg_",cons[i],"_all_genes.txt 2 3 ",SPECIES," > Limma_deg_",cons[i],".input.karyo"))
+system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py Limma_deg_",cons[i],"_all_genes.txt 2 3 ",SPECIES," ",KARYOBEDS," > Limma_deg_",cons[i],".input.karyo"))
 system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py Limma_deg_",cons[i],".input.karyo ",SPECIES))
 ki1=paste0("Limma_deg_",cons[i],".input.karyo1.png")
 ki2=paste0("Limma_deg_",cons[i],".input.karyo2.png")

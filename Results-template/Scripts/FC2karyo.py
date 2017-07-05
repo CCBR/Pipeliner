@@ -12,6 +12,7 @@ deseqFCfile=sys.argv[1]
 idpos = int(sys.argv[2])
 logfcpos = int(sys.argv[3])
 species = sys.argv[4]
+karyobeds = sys.argv[5]
 
 logfcdata={re.sub("\"","",a[idpos]):float(a[logfcpos]) for a in list(map(lambda x:x.strip().split("\t"),open(deseqFCfile).readlines()[1:]))}
 
@@ -28,7 +29,7 @@ chrs=[ "chr"+a for a in chr_numbers ]
 binsize=50
 list_genes=1 #Changeable
 for chrom in chrs:
-	bedfile="../bedfiles/karyobed."+chrom+".bed"
+	bedfile=karyobeds+"karyobed."+chrom+".bed"
 	lines=list(map(lambda x:x.strip().split("\t"),open(bedfile).readlines()))
 	genelist={a[4]:"###".join([ a[0], a[1], a[2]]) for a in lines}
 	datapoints=[]
