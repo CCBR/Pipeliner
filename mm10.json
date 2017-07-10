@@ -58,6 +58,8 @@
     "KNOWNVCF2": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_known_snps.vcf.gz",
     "NOVOINDEX": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_genome.nix",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/genome.fa",
+    "GTFFILE": "/fdb/GENCODE/Gencode_mouse/release_M12/gencode.vM12.annotation.gtf",
+    "CNVKITANTITARGETS": "/data/CCBR_Pipeliner/db/PipeDB/lib/fake.antitargetcoverage.cnn",
     "SNPSITES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
     "adapter.file": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat",
     "fastqc.adapters": "/data/CCBR_Pipeliner/db/PipeDB/dev/fastqc.adapters",
