@@ -1,0 +1,10 @@
+rule theta:
+       params: normalsample=lambda wildcards: config['project']['pairs'][wildcards.x][0],tumorsample=lambda wildcards: config['project']['pairs'][wildcards.x][1],genome=config['references'][pfamily]['GENOME'],exons=config['references'][pfamily]['EXONS'],sites=config['references'][pfamily]['THETASNPS'],workdir=config['project']['workpath'],rname="pl:theta"
+       input:  normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
+               tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
+               calls=config['project']['workpath']+"/cnvkit_out/{x}_calls.cns",
+               targets="exome_targets.bed",
+       output: infile=config['project']['workpath']+"/theta_out/{x}/{x}_thetaIN",
+#               sampdir=config['project']['workpath']+"/theta_out/{x}"
+       threads: 1
+       shell:  "mkdir -p {params.workdir}/theta_out/{params.normalsample}+{params.tumorsample}; module load theta/0.7-6-g4f12904; cd {params.workdir}/theta_out/{params.normalsample}+{params.tumorsample}; cnvkit.py export theta -i {params.tumorsample} -n {params.normalsample} -v {params.workdir}/cnvkit_out/{params.normalsample}+{params.tumorsample}_filtGermpairs.vcf -o {params.normalsample}+{params.tumorsample}_thetaIN {params.workdir}/cnvkit_out/{params.normalsample}+{params.tumorsample}_cnvkit/{params.tumorsample}.cns; RunTHetA {params.workdir}/theta_out/{params.normalsample}+{params.tumorsample}/{params.normalsample}+{params.tumorsample}_thetaIN --TUMOR_FILE {params.workdir}/theta_out/{params.normalsample}+{params.tumorsample}/{params.tumorsample}.tumor.snp_formatted.txt --NORMAL_FILE {params.workdir}/theta_out/{params.normalsample}+{params.tumorsample}/{params.tumorsample}.normal.snp_formatted.txt --MIN_FRAC 0.0001 --NUM_PROCESSES {threads} --OUTPUT_PREFIX {params.tumorsample} --DIR {params.workdir}/theta_out/{params.normalsample}+{params.tumorsample} --BAF"
