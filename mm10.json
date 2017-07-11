@@ -44,7 +44,9 @@
     "SELECTDB": "SIFT_score,SIFT_pred,Polyphen2_HVAR_score,Polyphen2_HVAR_pred,LRT_score,LRT_pred,GERP++_RS,MutationAssessor_score,MutationAssessor_pred,1000Gp1_AF,1000Gp1_EUR_AF,ESP6500_EA_AF,ESP6500_AA_AF",
     "DB29": "/data/CCBR_Pipeliner/db/PipeDB/lib/snpEff_db/dbNSFP2.9.txt.gz",
     "MUTECTCOSMIC": "",
-    "MUTECTSNP": ""
+    "MUTECTSNP": "",
+    "VEPBUILD": "GRCm38",
+    "VEPSPECIES": "mus_musculus",
 },
     "genomeseq": {
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
@@ -91,7 +93,9 @@
     "SELECTDB": "SIFT_score,SIFT_pred,Polyphen2_HVAR_score,Polyphen2_HVAR_pred,LRT_score,LRT_pred,GERP++_RS,MutationAssessor_score,MutationAssessor_pred,1000Gp1_AF,1000Gp1_EUR_AF,ESP6500_EA_AF,ESP6500_AA_AF",
     "DB29": "/data/CCBR_Pipeliner/db/PipeDB/lib/snpEff_db/dbNSFP2.9.txt.gz",
     "MUTECTCOSMIC": "",
-    "MUTECTSNP": ""
+    "MUTECTSNP": "",
+    "VEPBUILD": "GRCm38",
+    "VEPSPECIES": "mus_musculus",
 },
      "rnaseq":{
 "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",

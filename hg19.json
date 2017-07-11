@@ -60,7 +60,9 @@
     "MUTECTCOSMIC": "/data/CCBR_Pipeliner/db/PipeDB/lib/Cosmic_v80.vcf.gz",
     "MUTECTSNP": "/fdb/muTect/dbsnp_137.b37.vcf",
     "MUTECTGENOME": "/fdb/muTect/human_g1k_v37.fasta",
-    "MUTECTVARIANTS": "--dbsnp /fdb/muTect/dbsnp_137.b37.vcf --cosmic /data/CCBR_Pipeliner/db/PipeDB/lib/Cosmic_v80.vcf.gz"
+    "MUTECTVARIANTS": "--dbsnp /fdb/muTect/dbsnp_137.b37.vcf --cosmic /data/CCBR_Pipeliner/db/PipeDB/lib/Cosmic_v80.vcf.gz",
+    "VEPBUILD": "GRCh37",
+    "VEPSPECIES": "homo_sapiens",
     },
     "genomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
@@ -123,7 +125,9 @@
     "MUTECTCOSMIC": "/fdb/muTect/cosmic_v67.b37.vcf",
     "MUTECTSNP": "/fdb/muTect/dbsnp_137.b37.vcf",
     "MUTECTGENOME": "/fdb/muTect/human_g1k_v37.fasta",
-    "MUTECTVARIANTS": "--dbsnp /fdb/muTect/dbsnp_137.b37.vcf --cosmic /data/CCBR_Pipeliner/db/PipeDB/lib/Cosmic_v78.vcf"
+    "MUTECTVARIANTS": "--dbsnp /fdb/muTect/dbsnp_137.b37.vcf --cosmic /data/CCBR_Pipeliner/db/PipeDB/lib/Cosmic_v78.vcf",
+    "VEPBUILD": "GRCh37",
+    "VEPSPECIES": "homo_sapiens",
     },
     "rnaseq": {
     "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
