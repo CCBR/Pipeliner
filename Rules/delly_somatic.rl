@@ -24,7 +24,7 @@ rule delly_somatic_trans:
     input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
            tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam"
     output: tra=config['project']['workpath']+"/delly_out/{x}_tra.bcf",transvcf=config['project']['workpath']+"/delly_out/{x}_trans.vcf"
-    shell: "module load delly; delly call -t TRA -x {params.exclusions} -o {output.tra} -g {params.genome} {input.tumor} {input.normal}; module load samtools; bcftools convert -O v -o {output.transvcf} {output.tra}"
+    shell: "module load delly; delly call -t BND -x {params.exclusions} -o {output.tra} -g {params.genome} {input.tumor} {input.normal}; module load samtools; bcftools convert -O v -o {output.transvcf} {output.tra}"
 
 rule delly_somatic_inv:
     params: exclusions=config['references'][pfamily]['DELLY_EXCLUSIONS'],workdir=config['project']['workpath'],genome=config['references'][pfamily]['GENOME'],rname="pl:dellyinv"

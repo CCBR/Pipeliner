@@ -20,7 +20,7 @@ rule delly_germline_trans:
     params: exclusions=config['references'][pfamily]['DELLY_EXCLUSIONS'],workdir=config['project']['workpath'],genome=config['references'][pfamily]['GENOME'],rname="pl:delly"
     input: expand("{x}.recal.bam", x=samples)
     output: tra=config['project']['workpath']+"/delly_out/translocations.bcf",
-    shell: "mkdir -p delly_out; module load delly/0.7.6; delly call -t TRA -x {params.exclusions} -o {output.tra} -g {params.genome} {input}; module load samtools; bcftools convert -O v -o delly_out/translocations.vcf {output.tra}"
+    shell: "mkdir -p delly_out; module load delly/0.7.6; delly call -t BND -x {params.exclusions} -o {output.tra} -g {params.genome} {input}; module load samtools; bcftools convert -O v -o delly_out/translocations.vcf {output.tra}"
 
 rule delly_germline_inv:
     params: exclusions=config['references'][pfamily]['DELLY_EXCLUSIONS'],workdir=config['project']['workpath'],genome=config['references'][pfamily]['GENOME'],rname="pl:delly"
