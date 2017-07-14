@@ -47,6 +47,7 @@
     "MUTECTSNP": "",
     "VEPBUILD": "GRCm38",
     "VEPSPECIES": "mus_musculus",
+    "VEPFILTERVCF": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
 },
     "genomeseq": {
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",

@@ -63,6 +63,7 @@
     "MUTECTVARIANTS": "--dbsnp /fdb/muTect/dbsnp_137.b37.vcf --cosmic /data/CCBR_Pipeliner/db/PipeDB/lib/Cosmic_v80.vcf.gz",
     "VEPBUILD": "GRCh37",
     "VEPSPECIES": "homo_sapiens",
+    "VEPFILTERVCF": "/fdb/VEP/88/cache/ExAC.r0.3.sites.vep.vcf.gz",
     },
     "genomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
