@@ -64,6 +64,7 @@
     "VEPBUILD": "GRCh37",
     "VEPSPECIES": "homo_sapiens",
     "VEPFILTERVCF": "/fdb/VEP/88/cache/ExAC.r0.3.sites.vep.vcf.gz",
+    "VEPGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
     },
     "genomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
