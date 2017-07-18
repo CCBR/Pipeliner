@@ -5,6 +5,8 @@ from sys import stderr
 #from subprocess import call,Popen, PIPE, STDOUT
 
 #pathprj= os.path.dirname(sys.argv[1])
+pipeline_home = os.path.dirname(sys.argv[0])
+
 pathprj= sys.argv[1]
 print(pathprj, file=stderr)
 print(pathprj+"/project.json", file=stderr)

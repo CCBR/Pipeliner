@@ -59,6 +59,7 @@ from gui.genomeseq import GenomeSeqFrame
 from gui.mirseq import MiRSeqFrame
 from gui.epigenomeseq import ChIPSeqFrame
 from gui.exomeseq import ExomeSeqFrame
+from gui.scrnaseq import scRNASeqFrame
 
 from gui.menu import add_menubar
 
@@ -122,7 +123,7 @@ class PipelinerGUI(Tk):
         l = Label( pipeline_panel, text="Pipeline Family:" )
         l.grid(row=1,column=3,sticky=W,padx=0,pady=5)
         
-        annotations=['hg19','mm10']
+        annotations=['hg19','mm10','mm9','hg38']
         self.annotation = annotation = StringVar()
         annotation.set(annotations[0])
         #annotation.trace('w', lambda *_ :settargets(annotation) )
@@ -133,7 +134,7 @@ class PipelinerGUI(Tk):
         om["menu"].config() #bg = widgetBgColor,fg=widgetFgColor)
         om.grid(row=1,column=2,sticky=W,padx=10,pady=10)
         
-        pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'chipseq']
+        pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'ChIPseq', 'scrnaseq']
         self.pfamily = pfamily = StringVar()
         pfamily.set('Select a pipeline')
         om = OptionMenu(pipeline_panel, pfamily, *pfamilys, command=self.set_pipeline)
@@ -269,8 +270,8 @@ class PipelinerGUI(Tk):
                                                'miR-Seq', #self.pfamily.get(), 
                                                self.annotation, global_info=self )
      
-        elif self.pfamily.get() == 'chipseq' :
-            print( 'chipseq' )
+        elif self.pfamily.get() == 'ChIPseq' :
+            print( 'ChIPseq' )
             self.pipelineframe = ChIPSeqFrame( self.notebook, 
                                                'ChIPseq',#self.pfamily.get(), 
                                                self.annotation, global_info=self )
@@ -278,6 +279,11 @@ class PipelinerGUI(Tk):
             print( 'rnaseq' )
             self.pipelineframe = RNASeqFrame( self.notebook, 
                                                'RNAseq',#self.pfamily.get(), 
+                                               self.annotation, global_info=self )
+        elif self.pfamily.get() == 'scrnaseq' :
+            print( 'scrnaseq' )
+            self.pipelineframe = scRNASeqFrame( self.notebook, 
+                                               'scRNAseq',#self.pfamily.get(), 
                                                self.annotation, global_info=self )
         else :
             return

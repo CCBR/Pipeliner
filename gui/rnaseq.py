@@ -42,10 +42,16 @@ class RNASeqFrame( PipelineFrame ) :
         
         label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
         label.grid(row=3,column=0,sticky=W,padx=10,pady=5)
-        Pipelines=["initialqcrnaseq","rnaseq"]
-        Pipeline = self.Pipeline = StringVar()
-        Pipeline.set(Pipelines[0])        
-        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.option_controller)
+        PipelineLabels=["Quality Control Analysis","Differential Expression Analysis","Fusion Detection","Variant Calling" ]
+        Pipelines=["initialqcrnaseq","rnaseq","rnaseqfusion", "rnaseqvargerm"]
+
+        self.label2pipeline = { k:v for k,v in zip(PipelineLabels, Pipelines)}
+        
+        PipelineLabel = self.PipelineLabel = StringVar()
+        self.Pipeline = StringVar()
+
+        PipelineLabel.set(PipelineLabels[0])        
+        om = OptionMenu(eframe, PipelineLabel, *PipelineLabels, command=self.option_controller)
         om.config()#bg = widgetBgColor,fg=widgetFgColor)
         om["menu"].config()#bg = widgetBgColor,fg=widgetFgColor)
         #om.pack(side=LEFT,padx=20,pady=5)
@@ -60,7 +66,7 @@ class RNASeqFrame( PipelineFrame ) :
         self.rReadlen = rReadlen = StringVar()
         rReadlen.set(rReadlens[2])        
         self.om2 = OptionMenu(eframe, rReadlen, *rReadlens, command=self.option_controller)
-        self.om2.grid(row=4,column=1,sticky=W,padx=10,pady=5)
+        #self.om2.grid(row=4,column=1,sticky=W,padx=10,pady=5)
 
         rStrands = ['0, Reads are Unstranded',
                                     '1, Reads are from Sense Strand',
@@ -68,7 +74,7 @@ class RNASeqFrame( PipelineFrame ) :
         self.rStrand = rStrand = StringVar()
         rStrand.set(rStrands[0])
         self.om3 = OptionMenu(eframe, rStrand, *rStrands, command=self.option_controller)
-        self.om3.grid(row=5,column=1,sticky=W,padx=10,pady=5)
+        #self.om3.grid(row=5,column=1,sticky=W,padx=10,pady=5)
         
         rDegs = ["no, Do not Report Differentially Expressed Genes",
                               "yes, Report Differentially Expressed Genes"]
@@ -111,14 +117,26 @@ class RNASeqFrame( PipelineFrame ) :
         self.option_controller()
     
     def option_controller( self, *args, **kwargs ) :
+
         PipelineFrame.option_controller( self )
+
+        self.Pipeline.set( self.label2pipeline[self.PipelineLabel.get()] )
+        print( self.Pipeline.get() )
+
         if self.Pipeline.get() == 'initialqcrnaseq' :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
-        else :
+            self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+        elif self.Pipeline.get() == 'rnaseq' :
             self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
             self.sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
-            
+            self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+        else :
+            self.om4.grid_forget()
+            self.sampleLF.grid_forget()
+            self.info.grid_forget()
+
+
             
     def makejson_wrapper( self, *args, **kwargs ) :
         self.makejson(*args, **kwargs)
@@ -140,7 +158,6 @@ class RNASeqFrame( PipelineFrame ) :
             self.groups_button.grid( row=5, column=5, padx=10, pady=5 )
             self.contrasts_button.grid( row=5, column=6, padx=10, pady=5 )
 
-        self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
    
     def popup_groups( self ) :
         self.popup_window( "Groups Information", "groups.tab" )

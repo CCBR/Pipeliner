@@ -4,9 +4,11 @@ FILES <- args[2]
 MINCOUNT <- as.numeric(args[4])
 MINSAMPLES <- as.numeric(args[5])
 
-GTFFILE <- args[3]
-system(paste('grep -w gene ',GTFFILE,' | cut -f1,4,5,7,9 | sed -e "s/;/\\t/g" | cut -f1,2,3,4,5,7,9 | sed -e \'s/gene_id "//g\' -e \'s/gene_type "//g\' -e \'s/gene_name "//g\' | sed -e \'s/"//g\' > gencode.gtf.pre.bed ',sep=""))
-pregtf=read.delim('gencode.gtf.pre.bed',header=F,stringsAsFactors=F)
+#GTFFILE <- args[3]
+GENEINFO <- args[3]
+#system(paste('grep -w gene ',GTFFILE,' | cut -f1,4,5,7,9 | sed -e "s/;/\\t/g" | cut -f1,2,3,4,5,7,9 | sed -e \'s/gene_id "//g\' -e \'s/gene_type "//g\' -e \'s/gene_name "//g\' | sed -e \'s/"//g\' > gencode.gtf.pre.bed ',sep=""))
+#pregtf=read.delim('gencode.gtf.pre.bed',header=F,stringsAsFactors=F)
+pregtf=read.delim(GENEINFO,header=F,stringsAsFactors=F)
 filler1=rep(".",length(pregtf[,1]))
 filler2=rep(".",length(pregtf[,1]))
 id=paste(pregtf[,5],"-",pregtf[,7],sep="")

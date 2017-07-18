@@ -12,6 +12,7 @@ rmarkdown::render("PcaReport.Rmd", params = list(
     folder = args[1],
     sampleinfo = args[2],
     data = args[3],
-    contrasts = args[4]
+    projectId = args[4],
+    projectDesc = args[5]
   ))
 

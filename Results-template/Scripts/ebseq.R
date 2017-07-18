@@ -33,7 +33,7 @@ for(f in seq(1, length(contras), by = 2)){
 	fileorder = vector()
 	c1 = 0
 	for(fl in files){
-		if(s2c$condition[match(gsub("\\..*","",fl),s2c_pair$sample)] == contras[f]){
+		if(s2c_pair$condition[match(gsub("\\..*","",fl),s2c_pair$sample)] == contras[f]){
 			fileorder = c(fileorder, fl)
 			c1 = c1+1
 
@@ -41,7 +41,7 @@ for(f in seq(1, length(contras), by = 2)){
 	}
 	c2 = 0
 	for(fl in files){
-		if(s2c$condition[match(gsub("\\..*","",fl),s2c_pair$sample)] == contras[f+1]){
+		if(s2c_pair$condition[match(gsub("\\..*","",fl),s2c_pair$sample)] == contras[f+1]){
 			fileorder = c(fileorder, fl)
 			c2 = c2 + 1
 

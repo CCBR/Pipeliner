@@ -11,10 +11,38 @@
     {
         "threads": "1"
     },
+    "fusioncatcher":
+    {
+        "threads": "16",
+        "mem" : "96g",
+        "time" : "10-00:00:00",
+    },
+    "svaba_germline":
+    {
+        "threads": "32",
+        "mem" : "96g",
+        "time" : "10-00:00:00",
+    },
+    "starfusion":
+    {
+        "threads": "1",
+        "mem" : "48g",
+        "time" : "10-00:00:00",
+    },
+    "fusioninspector":
+    {
+        "threads": "1",
+        "mem" : "48g",
+    },
+    "oncofuse":
+    {
+        "threads": "1",
+        "mem" : "48g",
+    },
     "theta":
     {
         "threads": "1",
-        "mem" : "120g"
+        "mem" : "48g"
     },
     "manta_germline":
      {
@@ -25,6 +53,11 @@
      {
         "threads": "1",
         "mem" : "48g",
+    },
+    "cnvkit_germ":
+     {
+        "threads": "12",
+        "mem" : "64g",
     },
     "manta_somatic":
      {
@@ -49,6 +82,26 @@
     {
         "mem" : "96g"
     },
+    "delly_germline":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
+    "delly_somatic":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
+    "pindel_germline":
+    {
+        "threads": "8",
+        "mem" : "64g",
+    },
+    "breakdancer_germline":
+    {
+        "threads": "1",
+        "mem" : "64g",
+    },
     "make_somatic_network":
     {
         "threads": "1",
@@ -65,13 +118,16 @@
     },
     "fastq_screen":
     {
-        "threads": "24"
+        "threads": "24",
+        "mem": "24g"
     },
     "strelka":
     {
         "threads": "4",
         "mem": "64g"
     },
+        
+       
     "bwa_pe":
     {
         "threads": "4"
@@ -83,11 +139,18 @@
     },
     "fastqc_fastq":
     {
-        "threads": "8"
+        "threads": "8",
+        "mem": "24g"
+    },
+    "fastqc_rnaseqvar":
+    {
+        "threads": "8",
+        "mem": "24g"
     },
     "fastqc_trimmed":
     {
-        "threads": "8"
+        "threads": "8",
+        "mem": "24g"
     },
     "gatk_apply_variant_recal":
     {
@@ -275,12 +338,12 @@
     "star_align_2":
     {
         "threads": "32",
-        "mem" : "64g"
+        "mem" : "96g"
     },
     "star_align_1":
     {
         "threads": "32",
-        "mem" : "64g"
+        "mem" : "96g"
     },
     "germline_filter_rnaseqvar":
     {
@@ -295,7 +358,7 @@
     "gatk_rnaseqvar_haplotype_caller":
     {
         "threads": "4",
-        "mem": "48g"
+        "mem": "96g"
     },
     "star_generate":
     {
@@ -303,7 +366,8 @@
     },
     "trimmomatic":
     {
-        "threads": "32"
+        "threads": "32",
+        "mem": "24g"
     },
     "varscan":
     {
@@ -323,12 +387,12 @@
     "trimmomatic_pe":
     {
         "threads": "32",
-        "mem": "110g"
+        "mem": "24g"
     },
     "fastqc":
     {
         "threads": "32",
-        "mem": "110g"
+        "mem": "24g"
     },
     "star1p":
     {
@@ -446,5 +510,39 @@
         "mem": "16g"
     },
     
+    'BWA':
+    {
+        'mem': '32g',
+        'threads': '32'
+    },
+        
+    'MEMEChIP':
+    {
+        'mem': '64g',
+        'threads': '32'
+    },
 
+    "cellranger":
+    {
+        "threads": "40",
+        "mem": "110g"
+    },
+    "scrna_initial":
+    {
+        "partition" : "largemem",
+        "threads": "32",
+        "mem": "1000g"
+    },
+    "scrna_jackstraw":
+    {
+        "partition" : "largemem",
+        "threads": "32",
+        "mem": "1000g"
+    },
+    "scrna_cluster":
+    {
+        "partition" : "largemem",
+        "threads": "32",
+        "mem": "1000g"
+    }  
 }

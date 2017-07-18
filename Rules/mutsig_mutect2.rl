@@ -1,7 +1,6 @@
 if config['project']['annotation'] == "hg19":
   rule mutsig_mutect2:
-        input: expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{p}.maf",p=pairs),
-               dir=config['project']['workpath']+"/mutect2_out"
+        input: expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{p}.maf",p=pairs)
         output: genes=config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
                 maf=config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf"
         params: rname="pl:mutsig_mutect2"
@@ -10,8 +9,7 @@ if config['project']['annotation'] == "hg19":
 else:
 
   rule mutsig_mutect2:
-        input: expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{p}.maf",p=pairs),
-               dir=config['project']['workpath']+"/mutect2_out"
+        input: expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{p}.maf",p=pairs)
         output: genes=config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
                 maf=config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf"
         params: rname="pl:mutsig_mutect2"

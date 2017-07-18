@@ -16,6 +16,6 @@ rule gatk_merge_somatic_vcfs:
         cmd="{params.gatk} -T CombineVariants -R {params.genome} -L {params.regions} --filteredrecordsmergetype KEEP_UNCONDITIONAL --genotypemergeoption UNIQUIFY -o {output.strelkavcf}"+varb
         shell(cmd)
         flc=os.popen("ls mutect2_out/*FINALmutect2.vcf | grep -v 'snpEff'").read().split()
-        varb=" --variant "+" --variant ".join(flc)
+        varc=" --variant "+" --variant ".join(flc)
         cmd="{params.gatk} -T CombineVariants -R {params.genome} -L {params.regions} --filteredrecordsmergetype KEEP_UNCONDITIONAL --genotypemergeoption UNIQUIFY -o {output.mutect2vcf}"+varc
         shell(cmd)        
