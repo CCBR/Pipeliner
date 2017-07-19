@@ -2,7 +2,7 @@ rule gatk_genotype_gvcfs:
     input: expand("{x}.g.vcf",x=samples)
     output: "combined.vcf"
     params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
-    threads: 4
+    threads: 2
     run:
       fl=os.popen("ls *.g.vcf").read().split()      
       var=" --variant "+" --variant ".join(fl)
