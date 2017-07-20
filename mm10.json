@@ -96,7 +96,7 @@
 "GENOMEFILE": "/fdb/GENCODE/Gencode_mouse/release_M12/GRCm38.p5.genome.fa", 
 "GTFFILE": "/fdb/GENCODE/Gencode_mouse/release_M12/gencode.vM12.annotation.gtf",
 "FUSIONGTFFILE": "/fdb/STAR_2.4.2a/UCSC/mm10/genes.gtf",
-"STARDIR": "/fdb/STAR_current/GENCODE/Gencode_mouse/release_M12/genes-",
+"STARDIR": "/fdb/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M12/genes-",
 "STARREF": "/fdb/STAR_2.4.2a/UCSC/mm10/genes-",
 "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/dev/Mm10_M12_genes.txt",
 "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/dev/refFlatMm10_M12.txt",
