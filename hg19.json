@@ -149,7 +149,7 @@
     "SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/rsem1.3.0/human_gencode.transcripts.fa",
 #    "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/dev/RNA-Seq-pipeline/ver2/TruSeq_and_nextera_adapters_new.fa",
     "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
-    "STARDIR": "/fdb/STAR_current/GENCODE/Gencode_human/release_19/genes-",
+    "STARDIR": "/fdb/STAR_indices/2.5.2b/GENCODE/Gencode_human/release_19/genes-",
     "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg19.rRNA.interval_list_v3",
 <<<<<<< HEAD
     "RRNALIST2": "/data/CCBR_Pipeliner/db/PipeDB/lib/gencode.v19.annotation.gtf.rRNA.interval_list"
