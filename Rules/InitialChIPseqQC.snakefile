@@ -43,7 +43,8 @@ if readtype == 'Single' :
         threads: 24
         shell:
             """
-            module load bowtie ; 
+            module load bowtie/2-2.2.9 ;
+            module load perl/5.18.2; 
             {params.fastq_screen} --conf {params.config} \
                 --outdir {params.outdir} --subset 1000000 \
                 --aligner bowtie2 --force {input}
@@ -53,7 +54,6 @@ if readtype == 'Single' :
         input: 
             expand("{name}.R1.fastq.gz", name=samples) 
         output: 
-            #expand( "{name}_Input.R1_fastqc.html", name=samples)
             'rawQC'
         priority: 2
         params: 
@@ -68,22 +68,47 @@ if readtype == 'Single' :
             fastqc {input} -t {threads} -o {output}
             """
 
-    rule trimgalore:
+    # rule trimgalore:
+    #     input:
+    #         "{name}.R1.fastq.gz"
+    #     params:
+    #         rname='pl:trimgalore',
+    #         d = trim_dir,
+    #         of = '{d}/{name}.R1_trimmed.fq.gz'
+    #     output:
+    #         of1 = '{d}/{name}.R1.trim.fastq.gz',
+    #         of2 = '{d}/{name}.R1.fastq.gz_trimming_report.txt',
+    #     shell:
+    #         """
+    #         module load trimgalore; 
+    #         trim_galore -o {params.d} {input};
+    #         mv {params.of} {output.of1}
+    #         """
+
+    rule trim:
         input:
-            "{name}.R1.fastq.gz"
+            if1 = "{name}.R1.fastq.gz"
         params:
-            rname='pl:trimgalore',
-            d = trim_dir,
-            of = '{d}/{name}.R1_trimmed.fq.gz'
+            rname='pl:trimmomatic_se',
+            d=trim_dir,
+            batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
+            trimmomaticver=config['bin'][pfamily]['TRIMMOMATICVER'],
+            fastawithadaptersetc=config['references'][pfamily]['FASTAWITHADAPTERSETC'],
+            seedmismatches=config['bin'][pfamily]['SEEDMISMATCHES'],
+            palindromeclipthreshold=config['bin'][pfamily]['PALINDROMECLIPTHRESHOLD'],
+            simpleclipthreshold=config['bin'][pfamily]['SIMPLECLIPTHRESHOLD'],
+            leadingquality=config['bin'][pfamily]['LEADINGQUALITY'],
+            trailingquality=config['bin'][pfamily]['TRAILINGQUALITY'],
+            minlen=config['bin'][pfamily]['MINLEN'],
         output:
             of1 = '{d}/{name}.R1.trim.fastq.gz',
-            of2 = '{d}/{name}.R1.fastq.gz_trimming_report.txt',
+            of2 = '{d}/{name}.R1.fastq.gz_trimmomatic.err',
+        threads: 32
         shell:
             """
-            module load trimgalore; 
-            trim_galore -o {params.d} {input};
-            mv {params.of} {output.of1}
-            """
+            module load {params.trimmomaticver};
+            java -classpath $TRIMMOJAR org.usadellab.trimmomatic.TrimmomaticSE -threads {threads} {input.if1} {output.of1} ILLUMINACLIP:{param.fastawithadaptersetc}:{param.seedmismatches}:{param.palindromeclipthreshold}:{param.simpleclipthreshold} LEADING:{param.leadingquality} TRAILING:{param.trailingquality} MINLEN:{param.minlen} 2> {output.of2}
+            """            
 
     rule fastqc:  
         input:
