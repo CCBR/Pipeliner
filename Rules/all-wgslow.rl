@@ -41,30 +41,7 @@ if config['project']['annotation'] == "hg19":
 #           "breakdancer_out/file.ctx",
            config['project']['workpath']+"/svaba_out/svaba.log",
            expand("{s}"+".g.vcf",s=samples),
-           expand(config['project']['workpath']+"/mutect_out/{p}"+".FINAL.vcf",p=pairs),
-           expand(config['project']['workpath']+"/mutect2_out/{p}"+".FINALmutect2.vcf",p=pairs),
-           expand(config['project']['workpath']+"/strelka_out/{p}"+".vcf",p=pairs),
-           expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{p}"+".maf",p=pairs),
-           expand(config['project']['workpath']+"/strelka_out/oncotator_out/{p}"+".maf",p=pairs),
-           expand(config['project']['workpath']+"/mutect_out/oncotator_out/{p}"+".maf",p=pairs),
-           config['project']['workpath']+"/strelka_out",
-           config['project']['workpath']+"/mutect2_out",
-           config['project']['workpath']+"/cnvkit_out",
-           config['project']['workpath']+"/mutect_out",
-           config['project']['workpath']+"/delly_out",
-           expand(config['project']['workpath']+"/cnvkit_out/{p}_calls.cns", p=pairs),
-           expand(config['project']['workpath']+"/cnvkit_out/{p}_gainloss.tsv", p=pairs),                        
-           expand(config['project']['workpath']+"/delly_out/{p}_del.bcf", p=pairs),
-           expand(config['project']['workpath']+"/delly_out/{p}_ins.bcf", p=pairs),
-           expand(config['project']['workpath']+"/delly_out/{p}_dup.bcf", p=pairs),
-           expand(config['project']['workpath']+"/delly_out/{p}_tra.bcf", p=pairs),
-           expand(config['project']['workpath']+"/delly_out/{p}_inv.bcf", p=pairs),
-           expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs),
-           expand(config['project']['workpath']+"/conpair_out/{p}.conpair", p=pairs),
-           config['project']['workpath']+"/mutect_out/merged_somatic.vcf",
-           config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
-           config['project']['workpath']+"/mutect_out/merged_somatic_snpEff.vcf",
-           config['project']['workpath']+"/strelka_out/merged_somatic_snpEff.vcf",
+#           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
 
     output: 
     params: rname="final"
@@ -113,6 +90,7 @@ else:
            "cnvkit_out/cnvkit_heatmap.pdf",
 #           "breakdancer_out/file.ctx",
            config['project']['workpath']+"/svaba_out/svaba.log",
+#           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
     output: 
     params: rname="final"
     shell:  """

@@ -65,6 +65,9 @@
     "VEPSPECIES": "homo_sapiens",
     "VEPFILTERVCF": "/fdb/VEP/88/cache/ExAC.r0.3.sites.vep.vcf.gz",
     "VEPGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
+    "CANVASGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/GRCh37/WholeGenomeFasta",
+    "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/GRCh37/kmer.fa",
+    "CANVASFILTER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/GRCh37/filter13.bed",
     },
     "genomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
@@ -130,6 +133,9 @@
     "MUTECTVARIANTS": "--dbsnp /fdb/muTect/dbsnp_137.b37.vcf --cosmic /data/CCBR_Pipeliner/db/PipeDB/lib/Cosmic_v78.vcf",
     "VEPBUILD": "GRCh37",
     "VEPSPECIES": "homo_sapiens",
+    "CANVASGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/GRCh37/WholeGenomeFasta",
+    "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/GRCh37/kmer.fa",
+    "CANVASFILTER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/GRCh37/filter13.bed",
     },
     "rnaseq": {
     "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
