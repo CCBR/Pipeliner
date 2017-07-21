@@ -144,7 +144,7 @@
      "SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/rsem1.3.0/hg38_R26/human_gencode.transcripts.fa",
 #R    "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/dev/RNA-Seq-pipeline/ver2/TruSeq_and_nextera_adapters_new.fa",
      "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
-     "STARDIR": "/fdb/STAR_current/GENCODE/Gencode_human/release_26/genes-",
+     "STARDIR": "/fdb/STAR_indices/2.5.2b/GENCODE/Gencode_human/release_26/genes-",
      "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg38.rRNA.interval_list_R26",
     "STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38_gencode_v24_CTAT_lib_Mar292017_prebuilt",
     "STARREF": "/fdb/STAR_current/GENCODE/Gencode_human/release_26/genes-",
