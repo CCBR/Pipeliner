@@ -8,6 +8,7 @@ filetype = config['project']['filetype']
 readtype = config['project']['readtype']
 
 trim_dir='trim'
+bam_dir='bam'
 
 #print(samples)
 
@@ -16,25 +17,33 @@ if readtype == 'Single' :
         params: 
             batch='--time=168:00:00'
         input: 
-            "Reports/multiqc_report.html",
+            # "Reports/multiqc_report.html",
             "rawQC",
             "QC",
-            expand("FQscreen/{name}.R1_screen.txt",name=samples),
-            expand("FQscreen/{name}.R1_screen.png",name=samples),
-            expand("{name}.sorted.rmdup.bam.bai", name=samples),
-            expand("{name}.sorted.rmdup.bam", name=samples),
-            expand("{name}.shifts", name=samples),
-            expand("{name}.rmdup.shifts", name=samples),
-            expand(join(trim_dir,'{name}.R1.trim.fastq.gz'), name=samples)
+            "QC_not_blacklist_plus",
+            expand("FQscreen/{name}.R1.trim_screen.txt",name=samples),
+            expand("FQscreen/{name}.R1.trim_screen.png",name=samples),
+            expand(join(trim_dir,'{name}.R1.trim.fastq.gz'), name=samples),
+            expand(join(trim_dir,'{name}.R1.trim.not_blacklist_plus.fastq.gz'), name=samples),
+            expand(join(bam_dir,"{name}.sorted.bam"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.mapq_gt_3.bam"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.dedup.bam"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.ppqt"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.pdf"),name=samples),
+            # expand("{name}.sorted.rmdup.bam.bai", name=samples),
+            # expand("{name}.sorted.rmdup.bam", name=samples),
+            # expand("{name}.shifts", name=samples),
+            # expand("{name}.rmdup.shifts", name=samples),
 
                    
 
     rule fastq_screen:
         input: 
-            expand("{name}.R1.fastq.gz", name=samples)
+            join(trim_dir,"{name}.R1.trim.fastq.gz")
         output:
-            "FQscreen/{name}.R1_screen.txt",
-            "FQscreen/{name}.R1_screen.png",
+            "FQscreen/{name}.R1.trim_screen.txt",
+            "FQscreen/{name}.R1.trim_screen.png",
         params: 
             rname='pl:fqscreen',
             fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
@@ -90,7 +99,6 @@ if readtype == 'Single' :
             if1 = "{name}.R1.fastq.gz"
         params:
             rname='pl:trimmomatic_se',
-            d=trim_dir,
             batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
             trimmomaticver=config['bin'][pfamily]['TRIMMOMATICVER'],
             fastawithadaptersetc=config['references'][pfamily]['FASTAWITHADAPTERSETC'],
@@ -101,24 +109,66 @@ if readtype == 'Single' :
             trailingquality=config['bin'][pfamily]['TRAILINGQUALITY'],
             minlen=config['bin'][pfamily]['MINLEN'],
         output:
-            of1 = '{d}/{name}.R1.trim.fastq.gz',
-            of2 = '{d}/{name}.R1.fastq.gz_trimmomatic.err',
+            of1 = join(trim_dir,'{name}.R1.trim.fastq.gz'),
+            of2 = join(trim_dir,'{name}.R1.fastq.gz_trimmomatic.err'),
         threads: 32
         shell:
             """
             module load {params.trimmomaticver};
-            java -classpath $TRIMMOJAR org.usadellab.trimmomatic.TrimmomaticSE -threads {threads} {input.if1} {output.of1} ILLUMINACLIP:{param.fastawithadaptersetc}:{param.seedmismatches}:{param.palindromeclipthreshold}:{param.simpleclipthreshold} LEADING:{param.leadingquality} TRAILING:{param.trailingquality} MINLEN:{param.minlen} 2> {output.of2}
+            java -classpath $TRIMMOJAR org.usadellab.trimmomatic.TrimmomaticSE -threads {threads} {input.if1} {output.of1} ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold} LEADING:{params.leadingquality} TRAILING:{params.trailingquality} MINLEN:{params.minlen} 2> {output.of2}
             """            
 
     rule fastqc:  
-        input:
-            expand("trim/{name}.R1.trim.fastq.gz", name=samples),
-        output: "QC"
-        priority: 2
-        params: 
+        params:
             rname='pl:fastqc',
             batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
             fastqcver=config['bin'][pfamily]['FASTQCVER']
+        input:
+            expand(join(trim_dir,"{name}.R1.trim.fastq.gz"),name=samples),
+        output: "QC"
+        priority: 2
+        threads: 32
+        shell: 
+            """
+            mkdir -p {output};
+            module load {params.fastqcver}; 
+            fastqc {input} -t {threads} -o {output}
+            """
+
+    rule remove_blacklist_reads:
+        params:
+            rname="pl:removeBL",
+            reflen=config['references'][pfamily]['REFLEN'],
+            blacklistbwaindex=config['references'][pfamily]['BLACKLISTBWAINDEX'],
+            picardver=config['bin'][pfamily]['PICARDVER'],
+        input:
+            infq=join(trim_dir,"{name}.R1.trim.fastq.gz"),
+        output:
+            outfq=join(trim_dir,"{name}.R1.trim.not_blacklist_plus.fastq.gz"),
+            outbam=temp(join(trim_dir,"{name}.R1.trim.not_blacklist_plus.bam")),
+        threads: 32
+        shell:
+            """
+            module load {params.picardver};
+            module load bwa;
+            module load samtools;
+            bwa mem -t {threads} {params.blacklistbwaindex} {input.infq} | samtools view -@{threads} -f4 -b -o {output.outbam}
+            java -Xmx10g \
+                -jar $PICARDJARPATH/SamToFastq.jar \
+                VALIDATION_STRINGENCY=SILENT \
+                INPUT={output.outbam} \
+                FASTQ={output.outfq}
+            """
+
+    rule fastqc_notBL:  
+        params: 
+            rname='pl:fastqc_notBL',
+            batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
+            fastqcver=config['bin'][pfamily]['FASTQCVER']
+        input:
+            expand(join(trim_dir,"{name}.R1.trim.not_blacklist_plus.fastq.gz"), name=samples),
+        output: "QC_not_blacklist_plus"
+        priority: 2
         threads: 32
         shell: 
             """
@@ -129,65 +179,77 @@ if readtype == 'Single' :
 
     rule BWA:
         input:
-            "trim/{name}.R1.trim.fastq.gz"
-        output:
-            "{name}.sorted.bam"
+            infq=join(trim_dir,"{name}.R1.trim.not_blacklist_plus.fastq.gz"),
         params:
+            d=bam_dir,
             rname='pl:bwa',
             reference= config['references'][pfamily]['BWA'],
+        output:
+            outbam1="{d}/{name}.sorted.bam", 
+            outbam2="{d}/{name}.sorted.mapq_gt_3.bam",
+            flagstat1="{d}/{name}.sorted.bam.flagstat",
+            flagstat2="{d}/{name}.sorted.mapq_gt_3.bam.flagstat",
         threads: 32
         shell: 
             """
             module load bwa;
             module load samtools;
             bwa mem -t {threads} {params.reference} {input} | \
-                samtools sort -o {output}    
-            """
-                
-        '''
-        shell: 
-            """
-            module load bwa;
-            module load samtools;
-            bwa mem -t  {threads} {params.reference} {input} | \
-            awk -F '\t' \
-            '/^@SQ/{{\
-                OFS="\t"; \
-                split($2,a,":"); \
-                if(a[2]=="MT"){{ \
-                    $2 = a[1]":chrM"; }} \
-                else {{ $2=a[1]":chr"a[2]}}    \
-                print; next;}} \
-            /^@/{{print; next}} \
-            {{OFS="\t"; \
-                if($3=="*"){{}} \
-                else if($3=="MT"){{$3="chrM";}}\
-                else if($3!~/chr/){{$3="chr"$3;}}; \
-                if($7=="*"){{}} \
-                else if($7=="MT"){{$7="chrM";}}\
-                else if($7!~/chr/){{$7="chr"$7;}}; \
-            print}}' | samtools sort -o {output}
+            samtools sort -@{threads} -o {output.outbam1}
+            samtools index {output.outbam1}
+            samtools flagstat {output.outbam1} > {output.flagstat1}
+            samtools view -b -q 4 {output.outbam1} -o {output.outbam2}
+            samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
-        '''
+                
+        # '''
+        # shell: 
+        #     """
+        #     module load bwa;
+        #     module load samtools;
+        #     bwa mem -t  {threads} {params.reference} {input} | \
+        #     awk -F '\t' \
+        #     '/^@SQ/{{\
+        #         OFS="\t"; \
+        #         split($2,a,":"); \
+        #         if(a[2]=="MT"){{ \
+        #             $2 = a[1]":chrM"; }} \
+        #         else {{ $2=a[1]":chr"a[2]}}    \
+        #         print; next;}} \
+        #     /^@/{{print; next}} \
+        #     {{OFS="\t"; \
+        #         if($3=="*"){{}} \
+        #         else if($3=="MT"){{$3="chrM";}}\
+        #         else if($3!~/chr/){{$3="chr"$3;}}; \
+        #         if($7=="*"){{}} \
+        #         else if($7=="MT"){{$7="chrM";}}\
+        #         else if($7!~/chr/){{$7="chr"$7;}}; \
+        #     print}}' | samtools sort -o {output}
+        #     """  
+        # '''
 
-    rule picard:
+    rule picard_dedup:
         input: 
-            file1= "{name}.sorted.bam"
+            bam1= join(bam_dir,"{name}.sorted.bam"),
+            bam2= join(bam_dir,"{name}.sorted.mapq_gt_3.bam")
         output:
-            outstar1=temp("{name}.bwa_rg_added.sorted.bam"), 
-            outstar2="{name}.bwa_rg_added.sorted.dmark.bam",
-            outstar3="{name}.bwa.duplic" 
+            out1=temp(join(bam_dir,"{name}.bwa_rg_added.sorted.bam")), 
+            out2=join(bam_dir,"{name}.sorted.dedup.bam"),
+            out3=join(bam_dir,"{name}.bwa.duplic"), 
+            out4=temp(join(bam_dir,"{name}.bwa_rg_added.sorted.mapq_gt_3.bam")), 
+            out5=join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam"),
+            out6=join(bam_dir,"{name}.bwa.mapq_gt_3.duplic"), 
         params:
-            rname='pl:picard',
+            rname='pl:dedup',
             batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
-            picardver=config['bin'][pfamily]['PICARDVER']
+            picardver=config['bin'][pfamily]['PICARDVER'],
         shell: 
-             """
+            """
              module load {params.picardver}; 
              java -Xmx10g \
                   -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar \
-                  INPUT={input.file1} \
-                  OUTPUT={output.outstar1} \
+                  INPUT={input.bam1} \
+                  OUTPUT={output.out1} \
                   TMP_DIR=/lscratch/$SLURM_JOBID \
                   RGID=id \
                   RGLB=library \
@@ -196,29 +258,54 @@ if readtype == 'Single' :
                   RGSM=sample; 
              java -Xmx10g \
                   -jar $PICARDJARPATH/MarkDuplicates.jar \
-                  INPUT={output.outstar1} \
-                  OUTPUT={output.outstar2} \
+                  INPUT={output.out1} \
+                  OUTPUT={output.out2} \
                   TMP_DIR=/lscratch/$SLURM_JOBID \
                   CREATE_INDEX=true \
                   VALIDATION_STRINGENCY=SILENT \
-                  METRICS_FILE={output.outstar3}
-             """
-                
-    rule rmdup:
+                  REMOVE_DUPLICATES=true \
+                  METRICS_FILE={output.out3}
+             java -Xmx10g \
+                  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar \
+                  INPUT={input.bam2} \
+                  OUTPUT={output.out4} \
+                  TMP_DIR=/lscratch/$SLURM_JOBID \
+                  RGID=id \
+                  RGLB=library \
+                  RGPL=illumina \
+                  RGPU=machine \
+                  RGSM=sample; 
+             java -Xmx10g \
+                  -jar $PICARDJARPATH/MarkDuplicates.jar \
+                  INPUT={output.out4} \
+                  OUTPUT={output.out5} \
+                  TMP_DIR=/lscratch/$SLURM_JOBID \
+                  CREATE_INDEX=true \
+                  VALIDATION_STRINGENCY=SILENT \
+                  REMOVE_DUPLICATES=true \
+                  METRICS_FILE={output.out6}
+            """
+    rule ppqt:
         input:
-            file1= "{name}.sorted.bam"
+            bam1= join(bam_dir,"{name}.sorted.bam"),
+            bam2= join(bam_dir,"{name}.sorted.mapq_gt_3.bam"),
         output:
-            rmdup_bam="{name}.sorted.rmdup.bam", 
-            rmdup_bai="{name}.sorted.rmdup.bam.bai" 
+            ppqt1= join(bam_dir,"{name}.sorted.ppqt"),
+            pdf1= join(bam_dir,"{name}.sorted.pdf"),
+            ppqt2= join(bam_dir,"{name}.sorted.mapq_gt_3.ppqt"),
+            pdf2= join(bam_dir,"{name}.sorted.mapq_gt_3.pdf"),
         params:
-            rname='pl:rmdup'
+            rname="pl:ppqt",
+            batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
         shell:
             """
             module load samtools;
-            samtools rmdup {input.file1} {output.rmdup_bam};
-            samtools index {output.rmdup_bam};
+            module load R;
+            Rscript Scripts/phantompeakqualtools/run_spp.R \
+            -c={input.bam1} -savp -out={output.ppqt1} 
             """
-    
+
+
     rule shiftstats:
         input: 
             if1 = "{name}.sorted.bam",
