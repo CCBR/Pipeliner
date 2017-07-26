@@ -58,31 +58,31 @@ if readtype == 'Single' :
             expand(join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.ppqt"),name=samples),
             expand(join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.pdf"),name=samples),
             # ngs.plot
-            # expand(join(ngsplot_dir,"{name}.sorted.tss.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.tss.km.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.tes.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.tes.km.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.genebody.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.genebody.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.tss.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.tss.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.tes.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.tes.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.genebody.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.genebody.km.heatmap.pdf"),name=samples),
 
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tss.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tss.km.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tes.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tes.km.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.genebody.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.genebody.km.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.dedup.tss.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.dedup.tss.km.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.dedup.tes.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.dedup.tes.km.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.dedup.genebody.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.dedup.genebody.km.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tss.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tss.km.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tes.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tes.km.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.genebody.max.heatmap.pdf"),name=samples),
-            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.genebody.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tss.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tss.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tes.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tes.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.genebody.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.genebody.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.dedup.tss.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.dedup.tss.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.dedup.tes.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.dedup.tes.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.dedup.genebody.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.dedup.genebody.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tss.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tss.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tes.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tes.km.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.genebody.max.heatmap.pdf"),name=samples),
+            expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.genebody.km.heatmap.pdf"),name=samples),
             # deeptools
             expand(join(bw_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
             expand(join(bw_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
@@ -137,22 +137,6 @@ if readtype == 'Single' :
             fastqc {input} -t {threads} -o {output}
             """
 
-    # rule trimgalore:
-    #     input:
-    #         "{name}.R1.fastq.gz"
-    #     params:
-    #         rname='pl:trimgalore',
-    #         d = trim_dir,
-    #         of = '{d}/{name}.R1_trimmed.fq.gz'
-    #     output:
-    #         of1 = '{d}/{name}.R1.trim.fastq.gz',
-    #         of2 = '{d}/{name}.R1.fastq.gz_trimming_report.txt',
-    #     shell:
-    #         """
-    #         module load trimgalore; 
-    #         trim_galore -o {params.d} {input};
-    #         mv {params.of} {output.of1}
-    #         """
 
     rule trim:
         input:
@@ -415,36 +399,6 @@ if readtype == 'Single' :
             cmd4=commoncmd+"bedtools genomecov -ibam "+input.bam4+" -bg -scale "+scale4+" -g "+params.reflen+" > "+output.outbg4+" && wigToBigWig -clip "+output.outbg4+" "+params.reflen+" "+output.outbw4
             shell(cmd4)
 
-    # rule deeptools:
-    #     input:
-    #         expand(join(bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
-    #     output:
-    #         expand(join(bw_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
-    #         expand(join(bw_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
-    #         expand(join(bw_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
-    #         expand(join(bw_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
-    #         expand(join(bw_dir,"pca.{ext}.pdf"),ext=extensions),
-        # params:
-        #     rname="pl:deeptools",
-        #     batch='--mem=48g --time=10:00:00 --gres=lscratch:800',
-        # threads: 32
-        # run:
-        #     import re
-        #     commoncmd="module load deeptools;"
-        #     bws=list(map(lambda z:z.strip().split(),open({input}).readlines()))
-        #     for x in extensions:
-        #         bws=list(filter(lambda z:z.endswith(x+".bw"),input))
-        #         labels=list(map(lambda z:re.sub(bw_dir+"/","",z),list(map(lambda z:re.sub("."+x+".bw","",z),bws))))
-        #         cmd="multiBigwigSummary bins -b "+" ".join(bws)+" -l "+" ".join(labels)+" -out "+join(bw_dir,x+".npz")
-        #         shell(commoncmd+cmd)
-        #         for cm in ["spearman", "pearson"]:
-        #             for pt in ["heatmap", "scatterplot"]:
-        #                 cmd="plotCorrelation -in "+join(bw_dir,x+".npz")+" -o "+join(bw_dir,cm+"_"+pt+"."+x+".pdf")+" -c "+cm+" -p "+pt+" --skipZeros --removeOutliers"
-        #                 if pt=="heatmap":
-        #                     cmd+=" --plotNumbers"
-        #                 shell(commoncmd+cmd)
-        #         cmd="plotPCA -in "+join(bw_dir,x+".npz")+" -o "+join(bw_dir,"pca."+x+".pdf")
-        #         shell(commoncmd+cmd)
 
     rule deeptools_prep:
         input:
