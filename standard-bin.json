@@ -271,7 +271,15 @@
         "BEDTOOLS": "/usr/local/apps/bedtools/2.19.0/bin/bedtools",
         "MULTIQC":"multiqc/0.9dev0", 
         "PICARDVER": "picard/1.119",
-    },
+        "Trimsettings": "---------------------------- TRIMMOMATIC parameters ----------------------------------------------------------",
+        "TRIMMOMATICVER": "trimmomatic/0.33",
+        "SEEDMISMATCHES": 2,
+        "PALINDROMECLIPTHRESHOLD": 36,
+        "SIMPLECLIPTHRESHOLD": 10,
+        "LEADINGQUALITY": 10,
+        "TRAILINGQUALITY": 10,
+        "MINLEN": 35,
+            },
 
     "mirseq":{
 

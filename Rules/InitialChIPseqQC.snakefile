@@ -7,7 +7,12 @@ workpath = config['project']['workpath']
 filetype = config['project']['filetype']
 readtype = config['project']['readtype']
 
+extensions = [ "sorted.normalized", "sorted.mapq_gt_3.normalized", "sorted.dedup.normalized", "sorted.mapq_gt_3.dedup.normalized"]
+
 trim_dir='trim'
+bam_dir='bam'
+bw_dir='bigwig'
+ngsplot_dir='ngsplot'
 
 #print(samples)
 
@@ -16,25 +21,85 @@ if readtype == 'Single' :
         params: 
             batch='--time=168:00:00'
         input: 
-            "Reports/multiqc_report.html",
+            # Multiqc Report
+            # "Reports/multiqc_report.html",
+            # QC
             "rawQC",
             "QC",
-            expand("FQscreen/{name}.R1_screen.txt",name=samples),
-            expand("FQscreen/{name}.R1_screen.png",name=samples),
-            expand("{name}.sorted.rmdup.bam.bai", name=samples),
-            expand("{name}.sorted.rmdup.bam", name=samples),
-            expand("{name}.shifts", name=samples),
-            expand("{name}.rmdup.shifts", name=samples),
-            expand(join(trim_dir,'{name}.R1.trim.fastq.gz'), name=samples)
+            "QC_not_blacklist_plus",
+            # FastqScreen
+            expand("FQscreen/{name}.R1.trim_screen.txt",name=samples),
+            expand("FQscreen/{name}.R1.trim_screen.png",name=samples),
+            # Trim
+            expand(join(trim_dir,'{name}.R1.trim.fastq.gz'), name=samples),
+            # Remove Blacklisted reads
+            expand(join(trim_dir,'{name}.R1.trim.not_blacklist_plus.fastq.gz'), name=samples),
+            # Align using BWA and dedup with Picard
+            expand(join(bam_dir,"{name}.sorted.bam"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.mapq_gt_3.bam"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.dedup.bam"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam"),name=samples),
+            # BWA --> BigWig
+            expand(join(bw_dir,"{name}.sorted.normalized.bw",),name=samples), 
+            expand(join(bw_dir,"{name}.sorted.mapq_gt_3.normalized.bw",),name=samples), 
+            expand(join(bw_dir,"{name}.sorted.dedup.normalized.bw",),name=samples), 
+            expand(join(bw_dir,"{name}.sorted.mapq_gt_3.dedup.normalized.bw",),name=samples), 
+            # PhantomPeakQualTools
+            expand(join(bam_dir,"{name}.sorted.ppqt"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.pdf"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.mapq_gt_3.ppqt"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.mapq_gt_3.pdf"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.dedup.ppqt"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.dedup.pdf"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.ppqt"),name=samples),
+            expand(join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.pdf"),name=samples),
+            # ngs.plot
+            # expand(join(ngsplot_dir,"{name}.sorted.tss.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.tss.km.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.tes.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.tes.km.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.genebody.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.genebody.km.heatmap.pdf"),name=samples),
+
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tss.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tss.km.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tes.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tes.km.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.genebody.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.genebody.km.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.dedup.tss.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.dedup.tss.km.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.dedup.tes.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.dedup.tes.km.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.dedup.genebody.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.dedup.genebody.km.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tss.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tss.km.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tes.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tes.km.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.genebody.max.heatmap.pdf"),name=samples),
+            # expand(join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.genebody.km.heatmap.pdf"),name=samples),
+            # deeptools
+            expand(join(bw_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(bw_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(bw_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
+            expand(join(bw_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
+            expand(join(bw_dir,"pca.{ext}.pdf"),ext=extensions),
+
+
+            # expand("{name}.sorted.rmdup.bam.bai", name=samples),
+            # expand("{name}.sorted.rmdup.bam", name=samples),
+            # expand("{name}.shifts", name=samples),
+            # expand("{name}.rmdup.shifts", name=samples),
 
                    
 
     rule fastq_screen:
         input: 
-            expand("{name}.R1.fastq.gz", name=samples)
+            join(trim_dir,"{name}.R1.trim.fastq.gz")
         output:
-            "FQscreen/{name}.R1_screen.txt",
-            "FQscreen/{name}.R1_screen.png",
+            "FQscreen/{name}.R1.trim_screen.txt",
+            "FQscreen/{name}.R1.trim_screen.png",
         params: 
             rname='pl:fqscreen',
             fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
@@ -43,7 +108,8 @@ if readtype == 'Single' :
         threads: 24
         shell:
             """
-            module load bowtie ; 
+            module load bowtie/2-2.2.9 ;
+            module load perl/5.18.2; 
             {params.fastq_screen} --conf {params.config} \
                 --outdir {params.outdir} --subset 1000000 \
                 --aligner bowtie2 --force {input}
@@ -53,7 +119,6 @@ if readtype == 'Single' :
         input: 
             expand("{name}.R1.fastq.gz", name=samples) 
         output: 
-            #expand( "{name}_Input.R1_fastqc.html", name=samples)
             'rawQC'
         priority: 2
         params: 
@@ -68,32 +133,98 @@ if readtype == 'Single' :
             fastqc {input} -t {threads} -o {output}
             """
 
-    rule trimgalore:
+    # rule trimgalore:
+    #     input:
+    #         "{name}.R1.fastq.gz"
+    #     params:
+    #         rname='pl:trimgalore',
+    #         d = trim_dir,
+    #         of = '{d}/{name}.R1_trimmed.fq.gz'
+    #     output:
+    #         of1 = '{d}/{name}.R1.trim.fastq.gz',
+    #         of2 = '{d}/{name}.R1.fastq.gz_trimming_report.txt',
+    #     shell:
+    #         """
+    #         module load trimgalore; 
+    #         trim_galore -o {params.d} {input};
+    #         mv {params.of} {output.of1}
+    #         """
+
+    rule trim:
         input:
-            "{name}.R1.fastq.gz"
+            if1 = "{name}.R1.fastq.gz"
         params:
-            rname='pl:trimgalore',
-            d = trim_dir,
-            of = '{d}/{name}.R1_trimmed.fq.gz'
+            rname='pl:trimmomatic_se',
+            batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
+            trimmomaticver=config['bin'][pfamily]['TRIMMOMATICVER'],
+            fastawithadaptersetc=config['references'][pfamily]['FASTAWITHADAPTERSETC'],
+            seedmismatches=config['bin'][pfamily]['SEEDMISMATCHES'],
+            palindromeclipthreshold=config['bin'][pfamily]['PALINDROMECLIPTHRESHOLD'],
+            simpleclipthreshold=config['bin'][pfamily]['SIMPLECLIPTHRESHOLD'],
+            leadingquality=config['bin'][pfamily]['LEADINGQUALITY'],
+            trailingquality=config['bin'][pfamily]['TRAILINGQUALITY'],
+            minlen=config['bin'][pfamily]['MINLEN'],
         output:
-            of1 = '{d}/{name}.R1.trim.fastq.gz',
-            of2 = '{d}/{name}.R1.fastq.gz_trimming_report.txt',
+            of1 = join(trim_dir,'{name}.R1.trim.fastq.gz'),
+            of2 = join(trim_dir,'{name}.R1.fastq.gz_trimmomatic.err'),
+        threads: 32
         shell:
             """
-            module load trimgalore; 
-            trim_galore -o {params.d} {input};
-            mv {params.of} {output.of1}
-            """
+            module load {params.trimmomaticver};
+            java -classpath $TRIMMOJAR org.usadellab.trimmomatic.TrimmomaticSE -threads {threads} {input.if1} {output.of1} ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold} LEADING:{params.leadingquality} TRAILING:{params.trailingquality} MINLEN:{params.minlen} 2> {output.of2}
+            """            
 
     rule fastqc:  
-        input:
-            expand("trim/{name}.R1.trim.fastq.gz", name=samples),
-        output: "QC"
-        priority: 2
-        params: 
+        params:
             rname='pl:fastqc',
             batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
             fastqcver=config['bin'][pfamily]['FASTQCVER']
+        input:
+            expand(join(trim_dir,"{name}.R1.trim.fastq.gz"),name=samples),
+        output: "QC"
+        priority: 2
+        threads: 32
+        shell: 
+            """
+            mkdir -p {output};
+            module load {params.fastqcver}; 
+            fastqc {input} -t {threads} -o {output}
+            """
+
+    rule remove_blacklist_reads:
+        params:
+            rname="pl:removeBL",
+            reflen=config['references'][pfamily]['REFLEN'],
+            blacklistbwaindex=config['references'][pfamily]['BLACKLISTBWAINDEX'],
+            picardver=config['bin'][pfamily]['PICARDVER'],
+        input:
+            infq=join(trim_dir,"{name}.R1.trim.fastq.gz"),
+        output:
+            outfq=join(trim_dir,"{name}.R1.trim.not_blacklist_plus.fastq.gz"),
+            outbam=temp(join(trim_dir,"{name}.R1.trim.not_blacklist_plus.bam")),
+        threads: 32
+        shell:
+            """
+            module load {params.picardver};
+            module load bwa;
+            module load samtools;
+            bwa mem -t {threads} {params.blacklistbwaindex} {input.infq} | samtools view -@{threads} -f4 -b -o {output.outbam}
+            java -Xmx10g \
+                -jar $PICARDJARPATH/SamToFastq.jar \
+                VALIDATION_STRINGENCY=SILENT \
+                INPUT={output.outbam} \
+                FASTQ={output.outfq}
+            """
+
+    rule fastqc_notBL:  
+        params: 
+            rname='pl:fastqc_notBL',
+            batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
+            fastqcver=config['bin'][pfamily]['FASTQCVER']
+        input:
+            expand(join(trim_dir,"{name}.R1.trim.not_blacklist_plus.fastq.gz"), name=samples),
+        output: "QC_not_blacklist_plus"
+        priority: 2
         threads: 32
         shell: 
             """
@@ -104,65 +235,80 @@ if readtype == 'Single' :
 
     rule BWA:
         input:
-            "trim/{name}.R1.trim.fastq.gz"
-        output:
-            "{name}.sorted.bam"
+            infq=join(trim_dir,"{name}.R1.trim.not_blacklist_plus.fastq.gz"),
         params:
+            d=bam_dir,
             rname='pl:bwa',
             reference= config['references'][pfamily]['BWA'],
+            reflen=config['references'][pfamily]['REFLEN'],
+        output:
+            outbam1="{d}/{name}.sorted.bam", 
+            outbam2="{d}/{name}.sorted.mapq_gt_3.bam",
+            flagstat1="{d}/{name}.sorted.bam.flagstat",
+            flagstat2="{d}/{name}.sorted.mapq_gt_3.bam.flagstat",
         threads: 32
         shell: 
             """
             module load bwa;
             module load samtools;
             bwa mem -t {threads} {params.reference} {input} | \
-                samtools sort -o {output}    
-            """
-                
-        '''
-        shell: 
-            """
-            module load bwa;
-            module load samtools;
-            bwa mem -t  {threads} {params.reference} {input} | \
-            awk -F '\t' \
-            '/^@SQ/{{\
-                OFS="\t"; \
-                split($2,a,":"); \
-                if(a[2]=="MT"){{ \
-                    $2 = a[1]":chrM"; }} \
-                else {{ $2=a[1]":chr"a[2]}}    \
-                print; next;}} \
-            /^@/{{print; next}} \
-            {{OFS="\t"; \
-                if($3=="*"){{}} \
-                else if($3=="MT"){{$3="chrM";}}\
-                else if($3!~/chr/){{$3="chr"$3;}}; \
-                if($7=="*"){{}} \
-                else if($7=="MT"){{$7="chrM";}}\
-                else if($7!~/chr/){{$7="chr"$7;}}; \
-            print}}' | samtools sort -o {output}
+            samtools sort -@{threads} -o {output.outbam1}
+            samtools index {output.outbam1}
+            samtools flagstat {output.outbam1} > {output.flagstat1}
+            samtools view -b -q 4 {output.outbam1} -o {output.outbam2}
+            samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
-        '''
+                
+        # '''
+        # shell: 
+        #     """
+        #     module load bwa;
+        #     module load samtools;
+        #     bwa mem -t  {threads} {params.reference} {input} | \
+        #     awk -F '\t' \
+        #     '/^@SQ/{{\
+        #         OFS="\t"; \
+        #         split($2,a,":"); \
+        #         if(a[2]=="MT"){{ \
+        #             $2 = a[1]":chrM"; }} \
+        #         else {{ $2=a[1]":chr"a[2]}}    \
+        #         print; next;}} \
+        #     /^@/{{print; next}} \
+        #     {{OFS="\t"; \
+        #         if($3=="*"){{}} \
+        #         else if($3=="MT"){{$3="chrM";}}\
+        #         else if($3!~/chr/){{$3="chr"$3;}}; \
+        #         if($7=="*"){{}} \
+        #         else if($7=="MT"){{$7="chrM";}}\
+        #         else if($7!~/chr/){{$7="chr"$7;}}; \
+        #     print}}' | samtools sort -o {output}
+        #     """  
+        # '''
 
-    rule picard:
+    rule picard_dedup:
         input: 
-            file1= "{name}.sorted.bam"
+            bam1= join(bam_dir,"{name}.sorted.bam"),
+            bam2= join(bam_dir,"{name}.sorted.mapq_gt_3.bam")
         output:
-            outstar1=temp("{name}.bwa_rg_added.sorted.bam"), 
-            outstar2="{name}.bwa_rg_added.sorted.dmark.bam",
-            outstar3="{name}.bwa.duplic" 
+            out1=temp(join(bam_dir,"{name}.bwa_rg_added.sorted.bam")), 
+            out2=join(bam_dir,"{name}.sorted.dedup.bam"),
+            out2f=join(bam_dir,"{name}.sorted.dedup.bam.flagstat"),
+            out3=join(bam_dir,"{name}.bwa.duplic"), 
+            out4=temp(join(bam_dir,"{name}.bwa_rg_added.sorted.mapq_gt_3.bam")), 
+            out5=join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam"),
+            out5f=join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam.flagstat"),
+            out6=join(bam_dir,"{name}.bwa.mapq_gt_3.duplic"), 
         params:
-            rname='pl:picard',
+            rname='pl:dedup',
             batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
-            picardver=config['bin'][pfamily]['PICARDVER']
+            picardver=config['bin'][pfamily]['PICARDVER'],
         shell: 
-             """
+            """
              module load {params.picardver}; 
              java -Xmx10g \
                   -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar \
-                  INPUT={input.file1} \
-                  OUTPUT={output.outstar1} \
+                  INPUT={input.bam1} \
+                  OUTPUT={output.out1} \
                   TMP_DIR=/lscratch/$SLURM_JOBID \
                   RGID=id \
                   RGLB=library \
@@ -171,29 +317,183 @@ if readtype == 'Single' :
                   RGSM=sample; 
              java -Xmx10g \
                   -jar $PICARDJARPATH/MarkDuplicates.jar \
-                  INPUT={output.outstar1} \
-                  OUTPUT={output.outstar2} \
+                  INPUT={output.out1} \
+                  OUTPUT={output.out2} \
                   TMP_DIR=/lscratch/$SLURM_JOBID \
                   CREATE_INDEX=true \
                   VALIDATION_STRINGENCY=SILENT \
-                  METRICS_FILE={output.outstar3}
-             """
-                
-    rule rmdup:
+                  REMOVE_DUPLICATES=true \
+                  METRICS_FILE={output.out3}
+             samtools flagstat {output.out2} > {output.out2f}
+             java -Xmx10g \
+                  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar \
+                  INPUT={input.bam2} \
+                  OUTPUT={output.out4} \
+                  TMP_DIR=/lscratch/$SLURM_JOBID \
+                  RGID=id \
+                  RGLB=library \
+                  RGPL=illumina \
+                  RGPU=machine \
+                  RGSM=sample; 
+             java -Xmx10g \
+                  -jar $PICARDJARPATH/MarkDuplicates.jar \
+                  INPUT={output.out4} \
+                  OUTPUT={output.out5} \
+                  TMP_DIR=/lscratch/$SLURM_JOBID \
+                  CREATE_INDEX=true \
+                  VALIDATION_STRINGENCY=SILENT \
+                  REMOVE_DUPLICATES=true \
+                  METRICS_FILE={output.out6}
+             samtools flagstat {output.out5} > {output.out5f}
+            """
+
+
+    rule bam2bw:
         input:
-            file1= "{name}.sorted.bam"
+            bam1= join(bam_dir,"{name}.sorted.bam"),
+            bam2= join(bam_dir,"{name}.sorted.mapq_gt_3.bam"),
+            flagstat1=join(bam_dir,"{name}.sorted.bam.flagstat"),
+            flagstat2=join(bam_dir,"{name}.sorted.mapq_gt_3.bam.flagstat"),
+            bam3= join(bam_dir,"{name}.sorted.dedup.bam"),
+            bam4= join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam"),
+            flagstat3=join(bam_dir,"{name}.sorted.dedup.bam.flagstat"),
+            flagstat4=join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam.flagstat"),
         output:
-            rmdup_bam="{name}.sorted.rmdup.bam", 
-            rmdup_bai="{name}.sorted.rmdup.bam.bai" 
+            outbg1=temp(join(bw_dir,"{name}.sorted.normalized.bg")), 
+            outbg2=temp(join(bw_dir,"{name}.sorted.mapq_gt_3.normalized.bg")),
+            outbw1=join(bw_dir,"{name}.sorted.normalized.bw"), 
+            outbw2=join(bw_dir,"{name}.sorted.mapq_gt_3.normalized.bw"),
+            outbg3=temp(join(bw_dir,"{name}.sorted.dedup.normalized.bg")), 
+            outbg4=temp(join(bw_dir,"{name}.sorted.mapq_gt_3.dedup.normalized.bg")),
+            outbw3=join(bw_dir,"{name}.sorted.dedup.normalized.bw"), 
+            outbw4=join(bw_dir,"{name}.sorted.mapq_gt_3.dedup.normalized.bw"),
         params:
-            rname='pl:rmdup'
+            rname="pl:bam2bw",
+            batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
+            reflen=config['references'][pfamily]['REFLEN'],
+        run:
+            commoncmd="module load bedtools;module load ucsc;"
+            scale1=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat1).readlines()))))[0][0]))
+            cmd1=commoncmd+"bedtools genomecov -ibam "+input.bam1+" -bg -scale "+scale1+" -g "+params.reflen+" > "+output.outbg1+" && wigToBigWig -clip "+output.outbg1+" "+params.reflen+" "+output.outbw1
+            shell(cmd1)
+            scale2=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat2).readlines()))))[0][0]))
+            cmd2=commoncmd+"bedtools genomecov -ibam "+input.bam2+" -bg -scale "+scale2+" -g "+params.reflen+" > "+output.outbg2+" && wigToBigWig -clip "+output.outbg2+" "+params.reflen+" "+output.outbw2
+            shell(cmd2)
+            scale3=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat3).readlines()))))[0][0]))
+            cmd3=commoncmd+"bedtools genomecov -ibam "+input.bam3+" -bg -scale "+scale3+" -g "+params.reflen+" > "+output.outbg3+" && wigToBigWig -clip "+output.outbg3+" "+params.reflen+" "+output.outbw3
+            shell(cmd3)
+            scale4=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat4).readlines()))))[0][0]))
+            cmd4=commoncmd+"bedtools genomecov -ibam "+input.bam4+" -bg -scale "+scale4+" -g "+params.reflen+" > "+output.outbg4+" && wigToBigWig -clip "+output.outbg4+" "+params.reflen+" "+output.outbw4
+            shell(cmd4)
+
+    rule deeptools:
+        input:
+            expand(join(bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
+        output:
+            expand(join(bw_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(bw_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(bw_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
+            expand(join(bw_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
+            expand(join(bw_dir,"pca.{ext}.pdf"),ext=extensions),
+        params:
+            rname="pl:deeptools",
+            batch='--mem=48g --time=10:00:00 --gres=lscratch:800',
+        threads: 32
+        run:
+            import re
+            commoncmd="module load deeptools;"
+            for x in extensions:
+                bws=list(filter(lambda z:z.endswith(x+".bw"),input))
+                labels=list(map(lambda z:re.sub(bw_dir+"/","",z),list(map(lambda z:re.sub("."+x+".bw","",z),bws))))
+                cmd="multiBigwigSummary bins -b "+" ".join(bws)+" -l "+" ".join(labels)+" -out "+join(bw_dir,x+".npz")
+                shell(commoncmd+cmd)
+                for cm in ["spearman", "pearson"]:
+                    for pt in ["heatmap", "scatterplot"]:
+                        cmd="plotCorrelation -in "+join(bw_dir,x+".npz")+" -o "+join(bw_dir,cm+"_"+pt+"."+x+".pdf")+" -c "+cm+" -p "+pt+" --skipZeros --removeOutliers"
+                        if pt=="heatmap":
+                            cmd+=" --plotNumbers"
+                        shell(commoncmd+cmd)
+                cmd="plotPCA -in "+join(bw_dir,x+".npz")+" -o "+join(bw_dir,"pca."+x+".pdf")
+                shell(commoncmd+cmd)
+
+
+
+
+    rule ngsplot:
+        input:
+            bam1= join(bam_dir,"{name}.sorted.bam"),
+            # bam2= join(bam_dir,"{name}.sorted.mapq_gt_3.bam"),
+            # bam3= join(bam_dir,"{name}.sorted.dedup.bam"),
+            # bam4= join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam"),
+        output:
+            tssmax1=join(ngsplot_dir,"{name}.sorted.tss.max.heatmap.pdf"),
+            tsskm1=join(ngsplot_dir,"{name}.sorted.tss.km.heatmap.pdf"),
+            tesmax1=join(ngsplot_dir,"{name}.sorted.tes.max.heatmap.pdf"),
+            teskm1=join(ngsplot_dir,"{name}.sorted.tes.km.heatmap.pdf"),
+            genebodymax1=join(ngsplot_dir,"{name}.sorted.genebody.max.heatmap.pdf"),
+            genebodykm1=join(ngsplot_dir,"{name}.sorted.genebody.km.heatmap.pdf"),
+            # tssmax2=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tss.max.heatmap.pdf"),
+            # tsskm2=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tss.km.heatmap.pdf"),
+            # tesmax2=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tes.max.heatmap.pdf"),
+            # teskm2=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.tes.km.heatmap.pdf"),
+            # genebodymax2=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.genebody.max.heatmap.pdf"),
+            # genebodykm2=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.genebody.km.heatmap.pdf"),
+            # tssmax3=join(ngsplot_dir,"{name}.sorted.dedup.tss.max.heatmap.pdf"),
+            # tsskm3=join(ngsplot_dir,"{name}.sorted.dedup.tss.km.heatmap.pdf"),
+            # tesmax3=join(ngsplot_dir,"{name}.sorted.dedup.tes.max.heatmap.pdf"),
+            # teskm3=join(ngsplot_dir,"{name}.sorted.dedup.tes.km.heatmap.pdf"),
+            # genebodymax3=join(ngsplot_dir,"{name}.sorted.dedup.genebody.max.heatmap.pdf"),
+            # genebodykm3=join(ngsplot_dir,"{name}.sorted.dedup.genebody.km.heatmap.pdf"),            
+            # tssmax4=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tss.max.heatmap.pdf"),
+            # tsskm4=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tss.km.heatmap.pdf"),
+            # tesmax4=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tes.max.heatmap.pdf"),
+            # teskm4=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.tes.km.heatmap.pdf"),
+            # genebodymax4=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.genebody.max.heatmap.pdf"),
+            # genebodykm4=join(ngsplot_dir,"{name}.sorted.mapq_gt_3.dedup.genebody.km.heatmap.pdf"),
+        params:
+            rname="pl:ngsplot",
+            batch='--mem=48g --time=10:00:00 --gres=lscratch:800',
+            genome = config['project']['annotation'],
+        threads: 32
+        shell:
+            """
+            sh Scripts/plotngsplot.sh {input.bam1} {params.genome}
+            """            
+
+
+    rule ppqt:
+        input:
+            bam1= join(bam_dir,"{name}.sorted.bam"),
+            bam2= join(bam_dir,"{name}.sorted.mapq_gt_3.bam"),
+            bam3= join(bam_dir,"{name}.sorted.dedup.bam"),
+            bam4= join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam"),
+        output:
+            ppqt1= join(bam_dir,"{name}.sorted.ppqt"),
+            pdf1= join(bam_dir,"{name}.sorted.pdf"),
+            ppqt2= join(bam_dir,"{name}.sorted.mapq_gt_3.ppqt"),
+            pdf2= join(bam_dir,"{name}.sorted.mapq_gt_3.pdf"),
+            ppqt3= join(bam_dir,"{name}.sorted.dedup.ppqt"),
+            pdf3= join(bam_dir,"{name}.sorted.dedup.pdf"),
+            ppqt4= join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.ppqt"),
+            pdf4= join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.pdf"),
+        params:
+            rname="pl:ppqt",
+            batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
         shell:
             """
             module load samtools;
-            samtools rmdup {input.file1} {output.rmdup_bam};
-            samtools index {output.rmdup_bam};
+            module load R;
+            Rscript Scripts/phantompeakqualtools/run_spp.R \
+            -c={input.bam1} -savp -out={output.ppqt1} 
+            Rscript Scripts/phantompeakqualtools/run_spp.R \
+            -c={input.bam2} -savp -out={output.ppqt2} 
+            Rscript Scripts/phantompeakqualtools/run_spp.R \
+            -c={input.bam3} -savp -out={output.ppqt3} 
+            Rscript Scripts/phantompeakqualtools/run_spp.R \
+            -c={input.bam4} -savp -out={output.ppqt4} 
             """
-    
+
+
     rule shiftstats:
         input: 
             if1 = "{name}.sorted.bam",

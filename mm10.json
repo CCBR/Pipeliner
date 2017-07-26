@@ -222,7 +222,10 @@
             "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/lib/SS_mouse_exome_mm10_reformat.bed",
             "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCm38_mm10_RefSeq.bed",
             "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Mm10.rRNA.interval_list_M12"
-        }, 
+            "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
+            "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/lib/mm10.blacklist_chrM_plus.fa",
+            "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/lib/mm10.len",
+            }, 
 
 
   }
