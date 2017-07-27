@@ -10,12 +10,7 @@ rule all_rnaseqvargerm:
            expand("QC/{s}.{r}.trimmed_screen.txt",s=samples,r=['R1','R1']),
            expand("QC/{s}.{r}.trimmed_screen.png",s=samples,r=['R1','R1']),
            expand("{s}.dedup.bam",s=samples),
-#           expand("{s}.dedup.bam.onTarget.bam_stats",s=samples),
-#           expand("{s}.dedup.bam.onTarget.bam",s=samples),
-#           expand("{s}.dedup.bam.bam_stats",s=samples),
-            expand("QC/{s}_run_trimmomatic.err",s=samples),
-#            expand("QC/{s}.qualimapReport/genome_results.txt",s=samples),
-#            config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
+           expand("QC/{s}_run_trimmomatic.err",s=samples),
     output: 
     params: rname="final"
     shell:  """
