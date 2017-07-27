@@ -41,7 +41,7 @@ if config['project']['annotation'] == "hg19":
 #           "breakdancer_out/file.ctx",
            config['project']['workpath']+"/svaba_out/svaba.log",
            expand("{s}"+".g.vcf",s=samples),
-#           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
+           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
 
     output: 
     params: rname="final"
@@ -90,7 +90,7 @@ else:
            "cnvkit_out/cnvkit_heatmap.pdf",
 #           "breakdancer_out/file.ctx",
            config['project']['workpath']+"/svaba_out/svaba.log",
-#           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
+           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
     output: 
     params: rname="final"
     shell:  """
