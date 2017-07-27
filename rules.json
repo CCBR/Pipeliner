@@ -18,6 +18,7 @@
         "gatk_select_variants": ["exomeseq-germline"],
         "gatk_select_variants_genomeseq": ["wgslow"],
         "gatk_select_variants_rnaseqvar": ["rnaseqvargerm"],
+        "gatk.merge.chrom": ["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","wgslow","rnaseqvargerm"],
         "ngsqc": ["initialqc","initialqcgenomeseq","rnaseqvargerm"],
         "fastqc.fastq": ["initialqc","initialqcgenomeseq","rnaseqfusion"],
         "fastqc.rnaseqvar": ["rnaseqvargerm"],

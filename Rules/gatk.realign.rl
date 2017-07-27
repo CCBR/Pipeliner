@@ -1,5 +1,5 @@
 rule gatk_realign:
-        input:  "{x}.dedup.bam"
+        input:  temp("{x}.dedup.bam")
         output: re=temp("{x}.realign.bam"),
                 int="{x}.fin.bam.intervals"
         params: gatk=config['bin'][pfamily]['GATK'],
