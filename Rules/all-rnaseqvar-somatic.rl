@@ -30,7 +30,7 @@ rule all_exomeseq_somatic:
             "variants.bed",
             "full_annot.txt.zip",
             "sample_network.bmp",
-            "variants.database",
+#            "variants.database",
 #            "mutect2_out/oncotator_out/mutect2_variants.maf",
 #            "mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
             "strelka_out/oncotator_out/strelka_variants.maf",

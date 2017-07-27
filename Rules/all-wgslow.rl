@@ -55,7 +55,7 @@ else:
   rule all_wgslow:
     input: "combined.vcf",
            config['project']['workpath']+"/full_annot.txt.zip",
-           "variants.database",
+#           "variants.database",
            "sample_network.bmp",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),           
            "combined.snpeff.vcf",

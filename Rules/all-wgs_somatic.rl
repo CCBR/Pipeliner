@@ -2,7 +2,7 @@ if config['project']['annotation'] == "hg19":
   rule all_wgs_somatic:
     input: "combined.vcf",
            config['project']['workpath']+"/full_annot.txt.zip",
-           "variants.database",
+#           "variants.database",
            "sample_network.bmp",
            "combined.snpeff.vcf",
            "combined.strictFilter.vcf",
@@ -64,7 +64,7 @@ else:
   rule all_wgs_somatic:
     input: "combined.vcf",
            config['project']['workpath']+"/full_annot.txt.zip",
-           "variants.database",
+#           "variants.database",
            "sample_network.bmp",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),           
            "combined.snpeff.vcf",
