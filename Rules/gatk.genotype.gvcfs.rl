@@ -866,6 +866,6 @@ elif config['project']['annotation'] == "mm10":
       run:
         fl=os.popen("ls *.g.vcf").read().split()      
         var=" --variant "+" --variant ".join(fl)
-        cmd="module load GATK/3.5-0; GATK -m 120G GenotypeGVCFs -R {params.genome} --disable_auto_index_creation_and_locking_when_reading_rods --annotation InbreedingCoeff --annotation FisherStrand --annotation QualByDepth --annotation ChromosomeCounts  --dbsnp {params.snpsites} -o {output} -L chrMT -nt {threads}"+var
+        cmd="module load GATK/3.5-0; GATK -m 120G GenotypeGVCFs -R {params.genome} --disable_auto_index_creation_and_locking_when_reading_rods --annotation InbreedingCoeff --annotation FisherStrand --annotation QualByDepth --annotation ChromosomeCounts  --dbsnp {params.snpsites} -o {output} -L chrM -nt {threads}"+var
         print(cmd)
         shell(cmd)

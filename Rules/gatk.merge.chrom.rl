@@ -25,7 +25,6 @@ if config['project']['annotation'] == "hg19":
            vcfX="combined_X.vcf",
            vcfY="combined_Y.vcf",
            vcfMT="combined_MT.vcf",
-           targets=config['project']['workpath']+"/exome_targets.bed"
     output: vcf="combined.vcf",
     params: dir=config['project']['workpath'],gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],rname="pl:merge.chrom",
     threads: 4
@@ -57,7 +56,7 @@ elif config['project']['annotation'] == "hg38":
            vcf22="combined_22.vcf",
            vcfX="combined_X.vcf",
            vcfY="combined_Y.vcf",
-           targets=config['project']['workpath']+"/exome_targets.bed"
+           vcfMT="combined_MT.vcf",
     output: vcf="combined.vcf",
     params: dir=config['project']['workpath'],gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],rname="pl:merge.chrom",
     threads: 4
@@ -87,7 +86,7 @@ elif config['project']['annotation'] == "mm10":
             vcf19="combined_19.vcf",
             vcfX="combined_X.vcf",
             vcfY="combined_Y.vcf",
-            targets=config['project']['workpath']+"/exome_targets.bed"
+            vcfMT="combined_MT.vcf",
     output: vcf="combined.vcf",
     params: dir=config['project']['workpath'],gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],rname="pl:merge.chrom",
     threads: 4
