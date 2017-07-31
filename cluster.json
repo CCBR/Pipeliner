@@ -544,5 +544,9 @@
         "partition" : "largemem",
         "threads": "32",
         "mem": "1000g"
+    },
+    "kraken_se":
+    {
+        "mem":'200g'
     }  
 }
