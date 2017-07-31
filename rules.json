@@ -44,7 +44,7 @@
         "oncofuse_fuscatch": ["rnaseqfusion"],
         "oncofuse_starfus": ["rnaseqfusion"],
         "cnvkit_somatic": ["exomeseq-somatic"],
-        "cnvkit_germ": ["wgslow"],
+        "cnvkit_germ": ["none"],
         "cnvkit_summary": ["exomeseq-somatic"],
 #        "cnvkit_somatic_tumoronly": ["exomeseq-somatic-tumoronly"],
 #        "cnvkit_summary_tumoronly": ["exomeseq-somatic-tumoronly"],
