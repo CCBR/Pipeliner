@@ -27,7 +27,7 @@ n<-length(file_list)
 data <- dataset[,c("chromosome","start","end","cn","cn1","cn2")]
 data$chromosome<-toupper(data$chromosome)
 data$chromosome <- gsub('CHR', '', data$chromosome)
-data <- data[data$chromosome != 'X' & data$chromosome != 'Y',]
+data <- data[data$chromosome != 'X' & data$chromosome != 'Y' & data$chromosome != 'M' & data$chromosome != 'MT',]
 data$chromosome <- as.numeric(as.character(data$chromosome))
 data<-data[order(data$chromosome, data$start ),]
 
