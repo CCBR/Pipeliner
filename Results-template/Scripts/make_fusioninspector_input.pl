@@ -12,6 +12,8 @@ my @chrom = ();
 my $knowns = '';
 my @samples = ();
 my @fusion=();
+my $genea='';
+my $geneb='';
 
 my $input = '';
 
@@ -25,7 +27,9 @@ while (<J>) {
  		last if m/^$/;
 	@line = split;
 	next if ($line[0] =~ m'Gene_1_symbol');
-	push @fusion, ($line[0] . '--' . $line[1]);
+	$genea = ucfirst lc $line[0];
+	$geneb = ucfirst lc $line[1];
+	push @fusion, ($genea . '--' . $geneb);
 }
 	
 my $d = 0;

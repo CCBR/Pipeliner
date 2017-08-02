@@ -20,7 +20,7 @@ while (<B>){
 	if ($line[0] !~ m/##/) {
 	 	print C "$line[0]\t$line[1]\t$line[3]\t$line[4]";	
 		for ($a = 9; $a < @line; $a++) {
-			print C "\t$line[$a]";
+			print C "\t$line[$a].genotypes";
 		}
 		print C "\t";
 		$a++;

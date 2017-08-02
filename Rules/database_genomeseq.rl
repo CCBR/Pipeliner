@@ -1,5 +1,5 @@
 rule database_genomeseq:
-    input: vcf="combined.vcf",
+    input: vcf="combined.relaxedFilter.vcf",
            annotation=config['project']['workpath']+"/full_annot.txt.zip"
     output: dbase="variants.database",
             vcf="combined_genotypes.vcf"
