@@ -1,7 +1,7 @@
 rule svaba_germline:
      input: expand("{x}.recal.bam", x=samples)
      output: config['project']['workpath']+"/svaba_out/svaba.log"
-     params: genome=config['references'][pfamily]['GENOME'],rname="svaba"
+     params: genome=config['references'][pfamily]['CNVKITGENOME'],rname="svaba"
      threads: 32
      run:
         fl=os.popen("ls *.recal.bam").read().split()      

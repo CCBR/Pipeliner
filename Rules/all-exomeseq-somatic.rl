@@ -24,12 +24,7 @@ if config['project']['annotation'] == "hg19":
             expand(config['project']['workpath']+"/delly_out/{p}_inv.bcf", p=pairs),
             expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs),
             expand(config['project']['workpath']+"/conpair_out/{p}.conpair", p=pairs),
-            config['project']['workpath']+"/mutect_out/merged_somatic.vcf",
             config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
-            config['project']['workpath']+"/mutect_out/merged_somatic_snpEff.vcf",
-            config['project']['workpath']+"/strelka_out/merged_somatic_snpEff.vcf",
-#            config['project']['workpath']+"/mutect2_out/merged_somatic.vcf",
-#            config['project']['workpath']+"/mutect2_out/merged_somatic_snpEff.vcf",
 #            config['project']['workpath']+"/variants.bed",
 #            config['project']['workpath']+"/full_annot.txt.zip",
             config['project']['workpath']+"/sample_network.bmp",
@@ -45,7 +40,7 @@ if config['project']['annotation'] == "hg19":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/0.9dev0; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 
@@ -74,12 +69,7 @@ else:
             expand(config['project']['workpath']+"/delly_out/{p}_inv.bcf", p=pairs),
             expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs),
             expand(config['project']['workpath']+"/conpair_out/{p}.conpair", p=pairs),
-            config['project']['workpath']+"/mutect_out/merged_somatic.vcf",
             config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
-            config['project']['workpath']+"/mutect_out/merged_somatic_snpEff.vcf",
-            config['project']['workpath']+"/strelka_out/merged_somatic_snpEff.vcf",
-#            config['project']['workpath']+"/mutect2_out/merged_somatic.vcf",
-#            config['project']['workpath']+"/mutect2_out/merged_somatic_snpEff.vcf",
 #            config['project']['workpath']+"/variants.bed",
 #            config['project']['workpath']+"/full_annot.txt.zip",
             config['project']['workpath']+"/sample_network.bmp",
@@ -95,6 +85,6 @@ else:
     output:
     params: rname="final"
     shell:  """
-             module load multiqc; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """

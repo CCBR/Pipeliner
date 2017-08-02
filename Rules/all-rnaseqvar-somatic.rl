@@ -30,7 +30,7 @@ rule all_exomeseq_somatic:
             "variants.bed",
             "full_annot.txt.zip",
             "sample_network.bmp",
-            "variants.database",
+#            "variants.database",
 #            "mutect2_out/oncotator_out/mutect2_variants.maf",
 #            "mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
             "strelka_out/oncotator_out/strelka_variants.maf",
@@ -41,6 +41,6 @@ rule all_exomeseq_somatic:
     output:
     params: rname="final"
     shell:  """
-             module load multiqc; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped *.avia_status.txt *.avia.log *_genotypes.vcf logfiles/
+             module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped *.avia_status.txt *.avia.log *_genotypes.vcf logfiles/
 
             """

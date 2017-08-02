@@ -1,5 +1,5 @@
 rule mkdir_somatic:
-        input:  expand("{s}.dedup.bam", s=samples)
+        input:  expand("{s}.recal.bam", s=samples)
         output: mutect_dir=config['project']['workpath']+"/mutect_out",
                 mutect2_dir=config['project']['workpath']+"/mutect2_out",
                 mut2chrom_dir=config['project']['workpath']+"/mutect2_out/chrom_files",

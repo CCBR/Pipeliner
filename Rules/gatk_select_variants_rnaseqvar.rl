@@ -5,5 +5,5 @@ rule gatk_select_variants_rnaseqvar:
             csvstats="sample_vcfs/{x}.stats.csv",
             htmlstats="sample_vcfs/{x}.stats.html",
             bed="sample_vcfs/{x}.snpeff.bed"
-    params: sample=lambda wildcards: config['project']['units'][wildcards.x],gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],targets="exome_targets.bed",snpeff=config['bin'][pfamily]['SNPEFF'],effgenome=config['references'][pfamily]['SNPEFF_GENOME'],effconfig=config['references'][pfamily]['SNPEFF_CONFIG'],rname="pl:extract"
+    params: sample=lambda wildcards: config['project']['units'][wildcards.x],gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpeff=config['bin'][pfamily]['SNPEFF'],effgenome=config['references'][pfamily]['SNPEFF_GENOME'],effconfig=config['references'][pfamily]['SNPEFF_CONFIG'],rname="pl:extract"
     shell: "{params.gatk} -T SelectVariants -R {params.genome} -V {input.vcf} -sn {params.sample} -env -o {output.vcf}; {params.snpeff} -v -c {params.effconfig} -o bed -csvStats {output.csvstats} -stats {output.htmlstats} {params.effgenome} {output.vcf} > {output.bed}"
