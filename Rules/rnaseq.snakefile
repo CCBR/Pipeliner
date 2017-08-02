@@ -128,7 +128,7 @@ rule rsemcounts:
    input: files=expand("{name}.rsem.genes.results", name=samples)
    output: "RawCountFile_rsemgenes_filtered.txt"
    params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
-   shell: "module load R; Rscript Scripts/rsemcounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
+   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/rsemcounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
 
 
 rule subread:
@@ -148,25 +148,25 @@ rule genecounts:
    input: files=expand("{name}.star.count.txt", name=samples)
    output: "RawCountFile_genes_filtered.txt"
    params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
-   shell: "module load R; Rscript Scripts/genecounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
+   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/genecounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
 
 rule junctioncounts: 
    input: files=expand("{name}.p2.SJ.out.tab", name=samples)
    output: "RawCountFile_junctions_filtered.txt"
    params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
-   shell: "module load R; Rscript Scripts/junctioncounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}'"
+   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/junctioncounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}'"
 
 rule genejunctioncounts: 
    input: files=expand("{name}.p2.SJ.out.tab", name=samples)
    output: "RawCountFile_genejunctions_filtered.txt"
    params: rname='pl:genejunctions',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],geneinfo=config['references'][pfamily]['GENEINFO'],mincount=config['project']['MINCOUNTGENEJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
-   shell: "module load R; Rscript Scripts/genejunctioncounts.R '{params.dir}' '{input.files}' '{params.geneinfo}' '{params.mincount}' '{params.minsamples}'"
+   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/genejunctioncounts.R '{params.dir}' '{input.files}' '{params.geneinfo}' '{params.mincount}' '{params.minsamples}'"
 
 rule joincounts:
    input: files=expand("{name}.star.count.overlap.txt", name=samples),files2=expand("{name}.p2.ReadsPerGene.out.tab", name=samples)
    output: "RawCountFileOverlap.txt","RawCountFileStar.txt"
    params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],starstrandcol=config['bin'][pfamily]['STARSTRANDCOL']
-   shell: "module load R; Rscript Scripts/joincounts.R '{params.dir}' '{input.files}' '{input.files2}' '{params.starstrandcol}'"
+   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/joincounts.R '{params.dir}' '{input.files}' '{input.files2}' '{params.starstrandcol}'"
 
 
 rule rnaseq_multiqc:
@@ -209,28 +209,28 @@ rule deseq2:
   ## input: "sampletable.txt"
   output: "DEG{dtype}/deseq2_pca.png"
   params: rname='pl:deseq2',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", refer=config['project']['annotation'], projectId=config['project']['id'], projDesc=config['project']['description'],gtffile=config['references'][pfamily]['GTFFILE'],karyobeds=config['references'][pfamily]['KARYOBEDS']
-##  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/deseq2.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.annotate}' '{params.contrasts}'"
-  shell: "mkdir -p DEG{params.dtype}; cp Scripts/Deseq2Report.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/deseq2call.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}'"
+##  shell: "mkdir -p DEG{params.dtype}; module load R/3.4.0_gcc-6.2.0; Rscript Scripts/deseq2.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.annotate}' '{params.contrasts}'"
+  shell: "mkdir -p DEG{params.dtype}; cp Scripts/Deseq2Report.Rmd {params.dir}/DEG{params.dtype}/; module load R/3.4.0_gcc-6.2.0; Rscript Scripts/deseq2call.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}'"
 
 rule edgeR:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
   output: "DEG{dtype}/edgeR_prcomp.png"
   params: rname='pl:edgeR',batch='--mem=24g --time=10:00:00', dir=config['project']['workpath'],annotate=config['references'][pfamily]['ANNOTATE'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", refer=config['project']['annotation'], projectId=config['project']['id'], projDesc=config['project']['description'],gtffile=config['references'][pfamily]['GTFFILE'],karyobeds=config['references'][pfamily]['KARYOBEDS']
-##  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/edgeR.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.annotate}' '{params.contrasts}'"
-  shell: "mkdir -p DEG{params.dtype}; cp Scripts/EdgerReport.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/edgeRcall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}'"
+##  shell: "mkdir -p DEG{params.dtype}; module load R/3.4.0_gcc-6.2.0; Rscript Scripts/edgeR.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.annotate}' '{params.contrasts}'"
+  shell: "mkdir -p DEG{params.dtype}; cp Scripts/EdgerReport.Rmd {params.dir}/DEG{params.dtype}/; module load R/3.4.0_gcc-6.2.0; Rscript Scripts/edgeRcall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}'"
 
 rule limmavoom:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
   output: "DEG{dtype}/Limma_MDS.png"
   params: rname='pl:limmavoom',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", refer=config['project']['annotation'], projectId=config['project']['id'], projDesc=config['project']['description'],gtffile=config['references'][pfamily]['GTFFILE'],karyobeds=config['references'][pfamily]['KARYOBEDS']
-##  shell: "mkdir -p DEG{params.dtype}; module load R; Rscript Scripts/limmavoom.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}'"
-  shell: "mkdir -p DEG{params.dtype}; cp Scripts/LimmaReport.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/limmacall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}'"
+##  shell: "mkdir -p DEG{params.dtype}; module load R/3.4.0_gcc-6.2.0; Rscript Scripts/limmavoom.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}'"
+  shell: "mkdir -p DEG{params.dtype}; cp Scripts/LimmaReport.Rmd {params.dir}/DEG{params.dtype}/; module load R/3.4.0_gcc-6.2.0; Rscript Scripts/limmacall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}'"
 
 rule pca:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
   output: "DEG{dtype}/PcaReport.html"
-  params: rname='pl:pca',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", projectId=config['project']['id'], projDesc=config['project']['description']
-  shell: "mkdir -p DEG{params.dtype}; cp Scripts/PcaReport.Rmd {params.dir}/DEG{params.dtype}/; module load R; Rscript Scripts/pcacall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.projectId}' '{params.projDesc}'"
+e params: rname='pl:pca',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", projectId=config['project']['id'], projDesc=config['project']['description']
+  shell: "mkdir -p DEG{params.dtype}; cp Scripts/PcaReport.Rmd {params.dir}/DEG{params.dtype}/; module load R/3.4.0_gcc-6.2.0; Rscript Scripts/pcacall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.projectId}' '{params.projDesc}'"
 
 
 rule salmon:
@@ -243,10 +243,10 @@ rule sleuth:
   input: samtab = "sampletable.txt", bam=expand("salmonrun/{name}/quant.sf", name=samples)
   output: "salmonrun/sleuth_completed.txt"
   params: rname='pl:sleuth',batch='--mem=128g --cpus-per-task=8 --time=10:00:00',dir=config['project']['workpath'],pipeRlib=config['bin'][pfamily]['PIPERLIB'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']),species=config['project']['annotation']
-  shell: "module load R; Rscript Scripts/sleuth.R '{params.dir}' '{params.pipeRlib}' '{input.samtab}' '{params.contrasts}' '{params.species}'"
+  shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/sleuth.R '{params.dir}' '{params.pipeRlib}' '{input.samtab}' '{params.contrasts}' '{params.species}'"
 
 rule EBSeq:
   input: samtab = "sampletable.txt", isoforms=expand("{name}.rsem.isoforms.results", name=samples)
   output: "ebseq_completed.txt"
   params: rname='pl:EBSeq',batch='--mem=128g --cpus-per-task=8 --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']),rsemref=config['references'][pfamily]['RSEMREF'],rsem=config['bin'][pfamily]['RSEM']
-  shell: "module load R; Rscript Scripts/ebseq.R '{params.dir}' '{input.isoforms}' '{input.samtab}' '{params.contrasts}' '{params.rsemref}' '{params.rsem}'"
+  shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/ebseq.R '{params.dir}' '{input.isoforms}' '{input.samtab}' '{params.contrasts}' '{params.rsemref}' '{params.rsem}'"
