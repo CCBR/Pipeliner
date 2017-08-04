@@ -8,6 +8,7 @@ from pysam import Samfile, FastaFile
 from collections import Counter
 
 #pipehome = '/scratch/kimb8/Pipeliner/'
+bam_dir='bam'
 
 def normalize_bam_file_chromosomes(
     bamfns,
