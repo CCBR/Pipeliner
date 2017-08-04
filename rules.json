@@ -2,6 +2,7 @@
     "rules": {
         "avia": ["wgslow","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","rnaseqvargerm"],
         "vcf2maf": ["exomeseq-somatic","wgs_somatic","exomeseq-somatic-tumoronly"],
+        "maftools": ["exomeseq-somatic","wgs_somatic","exomeseq-somatic-tumoronly"],
         "germline_filter_wgs": ["wgslow"],
         "delly_germline": ["wgslow"],
         "pindel_germline": ["wgslow"],
