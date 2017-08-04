@@ -44,7 +44,11 @@
     "SELECTDB": "SIFT_score,SIFT_pred,Polyphen2_HVAR_score,Polyphen2_HVAR_pred,LRT_score,LRT_pred,GERP++_RS,MutationAssessor_score,MutationAssessor_pred,1000Gp1_AF,1000Gp1_EUR_AF,ESP6500_EA_AF,ESP6500_AA_AF",
     "DB29": "/data/CCBR_Pipeliner/db/PipeDB/lib/snpEff_db/dbNSFP2.9.txt.gz",
     "MUTECTCOSMIC": "",
-    "MUTECTSNP": ""
+    "MUTECTSNP": "",
+    "VEPBUILD": "GRCm38",
+    "VEPSPECIES": "mus_musculus",
+    "VEPFILTERVCF": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
+    "VEPGENOME": "/fdb/VEP/88/cache/mouse.fa",
 },
     "genomeseq": {
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
@@ -58,6 +62,8 @@
     "KNOWNVCF2": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_known_snps.vcf.gz",
     "NOVOINDEX": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_genome.nix",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/genome.fa",
+    "GTFFILE": "/fdb/GENCODE/Gencode_mouse/release_M12/gencode.vM12.annotation.gtf",
+    "CNVKITANTITARGETS": "/data/CCBR_Pipeliner/db/PipeDB/lib/fake.antitargetcoverage.cnn",
     "SNPSITES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
     "adapter.file": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat",
     "fastqc.adapters": "/data/CCBR_Pipeliner/db/PipeDB/dev/fastqc.adapters",
@@ -89,7 +95,9 @@
     "SELECTDB": "SIFT_score,SIFT_pred,Polyphen2_HVAR_score,Polyphen2_HVAR_pred,LRT_score,LRT_pred,GERP++_RS,MutationAssessor_score,MutationAssessor_pred,1000Gp1_AF,1000Gp1_EUR_AF,ESP6500_EA_AF,ESP6500_AA_AF",
     "DB29": "/data/CCBR_Pipeliner/db/PipeDB/lib/snpEff_db/dbNSFP2.9.txt.gz",
     "MUTECTCOSMIC": "",
-    "MUTECTSNP": ""
+    "MUTECTSNP": "",
+    "VEPBUILD": "GRCm38",
+    "VEPSPECIES": "mus_musculus",
 },
      "rnaseq":{
 "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
@@ -109,6 +117,10 @@
 "SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/rsem1.3.0/mouse_gencode.transcripts.fa",
 "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
 "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/gencode.vM12.annotation.rRNA.interval_list",
+"STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_gencode_vM12_TrinityResource",
+"FUSCATCHDAT": "/fdb/fusioncatcher/mus_musculus",
+"FUSCATCHCONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fusioncatcher_mm10_configuration.cfg",
+"ONCOFUSEBUILD": "mm10",
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
     "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
     "CHROMS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_chromosomes",

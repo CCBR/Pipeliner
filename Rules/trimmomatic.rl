@@ -1,10 +1,10 @@
 rule trimmomatic:
     input:  "{x}.R1."+config['project']['filetype'],
             "{x}.R2."+config['project']['filetype']
-    output: one="{x}.R1.trimmed.fastq.gz",
-            two="{x}.R1.trimmed.unpair.fastq.gz",
-            three="{x}.R2.trimmed.fastq.gz",
-            four="{x}.R2.trimmed.unpair.fastq.gz",
+    output: one=temp("{x}.R1.trimmed.fastq.gz"),
+            two=temp("{x}.R1.trimmed.unpair.fastq.gz"),
+            three=temp("{x}.R2.trimmed.fastq.gz"),
+            four=temp("{x}.R2.trimmed.unpair.fastq.gz"),
             err="QC/{x}_run_trimmomatic.err"
     params: trimmomatic=config['bin'][pfamily]['TRIMMOMATIC'],
             adapterfile=config['references'][pfamily]['trimmomatic.adapters'],rname="pl:trimmomatic"
