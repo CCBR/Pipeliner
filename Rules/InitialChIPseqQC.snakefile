@@ -419,7 +419,7 @@ if readtype == 'Single' :
 
 
 
-    rule ngsplot:
+    rule NGSPLOT:
         input:
             bam1= join(bam_dir,"{name}.sorted.bam"),
             # bam2= join(bam_dir,"{name}.sorted.mapq_gt_3.bam"),

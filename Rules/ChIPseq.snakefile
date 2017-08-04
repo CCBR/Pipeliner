@@ -7,7 +7,7 @@ from tempfile import TemporaryFile
 from pysam import Samfile, FastaFile
 from collections import Counter
 
-pipehome = '/scratch/kimb8/Pipeliner/'
+#pipehome = '/scratch/kimb8/Pipeliner/'
 
 def normalize_bam_file_chromosomes(
     bamfns,
@@ -58,7 +58,8 @@ def normalize_bam_file_chromosomes(
     
 
 configfile: "run.json"
-include: join( pipehome, "Rules", "InitialChIPseqQC.snakefile" )
+#include: join( pipehome, "Rules", "InitialChIPseqQC.snakefile" )
+include: join( "Rules", "InitialChIPseqQC.snakefile" )
     
 workpath = config['project']['workpath']    
 filetype = config['project']['filetype']
@@ -156,8 +157,10 @@ def fix_chrom( fn ) :
 #####################
 # Local programs
 #####################
-chipseeker_rmd = join( pipehome, 'ChIPseeker.rmd' )
-chipseeker_r = join( pipehome, 'runChIPseeker.R' )
+#chipseeker_rmd = join( pipehome, 'ChIPseeker.rmd' )
+#chipseeker_r = join( pipehome, 'runChIPseeker.R' )
+chipseeker_rmd = join( 'Scripts' , 'ChIPseeker.rmd' )
+chipseeker_r = join( 'Scripts' , 'runChIPseeker.R' )
     
 if genome == 'hg19' :
     rule ChIPseq:
