@@ -517,7 +517,7 @@ if readtype == 'Single' :
         shell:
             """
             module load samtools;
-            module load R;
+            module load R/3.4.0_gcc-6.2.0;
             Rscript Scripts/phantompeakqualtools/run_spp.R \
             -c={input.bam1} -savp -out={output.ppqt1} 
             Rscript Scripts/phantompeakqualtools/run_spp.R \
@@ -770,7 +770,7 @@ elif readtype == 'Paired' :
             picardver=config['bin'][pfamily]['PICARDVER'],
         shell:
             """
-            module load R;
+            module load R/3.4.0_gcc-6.2.0;
             module load {params.picardver};
             java -Xmx10g \
                  -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar \
