@@ -147,7 +147,6 @@
      "STARDIR": "/fdb/STAR_indices/2.5.2b/GENCODE/Gencode_human/release_26/genes-",
      "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg38.rRNA.interval_list_R26",
     "STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38_gencode_v24_CTAT_lib_Mar292017_prebuilt",
-    "STARREF": "/fdb/STAR_current/GENCODE/Gencode_human/release_26/genes-",
     "GENOME": "/fdb/GENCODE/Gencode_human/release_26/GRCh38.primary_assembly.genome.fa",
     "adapter.file": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat",
     "fastqc.adapters": "/data/CCBR_Pipeliner/db/PipeDB/dev/fastqc.adapters",

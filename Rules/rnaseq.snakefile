@@ -229,7 +229,7 @@ rule limmavoom:
 rule pca:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
   output: "DEG{dtype}/PcaReport.html"
-e params: rname='pl:pca',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", projectId=config['project']['id'], projDesc=config['project']['description']
+  params: rname='pl:pca',batch='--mem=24g --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']), dtype="{dtype}", projectId=config['project']['id'], projDesc=config['project']['description']
   shell: "mkdir -p DEG{params.dtype}; cp Scripts/PcaReport.Rmd {params.dir}/DEG{params.dtype}/; module load R/3.4.0_gcc-6.2.0; Rscript Scripts/pcacall.R '{params.dir}/DEG{params.dtype}/' '../{input.file1}' '../{input.file2}' '{params.projectId}' '{params.projDesc}'"
 
 
