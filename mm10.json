@@ -12,6 +12,8 @@
     "KNOWNVCF2": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_known_snps.vcf.gz",
     "NOVOINDEX": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_genome.nix",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/genome.fa",
+    "ADMIXTUREKEY": "/data/CCBR_Pipeliner/db/PipeDB/lib/mouse_genomes_strain_key.txt",
+    "ADMIXTUREREFS": "39",
     "SNPSITES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
     "adapter.file": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat",
     "fastqc.adapters": "/data/CCBR_Pipeliner/db/PipeDB/dev/fastqc.adapters",
@@ -62,6 +64,8 @@
     "KNOWNVCF2": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_known_snps.vcf.gz",
     "NOVOINDEX": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_genome.nix",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/genome.fa",
+    "ADMIXTUREKEY": "/data/CCBR_Pipeliner/db/PipeDB/lib/mouse_genomes_strain_key.txt",
+    "ADMIXTUREREFS": "39",
     "GTFFILE": "/fdb/GENCODE/Gencode_mouse/release_M12/gencode.vM12.annotation.gtf",
     "CNVKITANTITARGETS": "/data/CCBR_Pipeliner/db/PipeDB/lib/fake.antitargetcoverage.cnn",
     "SNPSITES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
@@ -160,7 +164,9 @@
     "SELECTDB": "SIFT_score,SIFT_pred,Polyphen2_HVAR_score,Polyphen2_HVAR_pred,LRT_score,LRT_pred,GERP++_RS,MutationAssessor_score,MutationAssessor_pred,1000Gp1_AF,1000Gp1_EUR_AF,ESP6500_EA_AF,ESP6500_AA_AF",
     "DB29": "/data/CCBR_Pipeliner/db/PipeDB/lib/snpEff_db/dbNSFP2.9.txt.gz",
     "MUTECTCOSMIC": "",
-    "MUTECTSNP": ""
+    "MUTECTSNP": "",
+    "ADMIXTUREKEY": "/data/CCBR_Pipeliner/db/PipeDB/lib/mouse_genomes_strain_key.txt",
+    "ADMIXTUREREFS": "39",
 
 },
     "rnaseqvargerm": {
@@ -187,6 +193,8 @@
     "KNOWNVCF2": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_known_snps.vcf.gz",
     "NOVOINDEX": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_genome.nix",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/genome.fa",
+    "ADMIXTUREKEY": "/data/CCBR_Pipeliner/db/PipeDB/lib/mouse_genomes_strain_key.txt",
+    "ADMIXTUREREFS": "39",
     "SNPSITES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
     "adapter.file": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat",
     "fastqc.adapters": "/data/CCBR_Pipeliner/db/PipeDB/dev/fastqc.adapters",
