@@ -176,6 +176,8 @@
                        "chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19",
                        "chrX","chrY","chrM"],
             "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
+            "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
+            "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/lib/mm9.len",
         }, 
     }
 }
