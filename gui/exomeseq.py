@@ -40,11 +40,17 @@ class ExomeSeqFrame( PipelineFrame ) :
         
         label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
         label.grid(row=3,column=0,sticky=W,padx=10,pady=5)
-        Pipelines=["initialqc","exomeseq-somatic","exomeseq-germline"]
+        PipelineLabels = ["Initial QC", "Germline", 'Somatic Tumor-Normal', 'Somatic Tumor-Only']
+        Pipelines=["initialqc", "exomeseq-germline", "exomeseq-somatic", "exomeseq-somatic-tumoronly"]
+        self.label2pipeline = { k:v for k,v in zip(PipelineLabels, Pipelines)}
+
         Pipeline = self.Pipeline = StringVar()
-        Pipeline.set(Pipelines[0])
+        PipelineLabel = self.PipelineLabel = StringVar()
+        self.Pipeline = StringVar()
+
+        PipelineLabel.set(PipelineLabels[0])
         
-        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.option_controller)
+        om = OptionMenu(eframe, PipelineLabel, *PipelineLabels, command=self.option_controller)
         #om.config()#bg = widgetBgColor,fg=widgetFgColor)
         #om["menu"].config()#bg = widgetBgColor,fg=widgetFgColor)
         #om.pack(side=LEFT,padx=20,pady=5)
@@ -75,6 +81,8 @@ class ExomeSeqFrame( PipelineFrame ) :
             
     def option_controller( self, *args, **kwargs ) :
         PipelineFrame.option_controller( self )
+        self.Pipeline.set( self.label2pipeline[self.PipelineLabel.get()] )
+        print( self.Pipeline.get() )
         
         if self.Pipeline.get() == 'exomeseq-somatic' :
             self.add_pairs( self.eframe )
