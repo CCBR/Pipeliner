@@ -40,7 +40,7 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/mutect_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/exome_targets.bed",
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
-            "samples_and_knowns_filtered_recode.P"
+            "admixture_out/samples_and_knowns_filtered_recode.P"
     output:
     params: rname="final"
     shell:  """

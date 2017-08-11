@@ -19,19 +19,19 @@
     },
     "admixture_germline":
     {
-        "threads": "8",
+        "threads": "4",
         "mem" : "96g",
         "time" : "2-00:00:00",
     },
     "admixture_somatic":
     {
-        "threads": "8",
+        "threads": "4",
         "mem" : "96g",
         "time" : "2-00:00:00",
     },
     "admixture_wgs":
     {
-        "threads": "8",
+        "threads": "4",
         "mem" : "96g",
         "time" : "2-00:00:00",
     },

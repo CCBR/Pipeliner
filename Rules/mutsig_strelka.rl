@@ -21,4 +21,4 @@ elif config['project']['annotation'] == "mm10":
         output: genes=config['project']['workpath']+"/strelka_out/mutsigCV_out/somatic.sig_genes.txt",
                 maf=config['project']['workpath']+"/strelka_out/oncotator_out/strelka_variants.maf"
         params: rname="pl:mutsig_strelka"
-        shell: "echo \"null\" > {output.maf}; echo \"null\" > {output.genes}"
+        shell: "cat strelka_out/oncotator_out/*.maf > {output.maf}; echo \"null\" > {output.genes}"
