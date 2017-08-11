@@ -42,7 +42,7 @@ if config['project']['annotation'] == "hg19":
            config['project']['workpath']+"/svaba_out/svaba.log",
            expand("{s}"+".g.vcf",s=samples),
 #           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
-           "admixture_out/samples_and_knowns_filtered_recode.P",
+           "admixture_out/samples_and_knowns_filtered_recode.Q",
 
     output: 
     params: rname="final"
@@ -94,7 +94,7 @@ elif config['project']['annotation'] == "hg38":
            config['project']['workpath']+"/svaba_out/svaba.log",
            expand("{s}"+".g.vcf",s=samples),
 #           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
-           "admixture_out/samples_and_knowns_filtered_recode.P"
+           "admixture_out/samples_and_knowns_filtered_recode.Q"
 
     output: 
     params: rname="final"
@@ -144,7 +144,7 @@ elif config['project']['annotation'] == "mm10":
 #           "breakdancer_out/file.ctx",
            config['project']['workpath']+"/svaba_out/svaba.log",
 #           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
-           "admixture_out/samples_and_knowns_filtered_recode.P"
+           "admixture_out/samples_and_knowns_filtered_recode.Q"
     output: 
     params: rname="final"
     shell:  """

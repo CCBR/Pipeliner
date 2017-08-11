@@ -28,7 +28,7 @@ if config['project']['annotation'] == "hg19":
            "cnvkit_out/cnvkit_heatmap.pdf",
 #           "breakdancer_out/file.ctx",
            config['project']['workpath']+"/svaba_out/{p}.log",
-           "admixture_out/samples_and_knowns_filtered_recode.P"
+           "admixture_out/samples_and_knowns_filtered_recode.Q"
     output: 
     params: rname="final"
     shell:  """
@@ -69,7 +69,7 @@ else:
            "cnvkit_out/cnvkit_heatmap.pdf",
 #           "breakdancer_out/file.ctx",
            config['project']['workpath']+"/svaba_out/{p}.log",
-           "admixture_out/samples_and_knowns_filtered_recode.P"
+           "admixture_out/samples_and_knowns_filtered_recode.Q"
     output: 
     params: rname="final"
     shell:  """

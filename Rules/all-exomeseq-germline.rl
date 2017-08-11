@@ -9,7 +9,7 @@ rule all_exomeseq_germline:
            "exome_targets.bed",
            "exome.strictFilter.vcf",
            "manta_out/results/variants/diploidSV.vcf.gz",
-           "admixture_out/samples_and_knowns_filtered_recode.P"
+           "admixture_out/samples_and_knowns_filtered_recode.Q"
     output: 
     params: rname="final"
     shell:  """
