@@ -1,7 +1,8 @@
 #!/bin/bash
-module load ngsplot
-bam=$1
-genome=$2
+ngsplotver=$1
+module load $ngsplotver
+bam=$2
+genome=$3
 name=${bam/.bam/}
 for region in tss tes genebody ; do
 for go in max km; do
