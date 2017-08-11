@@ -17,6 +17,24 @@
         "mem" : "96g",
         "time" : "10-00:00:00",
     },
+    "admixture_germline":
+    {
+        "threads": "8",
+        "mem" : "96g",
+        "time" : "2-00:00:00",
+    },
+    "admixture_somatic":
+    {
+        "threads": "8",
+        "mem" : "96g",
+        "time" : "2-00:00:00",
+    },
+    "admixture_wgs":
+    {
+        "threads": "8",
+        "mem" : "96g",
+        "time" : "2-00:00:00",
+    },
     "svaba_germline":
     {
         "threads": "32",
