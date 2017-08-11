@@ -1,8 +1,8 @@
  {
     "rules": {
         "avia": ["wgslow","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","rnaseqvargerm"],
-        "vcf2maf": ["exomeseq-somatic","wgs_somatic","exomeseq-somatic-tumoronly"],
-        "maftools": ["exomeseq-somatic","wgs_somatic","exomeseq-somatic-tumoronly"],
+        "vcf2maf": ["exomeseq-somatic","wgs-somatic","exomeseq-somatic-tumoronly"],
+        "maftools": ["exomeseq-somatic","wgs-somatic","exomeseq-somatic-tumoronly"],
         "germline_filter_wgs": ["wgslow"],
         "delly_germline": ["wgslow"],
         "pindel_germline": ["wgslow"],
@@ -33,9 +33,9 @@
         "oncotator_strelka": ["none"],
         "oncotator_mutect": ["none"],
         "oncotator_mutect2": ["none"],
-        "mutsig_strelka": ["exomeseq-somatic","wgs_somatic","exomeseq-somatic-tumoronly"],
-        "mutsig_mutect": ["exomeseq-somatic","wgs_somatic","exomeseq-somatic-tumoronly"],
-        "mutsig_mutect2": ["exomeseq-somatic","wgs_somatic","exomeseq-somatic-tumoronly"],
+        "mutsig_strelka": ["exomeseq-somatic","wgs-somatic","exomeseq-somatic-tumoronly"],
+        "mutsig_mutect": ["exomeseq-somatic","wgs-somatic","exomeseq-somatic-tumoronly"],
+        "mutsig_mutect2": ["exomeseq-somatic","wgs-somatic","exomeseq-somatic-tumoronly"],
         "mkdir_somatic": ["exomeseq-somatic","exomeseq-somatic-tumoronly"],
         "rnafusionmkdir": ["rnaseqfusion"],
         "starfusion": ["rnaseqfusion"],
@@ -124,6 +124,8 @@
     "final": {
         "exomeseq-pairs": "all-exomeseq-pairs.rl",
         "wgslow": "all-wgslow.rl",
+        "wgs-somatic": "all-wgs-somatic.rl",
+        "wgs-somatic-tumoronly": "all-wgs-somatic-tumoronly.rl",
         "exomeseq-somatic": "all-exomeseq-somatic.rl",
         "exomeseq-somatic-tumoronly": "all-exomeseq-somatic-tumoronly.rl",
         "exomeseq-germline": "all-exomeseq-germline.rl",
