@@ -337,7 +337,7 @@ preseq c_curve -B -o {output.ccurve} {input.bam}
             samtoolsver=config['bin'][pfamily]['SAMTOOLSVER'],
         shell: 
             """
-module load {params.samtolsver};
+module load {params.samtoolsver};
 module load {params.picardver}; 
 java -Xmx10g \
   -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar \
