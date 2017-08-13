@@ -109,6 +109,7 @@
 "GTFFILE": "/fdb/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M12/genes.gtf",
 "FUSIONGTFFILE": "/fdb/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M12/genes.gtf",
 "STARDIR": "/fdb/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M12/genes-",
+"STARREF": "/fdb/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M12/genes-",
 "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/dev/Mm10_M12_genes.txt",
 "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/dev/refFlatMm10_M12.txt",
 "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCm38_mm10_RefSeq.bed",
