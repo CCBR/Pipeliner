@@ -11,7 +11,7 @@ rule all_rnaseqvargerm:
            expand("QC/{s}.{r}.trimmed_screen.png",s=samples,r=['R1','R1']),
            expand("{s}.dedup.bam",s=samples),
            expand("QC/{s}_run_trimmomatic.err",s=samples),
-           "admixture_out/samples_and_knowns_filtered_recode.Q"
+           "admixture_out/admixture_table.tsv"
     output: 
     params: rname="final"
     shell:  """
