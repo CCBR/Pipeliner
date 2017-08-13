@@ -42,7 +42,7 @@ if config['project']['annotation'] == "hg19":
            config['project']['workpath']+"/svaba_out/svaba.log",
            expand("{s}"+".g.vcf",s=samples),
 #           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
-           "admixture_out/samples_and_knowns_filtered_recode.P",
+           "admixture_out/admixture_table.tsv",
 
     output: 
     params: rname="final"
@@ -50,6 +50,7 @@ if config['project']['annotation'] == "hg19":
              module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped *.avia_status.txt *.avia.log *_genotypes.vcf logfiles/
 
             """
+
 elif config['project']['annotation'] == "hg38":
   rule all_wgslow:
     input: "combined.vcf",
@@ -94,7 +95,7 @@ elif config['project']['annotation'] == "hg38":
            config['project']['workpath']+"/svaba_out/svaba.log",
            expand("{s}"+".g.vcf",s=samples),
 #           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
-           "admixture_out/samples_and_knowns_filtered_recode.P"
+           "admixture_out/admixture_table.tsv"
 
     output: 
     params: rname="final"
@@ -104,7 +105,6 @@ elif config['project']['annotation'] == "hg38":
             """
 
 elif config['project']['annotation'] == "mm10":
-
   rule all_wgslow:
     input: "combined.vcf",
            config['project']['workpath']+"/full_annot.txt.zip",
@@ -144,7 +144,7 @@ elif config['project']['annotation'] == "mm10":
 #           "breakdancer_out/file.ctx",
            config['project']['workpath']+"/svaba_out/svaba.log",
 #           expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
-           "admixture_out/samples_and_knowns_filtered_recode.P"
+           "admixture_out/admixture_table.tsv"
     output: 
     params: rname="final"
     shell:  """

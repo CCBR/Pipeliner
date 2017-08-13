@@ -1,6 +1,6 @@
 rule gatk_select_variants_rnaseqvar:
     input: bam=lambda wildcards: config['project']['units'][wildcards.x]+".recal.bam",
-           vcf="targets.strictFilter.vcf"
+           vcf="combined.strictFilter.vcf"
     output: vcf="sample_vcfs/{x}.sample.vcf",
             csvstats="sample_vcfs/{x}.stats.csv",
             htmlstats="sample_vcfs/{x}.stats.html",
