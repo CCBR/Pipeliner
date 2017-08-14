@@ -515,6 +515,12 @@
         'mem': '32g',
         'threads': '32'
     },
+
+    'trim_step4':
+    {
+        'threads': '32'
+    },
+        
         
     'MEMEChIP':
     {
