@@ -126,7 +126,7 @@
 "FUSCATCHCONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fusioncatcher_mm10_configuration.cfg",
 "ONCOFUSEBUILD": "mm10",
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
-    "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
+    "GENOME": "/fdb/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M12/ref.fa",
     "CHROMS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_chromosomes",
     "INDELSITES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_known_indels.vcf.gz",
     "KNOWNINDELS": "-known /data/CCBR_Pipeliner/db/PipeDB/lib/mm10_known_indels.vcf.gz",
