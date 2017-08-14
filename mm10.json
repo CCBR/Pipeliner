@@ -51,6 +51,9 @@
     "VEPSPECIES": "mus_musculus",
     "VEPFILTERVCF": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
     "VEPGENOME": "/fdb/VEP/88/cache/mouse.fa",
+    "CANVASGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/WholeGenomeFasta",
+    "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/kmer.fa",
+    "CANVASFILTER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_WindowMasker.bed",
 },
     "genomeseq": {
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
@@ -102,6 +105,9 @@
     "MUTECTSNP": "",
     "VEPBUILD": "GRCm38",
     "VEPSPECIES": "mus_musculus",
+    "CANVASGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/WholeGenomeFasta",
+    "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/kmer.fa",
+    "CANVASFILTER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_WindowMasker.bed",
 },
      "rnaseq":{
 "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
