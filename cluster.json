@@ -518,7 +518,7 @@
 
     'trim_step4':
     {
-        'threads': '32'
+        'threads': '16'
     },
         
         
