@@ -122,7 +122,7 @@ rule rsem:
   input: file1= "{name}.p2.Aligned.toTranscriptome.out.bam"
   output: out1="{name}.rsem.genes.results",out2="{name}.rsem.isoforms.results"
   params: rname='pl:rsem',prefix="{name}.rsem",batch='--cpus-per-task=16 --mem=32g --time=24:00:00',rsemref=config['references'][pfamily]['RSEMREF'],rsem=config['bin'][pfamily]['RSEM']
-  shell: "{params.rsem}/rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p 16  {input.file1} {params.rsemref} {params.prefix}"
+  shell: "{params.rsem}/rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p 16  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID"
 
 rule rsemcounts:
    input: files=expand("{name}.rsem.genes.results", name=samples)
