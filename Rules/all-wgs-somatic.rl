@@ -1,6 +1,6 @@
 if config['project']['annotation'] == "hg19":
 
-  rule all_exomeseq_somatic:
+  rule all_wgs_somatic:
     input:  expand("{s}"+".recal.bam",s=samples),
             expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect_out/{p}"+".FINAL.vcf",p=pairs),
@@ -49,7 +49,7 @@ if config['project']['annotation'] == "hg19":
             """
 elif config['project']['annotation'] == "hg38":
 
-  rule all_exomeseq_somatic:
+  rule all_wgs_somatic:
     input:  expand("{s}"+".recal.bam",s=samples),
             expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect_out/{p}"+".FINAL.vcf",p=pairs),
@@ -99,7 +99,7 @@ elif config['project']['annotation'] == "hg38":
 
 elif config['project']['annotation'] == "mm10":
 
-  rule all_exomeseq_somatic:
+  rule all_wgs_somatic:
     input:  expand("{s}"+".recal.bam",s=samples),
             expand(config['project']['workpath']+"/mutect_out/{p}"+".FINAL.vcf",p=pairs),
             expand(config['project']['workpath']+"/mutect2_out/{p}"+".FINALmutect2.vcf",p=pairs),
