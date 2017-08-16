@@ -57,6 +57,7 @@
     "CANVASFILTER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_WindowMasker.bed",
 },
     "genomeseq": {
+    "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_dbSNP_allStrains_compSet.vcf.gz",
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
     "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
     "CHROMS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_chromosomes",
@@ -95,7 +96,8 @@
     "DELLY_EXCLUSIONS": "/data/CCBR_Pipeliner/db/PipeDB/lib/delly.mouse.mm10.excl.tsv",
     "CNVKIT_TARGETS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_cnvkit_targets_split.bed",
     "CNVKITACCESS": "/data/CCBR_Pipeliner/db/PipeDB/lib/access-mm10.bed",
-    "CONPAIRMARKERS": "/data/CCBR_Pipeliner/db/PipeDB/lib/SureSelect_Mouse_All_Exon_V1_GRCm38_markers_MAF_0.4_LD_0.8.txt",
+    "CONPAIRMARKERSA": "/data/CCBR_Pipeliner/db/PipeDB/lib/SureSelect_Mouse_All_Exon_V1_GRCm38_markers_MAF_0.4_LD_0.8.txt",
+    "CONPAIRMARKERSB": "/data/CCBR_Pipeliner/db/PipeDB/lib/SureSelect_Mouse_All_Exon_V1_GRCm38_markers_MAF_0.4_LD_0.8.bed",
     "EXONS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_UCSCexons.bed",
     "THETASNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_theta_SNPfile_reformat.txt",
     "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
@@ -110,6 +112,10 @@
     "CANVASGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/WholeGenomeFasta",
     "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_kmer.fa",
     "CANVASFILTER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_WindowMasker.bed",
+    "VEPBUILD": "GRCm38",
+    "VEPSPECIES": "mus_musculus",
+    "VEPFILTERVCF": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
+    "VEPGENOME": "/fdb/VEP/88/cache/mouse.fa",
 },
      "rnaseq":{
 "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
