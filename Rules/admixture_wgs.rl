@@ -1,9 +1,9 @@
 rule admixture_wgs:
     input: "combined.strictFilter.vcf"
-    output: vcf="admixture_out/samples_noINDEL_nomissing.recode.vcf",
-            mergedvcf="admixture_out/samples_and_knowns.vcf",
-            ped="admixture_out/samples_and_knowns_filtered.ped",
-            map="admixture_out/samples_and_knowns_filtered.map",
+    output: vcf=temp("admixture_out/samples_noINDEL_nomissing.recode.vcf"),
+            mergedvcf=temp("admixture_out/samples_and_knowns.vcf"),
+            ped=temp("admixture_out/samples_and_knowns_filtered.ped"),
+            map=temp("admixture_out/samples_and_knowns_filtered.map"),
             recodeped="admixture_out/samples_and_knowns_filtered_recode.ped",
             admix="admixture_out/samples_and_knowns_filtered_recode.Q",
             table="admixture_out/admixture_table.tsv"

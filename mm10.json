@@ -12,6 +12,7 @@
     "KNOWNVCF2": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_known_snps.vcf.gz",
     "NOVOINDEX": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_genome.nix",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/genome.fa",
+    "CNVKITREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_flatRef.cnn",
     "ADMIXTUREKEY": "/data/CCBR_Pipeliner/db/PipeDB/lib/mouse_genomes_strain_key.txt",
     "ADMIXTUREREFS": "39",
     "SNPSITES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
@@ -52,7 +53,7 @@
     "VEPFILTERVCF": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
     "VEPGENOME": "/fdb/VEP/88/cache/mouse.fa",
     "CANVASGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/WholeGenomeFasta",
-    "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/kmer.fa",
+    "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_kmer.fa",
     "CANVASFILTER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_WindowMasker.bed",
 },
     "genomeseq": {
@@ -67,6 +68,7 @@
     "KNOWNVCF2": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_known_snps.vcf.gz",
     "NOVOINDEX": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_genome.nix",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/genome.fa",
+    "CNVKITREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_flatRef.cnn",
     "ADMIXTUREKEY": "/data/CCBR_Pipeliner/db/PipeDB/lib/mouse_genomes_strain_key.txt",
     "ADMIXTUREREFS": "39",
     "GTFFILE": "/fdb/GENCODE/Gencode_mouse/release_M12/gencode.vM12.annotation.gtf",
@@ -106,7 +108,7 @@
     "VEPBUILD": "GRCm38",
     "VEPSPECIES": "mus_musculus",
     "CANVASGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/WholeGenomeFasta",
-    "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/kmer.fa",
+    "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_kmer.fa",
     "CANVASFILTER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_WindowMasker.bed",
 },
      "rnaseq":{

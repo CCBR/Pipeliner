@@ -1,6 +1,8 @@
 rule canvas_wgs_somatic:
-    input: bam=lambda wildcards: config['project']['units'][wildcards.x]+".recal.bam",
-           vcf="sample_vcfs/{x}.sample.vcf",
+    input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
+           tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
+           filtvcf=config['project']['workpath']+"/cnvkit_out/{x}_filtGermpairs.vcf",
+           somaticvcf=config['project']['workpath']+"/mutect2_out/{x}.FINALmutect2.vcf",
     output: vcf="canvas_out/{x}/results/variants/candidateSV.vcf.gz",
-    params: genome=config['references'][pfamily]['CANVASGENOME'],sample=lambda wildcards: config['project']['units'][wildcards.x],kmer=config['references'][pfamily]['CANVASKMER'],filter=config['references'][pfamily]['CANVASFILTER'],rname="pl:canvas"
-    shell: "mkdir -p canvas_out; mkdir -p canvas_out/{params.sample}; module load Canvas; Canvas.dll Germline-WGS -b {input.bam} -o canvas_out/{params.sample} -r {params.kmer} -g {params.genome} -f {params.filter} --sample-name={params.sample} --sample-b-allele-vcf={input.vcf}"
+    params: genome=config['references'][pfamily]['CANVASGENOME'],tumorsample=lambda wildcards: config['project']['pairs'][wildcards.x][1],normalsample=lambda wildcards: config['project']['pairs'][wildcards.x][0],kmer=config['references'][pfamily]['CANVASKMER'],filter=config['references'][pfamily]['CANVASFILTER'],rname="pl:canvas"
+    shell: "mkdir -p canvas_out; mkdir -p canvas_out/{params.tumorsample}; cp {params.tumorsample}.recal.bai {params.tumorsample}.recal.bam.bai; cp {params.normalsample}.recal.bai {params.normalsample}.recal.bam.bai; mkdir -p canvas_out/{params.normalsample}; export COMPlus_gcAllowVeryLargeObjects=1; module load Canvas; Canvas.dll Somatic-WGS -b {input.tumor} -o canvas_out/{params.tumorsample} -r {params.kmer} -g {params.genome} -f {params.filter} --sample-name={params.tumorsample} --sample-b-allele-vcf={input.filtvcf} --somatic-vcf={input.somaticvcf}; module load Canvas; Canvas.dll Germline-WGS -b {input.normal} -o canvas_out/{params.normalsample} -r {params.kmer} -g {params.genome} -f {params.filter} --sample-name={params.normalsample} --sample-b-allele-vcf={input.filtvcf}"
