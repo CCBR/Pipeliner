@@ -715,7 +715,7 @@ rule SICER :
             cd {sicer_dir}/{wildcards.group}/{wildcards.name}
 
             bamToBed -i ../../../{input} > {wildcards.name}.bed
-            bamToBed -i ../../../bam_dir/{params.ctrl}.sorted.bam > {params.ctrl}.bed
+            bamToBed -i ../../../{bam_dir}/{params.ctrl}.sorted.bam > {params.ctrl}.bed
             """)
             
             #fix_chrom( join(sicer_dir,
