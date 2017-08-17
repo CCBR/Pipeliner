@@ -1,5 +1,6 @@
 import os
 import matplotlib
+matplotlib.use('Agg') # required by python 3.5 to supress plot window which causes seg fault
 from matplotlib.patches import Circle, Wedge, Polygon, Rectangle
 from matplotlib.collections import PatchCollection
 import matplotlib.pyplot as plt

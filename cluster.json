@@ -441,6 +441,7 @@
     },
     "rsem":
     {
+	"gres":"lscratch:500",
         "threads": "16"
     },
     "salmon":
