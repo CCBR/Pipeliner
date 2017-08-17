@@ -3,7 +3,6 @@ rule theta:
        input:  normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
                tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
                calls=config['project']['workpath']+"/cnvkit_out/{x}_calls.cns",
-               targets="exome_targets.bed",
        output: infile=config['project']['workpath']+"/theta_out/{x}/{x}_thetaIN",
 #               sampdir=config['project']['workpath']+"/theta_out/{x}"
        threads: 1
