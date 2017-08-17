@@ -38,9 +38,10 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/strelka_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/mutect_out/oncotator_out/mutect_variants.maf",
             config['project']['workpath']+"/mutect_out/mutsigCV_out/somatic.sig_genes.txt",
-            config['project']['workpath']+"/exome_targets.bed",
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
-            "admixture_out/admixture_table.tsv"
+            "admixture_out/admixture_table.tsv",
+            expand("svaba_out/{x}.log", p=pairs),
+            expand("canvas_out/{x}/tumorCNV.vcf.gz", p=pairs),
     output:
     params: rname="final"
     shell:  """
@@ -87,9 +88,10 @@ elif config['project']['annotation'] == "hg38":
             config['project']['workpath']+"/strelka_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/mutect_out/oncotator_out/mutect_variants.maf",
             config['project']['workpath']+"/mutect_out/mutsigCV_out/somatic.sig_genes.txt",
-            config['project']['workpath']+"/exome_targets.bed",
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
-            "admixture_out/admixture_table.tsv"
+            "admixture_out/admixture_table.tsv",
+            expand("svaba_out/{x}.log", p=pairs),
+            expand("canvas_out/{x}/tumorCNV.vcf.gz", p=pairs),
     output:
     params: rname="final"
     shell:  """
@@ -133,9 +135,10 @@ elif config['project']['annotation'] == "mm10":
             config['project']['workpath']+"/strelka_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/mutect_out/oncotator_out/mutect_variants.maf",
             config['project']['workpath']+"/mutect_out/mutsigCV_out/somatic.sig_genes.txt",
-            config['project']['workpath']+"/exome_targets.bed",
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
-            "admixture_out/admixture_table.tsv"
+            "admixture_out/admixture_table.tsv",
+            expand("svaba_out/{p}.log", p=pairs),
+            expand("canvas_out/{p}/tumorCNV.vcf.gz", p=pairs),
     output:
     params: rname="final"
     shell:  """

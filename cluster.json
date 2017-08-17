@@ -23,6 +23,12 @@
         "mem" : "96g",
         "time" : "10-00:00:00",
     },
+    "canvas_wgs_somatic":
+    {
+        "threads": "32",
+        "mem" : "96g",
+        "time" : "10-00:00:00",
+    },
     "admixture_germline":
     {
         "threads": "8",
@@ -77,6 +83,11 @@
      {
         "threads": "1",
         "mem" : "48g",
+    },
+    "cnvkit_somatic":
+     {
+        "threads": "4",
+        "mem" : "96g",
     },
     "cnvkit_germ":
      {
