@@ -37,8 +37,7 @@ if(params$genome=="hg19"){
 } else if (params$genome=='mm9') {
   txdb="TxDb.Mmusculus.UCSC.mm10.knownGene"
   annodb="org.Mm.eg.db"
-}
-else {
+} else {
   quit()
 }
 
