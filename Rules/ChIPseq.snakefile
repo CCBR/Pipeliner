@@ -286,7 +286,8 @@ rule ChIPseeker :
             shell( '''
             module load R;
             chipseeker=`basename {chipseeker_rmd}`
-            #ln -s {chipseeker_rmd}
+            rm -rf $chipseeker
+            ln -s {chipseeker_rmd} $chipseeker #linking is necessary to make things separate 
             Rscript {chipseeker_r} $chipseeker {in_fn} {params.genome} {out_fn}
             ''' )
             
