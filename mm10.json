@@ -55,7 +55,7 @@
     "CANVASGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/WholeGenomeFasta",
     "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_kmer.fa",
     "CANVASFILTER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_WindowMasker.bed",
-    "GTFFILE": "/fdb/GENCODE/Gencode_mouse/release_M12/gencode.vM12.annotation.gtf",
+    "CNVKITANNO": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_refFlat.txt",
 },
     "genomeseq": {
     "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_dbSNP_allStrains_compSet.vcf.gz",
@@ -75,7 +75,7 @@
     "CNVKITWGSTARGETS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_cnvkit_wgs_targets.bed",
     "ADMIXTUREKEY": "/data/CCBR_Pipeliner/db/PipeDB/lib/mouse_genomes_strain_key.txt",
     "ADMIXTUREREFS": "39",
-    "GTFFILE": "/fdb/GENCODE/Gencode_mouse/release_M12/gencode.vM12.annotation.gtf",
+    "CNVKITANNO": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_refFlat.txt",
     "CNVKITANTITARGETS": "/data/CCBR_Pipeliner/db/PipeDB/lib/fake.antitargetcoverage.cnn",
     "SNPSITES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
     "adapter.file": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat",
