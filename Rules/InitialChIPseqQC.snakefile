@@ -1,6 +1,6 @@
 from snakemake.utils import R
 from os.path import join
-import re
+import re,os
 
 configfile: "run.json"
     
@@ -8,20 +8,27 @@ workpath = config['project']['workpath']
 filetype = config['project']['filetype']
 readtype = config['project']['readtype']
 
-extensions = [ "sorted.normalized", "sorted.mapq_gt_3.normalized", "sorted.dedup.normalized", "sorted.mapq_gt_3.dedup.normalized"]
+extensions = [ "sorted.normalized", "sorted.Q5.normalized", "sorted.DD.normalized", "sorted.Q5DD.normalized"]
 extensions2 = list(map(lambda x:re.sub(".normalized","",x),extensions))
 
 trim_dir='trim'
-
-#kraken
 kraken_dir='kraken'
 bam_dir='bam'
 bw_dir='bigwig'
 ngsplot_dir='bam'
 deeptools_dir='deeptools'
 preseq_dir='preseq'
+
 # 1 is yes and 0 is no... to remove blacklisted reads after trimming....output file is still ends with trim.fastq.gz
-remove_blacklist_reads=1
+# remove_blacklist_reads=1
+remove_blacklist_reads=0
+
+# trimming method to use
+trim_method=1	# this is trimgalore only ... this is the fastest
+# trim_method=2	# this is cutadapt with condensed adapter set... followed by afterqc to remove polyX ... this is the slowest
+# trim_method=3	# this is method1 followed by afterqc and then followed by BBDuk, idea being a) remove most blatant adapter b) remove polyX and then c) remove other primer/adapter contamination
+# trim_method=4 # trimmomatic ... leaves traces of adapters at read ends
+
 
 #print(samples)
 
@@ -31,49 +38,48 @@ if readtype == 'Single' :
             batch='--time=168:00:00'
         input: 
             # Multiqc Report
-            "Reports/multiqc_report.html",
-            # QC
-            "rawQC",
+#             "Reports/multiqc_report.html",
+#             "rawQC",
             "QC",
 #             "QC_not_blacklist_plus", # not needed as merging blacklist removal into trimming
             # FastqScreen
-            expand("FQscreen/{name}.R1.trim_screen.txt",name=samples),
-            expand("FQscreen/{name}.R1.trim_screen.png",name=samples),
+#             expand("FQscreen/{name}.R1.trim_screen.txt",name=samples),
+#             expand("FQscreen/{name}.R1.trim_screen.png",name=samples),
             # Trim and remove blacklisted reads
             expand(join(trim_dir,'{name}.R1.trim.fastq.gz'), name=samples),
 #             expand(join(trim_dir,'{name}.R1.trim.not_blacklist_plus.fastq.gz'), name=samples),
             # Kraken
-            expand(join(kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
-            expand(join(kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
-            join(kraken_dir,"kraken_bacteria.taxa.summary.txt"),
-            # Align using BWA and dedup with Picard
+#             expand(join(kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
+#             expand(join(kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
+#             join(kraken_dir,"kraken_bacteria.taxa.summary.txt"),
+#             # Align using BWA and dedup with Picard
             expand(join(bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
-            # BWA --> BigWig
-            expand(join(bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions), 
-            # PhantomPeakQualTools
-            expand(join(bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
-            expand(join(bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
-            # ngs.plot
-            expand(join(ngsplot_dir,"{name}.{ext}.tss.max.heatmap.pdf"),name=samples,ext=extensions2),
-            expand(join(ngsplot_dir,"{name}.{ext}.tss.km.heatmap.pdf"),name=samples,ext=extensions2),
-            expand(join(ngsplot_dir,"{name}.{ext}.tes.max.heatmap.pdf"),name=samples,ext=extensions2),
-            expand(join(ngsplot_dir,"{name}.{ext}.tes.km.heatmap.pdf"),name=samples,ext=extensions2),
-            expand(join(ngsplot_dir,"{name}.{ext}.genebody.max.heatmap.pdf"),name=samples,ext=extensions2),
-            expand(join(ngsplot_dir,"{name}.{ext}.genebody.km.heatmap.pdf"),name=samples,ext=extensions2),
-            # deeptools
-            expand(join(deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(deeptools_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
-            expand(join(deeptools_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
-            expand(join(deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
-            # preseq
-            expand(join(preseq_dir,"{name}.ccurve"),name=samples),
-
-
-            # expand("{name}.sorted.rmdup.bam.bai", name=samples),
-            # expand("{name}.sorted.rmdup.bam", name=samples),
-            # expand("{name}.shifts", name=samples),
-            # expand("{name}.rmdup.shifts", name=samples),
+#             # BWA --> BigWig
+#             expand(join(bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions), 
+#             # PhantomPeakQualTools
+#             expand(join(bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
+#             expand(join(bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
+#             # ngs.plot
+#             expand(join(ngsplot_dir,"{name}.{ext}.tss.max.heatmap.pdf"),name=samples,ext=extensions2),
+#             expand(join(ngsplot_dir,"{name}.{ext}.tss.km.heatmap.pdf"),name=samples,ext=extensions2),
+#             expand(join(ngsplot_dir,"{name}.{ext}.tes.max.heatmap.pdf"),name=samples,ext=extensions2),
+#             expand(join(ngsplot_dir,"{name}.{ext}.tes.km.heatmap.pdf"),name=samples,ext=extensions2),
+#             expand(join(ngsplot_dir,"{name}.{ext}.genebody.max.heatmap.pdf"),name=samples,ext=extensions2),
+#             expand(join(ngsplot_dir,"{name}.{ext}.genebody.km.heatmap.pdf"),name=samples,ext=extensions2),
+#             # deeptools
+#             expand(join(deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
+#             expand(join(deeptools_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
+#             expand(join(deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
+#             expand(join(deeptools_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
+#             expand(join(deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
+#             # preseq
+#             expand(join(preseq_dir,"{name}.ccurve"),name=samples),
+# 
+# 
+#             # expand("{name}.sorted.rmdup.bam.bai", name=samples),
+#             # expand("{name}.sorted.rmdup.bam", name=samples),
+#             # expand("{name}.shifts", name=samples),
+#             # expand("{name}.rmdup.shifts", name=samples),
 
                    
 
@@ -117,106 +123,173 @@ mkdir -p {output};
 module load {params.fastqcver}; 
 fastqc {input} -t {threads} -o {output}
             """
-
-    rule trim_step1:
-    #trimgalore to remove blatant adapters
+            
+    rule trim: # actually trim, filter polyX and remove black listed reads
         input:
             infq="{name}.R1.fastq.gz",
         output:
-            outfq=temp(join(trim_dir,"{name}.R1_trimmed.fq.gz")),
+            outfq=join(trim_dir,"{name}.R1.trim.fastq.gz"),
         params:
-            rname='pl:trim1',
+            rname="pl:trim",
             cutadaptver=config['bin'][pfamily]['CUTADAPTVER'],
             trimgalorever=config['bin'][pfamily]['TRIMGALOREVER'],
-        shell:
-            """
-module load {params.cutadaptver};
-module load {params.trimgalorever};
-
-trim_galore --trim-n --gzip --length 35 -o trim {input.infq}
-            """
-
-    rule trim_step2:
-    #polyX removal with afterqc
-        input:
-            infq=join(trim_dir,"{name}.R1_trimmed.fq.gz"),
-        output:
-            outfq=temp(join(trim_dir,"good","{name}.R1_trimmed.good.fq")),
-            outfq_bad=temp(join(trim_dir,"bad","{name}.R1_trimmed.bad.fq")),
-        params:
-            rname='pl:trim2',
             afterqcver=config['bin'][pfamily]['AFTERQCVER'],
-            trimdir=trim_dir,
-        shell:
-            """
-module load {params.afterqcver};
-
-after.py \
--1 {input.infq} \
--g {params.trimdir}/good \
--b {params.trimdir}/bad \
--r {params.trimdir}/afterQC
-            """
-
-    rule trim_step3:
-    #remove any other adapter primers and move files
-        input:
-            infq=join(trim_dir,"good","{name}.R1_trimmed.good.fq"),
-        output:
-            outfq=temp(join(trim_dir,"{name}.R1.trim.beforeBLremoval.fastq.gz")),
-        params:
-            rname='pl:trim3',
-            adaptersfa=config['references'][pfamily]['FASTAWITHADAPTERSETC'],
-            bbtoolsver=config['bin'][pfamily]['BBTOOLSVER'],
-            minlen=config['bin'][pfamily]['MINLEN'],
-        shell:
-            """
-module load {params.bbtoolsver};
-
-bbtools BBDuk \
--ktrim=r \
-minlength={params.minlen} \
-ref={params.adaptersfa} \
--Xmx40g \
-in={input.infq} \
-out={output.outfq}
-            """
-            
-    rule trim_step4:
-    # remove blacklist reads
-        params:
-            rname="pl:removeBL",
-            reflen=config['references'][pfamily]['REFLEN'],
+            adaptersfa=config['references'][pfamily]['FASTAWITHADAPTERSETD'],
             blacklistbwaindex=config['references'][pfamily]['BLACKLISTBWAINDEX'],
+            bbtoolsver=config['bin'][pfamily]['BBTOOLSVER'],
             picardver=config['bin'][pfamily]['PICARDVER'],
             bwaver=config['bin'][pfamily]['BWAVER'],
             samtoolsver=config['bin'][pfamily]['SAMTOOLSVER'],
-            remove_blacklist_reads=remove_blacklist_reads,
-        input:
-            infq=join(trim_dir,"{name}.R1.trim.beforeBLremoval.fastq.gz"),
-        output:
-            outfq=join(trim_dir,"{name}.R1.trim.fastq.gz"),
-            outbam=temp(join(trim_dir,"{name}.R1.trim.not_blacklist_plus.bam")),    
+            trimmomaticver=config['bin'][pfamily]['TRIMMOMATICVER'],
+            minlen=config['bin'][pfamily]['MINLEN'],
         threads: 32
-        shell:
-            """
-if [ {params.remove_blacklist_reads} -eq 1 ]; then
-    module load {params.picardver};
-    module load {params.bwaver};
-    module load {params.samtoolsver};
+        run:
+            cmds=[]
+            beforeBLremovalfq=re.sub("R1.fastq.gz","R1.beforeBLremoval.fastq.gz",input.infq)
+            if trim_method==1 :
+                trimgalorefq=re.sub("R1.fastq.gz","R1_trimmed.fq.gz",input.infq)
+                cmds.append("module load %s"%(params.cutadaptver))
+                cmds.append("module load %s"%(params.trimgalorever))
+                cmds.append("trim_galore --trim-n --gzip --length %s -o /lscratch/$SLURM_JOBID %s"%(params.minlen,input.infq))
+                cmds.append("mv /lscratch/$SLURM_JOBID/%s /lscratch/$SLURM_JOBID/%s"%(trimgalorefq,beforeBLremovalfq))
+            elif trim_method==2 :
+                cutadaptfq=re.sub("R1.fastq.gz","R1.cutadapt.fastq.gz",input.infq)
+                afterqcgoodfq=re.sub("R1.cutadapt.fastq.gz","R1.cutadapt.good.fq",cutadaptfq)
+                cmds.append("module load %s"%(params.cutadaptver))
+                cmds.append("cutadapt --trim-n -m %s -b file:%s -o /lscratch/$SLURM_JOBID/%s %s"%(params.minlen,params.adaptersfa,cutadaptfq,input.infq))
+                cmds.append("module load %s"%(params.afterqcver))
+                cmds.append("after.py -1 /lscratch/$SLURM_JOBID/%s -g /lscratch/$SLURM_JOBID/good -b /lscratch/$SLURM_JOBID/bad -r /lscratch/$SLURM_JOBID/afterQC -q 2 --no_correction"%(cutadaptfq))
+                cmds.append("pigz -p4 /lscratch/$SLURM_JOBID/good/%s"%(afterqcgoodfq))
+                cmds.append("mv /lscratch/$SLURM_JOBID/good/%s.gz /lscratch/$SLURM_JOBID/%s"%(afterqcgoodfq,beforeBLremovalfq))
+            elif trim_method==3 :
+                trimgalorefq=re.sub("R1.fastq.gz","R1_trimmed.fq.gz",input.infq)
+                afterqcgoodfq=re.sub("R1_trimmed.fq.gz","R1_trimmed.good.fq",trimgalorefq)
+                BBDukStats=re.sub("R1.fastq.gz","BBDuk.stats",input.infq)
+                cmds.append("module load %s"%(params.cutadaptver))
+                cmds.append("module load %s"%(params.trimgalorever))
+                cmds.append("trim_galore --trim-n --gzip --length %s -o /lscratch/$SLURM_JOBID %s"%(params.minlen,input.infq))
+                cmds.append("module load %s"%(params.afterqcver))
+                cmds.append("after.py -1 /lscratch/$SLURM_JOBID/%s -g /lscratch/$SLURM_JOBID/good -b /lscratch/$SLURM_JOBID/bad -r /lscratch/$SLURM_JOBID/afterQC -q 2 --no_correction"%(trimgalorefq))
+                cmds.append("module load %s"%(params.bbtoolsver))
+                cmds.append("bbtools BBDuk -ktrim=r minlength=%s ref=%s -Xmx64g in=/lscratch/$SLURM_JOBID/good/%s out=/lscratch/$SLURM_JOBID/%s stats=%s"%(params.minlen,params.adaptersfa,afterqcgoodfq,beforeBLremovalfq,join(trim_dir,BBDukStats)))
+            elif trim_method==4:
+                cmds.append("module load %s"%(params.trimmomaticver))
+                cmds.append("java -jar $TRIMMOJAR SE %s /lscratch/$SLURM_JOBID/%s ILLUMINACLIP:%s:2:30:7 MINLEN:%s"%(input.infq,beforeBLremovalfq,params.adaptersfa,params.minlen))
+            if remove_blacklist_reads==0:
+                cmds.append("mv /lscratch/$SLURM_JOBID/%s %s"%(beforeBLremovalfq,output.outfq))
+            else:
+                bam=re.sub("R1.fastq.gz","R1.notBL.bam",input.infq)
+                cmds.append("module load %s"%(params.bwaver))
+                cmds.append("module load %s"%(params.samtoolsver))
+                cmds.append("module load %s"%(params.picardver))
+                cmds.append("bwa mem -t %s %s /lscratch/$SLURM_JOBID/%s | samtools view -@%s -f4 -b -o /lscratch/$SLURM_JOBID/%s"%(threads,params.blacklistbwaindex,beforeBLremovalfq,threads,bam))
+                cmds.append("java -Xmx64g -jar $PICARDJARPATH/SamToFastq.jar VALIDATION_STRINGENCY=SILENT INPUT=/lscratch/$SLURM_JOBID/%s FASTQ=%s"%(bam,output.outfq))
+            cmd="\n".join(cmds)
+            shell(cmd)
+                
+                
+                
+                    
 
-    bwa mem -t {threads} {params.blacklistbwaindex} {input.infq} | samtools view -@{threads} -f4 -b -o {output.outbam}
-
-    java -Xmx10g \
-    -jar $PICARDJARPATH/SamToFastq.jar \
-    VALIDATION_STRINGENCY=SILENT \
-    INPUT={output.outbam} \
-    FASTQ={output.outfq}
-else
-    mv {input.infq} {output.outfq}
-    touch {output.outbam}
-fi
-            """
+#     rule trim_step1:
+#     #trimgalore to remove blatant adapters
+#         input:
+#             infq="{name}.R1.fastq.gz",
+#         output:
+#             outfq=temp(join(trim_dir,"{name}.R1_trimmed.fq.gz")),
+#         params:
+#             rname='pl:trim1',
+#             cutadaptver=config['bin'][pfamily]['CUTADAPTVER'],
+#             trimgalorever=config['bin'][pfamily]['TRIMGALOREVER'],
+#         shell:
+#             """
+# module load {params.cutadaptver};
+# module load {params.trimgalorever};
+# 
+# trim_galore --trim-n --gzip --length 35 -o trim {input.infq}
+#             """
+# 
+#     rule trim_step2:
+#     #polyX removal with afterqc
+#         input:
+#             infq=join(trim_dir,"{name}.R1_trimmed.fq.gz"),
+#         output:
+#             outfq=temp(join(trim_dir,"good","{name}.R1_trimmed.good.fq")),
+#             outfq_bad=temp(join(trim_dir,"bad","{name}.R1_trimmed.bad.fq")),
+#         params:
+#             rname='pl:trim2',
+#             afterqcver=config['bin'][pfamily]['AFTERQCVER'],
+#             trimdir=trim_dir,
+#         shell:
+#             """
+# module load {params.afterqcver};
+# 
+# after.py \
+# -1 {input.infq} \
+# -g {params.trimdir}/good \
+# -b {params.trimdir}/bad \
+# -r {params.trimdir}/afterQC
+#             """
+# 
+#     rule trim_step3:
+#     #remove any other adapter primers and move files
+#         input:
+#             infq=join(trim_dir,"good","{name}.R1_trimmed.good.fq"),
+#         output:
+#             outfq=temp(join(trim_dir,"{name}.R1.trim.beforeBLremoval.fastq.gz")),
+#         params:
+#             rname='pl:trim3',
+#             adaptersfa=config['references'][pfamily]['FASTAWITHADAPTERSETC'],
+#             bbtoolsver=config['bin'][pfamily]['BBTOOLSVER'],
+#             minlen=config['bin'][pfamily]['MINLEN'],
+#         shell:
+#             """
+# module load {params.bbtoolsver};
+# 
+# bbtools BBDuk \
+# -ktrim=r \
+# minlength={params.minlen} \
+# ref={params.adaptersfa} \
+# -Xmx40g \
+# in={input.infq} \
+# out={output.outfq}
+#             """
+#             
+#     rule trim_step4:
+#     # remove blacklist reads
+#         params:
+#             rname="pl:removeBL",
+#             reflen=config['references'][pfamily]['REFLEN'],
+#             blacklistbwaindex=config['references'][pfamily]['BLACKLISTBWAINDEX'],
+#             picardver=config['bin'][pfamily]['PICARDVER'],
+#             bwaver=config['bin'][pfamily]['BWAVER'],
+#             samtoolsver=config['bin'][pfamily]['SAMTOOLSVER'],
+#             remove_blacklist_reads=remove_blacklist_reads,
+#         input:
+#             infq=join(trim_dir,"{name}.R1.trim.beforeBLremoval.fastq.gz"),
+#         output:
+#             outfq=join(trim_dir,"{name}.R1.trim.fastq.gz"),
+#             outbam=temp(join(trim_dir,"{name}.R1.trim.not_blacklist_plus.bam")),    
+#         threads: 32
+#         shell:
+#             """
+# if [ {params.remove_blacklist_reads} -eq 1 ]; then
+#     module load {params.picardver};
+#     module load {params.bwaver};
+#     module load {params.samtoolsver};
+# 
+#     bwa mem -t {threads} {params.blacklistbwaindex} {input.infq} | samtools view -@{threads} -f4 -b -o {output.outbam}
+# 
+#     java -Xmx10g \
+#     -jar $PICARDJARPATH/SamToFastq.jar \
+#     VALIDATION_STRINGENCY=SILENT \
+#     INPUT={output.outbam} \
+#     FASTQ={output.outfq}
+# else
+#     mv {input.infq} {output.outfq}
+#     touch {output.outbam}
+# fi
+#             """
 
     rule kraken_se:
         input:
@@ -286,9 +359,9 @@ fastqc {input} -t {threads} -o {output}
             samtoolsver=config['bin'][pfamily]['SAMTOOLSVER'],
         output:
             outbam1="{d}/{name}.sorted.bam", 
-            outbam2="{d}/{name}.sorted.mapq_gt_3.bam",
+            outbam2="{d}/{name}.sorted.Q5.bam",
             flagstat1="{d}/{name}.sorted.bam.flagstat",
-            flagstat2="{d}/{name}.sorted.mapq_gt_3.bam.flagstat",
+            flagstat2="{d}/{name}.sorted.Q5.bam.flagstat",
         threads: 32
         shell: 
             """
@@ -298,7 +371,7 @@ bwa mem -t {threads} {params.reference} {input} | \
 samtools sort -@{threads} -o {output.outbam1}
 samtools index {output.outbam1}
 samtools flagstat {output.outbam1} > {output.flagstat1}
-samtools view -b -q 4 {output.outbam1} -o {output.outbam2}
+samtools view -b -q 6 {output.outbam1} -o {output.outbam2}
 samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
@@ -320,16 +393,16 @@ preseq c_curve -B -o {output.ccurve} {input.bam}
     rule picard_dedup:
         input: 
             bam1= join(bam_dir,"{name}.sorted.bam"),
-            bam2= join(bam_dir,"{name}.sorted.mapq_gt_3.bam")
+            bam2= join(bam_dir,"{name}.sorted.Q5.bam")
         output:
             out1=temp(join(bam_dir,"{name}.bwa_rg_added.sorted.bam")), 
-            out2=join(bam_dir,"{name}.sorted.dedup.bam"),
-            out2f=join(bam_dir,"{name}.sorted.dedup.bam.flagstat"),
+            out2=join(bam_dir,"{name}.sorted.DD.bam"),
+            out2f=join(bam_dir,"{name}.sorted.DD.bam.flagstat"),
             out3=join(bam_dir,"{name}.bwa.duplic"), 
-            out4=temp(join(bam_dir,"{name}.bwa_rg_added.sorted.mapq_gt_3.bam")), 
-            out5=join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam"),
-            out5f=join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam.flagstat"),
-            out6=join(bam_dir,"{name}.bwa.mapq_gt_3.duplic"), 
+            out4=temp(join(bam_dir,"{name}.bwa_rg_added.sorted.Q5.bam")), 
+            out5=join(bam_dir,"{name}.sorted.Q5DD.bam"),
+            out5f=join(bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
+            out6=join(bam_dir,"{name}.bwa.Q5.duplic"), 
         params:
             rname='pl:dedup',
             batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
@@ -400,22 +473,22 @@ samtools flagstat {output.out5} > {output.out5f}
     rule bam2bw:
         input:
             bam1= join(bam_dir,"{name}.sorted.bam"),
-            bam2= join(bam_dir,"{name}.sorted.mapq_gt_3.bam"),
+            bam2= join(bam_dir,"{name}.sorted.Q5.bam"),
             flagstat1=join(bam_dir,"{name}.sorted.bam.flagstat"),
-            flagstat2=join(bam_dir,"{name}.sorted.mapq_gt_3.bam.flagstat"),
-            bam3= join(bam_dir,"{name}.sorted.dedup.bam"),
-            bam4= join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam"),
-            flagstat3=join(bam_dir,"{name}.sorted.dedup.bam.flagstat"),
-            flagstat4=join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam.flagstat"),
+            flagstat2=join(bam_dir,"{name}.sorted.Q5.bam.flagstat"),
+            bam3= join(bam_dir,"{name}.sorted.DD.bam"),
+            bam4= join(bam_dir,"{name}.sorted.Q5DD.bam"),
+            flagstat3=join(bam_dir,"{name}.sorted.DD.bam.flagstat"),
+            flagstat4=join(bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
         output:
             outbg1=temp(join(bw_dir,"{name}.sorted.normalized.bg")), 
-            outbg2=temp(join(bw_dir,"{name}.sorted.mapq_gt_3.normalized.bg")),
+            outbg2=temp(join(bw_dir,"{name}.sorted.Q5.normalized.bg")),
             outbw1=join(bw_dir,"{name}.sorted.normalized.bw"), 
-            outbw2=join(bw_dir,"{name}.sorted.mapq_gt_3.normalized.bw"),
-            outbg3=temp(join(bw_dir,"{name}.sorted.dedup.normalized.bg")), 
-            outbg4=temp(join(bw_dir,"{name}.sorted.mapq_gt_3.dedup.normalized.bg")),
-            outbw3=join(bw_dir,"{name}.sorted.dedup.normalized.bw"), 
-            outbw4=join(bw_dir,"{name}.sorted.mapq_gt_3.dedup.normalized.bw"),
+            outbw2=join(bw_dir,"{name}.sorted.Q5.normalized.bw"),
+            outbg3=temp(join(bw_dir,"{name}.sorted.DD.normalized.bg")), 
+            outbg4=temp(join(bw_dir,"{name}.sorted.Q5DD.normalized.bg")),
+            outbw3=join(bw_dir,"{name}.sorted.DD.normalized.bw"), 
+            outbw4=join(bw_dir,"{name}.sorted.Q5DD.normalized.bw"),
         params:
             rname="pl:bam2bw",
             batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
@@ -514,18 +587,18 @@ samtools flagstat {output.out5} > {output.out5f}
     rule ppqt:
         input:
             bam1= join(bam_dir,"{name}.sorted.bam"),
-            bam2= join(bam_dir,"{name}.sorted.mapq_gt_3.bam"),
-            bam3= join(bam_dir,"{name}.sorted.dedup.bam"),
-            bam4= join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.bam"),
+            bam2= join(bam_dir,"{name}.sorted.Q5.bam"),
+            bam3= join(bam_dir,"{name}.sorted.DD.bam"),
+            bam4= join(bam_dir,"{name}.sorted.Q5DD.bam"),
         output:
             ppqt1= join(bam_dir,"{name}.sorted.ppqt"),
             pdf1= join(bam_dir,"{name}.sorted.pdf"),
-            ppqt2= join(bam_dir,"{name}.sorted.mapq_gt_3.ppqt"),
-            pdf2= join(bam_dir,"{name}.sorted.mapq_gt_3.pdf"),
-            ppqt3= join(bam_dir,"{name}.sorted.dedup.ppqt"),
-            pdf3= join(bam_dir,"{name}.sorted.dedup.pdf"),
-            ppqt4= join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.ppqt"),
-            pdf4= join(bam_dir,"{name}.sorted.mapq_gt_3.dedup.pdf"),
+            ppqt2= join(bam_dir,"{name}.sorted.Q5.ppqt"),
+            pdf2= join(bam_dir,"{name}.sorted.Q5.pdf"),
+            ppqt3= join(bam_dir,"{name}.sorted.DD.ppqt"),
+            pdf3= join(bam_dir,"{name}.sorted.DD.pdf"),
+            ppqt4= join(bam_dir,"{name}.sorted.Q5DD.ppqt"),
+            pdf4= join(bam_dir,"{name}.sorted.Q5DD.pdf"),
         params:
             rname="pl:ppqt",
             batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
