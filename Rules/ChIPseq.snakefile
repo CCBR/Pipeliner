@@ -388,7 +388,7 @@ rule ngsplot :
         batch='--cpus-per-task=16 --mem=32g --time=24:00:00',
         name = [*samples, *inputs],
     input:
-        expand( join(bam_dir,"{name}.sorted.dedup.bam"), name=[*samples,*inputs] )
+        expand( join(bam_dir,"{name}.sorted.DD.bam"), name=[*samples,*inputs] )
     output:
         join("{ngsplot_dir}", "{region}.heatmap.pdf")
     run:
