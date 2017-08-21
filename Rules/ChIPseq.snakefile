@@ -7,8 +7,8 @@ from tempfile import TemporaryFile
 from pysam import Samfile, FastaFile
 from collections import Counter
 
-#pipehome = '/scratch/kimb8/Pipeliner/'
-pipehome = '/home/kopardevn/Pipeliner/'
+pipehome = os.getenv('PIPELINER_HOME', '/data/CCBR/projects/TechDev/Pipeliner')
+#pipehome = '/home/kopardevn/Pipeliner/'
 bam_dir='bam'
 
 def normalize_bam_file_chromosomes(
@@ -61,7 +61,7 @@ def normalize_bam_file_chromosomes(
 
 configfile: "run.json"
 include: join( pipehome, "Rules", "InitialChIPseqQC.snakefile" )
-#include: join( "Rules", "InitialChIPseqQC.snakefile" )
+
     
 workpath = config['project']['workpath']    
 filetype = config['project']['filetype']
