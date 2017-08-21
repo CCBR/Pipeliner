@@ -7,7 +7,7 @@ from tempfile import TemporaryFile
 from pysam import Samfile, FastaFile
 from collections import Counter
 
-pipehome = os.getenv('PIPELINER_HOME', '/data/CCBR/projects/TechDev/Pipeliner')
+pipehome = os.getenv('pipehome', '/data/CCBR/projects/TechDev/Pipeliner')
 #pipehome = '/home/kopardevn/Pipeliner/'
 bam_dir='bam'
 
