@@ -11,3 +11,4 @@ export PYTHONPATH=$PYTHONPATH:$pipehome/local/lib/
 cd  $pipehome;
 export pipehome=`pwd`;
 python pipeliner2.py &
+echo $pipehome;
