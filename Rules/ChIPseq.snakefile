@@ -487,8 +487,7 @@ rule ChIPQC:
         peak_files = lambda w: [ join(caller2dir[w.caller], 
                          g, 
                          c+caller2suffix[w.caller]
-                        ) for g in groups 
-                              for c in samples ]
+                        ) for g,c in zip(ogroups, samples) ]
         
     output:
         join('ChIPQC','{caller}','ChIPQCreport.html')
