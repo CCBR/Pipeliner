@@ -24,8 +24,8 @@ librarylocation=NULL #"/data/CCBR_Pipeliner/db/PipeDB/Rlibrary"
 library("DOSE") #,lib.loc=librarylocation)
 library("ChIPseeker") #,lib.loc=librarylocation)
 library("UpSetR") # ,lib.loc=librarylocation)
-library("clusterProfiler" , lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary" )
-library("ReactomePA", lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary")
+library("clusterProfiler") # , lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary" )
+library("ReactomePA") #, lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary")
 
 
 if(params$genome=="hg19"){
@@ -35,15 +35,14 @@ if(params$genome=="hg19"){
   txdb="TxDb.Mmusculus.UCSC.mm10.knownGene"
   annodb="org.Mm.eg.db"
 } else if (params$genome=='mm9') {
-  txdb="TxDb.Mmusculus.UCSC.mm10.knownGene"
+  txdb="TxDb.Mmusculus.UCSC.mm9.knownGene"
   annodb="org.Mm.eg.db"
-}
-else {
+} else {
   quit()
 }
 
-library(txdb,lib.loc=librarylocation,character.only=TRUE)
-library(annodb,lib.loc=librarylocation,character.only=TRUE)
+library(txdb,lib.loc=librarylocation, character.only=TRUE)
+library(annodb,lib.loc=librarylocation, character.only=TRUE)
 
 #### if not available:
 ## try http:// if https:// URLs are not supported

@@ -548,9 +548,15 @@
     
     'BWA':
     {
-        'mem': '32g',
+        'mem': '64g',
         'threads': '32'
     },
+
+    'trim_step4':
+    {
+        'threads': '16'
+    },
+        
         
     'MEMEChIP':
     {
