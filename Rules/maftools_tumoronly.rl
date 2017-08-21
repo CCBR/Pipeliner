@@ -1,4 +1,4 @@
-rule maftools:
+rule maftools_tumoronly:
   input: mutect2=config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf",
   output: mutect2maf=config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_merged.maf",
           mutect2summary=config['project']['workpath']+"/mutect2_out/mutect2_maf_summary.pdf",

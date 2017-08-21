@@ -59,6 +59,24 @@
         "mem" : "48g",
         "time" : "10-00:00:00",
     },
+    "vcf2maf_mutect":
+    {
+        "threads": "2",
+        "mem" : "96g",
+        "time" : "1-00:00:00",
+    },
+    "vcf2maf_mutect2":
+    {
+        "threads": "2",
+        "mem" : "96g",
+        "time" : "1-00:00:00",
+    },
+    "vcf2maf_strelka":
+    {
+        "threads": "2",
+        "mem" : "96g",
+        "time" : "1-00:00:00",
+    },
     "fusioninspector":
     {
         "threads": "1",
