@@ -7,7 +7,8 @@ from tempfile import TemporaryFile
 from pysam import Samfile, FastaFile
 from collections import Counter
 
-#pipehome = '/scratch/kimb8/Pipeliner/'
+pipehome = os.getenv('pipehome', '/data/CCBR/projects/TechDev/Pipeliner')
+#pipehome = '/home/kopardevn/Pipeliner/'
 bam_dir='bam'
 
 def normalize_bam_file_chromosomes(
@@ -59,8 +60,8 @@ def normalize_bam_file_chromosomes(
     
 
 configfile: "run.json"
-#include: join( pipehome, "Rules", "InitialChIPseqQC.snakefile" )
-include: join( "Rules", "InitialChIPseqQC.snakefile" )
+include: join( pipehome, "Rules", "InitialChIPseqQC.snakefile" )
+
     
 workpath = config['project']['workpath']    
 filetype = config['project']['filetype']
@@ -90,9 +91,9 @@ clabel_sep = '_vs_'
 clabels = [g1 + clabel_sep + g2 for g1,g2 in contrast]
 
 #debugging
-#print( groups, file=sys.stderr)
-#print( samples, file=sys.stderr)
-#print( ogroups, file=sys.stderr)
+print( 'groups:',groups, file=sys.stderr)
+print( 'samples:', samples, file=sys.stderr)
+print( 'ogroups:', ogroups, file=sys.stderr)
 
 #####################
 #Peak caller Output info
@@ -285,7 +286,8 @@ rule ChIPseeker :
             shell( '''
             module load R;
             chipseeker=`basename {chipseeker_rmd}`
-            ln -s {chipseeker_rmd}
+            rm -rf $chipseeker
+            ln -s {chipseeker_rmd} $chipseeker #linking is necessary to make things separate 
             Rscript {chipseeker_r} $chipseeker {in_fn} {params.genome} {out_fn}
             ''' )
             
@@ -386,7 +388,7 @@ rule ngsplot :
         batch='--cpus-per-task=16 --mem=32g --time=24:00:00',
         name = [*samples, *inputs],
     input:
-        expand( "{name}.sorted.rmdup.bam", name=[*samples,*inputs] )
+        expand( join(bam_dir,"{name}.sorted.DD.bam"), name=[*samples,*inputs] )
     output:
         join("{ngsplot_dir}", "{region}.heatmap.pdf")
     run:
@@ -408,20 +410,20 @@ rule PePr :
     params:
         rname="pl:PePr:{clabel}",
     input:
-        chips1 = lambda w: [chip+".sorted.bam"
+        chips1 = lambda w: [join(bam_dir,chip+".sorted.bam")
                    for chip in
                    groups[w.clabel.split(clabel_sep)[0]] ],
         
-        inputs1 = lambda w: [ctrl+".sorted.bam"
+        inputs1 = lambda w: [join(bam_dir,ctrl+".sorted.bam")
                    for ctrl in
                    [ chip2input[c] for c in groups[w.clabel.split(clabel_sep)[0]] ]  
                    if ctrl ],
         
-        chips2 = lambda w: [chip+".sorted.bam"
+        chips2 = lambda w: [join(bam_dir,chip+".sorted.bam")
                    for chip in
                    groups[w.clabel.split(clabel_sep)[1]] ],
         
-        inputs2 = lambda w: [ctrl+".sorted.bam"
+        inputs2 = lambda w: [join(bam_dir,ctrl+".sorted.bam")
                    for ctrl in
                    [ chip2input[c] for c in groups[w.clabel.split(clabel_sep)[1]] ]
                    if ctrl ],
@@ -438,10 +440,10 @@ rule PePr :
         inputs1 = list(set([ chip2input[c] for c in chips1 ]))
         inputs2 = list(set([ chip2input[c] for c in chips2 ]))
         
-        c1 = ','.join([c+'.sorted.bam' for c in chips1 ])
-        i1 = ','.join([c+'.sorted.bam' for c in inputs1])
-        c2 = ','.join([c+'.sorted.bam' for c in chips2 ])
-        i2 = ','.join([c+'.sorted.bam' for c in inputs2])
+        c1 = ','.join([join(bam_dir,c+'.sorted.bam') for c in chips1 ])
+        i1 = ','.join([join(bam_dir,c+'.sorted.bam') for c in inputs1])
+        c2 = ','.join([join(bam_dir,c+'.sorted.bam') for c in chips2 ])
+        i2 = ','.join([join(bam_dir,c+'.sorted.bam') for c in inputs2])
         
         '''
         bams = [ *chips1, *chips2, *inputs1, *inputs2 ]
@@ -485,8 +487,7 @@ rule ChIPQC:
         peak_files = lambda w: [ join(caller2dir[w.caller], 
                          g, 
                          c+caller2suffix[w.caller]
-                        ) for g in groups 
-                              for c in samples ]
+                        ) for g,c in zip(ogroups, samples) ]
         
     output:
         join('ChIPQC','{caller}','ChIPQCreport.html')
@@ -545,9 +546,9 @@ rule ChIPQC:
                         cnames[chp], 
                         cnames[g],
                         i+1, 
-                        chp+'.sorted.bam',
+                        join(bam_dir,chp+'.sorted.bam'),
                         cnames[inp],
-                        inp+'.sorted.bam',
+                        join(bam_dir,inp+'.sorted.bam'),
                         join(peak_dir, g, chp+suffix),
                         file=sfp, sep="\t"
                     )
@@ -556,7 +557,7 @@ rule ChIPQC:
                         cnames[chp], 
                         cnames[g],
                         i+1, 
-                        chp+'.sorted.bam',
+                        join(bam_dir,chp+'.sorted.bam'),
                         '',
                         '',
                         join(peak_dir, g, chp+suffix),
@@ -643,12 +644,12 @@ rule MACS2_narrow:
         join( macsn_dir, '{group}', '{name}'+macsn_suffix )
         
     input: 
-        "{name}"+bam_suffix
+        join(bam_dir,"{name}"+bam_suffix)
         
     params: 
         rname='pl:MACS2_narrow:{group}:{name}',
         gsize=config['project']['gsize'],
-        ctrl = lambda w : chip2input[w.name] + bam_suffix,
+        ctrl = lambda w : join(bam_dir,chip2input[w.name] + bam_suffix),
         genome=config['project']['annotation'],
         
     shell:
@@ -668,7 +669,7 @@ rule MACS2_narrow:
 
 rule MACS2_broad:
     input: 
-        "{name}.sorted.bam"
+        join( bam_dir, "{name}.sorted.bam")
     output:
         join( macsb_dir, '{group}', '{name}'+macsb_suffix )
     params: 
@@ -683,7 +684,7 @@ rule MACS2_broad:
 
         if [ -n "$ctrl" ] 
         then
-            macs2 callpeak -t {input} -c ${{ctrl}}.sorted.bam -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsb_dir}/{wildcards.group} --broad --broad-cutoff 0.1 ;
+            macs2 callpeak -t {input} -c {bam_dir}/${{ctrl}}.sorted.bam -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsb_dir}/{wildcards.group} --broad --broad-cutoff 0.1 ;
         else 
             macs2 callpeak -t {input} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsb_dir}/{wildcards.group} --broad --broad-cutoff 0.1;
         fi
@@ -694,7 +695,7 @@ rule MACS2_broad:
 
 rule SICER :       
     input:
-        "{name}.sorted.bam"
+        join(bam_dir,"{name}.sorted.bam")
     output:
         #lambda w: join(sicer,groups[w.name],w.name+sicer_suffix),
         join( sicer_dir, '{group}', '{name}'+sicer_suffix )
@@ -714,7 +715,7 @@ rule SICER :
             cd {sicer_dir}/{wildcards.group}/{wildcards.name}
 
             bamToBed -i ../../../{input} > {wildcards.name}.bed
-            bamToBed -i ../../../{params.ctrl}.sorted.bam > {params.ctrl}.bed
+            bamToBed -i ../../../{bam_dir}/{params.ctrl}.sorted.bam > {params.ctrl}.bed
             """)
             
             #fix_chrom( join(sicer_dir,

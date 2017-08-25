@@ -8,4 +8,7 @@ module load graphviz
 export pipehome=$(dirname $0)
 export PYTHONPATH=$PYTHONPATH:$pipehome/local/lib/
 
-cd  $pipehome && python pipeliner2.py &
+cd  $pipehome;
+export pipehome=`pwd`;
+python pipeliner2.py &
+echo $pipehome;
