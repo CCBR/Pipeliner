@@ -1,6 +1,6 @@
 rule cnvkit_somatic_tumoronly:
     input: tumor=lambda wildcards: config['project']['units'][wildcards.x]+".recal.bam",
-           targets=config['project']['workpath']+"/cnvkit_targets.bed"
+           targets=config['project']['workpath']+"/cnvkit_targets.bed",
     output: calls=config['project']['workpath']+"/cnvkit_out/{x}_calls.cns",
             gainloss=config['project']['workpath']+"/cnvkit_out/{x}_gainloss.tsv",
             dir=config['project']['workpath']+"/cnvkit_out/{x}_cnvkit"
