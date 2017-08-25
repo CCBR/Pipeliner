@@ -15,7 +15,6 @@ elif config['project']['annotation'] == "hg38":
         shell: "cat mutect2_out/oncotator_out/*.maf > {output.maf}; echo \"null\" > {output.genes}"
 
 elif config['project']['annotation'] == "mm10":
-
   rule mutsig_mutect2:
         input: expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{p}.maf",p=pairs)
         output: genes=config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",

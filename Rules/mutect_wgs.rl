@@ -1,7 +1,7 @@
-rule mutect:
+rule mutect_wgs:
        input:  normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
                tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
-       output: vcf=config['project']['workpath']+"/mutect_out/{x}.vcf",
+       output: vcf=temp(config['project']['workpath']+"/mutect_out/{x}.vcf"),
                stats=config['project']['workpath']+"/mutect_out/{x}.stats.out",
                vcfRename=config['project']['workpath']+"/mutect_out/{x}.FINAL.vcf",
                csvstats=config['project']['workpath']+"/mutect_out/{x}.mutect.stats.csv",

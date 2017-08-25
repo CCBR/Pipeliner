@@ -2,15 +2,16 @@ rule all_rnaseqvargerm:
     input: "combined.vcf",
            config['project']['workpath']+"/full_annot.txt.zip",
            "sample_network.bmp",
-           "targets.strictFilter.snpeff.vcf",
+           "combined.strictFilter.snpeff.vcf",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),
-           "targets.strictFilter.vcf",
+           "combined.strictFilter.vcf",
            expand("QC/{s}.R1_fastqc.html",s=samples),
            expand("QC/{s}.{r}.trimmed_fastqc.html",s=samples,r=['R1','R1']),
            expand("QC/{s}.{r}.trimmed_screen.txt",s=samples,r=['R1','R1']),
            expand("QC/{s}.{r}.trimmed_screen.png",s=samples,r=['R1','R1']),
            expand("{s}.dedup.bam",s=samples),
            expand("QC/{s}_run_trimmomatic.err",s=samples),
+           "admixture_out/admixture_table.tsv"
     output: 
     params: rname="final"
     shell:  """

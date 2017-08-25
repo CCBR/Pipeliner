@@ -17,6 +17,36 @@
         "mem" : "96g",
         "time" : "10-00:00:00",
     },
+    "canvas_wgs_germ":
+    {
+        "threads": "32",
+        "mem" : "96g",
+        "time" : "10-00:00:00",
+    },
+    "canvas_wgs_somatic":
+    {
+        "threads": "32",
+        "mem" : "96g",
+        "time" : "10-00:00:00",
+    },
+    "admixture_germline":
+    {
+        "threads": "8",
+        "mem" : "96g",
+        "time" : "2-00:00:00",
+    },
+    "admixture_somatic":
+    {
+        "threads": "8",
+        "mem" : "96g",
+        "time" : "2-00:00:00",
+    },
+    "admixture_wgs":
+    {
+        "threads": "8",
+        "mem" : "96g",
+        "time" : "2-00:00:00",
+    },
     "svaba_germline":
     {
         "threads": "32",
@@ -28,6 +58,24 @@
         "threads": "1",
         "mem" : "48g",
         "time" : "10-00:00:00",
+    },
+    "vcf2maf_mutect":
+    {
+        "threads": "2",
+        "mem" : "96g",
+        "time" : "1-00:00:00",
+    },
+    "vcf2maf_mutect2":
+    {
+        "threads": "2",
+        "mem" : "96g",
+        "time" : "1-00:00:00",
+    },
+    "vcf2maf_strelka":
+    {
+        "threads": "2",
+        "mem" : "96g",
+        "time" : "1-00:00:00",
     },
     "fusioninspector":
     {
@@ -53,6 +101,11 @@
      {
         "threads": "1",
         "mem" : "48g",
+    },
+    "cnvkit_somatic":
+     {
+        "threads": "4",
+        "mem" : "96g",
     },
     "cnvkit_germ":
      {
@@ -406,6 +459,7 @@
     },
     "rsem":
     {
+        "gres":"lscratch:500",
         "threads": "16"
     },
     "salmon":

@@ -8,6 +8,7 @@ my @germ = ();
 my @tumor = ();
 my @line = ();
 my $sample = $ARGV[0];
+my $ref = $ARGV[1];
 my @chrom = ();
 my $knowns = '';
 my @samples = ();
@@ -27,8 +28,14 @@ while (<J>) {
  		last if m/^$/;
 	@line = split;
 	next if ($line[0] =~ m'Gene_1_symbol');
+	if ($ref eq 'mm10') {
 	$genea = ucfirst lc $line[0];
 	$geneb = ucfirst lc $line[1];
+	}
+	else {
+	$genea = $line[0];
+	$geneb = $line[1];
+	}	
 	push @fusion, ($genea . '--' . $geneb);
 }
 	
