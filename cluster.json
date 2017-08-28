@@ -99,13 +99,18 @@
     },
     "cnvkit_somatic":
      {
+        "threads": "2",
+        "mem" : "96g",
+    },
+    "cnvkit_wgs_somatic":
+     {
+        "threads": "2",
+        "mem" : "96g",
+    },
+    "cnvkit_somatic_tumoronly":
+     {
         "threads": "1",
         "mem" : "48g",
-    },
-    "cnvkit_somatic":
-     {
-        "threads": "4",
-        "mem" : "96g",
     },
     "cnvkit_germ":
      {
@@ -428,13 +433,13 @@
     },
     "gatk_chrom_mutect2":
     {
-        "time": "6-00:00:00",
+        "time": "10-00:00:00",
         "threads": "2"
     },
     "gatk_mutect2":
     {
         "time": "10-00:00:00",
-        "threads": "2",
+        "threads": "4",
         "mem": "120g"
     },
     "trimmomatic_pe":
