@@ -11,7 +11,6 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/delly_out",
             expand(config['project']['workpath']+"/cnvkit_out/{s}_calls.cns", s=samples),
             expand(config['project']['workpath']+"/cnvkit_out/{s}_gainloss.tsv", s=samples),                        
-            expand(config['project']['workpath']+"/theta_out/{s}/{s}_thetaIN", s=samples),
             config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
             config['project']['workpath']+"/sample_network.bmp",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
