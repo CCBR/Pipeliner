@@ -608,5 +608,9 @@
     "kraken_se":
     {
         "mem":'200g'
+    },
+    "bam2bw":
+    {
+        "threads":'32'
     }  
 }
