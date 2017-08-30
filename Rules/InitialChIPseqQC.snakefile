@@ -503,13 +503,13 @@ samtools flagstat {output.out5} > {output.out5f}
             module load {params.samtoolsver};
             module load {params.rver};
             Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam1} -savp -out={output.ppqt1} 
+            -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID 
             Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam2} -savp -out={output.ppqt2} 
+            -c={input.bam2} -savp -out={output.ppqt2} -tmpdir=/lscratch/$SLURM_JOBID
             Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam3} -savp -out={output.ppqt3} 
+            -c={input.bam3} -savp -out={output.ppqt3} -tmpdir=/lscratch/$SLURM_JOBID
             Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam4} -savp -out={output.ppqt4} 
+            -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID
             """
 
 
