@@ -105,8 +105,16 @@ v1 <- voom(as.matrix(x),design,plot=TRUE,normalize="quantile")
 #dev.off()
 
 sf = v1$E/log2((x/colSums(x))*1000000)
+
+rn=rownames(v1$E)
+ensID=apply(array(as.character(rn)),1,function(z) unlist(strsplit(z, "\\|"))[1])
+gene=apply(array(as.character(rn)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+mydata=cbind(ensID,gene,v1$E)
+
+sf=cbind(ensID,gene,sf)
+
 write.table(sf,file="LimmaVoom_scaling_factors.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
-write.table(v1$E,file="LimmaVoom_Normalized_data.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
+write.table(mydata,file="LimmaVoom_Normalized_data.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
 
 #png("HistLimmavoomNormFilter.png")
 df.n <- melt(as.data.frame(v1$E))
