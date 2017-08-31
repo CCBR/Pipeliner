@@ -9,7 +9,7 @@
         "delly_germline": ["wgslow"],
         "pindel_germline": ["none"],
         "canvas_wgs_germ":  ["wgslow"],
-        "canvas_wgs_somatic": ["wgs-somatic"],
+#        "canvas_wgs_somatic": ["wgs-somatic"],
         "svaba_germline": ["wgslow"],
         "svaba_wgs_somatic": ["wgs-somatic"],
         "breakdancer_germline": ["wgslow"],

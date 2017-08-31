@@ -144,11 +144,13 @@
     {
         "threads": "1",
         "mem" : "64g",
+        "time" : "10-00:00:00",
     },
     "delly_somatic":
     {
         "threads": "1",
         "mem" : "64g",
+        "time" : "10-00:00:00",
     },
     "pindel_germline":
     {
