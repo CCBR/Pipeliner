@@ -1,4 +1,4 @@
-rule admixture_somatic:
+rule admixture_wgs_somatic:
     input: config['project']['workpath']+"/germline_vcfs/combined.vcf"
     output: vcf=temp("admixture_out/samples_noINDEL_nomissing.recode.vcf"),
             mergedvcf=temp("admixture_out/samples_and_knowns.vcf"),
