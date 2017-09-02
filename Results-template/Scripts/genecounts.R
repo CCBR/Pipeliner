@@ -39,8 +39,8 @@ write.table(as.data.frame(res2[,-c(3)]),file="RawCount_genes_unfiltered.txt",sep
 mydata<-DGEList(counts=res2[,-c(1:3)],genes=res2[,c("Ensembl_id","Gene_symbol","Length")])
 
 #apply filter to counts
-MINCOUNT<-5
-MINSAMPLES<-2
+#MINCOUNT<-5
+#MINSAMPLES<-2
 val1=as.numeric(MINCOUNT)
 val2=as.numeric(MINSAMPLES)
 
