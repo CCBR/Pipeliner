@@ -59,6 +59,12 @@
         "mem" : "48g",
         "time" : "10-00:00:00",
     },
+    "vcf2maf_tumoronly":
+    {
+        "threads": "2",
+        "mem" : "96g",
+        "time" : "1-00:00:00",
+    },
     "vcf2maf_mutect":
     {
         "threads": "2",
@@ -99,13 +105,18 @@
     },
     "cnvkit_somatic":
      {
+        "threads": "2",
+        "mem" : "96g",
+    },
+    "cnvkit_wgs_somatic":
+     {
+        "threads": "2",
+        "mem" : "96g",
+    },
+    "cnvkit_somatic_tumoronly":
+     {
         "threads": "1",
         "mem" : "48g",
-    },
-    "cnvkit_somatic":
-     {
-        "threads": "4",
-        "mem" : "96g",
     },
     "cnvkit_germ":
      {
@@ -139,11 +150,13 @@
     {
         "threads": "1",
         "mem" : "64g",
+        "time" : "10-00:00:00",
     },
     "delly_somatic":
     {
         "threads": "1",
         "mem" : "64g",
+        "time" : "10-00:00:00",
     },
     "pindel_germline":
     {
@@ -428,13 +441,13 @@
     },
     "gatk_chrom_mutect2":
     {
-        "time": "6-00:00:00",
+        "time": "10-00:00:00",
         "threads": "2"
     },
     "gatk_mutect2":
     {
         "time": "10-00:00:00",
-        "threads": "2",
+        "threads": "4",
         "mem": "120g"
     },
     "trimmomatic_pe":

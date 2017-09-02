@@ -68,10 +68,13 @@ while (<G>){
 	}
 	elsif ($line[0] !~ m'#') {
 		push @variants, $_;
-#		if ($ARGV[1] eq 'mutect2'){
+		if ($line[39] != 0){
 		$calc=($line[41]/$line[39]);
 		push @freq, $calc;
-#		}
+		}
+		else {
+		push @freq, '0';		
+	}
 	}
 }
 
