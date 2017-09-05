@@ -47,6 +47,12 @@
         "mem" : "96g",
         "time" : "2-00:00:00",
     },
+    "admixture_wgs_somatic":
+    {
+        "threads": "8",
+        "mem" : "96g",
+        "time" : "2-00:00:00",
+    },
     "svaba_germline":
     {
         "threads": "32",
@@ -96,7 +102,14 @@
     "theta":
     {
         "threads": "1",
-        "mem" : "48g"
+        "mem" : "48g",
+        "time" : "10-00:00:00",
+    },
+    "wgs_theta":
+    {
+        "threads": "1",
+        "mem" : "48g",
+        "time" : "10-00:00:00",
     },
     "manta_germline":
      {
