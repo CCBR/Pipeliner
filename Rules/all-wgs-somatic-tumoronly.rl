@@ -16,7 +16,8 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf",
             config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
             expand("manta_out/{s}/results/variants/candidateSV.vcf.gz", s=samples),
-            "admixture_out/admixture_table.tsv"
+            "admixture_out/admixture_table.tsv",
+            expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
     output:
     params: rname="final"
     shell:  """
@@ -41,7 +42,8 @@ elif config['project']['annotation'] == "hg38":
             config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf",
             config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
             expand("manta_out/{s}/results/variants/candidateSV.vcf.gz", s=samples),
-            "admixture_out/admixture_table.tsv"
+            "admixture_out/admixture_table.tsv",
+            expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
     output:
     params: rname="final"
     shell:  """
@@ -65,7 +67,8 @@ elif config['project']['annotation'] == "mm10":
             config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf",
             config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
             expand("manta_out/{s}/results/variants/candidateSV.vcf.gz", s=samples),
-            "admixture_out/admixture_table.tsv"
+            "admixture_out/admixture_table.tsv",
+            expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
     output:
     params: rname="final"
     shell:  """

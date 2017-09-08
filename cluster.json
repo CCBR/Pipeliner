@@ -1,7 +1,7 @@
 {
     "__default__" :
     {
-        "mem" : "64g",
+        "mem" : "120g",
         "time" : "96:00:00",
         "partition" : "ccr,norm",
         "threads": "4",
@@ -24,6 +24,12 @@
         "time" : "10-00:00:00",
     },
     "canvas_wgs_somatic":
+    {
+        "threads": "32",
+        "mem" : "96g",
+        "time" : "10-00:00:00",
+    },
+    "canvas_wgs_tumoronly":
     {
         "threads": "32",
         "mem" : "96g",
