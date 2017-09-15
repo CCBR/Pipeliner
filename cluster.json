@@ -1,7 +1,7 @@
 {
     "__default__" :
     {
-        "mem" : "64g",
+        "mem" : "120g",
         "time" : "96:00:00",
         "partition" : "ccr,norm",
         "threads": "4",
@@ -20,38 +20,44 @@
     "canvas_wgs_germ":
     {
         "threads": "32",
-        "mem" : "96g",
+        "mem" : "120g",
         "time" : "10-00:00:00",
     },
     "canvas_wgs_somatic":
     {
         "threads": "32",
-        "mem" : "96g",
+        "mem" : "120g",
+        "time" : "10-00:00:00",
+    },
+    "canvas_wgs_tumoronly":
+    {
+        "threads": "32",
+        "mem" : "120g",
         "time" : "10-00:00:00",
     },
     "admixture_germline":
     {
-        "threads": "8",
+        "threads": "32",
         "mem" : "96g",
-        "time" : "2-00:00:00",
+        "time" : "5-00:00:00",
     },
     "admixture_somatic":
     {
-        "threads": "8",
+        "threads": "32",
         "mem" : "96g",
-        "time" : "2-00:00:00",
+        "time" : "5-00:00:00",
     },
     "admixture_wgs":
     {
-        "threads": "8",
+        "threads": "32",
         "mem" : "96g",
-        "time" : "2-00:00:00",
+        "time" : "5-00:00:00",
     },
     "admixture_wgs_somatic":
     {
-        "threads": "8",
+        "threads": "32",
         "mem" : "96g",
-        "time" : "2-00:00:00",
+        "time" : "5-00:00:00",
     },
     "svaba_germline":
     {

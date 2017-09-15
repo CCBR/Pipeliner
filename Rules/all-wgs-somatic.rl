@@ -41,7 +41,7 @@ if config['project']['annotation'] == "hg19":
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
             "admixture_out/admixture_table.tsv",
             expand("svaba_out/{p}.log", p=pairs),
-#            expand("canvas_out/{p}/tumorCNV.vcf.gz", p=pairs),
+            expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
     output:
     params: rname="final"
     shell:  """
@@ -91,7 +91,7 @@ elif config['project']['annotation'] == "hg38":
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
             "admixture_out/admixture_table.tsv",
             expand("svaba_out/{p}.log", p=pairs),
-#            expand("canvas_out/{p}/tumorCNV.vcf.gz", p=pairs),
+            expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
     output:
     params: rname="final"
     shell:  """
@@ -138,7 +138,7 @@ elif config['project']['annotation'] == "mm10":
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
             "admixture_out/admixture_table.tsv",
             expand("svaba_out/{p}.log", p=pairs),
-#            expand("canvas_out/{p}/tumorCNV.vcf.gz", p=pairs),
+            expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
     output:
     params: rname="final"
     shell:  """
