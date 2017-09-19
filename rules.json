@@ -1,6 +1,7 @@
  {
     "rules": {
         "avia": ["wgslow","exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","rnaseqvargerm"],
+        "rnaseqforfusions": ["rnaseqfusion"],
         "vcf2maf": ["exomeseq-somatic","wgs-somatic"],
         "vcf2maf_tumoronly": ["exomeseq-somatic-tumoronly","wgs-somatic-tumoronly"],
         "maftools": ["exomeseq-somatic","wgs-somatic"],
@@ -29,8 +30,8 @@
         "gatk_select_variants_rnaseqvar": ["rnaseqvargerm"],
         "gatk.merge.chrom": ["exomeseq-germline","exomeseq-germline-recal","exomeseq-germline-partial","wgslow","rnaseqvargerm"],
         "ngsqc": ["initialqc","initialqcgenomeseq","rnaseqvargerm"],
-        "fastqc.fastq": ["initialqc","initialqcgenomeseq","rnaseqfusion"],
-        "fastqc.rnaseqvar": ["rnaseqvargerm"],
+        "fastqc.fastq": ["initialqc","initialqcgenomeseq"],
+        "fastqc.rnaseqvar": ["rnaseqvargerm","rnaseqfusion"],
         "bamstats": ["initialqc"],
         "make_target_files": ["initialqc","exomeseq-somatic","exomeseq-somatic-tumoronly","exomeseq-germline"],
         "fastq_screen": ["initialqc","initialqcgenomeseq","rnaseqvargerm","rnaseqfusion"],
