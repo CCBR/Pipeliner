@@ -2,7 +2,7 @@ if config['project']['annotation'] == "hg19":
 
   rule gatk_genotype_gvcfs_1:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_1.vcf"
+      output: temp("combined_1.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -14,7 +14,7 @@ if config['project']['annotation'] == "hg19":
 
   rule gatk_genotype_gvcfs_2:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_2.vcf"
+      output: temp("combined_2.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -26,7 +26,7 @@ if config['project']['annotation'] == "hg19":
 
   rule gatk_genotype_gvcfs_3:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_3.vcf"
+      output: temp("combined_3.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -38,7 +38,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_4:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_4.vcf"
+      output: temp("combined_4.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -50,7 +50,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_5:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_5.vcf"
+      output: temp("combined_5.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -62,7 +62,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_6:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_6.vcf"
+      output: temp("combined_6.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -74,7 +74,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_7:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_7.vcf"
+      output: temp("combined_7.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -86,7 +86,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_8:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_8.vcf"
+      output: temp("combined_8.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -98,7 +98,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_9:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_9.vcf"
+      output: temp("combined_9.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -110,7 +110,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_10:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_10.vcf"
+      output: temp("combined_10.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -122,7 +122,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_11:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_11.vcf"
+      output: temp("combined_11.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -134,7 +134,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_12:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_12.vcf"
+      output: temp("combined_12.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -146,7 +146,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_13:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_13.vcf"
+      output: temp("combined_13.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -158,7 +158,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_14:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_14.vcf"
+      output: temp("combined_14.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -170,7 +170,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_15:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_15.vcf"
+      output: temp("combined_15.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -182,7 +182,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_16:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_16.vcf"
+      output: temp("combined_16.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -194,7 +194,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_17:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_17.vcf"
+      output: temp("combined_17.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -206,7 +206,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_18:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_18.vcf"
+      output: temp("combined_18.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -218,7 +218,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_19:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_19.vcf"
+      output: temp("combined_19.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -230,7 +230,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_20:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_20.vcf"
+      output: temp("combined_20.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -242,7 +242,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_21:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_21.vcf"
+      output: temp("combined_21.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -254,7 +254,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_22:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_22.vcf"
+      output: temp("combined_22.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -266,7 +266,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_X:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_X.vcf"
+      output: temp("combined_X.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -278,7 +278,7 @@ if config['project']['annotation'] == "hg19":
         
   rule gatk_genotype_gvcfs_Y:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_Y.vcf"
+      output: temp("combined_Y.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -290,7 +290,7 @@ if config['project']['annotation'] == "hg19":
 
   rule gatk_genotype_gvcfs_MT:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_MT.vcf"
+      output: temp("combined_MT.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -305,7 +305,7 @@ elif config['project']['annotation'] == "hg38":
 
   rule gatk_genotype_gvcfs_1:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_1.vcf"
+      output: temp("combined_1.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -317,7 +317,7 @@ elif config['project']['annotation'] == "hg38":
 
   rule gatk_genotype_gvcfs_2:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_2.vcf"
+      output: temp("combined_2.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -329,7 +329,7 @@ elif config['project']['annotation'] == "hg38":
 
   rule gatk_genotype_gvcfs_3:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_3.vcf"
+      output: temp("combined_3.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -341,7 +341,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_4:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_4.vcf"
+      output: temp("combined_4.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -353,7 +353,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_5:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_5.vcf"
+      output: temp("combined_5.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -365,7 +365,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_6:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_6.vcf"
+      output: temp("combined_6.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -377,7 +377,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_7:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_7.vcf"
+      output: temp("combined_7.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -389,7 +389,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_8:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_8.vcf"
+      output: temp("combined_8.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -401,7 +401,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_9:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_9.vcf"
+      output: temp("combined_9.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -413,7 +413,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_10:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_10.vcf"
+      output: temp("combined_10.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -425,7 +425,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_11:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_11.vcf"
+      output: temp("combined_11.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -437,7 +437,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_12:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_12.vcf"
+      output: temp("combined_12.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -449,7 +449,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_13:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_13.vcf"
+      output: temp("combined_13.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -461,7 +461,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_14:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_14.vcf"
+      output: temp("combined_14.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -473,7 +473,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_15:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_15.vcf"
+      output: temp("combined_15.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -485,7 +485,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_16:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_16.vcf"
+      output: temp("combined_16.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -497,7 +497,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_17:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_17.vcf"
+      output: temp("combined_17.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -509,7 +509,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_18:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_18.vcf"
+      output: temp("combined_18.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -521,7 +521,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_19:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_19.vcf"
+      output: temp("combined_19.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -533,7 +533,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_20:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_20.vcf"
+      output: temp("combined_20.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -545,7 +545,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_21:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_21.vcf"
+      output: temp("combined_21.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -557,7 +557,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_22:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_22.vcf"
+      output: temp("combined_22.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -569,7 +569,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_X:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_X.vcf"
+      output: temp("combined_X.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -581,7 +581,7 @@ elif config['project']['annotation'] == "hg38":
         
   rule gatk_genotype_gvcfs_Y:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_Y.vcf"
+      output: temp("combined_Y.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -593,7 +593,7 @@ elif config['project']['annotation'] == "hg38":
 
   rule gatk_genotype_gvcfs_MT:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_MT.vcf"
+      output: temp("combined_MT.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -608,7 +608,7 @@ elif config['project']['annotation'] == "mm10":
 
   rule gatk_genotype_gvcfs_1:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_1.vcf"
+      output: temp("combined_1.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -620,7 +620,7 @@ elif config['project']['annotation'] == "mm10":
 
   rule gatk_genotype_gvcfs_2:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_2.vcf"
+      output: temp("combined_2.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -632,7 +632,7 @@ elif config['project']['annotation'] == "mm10":
 
   rule gatk_genotype_gvcfs_3:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_3.vcf"
+      output: temp("combined_3.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -644,7 +644,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_4:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_4.vcf"
+      output: temp("combined_4.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -656,7 +656,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_5:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_5.vcf"
+      output: temp("combined_5.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -668,7 +668,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_6:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_6.vcf"
+      output: temp("combined_6.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -680,7 +680,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_7:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_7.vcf"
+      output: temp("combined_7.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -692,7 +692,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_8:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_8.vcf"
+      output: temp("combined_8.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -704,7 +704,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_9:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_9.vcf"
+      output: temp("combined_9.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -716,7 +716,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_10:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_10.vcf"
+      output: temp("combined_10.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -728,7 +728,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_11:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_11.vcf"
+      output: temp("combined_11.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -740,7 +740,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_12:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_12.vcf"
+      output: temp("combined_12.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -752,7 +752,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_13:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_13.vcf"
+      output: temp("combined_13.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -764,7 +764,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_14:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_14.vcf"
+      output: temp("combined_14.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -776,7 +776,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_15:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_15.vcf"
+      output: temp("combined_15.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -788,7 +788,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_16:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_16.vcf"
+      output: temp("combined_16.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -800,7 +800,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_17:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_17.vcf"
+      output: temp("combined_17.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -812,7 +812,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_18:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_18.vcf"
+      output: temp("combined_18.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -824,7 +824,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_19:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_19.vcf"
+      output: temp("combined_19.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -836,7 +836,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_X:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_X.vcf"
+      output: temp("combined_X.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -848,7 +848,7 @@ elif config['project']['annotation'] == "mm10":
         
   rule gatk_genotype_gvcfs_Y:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_Y.vcf"
+      output: temp("combined_Y.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
@@ -860,7 +860,7 @@ elif config['project']['annotation'] == "mm10":
 
   rule gatk_genotype_gvcfs_MT:
       input: expand("{x}.g.vcf",x=samples)
-      output: "combined_MT.vcf"
+      output: temp("combined_MT.vcf")
       params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
       threads: 2
       run:
