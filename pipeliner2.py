@@ -119,20 +119,20 @@ class PipelinerGUI(Tk):
         pipeline_panel.pack( side=TOP, fill=X, padx=10, pady=5, expand=YES )
         
         l=Label( pipeline_panel, text="Genome:" )
-        l.grid(row=1,column=1,sticky=W,padx=0,pady=5)
-        l = Label( pipeline_panel, text="Pipeline Family:" )
         l.grid(row=1,column=3,sticky=W,padx=0,pady=5)
+        l = Label( pipeline_panel, text="Pipeline Family:" )
+        l.grid(row=1,column=1,sticky=W,padx=0,pady=5)
         
         annotations=['hg19','mm10','mm9','hg38']
         self.annotation = annotation = StringVar()
         annotation.set(annotations[0])
         #annotation.trace('w', lambda *_ :settargets(annotation) )
         
-        om = OptionMenu(pipeline_panel, annotation, *annotations)
+        om = OptionMenu(pipeline_panel, annotation, *annotations, command=self.set_pipeline)
         #, command=lambda _:makejson("refsets"))
         om.config() #bg = widgetBgColor,fg=widgetFgColor)
         om["menu"].config() #bg = widgetBgColor,fg=widgetFgColor)
-        om.grid(row=1,column=2,sticky=W,padx=10,pady=10)
+        om.grid(row=1,column=4,sticky=W,padx=10,pady=10)
         
         pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'ChIPseq', 'scrnaseq']
         self.pfamily = pfamily = StringVar()
@@ -141,7 +141,7 @@ class PipelinerGUI(Tk):
         #, command=lambda _:makejson(pfamily.get()))
         om.config() #bg = widgetBgColor,fg=widgetFgColor)
         om["menu"].config() #bg = widgetBgColor,fg=widgetFgColor)
-        om.grid(row=1,column=4,sticky=W,padx=10,pady=5)
+        om.grid(row=1,column=2,sticky=W,padx=10,pady=5)
         #add_button = Button( pipeline_panel, 
         #                    text="Set a pipeline", 
         #                    command=self.add_pipeline
