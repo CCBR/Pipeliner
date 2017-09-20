@@ -11,7 +11,7 @@ rule trimmomatic_pe:
 
 rule star1p:
    input: file1= "trim/{name}_R1_001_trim_paired.fastq.gz",file2="trim/{name}_R2_001_trim_paired.fastq.gz",qcdir="QC",length="QC/{name}_readlength.txt"
-   output: out1= "{name}.SJ.out.tab", out3= temp("{name}.Aligned.out.bam") #,out2= "{name}.SJ.out.tab.Pass1.sjdb"
+   output: out1= temp("expression/{name}.SJ.out.tab"), out3= temp("expression/{name}.Aligned.out.bam") #,out2= temp(expression/"{name}.SJ.out.tab.Pass1.sjdb")
    params: rname='pl:star1p',prefix="{name}",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],stardir=config['references']['rnaseq']['STARDIR'],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2'],
    threads: 32
    run:
@@ -34,8 +34,8 @@ rule star1p:
      F.close()
 
 rule star2p:
-   input: file1= "trim/{name}_R1_001_trim_paired.fastq.gz",file2="trim/{name}_R2_001_trim_paired.fastq.gz",tab=expand("{name}.SJ.out.tab",name=samples),qcdir="QC",length="QC/{name}_readlength.txt"
-   output: out1=temp("{name}.p2.Aligned.sortedByCoord.out.bam"),out2="{name}.p2.ReadsPerGene.out.tab",out3=temp("{name}.p2.Aligned.toTranscriptome.out.bam"),out4="{name}.p2.SJ.out.tab",out5="{name}.p2.Log.final.out"
+   input: file1= "trim/{name}_R1_001_trim_paired.fastq.gz",file2="trim/{name}_R2_001_trim_paired.fastq.gz",tab=expand("expression/{name}.SJ.out.tab",name=samples),qcdir="QC",length="QC/{name}_readlength.txt"
+   output: out1=temp("expression/{name}.p2.Aligned.sortedByCoord.out.bam"),out2=temp("expression/{name}.p2.ReadsPerGene.out.tab"),out3=temp("expression/{name}.p2.Aligned.toTranscriptome.out.bam"),out4=temp("expression/{name}.p2.SJ.out.tab"),out5=temp("expression/{name}.p2.Log.final.out")
    params: rname='pl:star2p',prefix="{name}.p2",batch='--cpus-per-task=32 --mem=110g --time=48:00:00',starver=config['bin'][pfamily]['STARVER'],filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],filtertype=config['bin'][pfamily]['FILTERTYPE'],filtermultimapnmax=config['bin'][pfamily]['FILTERMULTIMAPNMAX'],alignsjoverhangmin=config['bin'][pfamily]['ALIGNSJOVERHANGMIN'],alignsjdboverhangmin=config['bin'][pfamily]['ALIGNSJDBOVERHANGMIN'],filtermismatchnmax=config['bin'][pfamily]['FILTERMISMATCHNMAX'],filtermismatchnoverlmax=config['bin'][pfamily]['FILTERMISMATCHNOVERLMAX'],alignintronmin=config['bin'][pfamily]['ALIGNINTRONMIN'],alignintronmax=config['bin'][pfamily]['ALIGNINTRONMAX'],alignmatesgapmax=config['bin'][pfamily]['ALIGNMATESGAPMAX'],adapter1=config['bin'][pfamily]['ADAPTER1'],adapter2=config['bin'][pfamily]['ADAPTER2'],outsamunmapped=config['bin'][pfamily]['OUTSAMUNMAPPED'],wigtype=config['bin'][pfamily]['WIGTYPE'],wigstrand=config['bin'][pfamily]['WIGSTRAND'], gtffile=config['references'][pfamily]['GTFFILE'], nbjuncs=config['bin'][pfamily]['NBJUNCS'],stardir=config['references']['rnaseq']['STARDIR']
    threads:32
    run:
@@ -48,32 +48,32 @@ rule star2p:
      shell(cmd)
 
 rule rsem:
-  input: file1= "{name}.p2.Aligned.toTranscriptome.out.bam"
-  output: out1="{name}.rsem.genes.results",out2="{name}.rsem.isoforms.results"
+  input: file1= "expression/{name}.p2.Aligned.toTranscriptome.out.bam"
+  output: out1="expression/{name}.rsem.genes.results",out2="expression/{name}.rsem.isoforms.results"
   params: rname='pl:rsem',prefix="{name}.rsem",batch='--cpus-per-task=16 --mem=32g --time=24:00:00',rsemref=config['references'][pfamily]['RSEMREF'],rsem=config['bin'][pfamily]['RSEM']
   shell: "{params.rsem}/rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p 16  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files"
 
 rule rsemcounts:
-   input: files=expand("{name}.rsem.genes.results", name=samples)
-   output: "RawCountFile_rsemgenes_filtered.txt"
+   input: files=expand("expression/{name}.rsem.genes.results", name=samples)
+   output: "expression/RawCountFile_rsemgenes_filtered.txt"
    params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
    shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/rsemcounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
 
 rule picard:
-  input: file1= "{name}.p2.Aligned.sortedByCoord.out.bam"
-  output: outstar1=temp("{name}.star_rg_added.sorted.bam"), outstar2="{name}.star_rg_added.sorted.dmark.bam",outstar3="{name}.star.duplic"
+  input: file1= "expression/{name}.p2.Aligned.sortedByCoord.out.bam"
+  output: outstar1=temp("expression/{name}.star_rg_added.sorted.bam"), outstar2="expression/{name}.star_rg_added.sorted.dmark.bam",outstar3="expression/{name}.star.duplic"
   params: rname='pl:picard',batch='--mem=24g --time=10:00:00 --gres=lscratch:800',picardver=config['bin'][pfamily]['PICARDVER']#,picardjarpath=config['bin'][pfamily]['PICARDJARPATH']
   shell: "module load {params.picardver}; java -Xmx10g  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar INPUT={input.file1} OUTPUT={output.outstar1} TMP_DIR=/lscratch/$SLURM_JOBID RGID=id RGLB=library RGPL=illumina RGPU=machine RGSM=sample; java -Xmx10g -jar $PICARDJARPATH/MarkDuplicates.jar INPUT={output.outstar1} OUTPUT={output.outstar2} TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3}"
 
 rule stats:
-  input: file1= "{name}.star_rg_added.sorted.dmark.bam"
-  output: outstar1="{name}.RnaSeqMetrics.txt", outstar2="{name}.flagstat.concord.txt", outstar3="{name}.InsertSizeMetrics.txt", outstar4="{name}.InsertSizeHisto.pdf"
+  input: file1= "expression/{name}.star_rg_added.sorted.dmark.bam"
+  output: outstar1="expression/{name}.RnaSeqMetrics.txt", outstar2="expression/{name}.flagstat.concord.txt", outstar3="expression/{name}.InsertSizeMetrics.txt", outstar4="expression/{name}.InsertSizeHisto.pdf"
   params: rname='pl:stats',batch='--mem=24g --time=10:00:00 --gres=lscratch:800',picardver=config['bin'][pfamily]['PICARDVER'],refflat=config['references'][pfamily]['REFFLAT'],rrnalist=config['references'][pfamily]['RRNALIST'],picardstrand=config['bin'][pfamily]['PICARDSTRAND']
   shell: "module load R/3.4.0_gcc-6.2.0;module load {params.picardver}; java -Xmx10g -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar REF_FLAT={params.refflat} INPUT={input.file1} OUTPUT={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY=SECOND_READ_TRANSCRIPTION_STRAND TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT; java -Xmx10g -jar $PICARDJARPATH/CollectInsertSizeMetrics.jar INPUT={input.file1} OUTPUT={output.outstar3} HISTOGRAM_FILE={output.outstar4} MINIMUM_PCT=0.5 TMP_DIR=/lscratch/$SLURM_JOBID ;module load samtools; samtools flagstat {input.file1} > {output.outstar2}; module load python; python Scripts/bam_count_concord_stats.py {input.file1} >> {output.outstar2} "
 
 rule prernaseqc:
-  input: expand("{name}.star_rg_added.sorted.dmark.bam", name=samples)
-  output: out1="files_to_rnaseqc.txt"
+  input: expand("expression/{name}.star_rg_added.sorted.dmark.bam", name=samples)
+  output: out1=temp("expression/files_to_rnaseqc.txt")
   priority: 2
   params: rname='pl:prernaseqc',batch='--mem=4g --time=04:00:00'
   run:
@@ -86,8 +86,8 @@ rule prernaseqc:
             out.close()
 
 rule rnaseqc:
-  input: "files_to_rnaseqc.txt"
-  output: "STAR_QC"
+  input: "expression/files_to_rnaseqc.txt"
+  output: "expression/STAR_QC"
   priority: 2
   params: rname='pl:rnaseqc',batch='--mem=24g --time=48:00:00',bwaver=config['bin'][pfamily]['BWAVER'],rrnalist=config['references'][pfamily]['RRNALIST'],rnaseqcver=config['bin'][pfamily]['RNASEQCVER'],gtffile=config['references'][pfamily]['GTFFILE'],genomefile=config['references'][pfamily]['GENOMEFILE']
   shell: """
@@ -101,10 +101,10 @@ rule rnaseqc:
          """
 
 rule rseqc:
-    input: file1="{name}.star_rg_added.sorted.dmark.bam"
-    # output: out1="{name}.strand.info",out2="{name}.inner_distance_plot.pdf",out3="{name}.GC_plot.pdf",out4="{name}.Rdist.info"
-    output: out1="{name}.strand.info",out4="{name}.Rdist.info"
-    # output: out1="{name}.strand.info",out2="{name}.inner_distance_plot.pdf",out3="{name}.GC_plot.pdf"
+    input: file1="expression/{name}.star_rg_added.sorted.dmark.bam"
+    # output: out1="expression/{name}.strand.info",out2="expression/{name}.inner_distance_plot.pdf",out3="expression/{name}.GC_plot.pdf",out4="expression/{name}.Rdist.info"
+    output: out1="expression/{name}.strand.info",out4="expression/{name}.Rdist.info"
+    # output: out1="expression/{name}.strand.info",out2="expression/{name}.inner_distance_plot.pdf",out3="expression/{name}.GC_plot.pdf"
     params: bedref=config['references'][pfamily]['BEDREF'],prefix="{name}",rname="pl:rseqc"
     shell: """
            module load rseqc
@@ -115,37 +115,37 @@ rule rseqc:
            """
 
 rule subread:
-   input:  file1="{name}.star_rg_added.sorted.dmark.bam",
-   output: out="{name}.star.count.info.txt", res="{name}.star.count.txt"
+   input:  file1="expression/{name}.star_rg_added.sorted.dmark.bam",
+   output: out="expression/{name}.star.count.info.txt",res="expression/{name}.star.count.txt"
    params: rname='pl:subread',batch='--time=4:00:00 --gres=lscratch:800',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
    shell: "module load {params.subreadver}; featureCounts -T 16 -p -t exon -R -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
 
 rule subreadoverlap:
-   input:  file1="{name}.star_rg_added.sorted.dmark.bam",
-   output: out="{name}.star.count.info.overlap.txt", res="{name}.star.count.overlap.txt"
+   input:  file1="expression/{name}.star_rg_added.sorted.dmark.bam",
+   output: out="expression/{name}.star.count.info.overlap.txt",res="expression/{name}.star.count.overlap.txt"
    params: rname='pl:subreadoverlap',batch='--cpus-per-task=16 --mem=24g --time=48:00:00 --gres=lscratch:800',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
    shell: "module load {params.subreadver}; featureCounts -T 16 -p -t exon -R -O -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
 
 rule genecounts: 
-   input: files=expand("{name}.star.count.txt", name=samples)
-   output: "RawCountFile_genes_filtered.txt"
+   input: files=expand("expression/{name}.star.count.txt", name=samples)
+   output: "expression/RawCountFile_genes_filtered.txt"
    params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
    shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/genecounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
 
 rule junctioncounts: 
-   input: files=expand("{name}.p2.SJ.out.tab", name=samples)
-   output: "RawCountFile_junctions_filtered.txt"
+   input: files=expand("expression/{name}.p2.SJ.out.tab", name=samples)
+   output: "expression/RawCountFile_junctions_filtered.txt"
    params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
    shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/junctioncounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}'"
 
 rule genejunctioncounts: 
-   input: files=expand("{name}.p2.SJ.out.tab", name=samples)
-   output: "RawCountFile_genejunctions_filtered.txt"
+   input: files=expand("expression/{name}.p2.SJ.out.tab", name=samples)
+   output: "expression/RawCountFile_genejunctions_filtered.txt"
    params: rname='pl:genejunctions',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],geneinfo=config['references'][pfamily]['GENEINFO'],mincount=config['project']['MINCOUNTGENEJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
    shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/genejunctioncounts.R '{params.dir}' '{input.files}' '{params.geneinfo}' '{params.mincount}' '{params.minsamples}'"
 
 rule joincounts:
-   input: files=expand("{name}.star.count.overlap.txt", name=samples),files2=expand("{name}.p2.ReadsPerGene.out.tab", name=samples)
-   output: "RawCountFileOverlap.txt","RawCountFileStar.txt"
+   input: files=expand("expression/{name}.star.count.overlap.txt",name=samples),files2=expand("expression/{name}.p2.ReadsPerGene.out.tab",name=samples)
+   output: "expression/RawCountFileOverlap.txt","expression/RawCountFileStar.txt"
    params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],starstrandcol=config['bin'][pfamily]['STARSTRANDCOL']
    shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/joincounts.R '{params.dir}' '{input.files}' '{input.files2}' '{params.starstrandcol}'"
