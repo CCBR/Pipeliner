@@ -61,7 +61,7 @@ rule rsemcounts:
 
 rule picard:
   input: file1= "{name}.p2.Aligned.sortedByCoord.out.bam"
-  output: outstar1=temp("{name}.star_rg_added.sorted.bam"), outstar2="{name}.star_rg_added.sorted.dmark.bam",outstar3="{name}.star.duplic"
+  output: outstar1=temp("{name}.star_rg_added.sorted.bam"), outstar2=temp("{name}.star_rg_added.sorted.dmark.bam"),outstar3="{name}.star.duplic"
   params: rname='pl:picard',batch='--mem=24g --time=10:00:00 --gres=lscratch:800',picardver=config['bin'][pfamily]['PICARDVER']#,picardjarpath=config['bin'][pfamily]['PICARDJARPATH']
   shell: "module load {params.picardver}; java -Xmx10g  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar INPUT={input.file1} OUTPUT={output.outstar1} TMP_DIR=/lscratch/$SLURM_JOBID RGID=id RGLB=library RGPL=illumina RGPU=machine RGSM=sample; java -Xmx10g -jar $PICARDJARPATH/MarkDuplicates.jar INPUT={output.outstar1} OUTPUT={output.outstar2} TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3}"
 

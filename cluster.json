@@ -23,6 +23,12 @@
         "mem" : "12g",
         "time" : "1-00:00:00",
     },
+    "rnafusioncleanup":
+    {
+        "threads": "1",
+        "mem" : "12g",
+        "time" : "1-00:00:00",
+    },
     "canvas_wgs_germ":
     {
         "threads": "32",
