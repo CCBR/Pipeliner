@@ -18,19 +18,19 @@ if config['project']['annotation'] == "hg19":
            config['project']['workpath']+"/starfusion",
            config['project']['workpath']+"/starfusion/fusioninspector",
            config['project']['workpath']+"/starfusion/oncofuse",
-           expand("{name}.RnaSeqMetrics.txt",name=samples),
-           "RawCountFile_genes_filtered.txt",
-           "RawCountFile_junctions_filtered.txt",
-           "RawCountFile_genejunctions_filtered.txt",
-           expand("{name}.star.count.overlap.txt",name=samples),
-           "RawCountFileOverlap.txt",
-           "RawCountFileStar.txt",
-           expand("{name}.rsem.genes.results",name=samples),
+           expand("expression/{name}.RnaSeqMetrics.txt",name=samples),
+           "expression/RawCountFile_genes_filtered.txt",
+           "expression/RawCountFile_junctions_filtered.txt",
+           "expression/RawCountFile_genejunctions_filtered.txt",
+           expand("expression/{name}.star.count.overlap.txt",name=samples),
+           "expression/RawCountFileOverlap.txt",
+           "expression/RawCountFileStar.txt",
+           expand("expression/{name}.rsem.genes.results",name=samples),
            expand("QC/{x}_readlength.txt",x=samples),
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/
+             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; rm *featureCounts; mv *.out slurmfiles/
 
             """
 
@@ -54,19 +54,19 @@ elif config['project']['annotation'] == "hg38":
            config['project']['workpath']+"/starfusion",
            config['project']['workpath']+"/starfusion/fusioninspector",
            config['project']['workpath']+"/starfusion/oncofuse",
-           expand("{name}.RnaSeqMetrics.txt",name=samples),
-           "RawCountFile_genes_filtered.txt",
-           "RawCountFile_junctions_filtered.txt",
-           "RawCountFile_genejunctions_filtered.txt",
-           expand("{name}.star.count.overlap.txt",name=samples),
-           "RawCountFileOverlap.txt",
-           "RawCountFileStar.txt",
-           expand("{name}.rsem.genes.results",name=samples),
+           expand("expression/{name}.RnaSeqMetrics.txt",name=samples),
+           "expression/RawCountFile_genes_filtered.txt",
+           "expression/RawCountFile_junctions_filtered.txt",
+           "expression/RawCountFile_genejunctions_filtered.txt",
+           expand("expression/{name}.star.count.overlap.txt",name=samples),
+           "expression/RawCountFileOverlap.txt",
+           "expression/RawCountFileStar.txt",
+           expand("expression/{name}.rsem.genes.results",name=samples),
            expand("QC/{x}_readlength.txt",x=samples),
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/
+             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; mv *.out slurmfiles/
 
             """
 
@@ -86,18 +86,18 @@ elif config['project']['annotation'] == "mm10":
            config['project']['workpath']+"/starfusion",
            config['project']['workpath']+"/starfusion/fusioninspector",
            config['project']['workpath']+"/starfusion/oncofuse",
-           expand("{name}.RnaSeqMetrics.txt",name=samples),
-           "RawCountFile_genes_filtered.txt",
-           "RawCountFile_junctions_filtered.txt",
-           "RawCountFile_genejunctions_filtered.txt",
-           expand("{name}.star.count.overlap.txt",name=samples),
-           "RawCountFileOverlap.txt",
-           "RawCountFileStar.txt",
-           expand("{name}.rsem.genes.results",name=samples),
+           expand("expression/{name}.RnaSeqMetrics.txt",name=samples),
+           "expression/RawCountFile_genes_filtered.txt",
+           "expression/RawCountFile_junctions_filtered.txt",
+           "expression/RawCountFile_genejunctions_filtered.txt",
+           expand("expression/{name}.star.count.overlap.txt",name=samples),
+           "expression/RawCountFileOverlap.txt",
+           "expression/RawCountFileStar.txt",
+           expand("expression/{name}.rsem.genes.results",name=samples),
            expand("QC/{x}_readlength.txt",x=samples),
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/
+             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; mv *.out slurmfiles/
 
             """

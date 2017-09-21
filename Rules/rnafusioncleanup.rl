@@ -7,7 +7,6 @@ rule rnafusioncleanup:
                 "RawCountFileOverlap.txt",
                 "RawCountFileStar.txt",
                 expand("{name}.rsem.genes.results",name=samples),
-                expand("QC/{x}_readlength.txt",x=samples),
                 expand("{x}.R1.fastq.gz", x=samples),
         output: expand("expression/{name}.RnaSeqMetrics.txt",name=samples),
                 "expression/RawCountFile_genes_filtered.txt",
@@ -17,6 +16,5 @@ rule rnafusioncleanup:
                 "expression/RawCountFileOverlap.txt",
                 "expression/RawCountFileStar.txt",
                 expand("expression/{name}.rsem.genes.results",name=samples),
-                expand("expression/QC/{x}_readlength.txt",x=samples),
         params: rname="pl:clean"
-        shell:  "mv *filtered.tx expression/; mv *.RnaSeqMetrics.txt expression/; mv *.star.count.overlap.txt expression/; mv RawCountFileOverlap.txt expression/; mv RawCountFileStar.txt expression/; mv *.rsem.genes.results expression/; mv  mkdir -p {output.fusioncatcher}; mkdir -p {output.starfusion}; mkdir -p {output.fusioninspcatch}; mkdir -p {output.oncofusecatch}; mkdir -p {output.fusioninspstar}; mkdir -p {output.oncofusestar}; mkdir -p {output.expression}"
+        shell:  "mv *.star_rg_added.sorted.dmark.bai expression/; mv *.star.duplic expression/; mv *.star.count.info.overlap.txt.summary expression/; mv *.star.count.info.txt.summary expression/; mv *.star.count.info.overlap.txt expression/; mv *.star.count.txt expression/; mv *.star.count.info.txt expression/; mv HistBeforenormFilter.png expression/; mv RawCount_genes_unfiltered.txt expression/; mv *_counts.txt expression/; mv *.InsertSizeMetrics.txt expression/; mv *.InsertSizeHisto.pdf expression/; mv *.flagstat.concord.txt expression/; mv *filtered.txt expression/; mv *.RnaSeqMetrics.txt expression/; mv *.star.count.overlap.txt expression/; mv RawCountFileOverlap.txt expression/; mv RawCountFileStar.txt expression/; mv *.rsem.genes.results expression/"
