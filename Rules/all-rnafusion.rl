@@ -26,6 +26,7 @@ if config['project']['annotation'] == "hg19":
            "expression/RawCountFileOverlap.txt",
            "expression/RawCountFileStar.txt",
            expand("expression/{name}.rsem.genes.results",name=samples),
+           "expression/RawCountFile_rsemgenes_filtered.txt",
            expand("QC/{x}_readlength.txt",x=samples),
     output: 
     params: rname="final"
@@ -62,6 +63,7 @@ elif config['project']['annotation'] == "hg38":
            "expression/RawCountFileOverlap.txt",
            "expression/RawCountFileStar.txt",
            expand("expression/{name}.rsem.genes.results",name=samples),
+           "expression/RawCountFile_rsemgenes_filtered.txt",
            expand("QC/{x}_readlength.txt",x=samples),
     output: 
     params: rname="final"
@@ -94,6 +96,7 @@ elif config['project']['annotation'] == "mm10":
            "expression/RawCountFileOverlap.txt",
            "expression/RawCountFileStar.txt",
            expand("expression/{name}.rsem.genes.results",name=samples),
+           "expression/RawCountFile_rsemgenes_filtered.txt",
            expand("QC/{x}_readlength.txt",x=samples),
     output: 
     params: rname="final"
