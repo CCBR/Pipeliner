@@ -2,17 +2,19 @@
 library('reshape') 
 library('ggplot2')
 library('edgeR')
+library('limma')
 
 args <- commandArgs(trailingOnly = TRUE)
 DIR <- args[1]
-FILES <- args[2]
+FILE1 <- args[2]
 MINCOUNT <- args[3]
 MINSAMPLES <- args[4]
 ANNOTATE <- args[5]
+FILE2 <- args[6]
 
 setwd(DIR)
 
-myfiles=as.character(unlist(strsplit(FILES, split=" ")))
+myfiles=as.character(unlist(strsplit(FILE1, split=" ")))
 
 #read first file for gene length data
 myfirstfiles = gsub("count", "count.info", myfiles[1])
@@ -45,7 +47,7 @@ val1=as.numeric(MINCOUNT)
 val2=as.numeric(MINSAMPLES)
 
 tot=colSums(res2[,-c(1:3)])
-val1=(val1/max(tot))*1e6
+#val1=(val1/max(tot))*1e6
 
 filter <- apply(cpm(mydata), 1, function(x) length(x[x>val1])>=val2)
 res=mydata[filter,,keep.lib.sizes=FALSE]
@@ -69,11 +71,12 @@ write.table(data.frame(res$genes[,-c(3)], ndata),file="CPM_TMM_counts.txt",sep="
 ndata = rpkm(tmm_y,res$genes$Length, log=FALSE,normalized.lib.sizes=TRUE)
 write.table(data.frame(res$genes[,-c(3)], ndata),file="RPKM_TMM_counts.txt",sep="\t",row.names=F)
 
-#calculate unfiltered CPM_TMM and output
-tmm_y <- calcNormFactors(mydata,method="TMM")
-ndata= cpm(tmm_y,log=FALSE,normalized.lib.sizes=TRUE)
-write.table(data.frame(mydata$genes[,-c(3)], ndata),file="CPM_TMM_unfiltered_counts.txt",sep="\t",row.names=F)
+#calculate RPKM from Voom normalized logCPM and output
+sampleinfo=read.delim(FILE2)
+Group <- factor(sampleinfo$condition)
+design=model.matrix(~0+Group)
 
-#calculate unfiltered RPKM_TMM and output
-ndata = rpkm(tmm_y,res$genes$Length, log=FALSE,normalized.lib.sizes=TRUE)
-write.table(data.frame(mydata$genes[,-c(3)], ndata),file="RPKM_TMM_unfiltered_counts.txt",sep="\t",row.names=F)
+v1 <- voom(tmm_y,design,plot=FALSE,normalize="quantile")
+ndata <- apply(v1$E, 2, function(z) ((2^z/v1$genes$Length)*1000))
+
+write.table(data.frame(tmm_y$genes[,-c(3)], ndata),file="LimmaVoom_normalized_rpkm_counts.txt",sep="\t",row.names=F)
