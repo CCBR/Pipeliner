@@ -1,15 +1,25 @@
+#version1
 import numpy as np
 import pandas as pd 
 #import seaborn as sns
 #import matplotlib.pyplot as plt
 #from scipy import stats 
-import sys
+import sys, os
 #from matplotlib.backends.backend_pdf import PdfPages
 
 fusionCatcher=pd.read_csv(sys.argv[1],sep='\t')
 starFusion=pd.read_csv(sys.argv[2],sep='\t')
-oncoFuseSF=pd.read_csv(sys.argv[3],sep='\t')
-oncoFuseFC=pd.read_csv(sys.argv[4],sep='\t')
+
+if os.path.isfile(sys.argv[3]):
+	oncoFuseSF=pd.read_csv(sys.argv[3],sep='\t')
+else:	
+	oncoFuseSF=pd.DataFrame(columns=['5_FPG_GENE_NAME','3_FPG_GENE_NAME','P_VAL_CORR','DRIVER_PROB','EXPRESSION_GAIN','5_DOMAINS_RETAINED','3_DOMAINS_RETAINED','5_DOMAINS_BROKEN','3_DOMAINS_BROKEN','5_PII_RETAINED','3_PII_RETAINED'])
+
+if os.path.isfile(sys.argv[4]):
+        oncoFuseFC=pd.read_csv(sys.argv[4],sep='\t')
+else: 
+	oncoFuseFC=pd.DataFrame(columns=['5_FPG_GENE_NAME','3_FPG_GENE_NAME','P_VAL_CORR','DRIVER_PROB','EXPRESSION_GAIN','5_DOMAINS_RETAINED','3_DOMAINS_RETAINED','5_DOMAINS_BROKEN','3_DOMAINS_BROKEN','5_PII_RETAINED','3_PII_RETAINED'])
+
 detectorSF=pd.read_csv(sys.argv[5],sep='\t')
 detectorFC=pd.read_csv(sys.argv[6],sep='\t')
 
@@ -18,7 +28,6 @@ fc.columns = ['Gene1','Gene2','Gene1 ID', 'Gene2 ID', 'Fusion_description', 'Cou
 fc = fc.astype(str)
 fc=fc.groupby(['Gene1','Gene2','Gene1 ID', 'Gene2 ID']).agg('|'.join)
 fc.reset_index(inplace=True)  
-
 
 if detectorFC.shape[0] <1:
     fc['Fusion Inspector']="False"
@@ -41,7 +50,6 @@ if oncoFuseFC.shape[0] >0:
 else:
     combFC=fc
     combFC['Pred']= 'Catch'
-
 
 starFusion['Gene1'], starFusion['Gene2'] = starFusion['#FusionName'].str.split('--', 1).str
 starFusion['Gene1 ID']=starFusion.LeftGene.apply(lambda x: x.split('^')[1]).apply(lambda x: x.split('.')[0])
@@ -72,7 +80,7 @@ if oncoFuseSF.shape[0] >0:
     combSF=pd.merge(sf, ofsf, how='left', left_on=['Gene1','Gene2'], right_on = ['Gene1','Gene2'])
     combSF['Pred']= 'Star'
 else:
-    combSF=fc
+    combSF=sf
     combSF['Pred']= 'Star'
 
 
@@ -84,7 +92,6 @@ elif oncoFuseFC.shape[0] <1:
     selectFC=combFC[['Gene1','Gene2','Gene1 ID', 'Gene2 ID','Fusion Inspector','Pred']]
 else: 
     selectFC=combFC[['Gene1','Gene2','Gene1 ID', 'Gene2 ID','Fusion Inspector','P_VAL_CORR','DRIVER_PROB','EXPRESSION_GAIN','Pred']]
-
 
 if detectorSF.shape[0] < 1 and oncoFuseSF.shape[0] <1: 
     selectSF=combSF[['Gene1','Gene2','Gene1 ID', 'Gene2 ID','Pred','Fusion Inspector']]
@@ -128,10 +135,19 @@ if oncoFuseFC.shape[0] >0 or oncoFuseSF.shape[0] >0:
 	of.groupby(['Gene1','Gene2'])
 	of.drop_duplicates()#, sort=False)['DRIVER_PROB'].max()#.agg('|'.join)
 	#of.reset_index(inplace=True)
-	x=x[['Gene1','Gene2','Gene1 ID', 'Gene2 ID','Fusion Inspector','Predicted By','Sample','Pred']]	
+	x=x[['Gene1','Gene2','Gene1 ID', 'Gene2 ID','Fusion Inspector','Predicted By','Sample','Pred']].drop_duplicates()	
 	y=pd.merge(x, of, how='left', left_on=['Gene1','Gene2'], right_on = ['Gene1','Gene2'])
 	y.fillna('notFound', inplace=True)
+	y=y.drop_duplicates()
 else:
-	y = "No oncofuse detection for this sample"
+	of=pd.concat([ofsf,offc],axis=0)
+        of.groupby(['Gene1','Gene2'])
+        of.drop_duplicates()#, sort=False)['DRIVER_PROB'].max()#.agg('|'.join)
+        #of.reset_index(inplace=True)
+        x=x[['Gene1','Gene2','Gene1 ID', 'Gene2 ID','Fusion Inspector','Predicted By','Sample','Pred']].drop_duplicates()
+        y=pd.merge(x, of, how='left', left_on=['Gene1','Gene2'], right_on = ['Gene1','Gene2'])
+        y.fillna('notFound', inplace=True)
+        y=y.drop_duplicates()
+
 	
 y.to_csv(path_or_buf=sys.argv[10],sep='\t')
