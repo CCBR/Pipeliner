@@ -39,6 +39,7 @@ library(genefilter)
 library(org.Hs.eg.db)
 library(gplots)
 library(gdata)
+Sys.setenv(R_MAX_NUM_DLLS=150)
 
 # knit_hooks$set(rgl = function(before, options, envir) {
 #   if (!before) {
