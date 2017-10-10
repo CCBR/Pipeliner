@@ -27,7 +27,7 @@ while (<J>) {
 	chomp;
  		last if m/^$/;
 	@line = split;
-	next if ($line[0] =~ m'Gene_1_symbol');
+	next if ($line[0] =~ m'_symbol');
 	if ($ref eq 'mm10') {
 	$genea = ucfirst lc $line[0];
 	$geneb = ucfirst lc $line[1];

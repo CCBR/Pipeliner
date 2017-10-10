@@ -1,7 +1,7 @@
  {"references": {
     "exomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
-    "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/1kGenomes_ExAC_0.001freq_PON.vcf",
+    "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/1kGenomes_ExAC_0.001freq_PON.vcf.gz",
     "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
 #    "CNVKITREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5_flatRef.cnn",
@@ -67,7 +67,7 @@
     },
     "genomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
-    "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/1kGenomes_ExAC_0.001freq_PON.vcf",
+    "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/1kGenomes_ExAC_0.001freq_PON.vcf.gz",
     "CHROMS": ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","X","Y","MT"],
     "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",

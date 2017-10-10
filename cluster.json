@@ -1,7 +1,7 @@
 {
     "__default__" :
     {
-        "mem" : "64g",
+        "mem" : "120g",
         "time" : "96:00:00",
         "partition" : "ccr,norm",
         "threads": "4",
@@ -17,35 +17,59 @@
         "mem" : "96g",
         "time" : "10-00:00:00",
     },
+    "fusion_summary":
+    {
+        "threads": "1",
+        "mem" : "12g",
+        "time" : "1-00:00:00",
+    },
+    "rnafusioncleanup":
+    {
+        "threads": "1",
+        "mem" : "12g",
+        "time" : "1-00:00:00",
+    },
     "canvas_wgs_germ":
     {
         "threads": "32",
-        "mem" : "96g",
+        "mem" : "120g",
         "time" : "10-00:00:00",
     },
     "canvas_wgs_somatic":
     {
         "threads": "32",
-        "mem" : "96g",
+        "mem" : "120g",
+        "time" : "10-00:00:00",
+    },
+    "canvas_wgs_tumoronly":
+    {
+        "threads": "32",
+        "mem" : "120g",
         "time" : "10-00:00:00",
     },
     "admixture_germline":
     {
-        "threads": "8",
+        "threads": "32",
         "mem" : "96g",
-        "time" : "2-00:00:00",
+        "time" : "5-00:00:00",
     },
     "admixture_somatic":
     {
-        "threads": "8",
+        "threads": "32",
         "mem" : "96g",
-        "time" : "2-00:00:00",
+        "time" : "5-00:00:00",
     },
     "admixture_wgs":
     {
-        "threads": "8",
+        "threads": "32",
         "mem" : "96g",
-        "time" : "2-00:00:00",
+        "time" : "5-00:00:00",
+    },
+    "admixture_wgs_somatic":
+    {
+        "threads": "32",
+        "mem" : "96g",
+        "time" : "5-00:00:00",
     },
     "svaba_germline":
     {
@@ -58,6 +82,12 @@
         "threads": "1",
         "mem" : "48g",
         "time" : "10-00:00:00",
+    },
+    "vcf2maf_tumoronly":
+    {
+        "threads": "2",
+        "mem" : "96g",
+        "time" : "1-00:00:00",
     },
     "vcf2maf_mutect":
     {
@@ -90,7 +120,14 @@
     "theta":
     {
         "threads": "1",
-        "mem" : "48g"
+        "mem" : "48g",
+        "time" : "10-00:00:00",
+    },
+    "wgs_theta":
+    {
+        "threads": "1",
+        "mem" : "48g",
+        "time" : "10-00:00:00",
     },
     "manta_germline":
      {
@@ -99,13 +136,18 @@
     },
     "cnvkit_somatic":
      {
+        "threads": "2",
+        "mem" : "96g",
+    },
+    "cnvkit_wgs_somatic":
+     {
+        "threads": "2",
+        "mem" : "96g",
+    },
+    "cnvkit_somatic_tumoronly":
+     {
         "threads": "1",
         "mem" : "48g",
-    },
-    "cnvkit_somatic":
-     {
-        "threads": "4",
-        "mem" : "96g",
     },
     "cnvkit_germ":
      {
@@ -139,11 +181,13 @@
     {
         "threads": "1",
         "mem" : "64g",
+        "time" : "10-00:00:00",
     },
     "delly_somatic":
     {
         "threads": "1",
         "mem" : "64g",
+        "time" : "10-00:00:00",
     },
     "pindel_germline":
     {
@@ -428,13 +472,19 @@
     },
     "gatk_chrom_mutect2":
     {
-        "time": "6-00:00:00",
+        "time": "10-00:00:00",
         "threads": "2"
     },
     "gatk_mutect2":
     {
         "time": "10-00:00:00",
-        "threads": "2",
+        "threads": "4",
+        "mem": "120g"
+    },
+    "gatk_mutect2":
+    {
+        "time": "10-00:00:00",
+        "threads": "4",
         "mem": "120g"
     },
     "trimmomatic_pe":
