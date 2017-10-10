@@ -90,7 +90,7 @@ class RNASeqFrame( PipelineFrame ) :
                                               text="Low Abundance Gene Thresholds" )
         
         self.rMincount = rMincount = StringVar()
-        rMincount.set("5")
+        rMincount.set("0.5")
         self.rMinsamples = rMinsamples = StringVar()
         rMinsamples.set("2")
         
@@ -99,7 +99,7 @@ class RNASeqFrame( PipelineFrame ) :
         #Filter out genes < [5] read counts in < [2] samples
         rminsamplesL = Label(sampleLF, text="Include genes with >=") # in")
         rmincountE = Entry(sampleLF, bd =2, width=3, textvariable=rMincount)
-        rmincountL = Label(sampleLF, text="read counts in  >=")
+        rmincountL = Label(sampleLF, text="CPM in  >=")
         rminsamplesE = Entry(sampleLF, bd =2, width=3, textvariable=rMinsamples)
         rminsamplesR = Label(sampleLF, text="samples")
         
