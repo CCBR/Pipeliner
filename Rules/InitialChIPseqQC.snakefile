@@ -348,41 +348,61 @@ samtools flagstat {output.out5} > {output.out5f}
         input:
             bam1= join(bam_dir,"{name}.sorted.bam"),
             bam2= join(bam_dir,"{name}.sorted.Q5.bam"),
-            flagstat1=join(bam_dir,"{name}.sorted.bam.flagstat"),
-            flagstat2=join(bam_dir,"{name}.sorted.Q5.bam.flagstat"),
+#             flagstat1=join(bam_dir,"{name}.sorted.bam.flagstat"),
+#             flagstat2=join(bam_dir,"{name}.sorted.Q5.bam.flagstat"),
             bam3= join(bam_dir,"{name}.sorted.DD.bam"),
             bam4= join(bam_dir,"{name}.sorted.Q5DD.bam"),
-            flagstat3=join(bam_dir,"{name}.sorted.DD.bam.flagstat"),
-            flagstat4=join(bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
+#             flagstat3=join(bam_dir,"{name}.sorted.DD.bam.flagstat"),
+#             flagstat4=join(bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
         output:
-            outbg1=temp(join(bw_dir,"{name}.sorted.normalized.bg")), 
-            outbg2=temp(join(bw_dir,"{name}.sorted.Q5.normalized.bg")),
+#             outbg1=temp(join(bw_dir,"{name}.sorted.normalized.bg")), 
+#             outbg2=temp(join(bw_dir,"{name}.sorted.Q5.normalized.bg")),
             outbw1=join(bw_dir,"{name}.sorted.normalized.bw"), 
             outbw2=join(bw_dir,"{name}.sorted.Q5.normalized.bw"),
-            outbg3=temp(join(bw_dir,"{name}.sorted.DD.normalized.bg")), 
-            outbg4=temp(join(bw_dir,"{name}.sorted.Q5DD.normalized.bg")),
+#             outbg3=temp(join(bw_dir,"{name}.sorted.DD.normalized.bg")), 
+#             outbg4=temp(join(bw_dir,"{name}.sorted.Q5DD.normalized.bg")),
             outbw3=join(bw_dir,"{name}.sorted.DD.normalized.bw"), 
             outbw4=join(bw_dir,"{name}.sorted.Q5DD.normalized.bw"),
         params:
             rname="pl:bam2bw",
             batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
             reflen=config['references'][pfamily]['REFLEN'],
-            bedtoolsver=config['bin'][pfamily]['BEDTOOLSVER'],
-            ucscver=config['bin'][pfamily]['UCSCVER'],
+#             bedtoolsver=config['bin'][pfamily]['BEDTOOLSVER'],
+#             ucscver=config['bin'][pfamily]['UCSCVER'],
+            deeptoolsver=config['bin'][pfamily]['DEEPTOOLSVER'],
         run:
-            commoncmd="module load {params.bedtoolsver};module load {params.ucscver};"
-            scale1=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat1).readlines()))))[0][0]))
-            cmd1=commoncmd+"bedtools genomecov -ibam "+input.bam1+" -bg -scale "+scale1+" -g "+params.reflen+" > "+output.outbg1+" && wigToBigWig -clip "+output.outbg1+" "+params.reflen+" "+output.outbw1
-            shell(cmd1)
-            scale2=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat2).readlines()))))[0][0]))
-            cmd2=commoncmd+"bedtools genomecov -ibam "+input.bam2+" -bg -scale "+scale2+" -g "+params.reflen+" > "+output.outbg2+" && wigToBigWig -clip "+output.outbg2+" "+params.reflen+" "+output.outbw2
-            shell(cmd2)
-            scale3=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat3).readlines()))))[0][0]))
-            cmd3=commoncmd+"bedtools genomecov -ibam "+input.bam3+" -bg -scale "+scale3+" -g "+params.reflen+" > "+output.outbg3+" && wigToBigWig -clip "+output.outbg3+" "+params.reflen+" "+output.outbw3
-            shell(cmd3)
-            scale4=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat4).readlines()))))[0][0]))
-            cmd4=commoncmd+"bedtools genomecov -ibam "+input.bam4+" -bg -scale "+scale4+" -g "+params.reflen+" > "+output.outbg4+" && wigToBigWig -clip "+output.outbg4+" "+params.reflen+" "+output.outbw4
-            shell(cmd4)
+            lines=list(map(lambda x:x.strip().split("\t"),open(params.reflen).readlines()))
+            genomelen=0
+            for chr,l in lines:
+                if not "_" in chr and chr!="chrX" and chr!="chrM":
+                    genomelen+=int(l)
+            commoncmd="module load {params.deeptoolsver};"
+            cmd1="bamCoverage --bam "+input.bam1+" -o "+output.outbw1+" --binSize 2 --smoothLength 5 --ignoreForNormalization chrM chrX --numberOfProcessors 32 --normalizeTo1x "+str(genomelen)
+            shell(commoncmd+cmd1)
+            cmd2="bamCoverage --bam "+input.bam2+" -o "+output.outbw2+" --binSize 2 --smoothLength 5 --ignoreForNormalization chrM chrX --numberOfProcessors 32 --normalizeTo1x "+str(genomelen)
+            shell(commoncmd+cmd2)
+            cmd3="bamCoverage --bam "+input.bam3+" -o "+output.outbw3+" --binSize 2 --smoothLength 5 --ignoreForNormalization chrM chrX --numberOfProcessors 32 --normalizeTo1x "+str(genomelen)
+            shell(commoncmd+cmd3)
+            cmd4="bamCoverage --bam "+input.bam4+" -o "+output.outbw4+" --binSize 2 --smoothLength 5 --ignoreForNormalization chrM chrX --numberOfProcessors 32 --normalizeTo1x "+str(genomelen)
+            shell(commoncmd+cmd4)
+            
+            
+                    
+            
+#         run:
+#             commoncmd="module load {params.bedtoolsver};module load {params.ucscver};"
+#             scale1=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat1).readlines()))))[0][0]))
+#             cmd1=commoncmd+"bedtools genomecov -ibam "+input.bam1+" -bg -scale "+scale1+" -g "+params.reflen+" > "+output.outbg1+" && wigToBigWig -clip "+output.outbg1+" "+params.reflen+" "+output.outbw1
+#             shell(cmd1)
+#             scale2=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat2).readlines()))))[0][0]))
+#             cmd2=commoncmd+"bedtools genomecov -ibam "+input.bam2+" -bg -scale "+scale2+" -g "+params.reflen+" > "+output.outbg2+" && wigToBigWig -clip "+output.outbg2+" "+params.reflen+" "+output.outbw2
+#             shell(cmd2)
+#             scale3=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat3).readlines()))))[0][0]))
+#             cmd3=commoncmd+"bedtools genomecov -ibam "+input.bam3+" -bg -scale "+scale3+" -g "+params.reflen+" > "+output.outbg3+" && wigToBigWig -clip "+output.outbg3+" "+params.reflen+" "+output.outbw3
+#             shell(cmd3)
+#             scale4=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat4).readlines()))))[0][0]))
+#             cmd4=commoncmd+"bedtools genomecov -ibam "+input.bam4+" -bg -scale "+scale4+" -g "+params.reflen+" > "+output.outbg4+" && wigToBigWig -clip "+output.outbg4+" "+params.reflen+" "+output.outbw4
+#             shell(cmd4)
 
 
     rule deeptools_prep:
@@ -483,13 +503,13 @@ samtools flagstat {output.out5} > {output.out5f}
             module load {params.samtoolsver};
             module load {params.rver};
             Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam1} -savp -out={output.ppqt1} 
+            -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID 
             Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam2} -savp -out={output.ppqt2} 
+            -c={input.bam2} -savp -out={output.ppqt2} -tmpdir=/lscratch/$SLURM_JOBID
             Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam3} -savp -out={output.ppqt3} 
+            -c={input.bam3} -savp -out={output.ppqt3} -tmpdir=/lscratch/$SLURM_JOBID
             Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam4} -savp -out={output.ppqt4} 
+            -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID
             """
 
 
