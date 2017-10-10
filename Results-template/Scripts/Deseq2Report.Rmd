@@ -90,7 +90,13 @@ ddsHTSeq<-DESeqDataSetFromMatrix(countData=x,colData=sampleinfo, design=~conditi
 dds<-DESeq(ddsHTSeq)
 ndata=as.data.frame(counts(dds,normalized=TRUE))
 colnames(ndata)=colnames(x)
-write.table(ndata,file="Deseq2_normalized_counts.txt",sep="\t",col.names=NA)
+
+rn=rownames(ndata)
+ensID=apply(array(as.character(rn)),1,function(z) unlist(strsplit(z, "\\|"))[1])
+gene=apply(array(as.character(rn)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+mydata=cbind(ensID,gene,ndata)
+
+write.table(mydata,file="Deseq2_normalized_counts.txt",sep="\t",col.names=NA)
 #png("HistDesq2normFilter.png")
 df.m <- melt(as.data.frame(ndata))
 print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
@@ -100,7 +106,9 @@ print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = 
 rld <- rlogTransformation(dds, blind=TRUE)
 rldm=assay(rld)
 colnames(rldm)=colnames(x)
-write.table(rldm,file="Deseq2_normalized_rld.txt",sep="\t",col.names=NA)
+
+mydata=cbind(ensID,gene,rldm)
+write.table(mydata,file="Deseq2_normalized_rld.txt",sep="\t",col.names=NA)
 
 ```
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,include=FALSE}

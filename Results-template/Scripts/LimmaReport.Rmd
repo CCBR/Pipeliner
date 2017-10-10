@@ -52,6 +52,7 @@ library(amap)
 library(DT)
 library(plotly)
 
+knitr::opts_chunk$set(fig.width=12, fig.height=8) 
 knit_hooks$set(rgl = function(before, options, envir) {
   if (!before) {
     ## after a chunk has been evaluated
@@ -105,8 +106,16 @@ v1 <- voom(as.matrix(x),design,plot=TRUE,normalize="quantile")
 #dev.off()
 
 sf = v1$E/log2((x/colSums(x))*1000000)
+
+rn=rownames(v1$E)
+ensID=apply(array(as.character(rn)),1,function(z) unlist(strsplit(z, "\\|"))[1])
+gene=apply(array(as.character(rn)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+mydata=cbind(ensID,gene,v1$E)
+
+sf=cbind(ensID,gene,sf)
+
 write.table(sf,file="LimmaVoom_scaling_factors.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
-write.table(v1$E,file="LimmaVoom_Normalized_data.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
+write.table(mydata,file="LimmaVoom_Normalized_data.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
 
 #png("HistLimmavoomNormFilter.png")
 df.n <- melt(as.data.frame(v1$E))
@@ -131,7 +140,9 @@ dev.off()
 
 ## **Boxplot and PCA**
 
-```{r, echo=FALSE,webgl=TRUE,message=FALSE}
+```{r, set-options, echo=FALSE,webgl=TRUE,message=FALSE}
+#options(out.width = 160)
+
 # library(rglwidget)
 
 #colnames(v1$E)=fc1filtnames
@@ -151,12 +162,39 @@ Phenotype=sampleinfo$condition
 cell_rep=sampleinfo$label
 tedf1$group = as.factor(Phenotype)
 
+pc1 = round(pca$sdev[1]^2/sum(pca$sdev^2)*100,2)
+pc2 = round(pca$sdev[2]^2/sum(pca$sdev^2)*100,2)
+pc3 = round(pca$sdev[3]^2/sum(pca$sdev^2)*100,2)
+
+pcafactor = as.factor(sampleinfo$condition)
+
+library(RColorBrewer)
+
+col <- brewer.pal(nlevels(pcafactor), "Paired")
+
+p <- plot_ly(as.data.frame(pca$x[,1:3]), x = ~PC1, y = ~PC2, z = ~PC3, color = pcafactor, colors = col, hoverinfo="text",
+             hovertext = ~sampleinfo$label) %>%
+  add_markers() %>%
+  layout(title = "PCA plot", 
+         scene = list(xaxis = list(title = paste0("PC1 (",pc1,"%)")),
+                      yaxis = list(title = paste0("PC2 (",pc2,"%)")),
+                      zaxis = list(title = paste0("PC3 (",pc3,"%)"))))
+
+saveWidget(as_widget(p), "MainPcaPlot.html")
+
+p
+
+
+
+
+
+
 # plot(pca,type="lines")  #Decide how many PC's are relevant for plotting
   #pca$x[,1:3]  #look at first 3 PC's
 
-plot3d(pca$x[,1:3],col = as.integer(tedf1$group),type="s",size=2)
-group.v<-as.vector(cell_rep)
-text3d(pca$x, pca$y, pca$z, group.v, cex=1.0, adj = 1.2) 
+#plot3d(pca$x[,1:3],col = as.integer(tedf1$group),type="s",size=2)
+#group.v<-as.vector(cell_rep)
+#text3d(pca$x, pca$y, pca$z, group.v, cex=1.0, adj = 1.2) 
 # rgl.postscript("pca3d_limma.pdf","pdf")
 
 ```
@@ -238,19 +276,19 @@ if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38")
 iup=which(final$P.Value<0.05 & final$FC >=0)
 idw=which(final$P.Value<0.05 & final$FC <0)
 fin.up=final[iup,]
-if (length(iup) > 500)
+if (length(iup) > 50)
   {
    fin.up=fin.up[order(fin.up$P.Value),]
-   fin.up=fin.up[1:500,]
+   fin.up=fin.up[1:50,]
   }
 x2=rownames(fin.up)
 gup=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 
 fin.dw=final[idw,]
-if (length(idw) > 500)
+if (length(idw) > 50)
   {
    fin.dw=fin.dw[order(fin.dw$P.Value),]
-   fin.dw=fin.dw[1:500,]
+   fin.dw=fin.dw[1:50,]
   }
 x2=rownames(fin.dw)
 gdw=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
@@ -289,8 +327,8 @@ mup=mup[,c(8,9,10,11,1:7,12)]
 mdw=mdw[,c(8,9,10,11,1:7,12)]
 
 
-pup[[i]] <- DT::datatable(mup, caption=htmltools::tags$caption(paste0("Pathways for top 500 up-regulated genes ",cons[i]) ,style="color:red; font-size: 18px" ),rownames=F)
-pdw[[i]] <- DT::datatable(mdw, caption=htmltools::tags$caption(paste0("Pathways for top 500 down-regulated genes ",cons[i]) ,style="color:green; font-size: 18px" ),rownames=F )
+pup[[i]] <- DT::datatable(mup, caption=htmltools::tags$caption(paste0("Pathways for top 50 up-regulated genes ",cons[i]) ,style="color:red; font-size: 18px" ),rownames=F)
+pdw[[i]] <- DT::datatable(mdw, caption=htmltools::tags$caption(paste0("Pathways for top 50 down-regulated genes ",cons[i]) ,style="color:green; font-size: 18px" ),rownames=F )
 
 }
 ## ------------------------------------------------------------------

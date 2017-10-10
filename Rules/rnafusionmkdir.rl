@@ -6,5 +6,6 @@ rule rnafusionmkdir:
                 starfusion=config['project']['workpath']+"/starfusion",
                 fusioninspstar=config['project']['workpath']+"/starfusion/fusioninspector",
                 oncofusestar=config['project']['workpath']+"/starfusion/oncofuse",
+                expression=config['project']['workpath']+"/expression",
         params: rname="pl:mkdir"
-        shell:  "mkdir -p {output.fusioncatcher}; mkdir -p {output.starfusion}; mkdir -p {output.fusioninspcatch}; mkdir -p {output.oncofusecatch}; mkdir -p {output.fusioninspstar}; mkdir -p {output.oncofusestar}"
+        shell:  "mkdir -p {output.fusioncatcher}; mkdir -p {output.starfusion}; mkdir -p {output.fusioninspcatch}; mkdir -p {output.oncofusecatch}; mkdir -p {output.fusioninspstar}; mkdir -p {output.oncofusestar}; mkdir -p {output.expression}"

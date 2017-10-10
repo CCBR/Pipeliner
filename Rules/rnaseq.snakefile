@@ -2,16 +2,31 @@ from snakemake.utils import R
 
 configfile: "run.json"
 
-#samples=config['project']['units']
-#samples=config['project']['contrasts']['rsamps']
 samples=config['project']['groups']['rsamps']
+
+from os import listdir
+mypath = config['project']['workpath']
+fR1 = [f for f in listdir(mypath) if f.find("R1") > 0]
+fR2 = [f for f in listdir(mypath) if f.find("R2") > 0]
+pe = ""
+se = ""
+if len(fR1) >= 2 and len(fR2) >= 2:
+   pe="yes"
+elif len(fR1) >= 2:
+   se="yes"
+else:
+   pass
+
+
+
 
 if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
   rule all:
      params: batch='--time=168:00:00'
 #     input: "STAR_QC","Reports/multiqc_report.html",
      input: "Reports/multiqc_report.html",
-            "ebseq_completed.txt",
+            "RSEMDEG_isoform/ebseq_isoform_completed.txt",
+            "RSEMDEG_gene/ebseq_gene_completed.txt",
             "salmonrun/sleuth_completed.txt",
          #   expand("{name}.RnaSeqMetrics.txt",name=samples),
          #   "postTrimQC","sampletable.txt",
@@ -58,7 +73,8 @@ elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
   rule all:
 #     input: "STAR_QC","Reports/multiqc_report.html",
      input: "Reports/multiqc_report.html",
-            "ebseq_completed.txt",
+            "RSEMDEG_isoform/ebseq_isoform_completed.txt",
+            "RSEMDEG_gene/ebseq_gene_completed.txt",
             "salmonrun/sleuth_completed.txt",
             expand("{name}.RnaSeqMetrics.txt",name=samples),
             "sampletable.txt",
@@ -117,12 +133,43 @@ rule get_strandness:
     with open('run.json','w') as F:
       json.dump(config, F, sort_keys = True, indent = 4,ensure_ascii=False)
     F.close()
+   
+rule samplecondition:
+   input: files=expand("{name}.star.count.txt", name=samples)
+   output: out1= "sampletable.txt"
+   params: rname='pl:samplecondition',batch='--mem=4g --time=10:00:00', groups=config['project']['groups']['rgroups'], labels=config['project']['groups']['rlabels'],gtffile=config['references'][pfamily]['GTFFILE']
+   run:
+        with open(output.out1, "w") as out:
+            out.write("sampleName\tfileName\tcondition\tlabel\n")
+            i=0
+            for f in input.files:
+                out.write("%s\t"  % f)
+                out.write("%s\t"  % f)
+                out.write("%s\t" % params.groups[i])
+                out.write("%s\n" % params.labels[i])                
+                i=i+1
+            out.close()
+        #os.system("mkdir -p bedfiles")
+        #os.system("cd bedfiles; perl ../Scripts/gtf2bed.pl "+params.gtffile+" |sort -k1,1 -k2,2n > karyobed.bed")
+        #os.system("cd bedfiles; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {print}}\' > karyobed.${a}.bed;done < chrs.txt")
 
-rule rsem:
-  input: file1= "{name}.p2.Aligned.toTranscriptome.out.bam"
-  output: out1="{name}.rsem.genes.results",out2="{name}.rsem.isoforms.results"
-  params: rname='pl:rsem',prefix="{name}.rsem",batch='--cpus-per-task=16 --mem=32g --time=24:00:00',rsemref=config['references'][pfamily]['RSEMREF'],rsem=config['bin'][pfamily]['RSEM']
-  shell: "{params.rsem}/rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p 16  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files"
+
+if pe=="yes":
+
+   rule rsem:
+      input: file1= "{name}.p2.Aligned.toTranscriptome.out.bam"
+      output: out1="{name}.rsem.genes.results",out2="{name}.rsem.isoforms.results"
+      params: rname='pl:rsem',prefix="{name}.rsem",batch='--cpus-per-task=16 --mem=32g --time=24:00:00',rsemref=config['references'][pfamily]['RSEMREF'],rsem=config['bin'][pfamily]['RSEM']
+      shell: "{params.rsem}/rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p 16  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files"
+
+if se=="yes":
+
+   rule rsem:
+      input: file1= "{name}.p2.Aligned.toTranscriptome.out.bam"
+      output: out1="{name}.rsem.genes.results",out2="{name}.rsem.isoforms.results"
+      params: rname='pl:rsem',prefix="{name}.rsem",batch='--cpus-per-task=16 --mem=32g --time=24:00:00',rsemref=config['references'][pfamily]['RSEMREF'],rsem=config['bin'][pfamily]['RSEM']
+      shell: "{params.rsem}/rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam -p 16  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files"
+
 
 rule rsemcounts:
    input: files=expand("{name}.rsem.genes.results", name=samples)
@@ -145,10 +192,10 @@ rule subreadoverlap:
 
 
 rule genecounts: 
-   input: files=expand("{name}.star.count.txt", name=samples)
+   input: file1=expand("{name}.star.count.txt", name=samples), file2="sampletable.txt"
    output: "RawCountFile_genes_filtered.txt"
    params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
-   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/genecounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
+   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/genecounts.R '{params.dir}' '{input.file1}' '{params.mincount}' '{params.minsamples}' '{params.annotate}' '{input.file2}'"
 
 rule junctioncounts: 
    input: files=expand("{name}.p2.SJ.out.tab", name=samples)
@@ -183,26 +230,6 @@ rule rnaseq_multiqc:
             module load {params.multiqc}
             cd Reports && multiqc -f -c {params.qcconfig}  ../
             """
-
-   
-rule samplecondition:
-   input: files=expand("{name}.star.count.txt", name=samples)
-   output: out1= "sampletable.txt"
-   params: rname='pl:samplecondition',batch='--mem=4g --time=10:00:00', groups=config['project']['groups']['rgroups'], labels=config['project']['groups']['rlabels'],gtffile=config['references'][pfamily]['GTFFILE']
-   run:
-        with open(output.out1, "w") as out:
-            out.write("sampleName\tfileName\tcondition\tlabel\n")
-            i=0
-            for f in input.files:
-                out.write("%s\t"  % f)
-                out.write("%s\t"  % f)
-                out.write("%s\t" % params.groups[i])
-                out.write("%s\n" % params.labels[i])                
-                i=i+1
-            out.close()
-        #os.system("mkdir -p bedfiles")
-        #os.system("cd bedfiles; perl ../Scripts/gtf2bed.pl "+params.gtffile+" |sort -k1,1 -k2,2n > karyobed.bed")
-        #os.system("cd bedfiles; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {print}}\' > karyobed.${a}.bed;done < chrs.txt")
 
 rule deseq2:
   input: file1="sampletable.txt", file2="RawCountFile{dtype}_filtered.txt"
@@ -245,8 +272,14 @@ rule sleuth:
   params: rname='pl:sleuth',batch='--mem=128g --cpus-per-task=8 --time=10:00:00',dir=config['project']['workpath'],pipeRlib=config['bin'][pfamily]['PIPERLIB'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']),species=config['project']['annotation']
   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/sleuth.R '{params.dir}' '{params.pipeRlib}' '{input.samtab}' '{params.contrasts}' '{params.species}'"
 
-rule EBSeq:
-  input: samtab = "sampletable.txt", isoforms=expand("{name}.rsem.isoforms.results", name=samples)
-  output: "ebseq_completed.txt"
+rule EBSeq_isoform:
+  input: samtab = "sampletable.txt", igfiles=expand("{name}.rsem.isoforms.results", name=samples)
+  output: "RSEMDEG_isoform/ebseq_isoform_completed.txt"
   params: rname='pl:EBSeq',batch='--mem=128g --cpus-per-task=8 --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']),rsemref=config['references'][pfamily]['RSEMREF'],rsem=config['bin'][pfamily]['RSEM']
-  shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/ebseq.R '{params.dir}' '{input.isoforms}' '{input.samtab}' '{params.contrasts}' '{params.rsemref}' '{params.rsem}'"
+  shell: "mkdir -p RSEMDEG_isoform; module load R/3.4.0_gcc-6.2.0; Rscript Scripts/ebseq.R '{params.dir}' '{input.igfiles}' '{input.samtab}' '{params.contrasts}' '{params.rsemref}' '{params.rsem}' 'isoform'"
+
+rule EBSeq_gene:
+  input: samtab = "sampletable.txt", igfiles=expand("{name}.rsem.genes.results", name=samples)
+  output: "RSEMDEG_gene/ebseq_gene_completed.txt"
+  params: rname='pl:EBSeq',batch='--mem=128g --cpus-per-task=8 --time=10:00:00',dir=config['project']['workpath'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']),rsemref=config['references'][pfamily]['RSEMREF'],rsem=config['bin'][pfamily]['RSEM']
+  shell: "mkdir -p RSEMDEG_gene; module load R/3.4.0_gcc-6.2.0; Rscript Scripts/ebseq.R '{params.dir}' '{input.igfiles}' '{input.samtab}' '{params.contrasts}' '{params.rsemref}' '{params.rsem}' 'gene'"

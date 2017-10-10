@@ -41,11 +41,11 @@ if config['project']['annotation'] == "hg19":
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
             "admixture_out/admixture_table.tsv",
             expand("svaba_out/{p}.log", p=pairs),
-            expand("canvas_out/{p}/tumorCNV.vcf.gz", p=pairs),
+            expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 elif config['project']['annotation'] == "hg38":
@@ -91,11 +91,11 @@ elif config['project']['annotation'] == "hg38":
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
             "admixture_out/admixture_table.tsv",
             expand("svaba_out/{p}.log", p=pairs),
-            expand("canvas_out/{p}/tumorCNV.vcf.gz", p=pairs),
+            expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 
@@ -138,10 +138,10 @@ elif config['project']['annotation'] == "mm10":
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
             "admixture_out/admixture_table.tsv",
             expand("svaba_out/{p}.log", p=pairs),
-            expand("canvas_out/{p}/tumorCNV.vcf.gz", p=pairs),
+            expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.1; multiqc -f -e featureCounts .; mv *.out slurmfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
