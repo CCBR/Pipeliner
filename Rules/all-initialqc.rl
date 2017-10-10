@@ -17,6 +17,6 @@ rule all_initialqc:
     output:
     params: rname="final"
     shell:  """
-             mv *.out slurmfiles/; mv *bam_stats bamstats/; mv *.bam_stats.err bamstats/; mv *.bam.err bamstats/; rm *sorted.bam.bai; mv *sorted.txt logfiles/
+             mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; mv *bam_stats bamstats/; mv *.bam_stats.err bamstats/; mv *.bam.err bamstats/; rm *sorted.bam.bai; mv *sorted.txt logfiles/
 
             """
