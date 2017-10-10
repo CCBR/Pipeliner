@@ -35,7 +35,7 @@ if config['project']['annotation'] == "hg19":
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; rm *featureCounts; mv *.out slurmfiles/
+             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; rm *featureCounts; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
 
             """
 
@@ -76,7 +76,7 @@ elif config['project']['annotation'] == "hg38":
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; mv *.out slurmfiles/
+             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
 
             """
 
@@ -113,6 +113,6 @@ elif config['project']['annotation'] == "mm10":
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; mv *.out slurmfiles/
+             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
 
             """
