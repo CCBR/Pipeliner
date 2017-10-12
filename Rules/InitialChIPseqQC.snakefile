@@ -8,7 +8,8 @@ workpath = config['project']['workpath']
 filetype = config['project']['filetype']
 readtype = config['project']['readtype']
 
-extensions = [ "sorted.normalized", "sorted.Q5.normalized", "sorted.DD.normalized", "sorted.Q5DD.normalized"]
+# extensions = [ "sorted.normalized", "sorted.Q5.normalized", "sorted.DD.normalized", "sorted.Q5DD.normalized"]
+extensions = [ "sorted.normalized", "sorted.Q5DD.normalized"]
 extensions2 = list(map(lambda x:re.sub(".normalized","",x),extensions))
 
 trim_dir='trim'
@@ -20,12 +21,12 @@ deeptools_dir='deeptools'
 preseq_dir='preseq'
 
 # 1 is yes and 0 is no... to remove blacklisted reads after trimming....output file is still ends with trim.fastq.gz
-# remove_blacklist_reads=1
-remove_blacklist_reads=0
+remove_blacklist_reads=1
+# remove_blacklist_reads=0
 
 # trimming method to use
-trim_method=1	# this is trimgalore only ... this is the fastest
-# trim_method=2	# this is cutadapt with condensed adapter set... followed by afterqc to remove polyX ... this is the slowest
+# trim_method=1	# this is trimgalore only ... this is the fastest
+trim_method=2	# this is cutadapt with condensed adapter set... it is NOT followed by afterqc to remove polyX like it was in the past... this is the slowest
 # trim_method=3	# this is method1 followed by afterqc and then followed by BBDuk, idea being a) remove most blatant adapter b) remove polyX and then c) remove other primer/adapter contamination
 # trim_method=4 # trimmomatic ... leaves traces of adapters at read ends
 
@@ -72,6 +73,12 @@ if readtype == 'Single' :
             expand(join(deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
             # preseq
             expand(join(preseq_dir,"{name}.ccurve"),name=samples),
+        shell:
+            """
+rm -rf *bam.cnt
+mv slurm*out slurmfiles/
+perl Scripts/summarize_usage.pl
+            """
 
                    
 
@@ -115,7 +122,7 @@ mkdir -p {output};
 module load {params.fastqcver}; 
 fastqc {input} -t {threads} -o {output}
             """
-            
+    
     rule trim: # actually trim, filter polyX and remove black listed reads
         input:
             infq="{name}.R1.fastq.gz",
@@ -124,60 +131,43 @@ fastqc {input} -t {threads} -o {output}
         params:
             rname="pl:trim",
             cutadaptver=config['bin'][pfamily]['CUTADAPTVER'],
-            trimgalorever=config['bin'][pfamily]['TRIMGALOREVER'],
-            afterqcver=config['bin'][pfamily]['AFTERQCVER'],
+            workpath=config['project']['workpath'],
             adaptersfa=config['references'][pfamily]['FASTAWITHADAPTERSETD'],
             blacklistbwaindex=config['references'][pfamily]['BLACKLISTBWAINDEX'],
-            bbtoolsver=config['bin'][pfamily]['BBTOOLSVER'],
             picardver=config['bin'][pfamily]['PICARDVER'],
             bwaver=config['bin'][pfamily]['BWAVER'],
             samtoolsver=config['bin'][pfamily]['SAMTOOLSVER'],
-            trimmomaticver=config['bin'][pfamily]['TRIMMOMATICVER'],
             minlen=config['bin'][pfamily]['MINLEN'],
         threads: 32
-        run:
-            cmds=[]
-            beforeBLremovalfq=re.sub("R1.fastq.gz","R1.beforeBLremoval.fastq.gz",input.infq)
-            if trim_method==1 :
-                trimgalorefq=re.sub("R1.fastq.gz","R1_trimmed.fq.gz",input.infq)
-                cmds.append("module load %s"%(params.cutadaptver))
-                cmds.append("module load %s"%(params.trimgalorever))
-                cmds.append("trim_galore --trim-n --gzip --length %s -o /lscratch/$SLURM_JOBID %s"%(params.minlen,input.infq))
-                cmds.append("mv /lscratch/$SLURM_JOBID/%s /lscratch/$SLURM_JOBID/%s"%(trimgalorefq,beforeBLremovalfq))
-            elif trim_method==2 :
-                cutadaptfq=re.sub("R1.fastq.gz","R1.cutadapt.fastq.gz",input.infq)
-                afterqcgoodfq=re.sub("R1.cutadapt.fastq.gz","R1.cutadapt.good.fq",cutadaptfq)
-                cmds.append("module load %s"%(params.cutadaptver))
-                cmds.append("cutadapt --trim-n -m %s -b file:%s -o /lscratch/$SLURM_JOBID/%s %s"%(params.minlen,params.adaptersfa,cutadaptfq,input.infq))
-                cmds.append("module load %s"%(params.afterqcver))
-                cmds.append("after.py -1 /lscratch/$SLURM_JOBID/%s -g /lscratch/$SLURM_JOBID/good -b /lscratch/$SLURM_JOBID/bad -r /lscratch/$SLURM_JOBID/afterQC -q 2 --no_correction"%(cutadaptfq))
-                cmds.append("pigz -p4 /lscratch/$SLURM_JOBID/good/%s"%(afterqcgoodfq))
-                cmds.append("mv /lscratch/$SLURM_JOBID/good/%s.gz /lscratch/$SLURM_JOBID/%s"%(afterqcgoodfq,beforeBLremovalfq))
-            elif trim_method==3 :
-                trimgalorefq=re.sub("R1.fastq.gz","R1_trimmed.fq.gz",input.infq)
-                afterqcgoodfq=re.sub("R1_trimmed.fq.gz","R1_trimmed.good.fq",trimgalorefq)
-                BBDukStats=re.sub("R1.fastq.gz","BBDuk.stats",input.infq)
-                cmds.append("module load %s"%(params.cutadaptver))
-                cmds.append("module load %s"%(params.trimgalorever))
-                cmds.append("trim_galore --trim-n --gzip --length %s -o /lscratch/$SLURM_JOBID %s"%(params.minlen,input.infq))
-                cmds.append("module load %s"%(params.afterqcver))
-                cmds.append("after.py -1 /lscratch/$SLURM_JOBID/%s -g /lscratch/$SLURM_JOBID/good -b /lscratch/$SLURM_JOBID/bad -r /lscratch/$SLURM_JOBID/afterQC -q 2 --no_correction"%(trimgalorefq))
-                cmds.append("module load %s"%(params.bbtoolsver))
-                cmds.append("bbtools BBDuk -ktrim=r minlength=%s ref=%s -Xmx64g in=/lscratch/$SLURM_JOBID/good/%s out=/lscratch/$SLURM_JOBID/%s stats=%s"%(params.minlen,params.adaptersfa,afterqcgoodfq,beforeBLremovalfq,join(trim_dir,BBDukStats)))
-            elif trim_method==4:
-                cmds.append("module load %s"%(params.trimmomaticver))
-                cmds.append("java -jar $TRIMMOJAR SE %s /lscratch/$SLURM_JOBID/%s ILLUMINACLIP:%s:2:30:7 MINLEN:%s"%(input.infq,beforeBLremovalfq,params.adaptersfa,params.minlen))
-            if remove_blacklist_reads==0:
-                cmds.append("mv /lscratch/$SLURM_JOBID/%s %s"%(beforeBLremovalfq,output.outfq))
-            else:
-                bam=re.sub("R1.fastq.gz","R1.notBL.bam",input.infq)
-                cmds.append("module load %s"%(params.bwaver))
-                cmds.append("module load %s"%(params.samtoolsver))
-                cmds.append("module load %s"%(params.picardver))
-                cmds.append("bwa mem -t %s %s /lscratch/$SLURM_JOBID/%s | samtools view -@%s -f4 -b -o /lscratch/$SLURM_JOBID/%s"%(threads,params.blacklistbwaindex,beforeBLremovalfq,threads,bam))
-                cmds.append("java -Xmx64g -jar $PICARDJARPATH/SamToFastq.jar VALIDATION_STRINGENCY=SILENT INPUT=/lscratch/$SLURM_JOBID/%s FASTQ=%s"%(bam,output.outfq))
-            cmd="\n".join(cmds)
-            shell(cmd)
+        shell:
+            """
+module load {params.cutadaptver};
+module load parallel;
+module load pigz;
+if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
+cd /lscratch/$SLURM_JOBID
+sample=`echo {input.infq}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
+zcat {params.workpath}/{input.infq} |split -l 4000000 -d -a 4 - ${{sample}}.R1.
+ls ${{sample}}.R1.0???|sort > ${{sample}}.tmp1
+while read a;do
+mv $a ${{a}}.fastq
+done < ${{sample}}.tmp1
+while read f1;do
+echo "cutadapt --nextseq-trim=2 --trim-n -m {params.minlen} -b file:{params.adaptersfa} -o ${{f1}}.cutadapt ${{f1}}.fastq";done < ${{sample}}.tmp1 > do_cutadapt_${{sample}}
+parallel -j {threads} < do_cutadapt_${{sample}}
+rm -f ${{sample}}.outr1.fastq
+while read f1;do
+cat ${{f1}}.cutadapt >> ${{sample}}.outr1.fastq;
+done < ${{sample}}.tmp1
+module load {params.bwaver};
+module load {params.samtoolsver};
+module load {params.picardver};
+bwa mem -t {threads} {params.blacklistbwaindex} ${{sample}}.outr1.fastq | samtools view -@{threads} -f4 -b -o ${{sample}}.bam
+java -Xmx64g -jar $PICARDJARPATH/SamToFastq.jar VALIDATION_STRINGENCY=SILENT INPUT=${{sample}}.bam FASTQ=${{sample}}.outr1.noBL.fastq
+pigz -p 16 ${{sample}}.outr1.noBL.fastq;
+mv ${{sample}}.outr1.noBL.fastq.gz {params.workpath}/{output.outfq};
+            """
+
                 
 
     rule kraken_se:
@@ -248,7 +238,7 @@ fastqc {input} -t {threads} -o {output}
             samtoolsver=config['bin'][pfamily]['SAMTOOLSVER'],
         output:
             outbam1="{d}/{name}.sorted.bam", 
-            outbam2="{d}/{name}.sorted.Q5.bam",
+            outbam2=temp("{d}/{name}.sorted.Q5.bam"),
             flagstat1="{d}/{name}.sorted.bam.flagstat",
             flagstat2="{d}/{name}.sorted.Q5.bam.flagstat",
         threads: 32
@@ -281,13 +271,13 @@ preseq c_curve -B -o {output.ccurve} {input.bam}
             
     rule picard_dedup:
         input: 
-            bam1= join(bam_dir,"{name}.sorted.bam"),
+            # bam1= join(bam_dir,"{name}.sorted.bam"),
             bam2= join(bam_dir,"{name}.sorted.Q5.bam")
         output:
-            out1=temp(join(bam_dir,"{name}.bwa_rg_added.sorted.bam")), 
-            out2=join(bam_dir,"{name}.sorted.DD.bam"),
-            out2f=join(bam_dir,"{name}.sorted.DD.bam.flagstat"),
-            out3=join(bam_dir,"{name}.bwa.duplic"), 
+            # out1=temp(join(bam_dir,"{name}.bwa_rg_added.sorted.bam")), 
+            # out2=temp(join(bam_dir,"{name}.sorted.DD.bam")),
+            # out2f=join(bam_dir,"{name}.sorted.DD.bam.flagstat"),
+            # out3=join(bam_dir,"{name}.bwa.duplic"), 
             out4=temp(join(bam_dir,"{name}.bwa_rg_added.sorted.Q5.bam")), 
             out5=join(bam_dir,"{name}.sorted.Q5DD.bam"),
             out5f=join(bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
@@ -301,26 +291,6 @@ preseq c_curve -B -o {output.ccurve} {input.bam}
             """
 module load {params.samtoolsver};
 module load {params.picardver}; 
-java -Xmx10g \
-  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar \
-  INPUT={input.bam1} \
-  OUTPUT={output.out1} \
-  TMP_DIR=/lscratch/$SLURM_JOBID \
-  RGID=id \
-  RGLB=library \
-  RGPL=illumina \
-  RGPU=machine \
-  RGSM=sample; 
-java -Xmx10g \
-  -jar $PICARDJARPATH/MarkDuplicates.jar \
-  INPUT={output.out1} \
-  OUTPUT={output.out2} \
-  TMP_DIR=/lscratch/$SLURM_JOBID \
-  CREATE_INDEX=true \
-  VALIDATION_STRINGENCY=SILENT \
-  REMOVE_DUPLICATES=true \
-  METRICS_FILE={output.out3}
-samtools flagstat {output.out2} > {output.out2f}
 java -Xmx10g \
   -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar \
   INPUT={input.bam2} \
@@ -347,28 +317,14 @@ samtools flagstat {output.out5} > {output.out5f}
     rule bam2bw:
         input:
             bam1= join(bam_dir,"{name}.sorted.bam"),
-            bam2= join(bam_dir,"{name}.sorted.Q5.bam"),
-#             flagstat1=join(bam_dir,"{name}.sorted.bam.flagstat"),
-#             flagstat2=join(bam_dir,"{name}.sorted.Q5.bam.flagstat"),
-            bam3= join(bam_dir,"{name}.sorted.DD.bam"),
             bam4= join(bam_dir,"{name}.sorted.Q5DD.bam"),
-#             flagstat3=join(bam_dir,"{name}.sorted.DD.bam.flagstat"),
-#             flagstat4=join(bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
         output:
-#             outbg1=temp(join(bw_dir,"{name}.sorted.normalized.bg")), 
-#             outbg2=temp(join(bw_dir,"{name}.sorted.Q5.normalized.bg")),
             outbw1=join(bw_dir,"{name}.sorted.normalized.bw"), 
-            outbw2=join(bw_dir,"{name}.sorted.Q5.normalized.bw"),
-#             outbg3=temp(join(bw_dir,"{name}.sorted.DD.normalized.bg")), 
-#             outbg4=temp(join(bw_dir,"{name}.sorted.Q5DD.normalized.bg")),
-            outbw3=join(bw_dir,"{name}.sorted.DD.normalized.bw"), 
             outbw4=join(bw_dir,"{name}.sorted.Q5DD.normalized.bw"),
         params:
             rname="pl:bam2bw",
             batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
             reflen=config['references'][pfamily]['REFLEN'],
-#             bedtoolsver=config['bin'][pfamily]['BEDTOOLSVER'],
-#             ucscver=config['bin'][pfamily]['UCSCVER'],
             deeptoolsver=config['bin'][pfamily]['DEEPTOOLSVER'],
         run:
             lines=list(map(lambda x:x.strip().split("\t"),open(params.reflen).readlines()))
@@ -379,30 +335,9 @@ samtools flagstat {output.out5} > {output.out5f}
             commoncmd="module load {params.deeptoolsver};"
             cmd1="bamCoverage --bam "+input.bam1+" -o "+output.outbw1+" --binSize 2 --smoothLength 5 --ignoreForNormalization chrM chrX --numberOfProcessors 32 --normalizeTo1x "+str(genomelen)
             shell(commoncmd+cmd1)
-            cmd2="bamCoverage --bam "+input.bam2+" -o "+output.outbw2+" --binSize 2 --smoothLength 5 --ignoreForNormalization chrM chrX --numberOfProcessors 32 --normalizeTo1x "+str(genomelen)
-            shell(commoncmd+cmd2)
-            cmd3="bamCoverage --bam "+input.bam3+" -o "+output.outbw3+" --binSize 2 --smoothLength 5 --ignoreForNormalization chrM chrX --numberOfProcessors 32 --normalizeTo1x "+str(genomelen)
-            shell(commoncmd+cmd3)
             cmd4="bamCoverage --bam "+input.bam4+" -o "+output.outbw4+" --binSize 2 --smoothLength 5 --ignoreForNormalization chrM chrX --numberOfProcessors 32 --normalizeTo1x "+str(genomelen)
             shell(commoncmd+cmd4)
             
-            
-                    
-            
-#         run:
-#             commoncmd="module load {params.bedtoolsver};module load {params.ucscver};"
-#             scale1=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat1).readlines()))))[0][0]))
-#             cmd1=commoncmd+"bedtools genomecov -ibam "+input.bam1+" -bg -scale "+scale1+" -g "+params.reflen+" > "+output.outbg1+" && wigToBigWig -clip "+output.outbg1+" "+params.reflen+" "+output.outbw1
-#             shell(cmd1)
-#             scale2=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat2).readlines()))))[0][0]))
-#             cmd2=commoncmd+"bedtools genomecov -ibam "+input.bam2+" -bg -scale "+scale2+" -g "+params.reflen+" > "+output.outbg2+" && wigToBigWig -clip "+output.outbg2+" "+params.reflen+" "+output.outbw2
-#             shell(cmd2)
-#             scale3=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat3).readlines()))))[0][0]))
-#             cmd3=commoncmd+"bedtools genomecov -ibam "+input.bam3+" -bg -scale "+scale3+" -g "+params.reflen+" > "+output.outbg3+" && wigToBigWig -clip "+output.outbg3+" "+params.reflen+" "+output.outbw3
-#             shell(cmd3)
-#             scale4=str(1000000000/int(list(filter(lambda x:x[3]=="mapped",list(map(lambda x:x.strip().split(),open(input.flagstat4).readlines()))))[0][0]))
-#             cmd4=commoncmd+"bedtools genomecov -ibam "+input.bam4+" -bg -scale "+scale4+" -g "+params.reflen+" > "+output.outbg4+" && wigToBigWig -clip "+output.outbg4+" "+params.reflen+" "+output.outbw4
-#             shell(cmd4)
 
 
     rule deeptools_prep:
@@ -481,16 +416,10 @@ samtools flagstat {output.out5} > {output.out5f}
     rule ppqt:
         input:
             bam1= join(bam_dir,"{name}.sorted.bam"),
-            bam2= join(bam_dir,"{name}.sorted.Q5.bam"),
-            bam3= join(bam_dir,"{name}.sorted.DD.bam"),
             bam4= join(bam_dir,"{name}.sorted.Q5DD.bam"),
         output:
             ppqt1= join(bam_dir,"{name}.sorted.ppqt"),
             pdf1= join(bam_dir,"{name}.sorted.pdf"),
-            ppqt2= join(bam_dir,"{name}.sorted.Q5.ppqt"),
-            pdf2= join(bam_dir,"{name}.sorted.Q5.pdf"),
-            ppqt3= join(bam_dir,"{name}.sorted.DD.ppqt"),
-            pdf3= join(bam_dir,"{name}.sorted.DD.pdf"),
             ppqt4= join(bam_dir,"{name}.sorted.Q5DD.ppqt"),
             pdf4= join(bam_dir,"{name}.sorted.Q5DD.pdf"),
         params:
@@ -503,13 +432,9 @@ samtools flagstat {output.out5} > {output.out5f}
             module load {params.samtoolsver};
             module load {params.rver};
             Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID 
+            -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
             Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam2} -savp -out={output.ppqt2} -tmpdir=/lscratch/$SLURM_JOBID
-            Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam3} -savp -out={output.ppqt3} -tmpdir=/lscratch/$SLURM_JOBID
-            Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID
+            -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
             """
 
 
@@ -550,7 +475,7 @@ samtools flagstat {output.out5} > {output.out5f}
             
     rule multiqc:
         input: 
-            expand(join(bam_dir,"{name}.bwa.duplic"), name=samples),
+            expand(join(bam_dir,"{name}.bwa.Q5.duplic"), name=samples),
             expand("FQscreen/{name}.R1.trim_screen.txt",name=samples),
             expand(join(preseq_dir,"{name}.ccurve"), name=samples),
             "QC",
@@ -787,29 +712,5 @@ elif readtype == 'Paired' :
                 module load {params.multiqc}
                 cd Reports && multiqc -f  ../
                 """
-
-    rule RNAseq_generate_QC_table:
-        input:
-            expand("QC/{name}_run_trimmomatic.err",name=samples),
-            expand("{name}.star.duplic",name=samples),
-            expand("{name}.p2.Log.final.out",name=samples),
-            expand("{name}.RnaSeqMetrics.txt",name=samples)
-        output:
-            config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
-        params:
-            workpath,
-            project=config['project']['id'],
-            flowcell=config['project']['flowcellid'],
-            rname="pl:QC_table"
-        shell: 
-            """
-            perl Scripts/CollectPipelineStats2Tab_v2.3.pl \
-                -p {params.project}\
-                -f {params.flowcell}\
-                -d {params.workpath}\
-                -r 5\
-                -e 2;
-            perl Scripts/Tab2Excel_v2.3.pl -i {params.project}_{params.flowcell} -r 5
-            """
 
 
