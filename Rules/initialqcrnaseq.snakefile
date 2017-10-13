@@ -1,5 +1,6 @@
 from snakemake.utils import R
-
+from os.path import join
+#testing
 configfile: "run.json"
 
 from os import listdir
@@ -15,22 +16,44 @@ elif len(fR1) >= 2:
 else:
    pass
 
+workpath = config['project']['workpath']
+print("Workpath is %s"%(workpath))
 
 if pe=="yes":
 
    rule all:
-      params: batch='--time=168:00:00'
-      input: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx","Reports/multiqc_report.html",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),"rawQC",
-            "QC",expand("FQscreen/{name}_R1_001_trim_paired_screen.txt",name=samples), expand("FQscreen/{name}_R1_001_trim_paired_screen.png",name=samples), expand("FQscreen/{name}_R2_001_trim_paired_screen.txt",name=samples), expand("FQscreen/{name}_R2_001_trim_paired_screen.png",name=samples)
+      params: 
+        batch='--time=168:00:00'
+      input: 
+        config['project']['id']+"_"+config['project']['flowcellid']+".xlsx",
+        join(workpath,"Reports/multiqc_report.html"),
+        expand("{name}.RnaSeqMetrics.txt",name=samples),
+        join(workpath,"rawQC"),
+        join(workpath,"QC"),
+        expand(join(workpath,"FQscreen/{name}_R1_001_trim_paired_screen.txt"),name=samples),
+        expand(join(workpath,"FQscreen/{name}_R1_001_trim_paired_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen/{name}_R2_001_trim_paired_screen.txt"),name=samples),
+        expand(join(workpath,"FQscreen/{name}_R2_001_trim_paired_screen.png"),name=samples)
+
    rule rawfastqc:
-      input: expand("{name}.R1.fastq.gz", name=samples), expand("{name}.R2.fastq.gz", name=samples)
-      output: "rawQC"
+      input: 
+        expand("{name}.R1.fastq.gz", name=samples), 
+        expand("{name}.R2.fastq.gz", name=samples)
+      output: 
+        join(workpath,"rawQC")
       priority: 2
-      params: rname='pl:rawfastqc',batch='--cpus-per-task=32 --mem=110g --time=48:00:00',fastqcver=config['bin'][pfamily]['FASTQCVER'],workpath=config['project']['workpath']
+      params: 
+        rname='pl:rawfastqc',
+        batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
+        fastqcver=config['bin'][pfamily]['FASTQCVER'],
       threads: 32
-      shell: "mkdir -p {output};module load {params.fastqcver}; fastqc {input} -t {threads} -o {output}; module load python/3.5; python Scripts/get_read_length.py {params.workpath}/rawQC > {output}/readlength.txt 2> {output}/readlength.err"
-      
+      shell:
+        """
+mkdir -p {output};
+module load {params.fastqcver};
+fastqc {input} -t {threads} -o {output}; 
+        """
+
    rule trimmomatic_pe:
       input: file1= config['project']['workpath']+"/{name}.R1."+config['project']['filetype'],file2=config['project']['workpath']+"/{name}.R2."+config['project']['filetype']
       output: out11="trim/{name}_R1_001_trim_paired.fastq.gz",out12="trim/{name}_R1_001_trim_unpaired.fastq.gz",out21="trim/{name}_R2_001_trim_paired.fastq.gz",out22="trim/{name}_R2_001_trim_unpaired.fastq.gz",err="QC/{name}_run_trimmomatic.err"
@@ -39,19 +62,47 @@ if pe=="yes":
       shell:"module load {params.trimmomaticver}; java -classpath $TRIMMOJAR   org.usadellab.trimmomatic.TrimmomaticPE -threads {threads} {input.file1} {input.file2} {output.out11} {output.out12} {output.out21} {output.out22} ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold} LEADING:10 TRAILING:10 MAXINFO:50:0.97 MINLEN:{params.minlen} 2> {output.err}"
 
    rule fastqc:
-      input: expand("trim/{name}_R1_001_trim_paired.fastq.gz", name=samples), expand("trim/{name}_R2_001_trim_paired.fastq.gz", name=samples)
-      output: "QC"
+      input: 
+        expand("trim/{name}_R1_001_trim_paired.fastq.gz", name=samples), 
+        expand("trim/{name}_R2_001_trim_paired.fastq.gz", name=samples)
+      output: 
+        join(workpath,"QC")
       priority: 2
-      params: rname='pl:fastqc',batch='--cpus-per-task=32 --mem=110g --time=48:00:00',fastqcver=config['bin'][pfamily]['FASTQCVER'],workpath=config['project']['workpath']
+      params: 
+        rname='pl:fastqc',
+        batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
+        fastqcver=config['bin'][pfamily]['FASTQCVER'],
       threads: 32
-      shell: "mkdir -p {output};module load {params.fastqcver}; fastqc {input} -t {threads} -o {output}; module load python/3.5; python Scripts/get_read_length.py {params.workpath}/QC > {output}/readlength.txt  2> {output}/readlength.err"
+      shell: 
+        """
+mkdir -p {output};
+module load {params.fastqcver};
+fastqc {input} -t {threads} -o {output};
+module load python/3.5; python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output}/readlength.err
+        """
 
    rule fastq_screen:
-      input: file1="trim/{name}_R1_001_trim_paired.fastq.gz", file2="trim/{name}_R2_001_trim_paired.fastq.gz"
-      output: out1="FQscreen/{name}_R1_001_trim_paired_screen.txt", out2="FQscreen/{name}_R1_001_trim_paired_screen.png", out3="FQscreen/{name}_R2_001_trim_paired_screen.txt", out4="FQscreen/{name}_R2_001_trim_paired_screen.png"
-      params: rname='pl:fqscreen',batch='--cpus-per-task=24 --mem=64g --time=10:00:00',fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],outdir = "FQscreen",config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
+      input: 
+        file1="trim/{name}_R1_001_trim_paired.fastq.gz", 
+        file2="trim/{name}_R2_001_trim_paired.fastq.gz"
+      output: 
+        out1=join(workpath,"FQscreen/{name}_R1_001_trim_paired_screen.txt"), 
+        out2=join(workpath,"FQscreen/{name}_R1_001_trim_paired_screen.png"), 
+        out3=join(workpath,"FQscreen/{name}_R2_001_trim_paired_screen.txt"), 
+        out4=join(workpath,"FQscreen/{name}_R2_001_trim_paired_screen.png")
+      params: 
+        rname='pl:fqscreen',
+        batch='--cpus-per-task=24 --mem=64g --time=10:00:00',
+        fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
+        outdir = join(workpath,"FQscreen"),
+        config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
       threads: 24
-      shell:  "module load bowtie/2-2.2.9;module load perl/5.18.2; {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --subset 1000000 --aligner bowtie2 --force {input.file1} {input.file2}"
+      shell:  
+        """
+module load bowtie/2-2.2.9;
+module load perl/5.18.2;
+{params.fastq_screen} --conf {params.config} --outdir {params.outdir} --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1} {input.file2}
+        """
 
 
    rule star1p:
@@ -217,14 +268,23 @@ rule rnaseqc:
          """
 
 rule rnaseq_multiqc:
-   input: expand("{name}.Rdist.info",name=samples),expand("FQscreen/{name}_R1_001_trim_paired_screen.png",name=samples),expand("{name}.flagstat.concord.txt",name=samples),expand("{name}.RnaSeqMetrics.txt",name=samples)
-   output: "Reports/multiqc_report.html"
-   params: rname="pl:multiqc",multiqc=config['bin'][pfamily]['MULTIQC'],qcconfig=config['bin'][pfamily]['CONFMULTIQC']
+   input: 
+    expand("{name}.Rdist.info",name=samples),
+    expand(join(workpath,"FQscreen/{name}_R1_001_trim_paired_screen.png"),name=samples),
+    expand("{name}.flagstat.concord.txt",name=samples),
+    expand("{name}.RnaSeqMetrics.txt",name=samples)
+   output: 
+    join(workpath,"Reports/multiqc_report.html")
+   params: 
+    rname="pl:multiqc",
+    multiqc=config['bin'][pfamily]['MULTIQC'],
+    qcconfig=config['bin'][pfamily]['CONFMULTIQC']
    threads: 1
-   shell:  """
-            module load {params.multiqc}
-            cd Reports && multiqc -f -c {params.qcconfig}  ../
-            """
+   shell:  
+    """
+module load {params.multiqc}
+cd Reports && multiqc -f -c {params.qcconfig} ../
+    """
 
 if pe=="yes":
 
