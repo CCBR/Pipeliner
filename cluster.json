@@ -7,6 +7,14 @@
         "threads": "4",
         "gres":"lscratch:256"
     },
+    "rawfastqc":
+    {
+        "threads": "8",
+    },    
+    "fastqc":
+    {
+        "threads": "8",
+    },
     "deeptools_prep":
     {
         "mem": "4g",
@@ -236,7 +244,8 @@
     },
     "multiqc":
     {
-        "threads": "1"
+        "threads": "2",
+        "mem" : "24g"
     },
     "fastq_screen":
     {
