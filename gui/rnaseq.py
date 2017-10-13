@@ -126,7 +126,7 @@ class RNASeqFrame( PipelineFrame ) :
         if self.Pipeline.get() == 'initialqcrnaseq' :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
-            self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+            self.info.grid_forget()
         elif self.Pipeline.get() == 'rnaseq' :
             self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
             self.sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
