@@ -7,6 +7,14 @@
         "threads": "4",
         "gres":"lscratch:256"
     },
+    "stats":
+    {
+        "mem": "110g",
+    },    
+    "picard":
+    {
+        "mem": "110g",
+    },    
     "rawfastqc":
     {
         "threads": "8",
