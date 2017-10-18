@@ -55,7 +55,9 @@ if pe=="yes":
         expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),name=samples),
         expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),name=samples),
         expand(join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.txt"),name=samples),
-        expand(join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.png"),name=samples)
+        expand(join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.png"),name=samples),
+        expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
+        expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
 
 
    rule rawfastqc:
@@ -190,6 +192,32 @@ module load {params.bowtie2ver};
 module load {params.perlver};
 {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1} {input.file2}
         """
+
+   rule kraken_pe:
+      input: 
+        fq1=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
+        fq2=join(workpath,trim_dir,"{name}_R2_001_trim_paired.fastq.gz"),
+      output: 
+        krakentaxa = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),
+        kronahtml = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),
+      params: 
+        rname='pl:kraken',
+        prefix = "{name}",
+        outdir=join(workpath,kraken_dir),
+        bacdb=config['bin'][pfamily]['tool_parameters']['KRAKENBACDB'],
+        krakenver=config['bin'][pfamily]['tool_versions']['KRAKENVER'],
+        kronatoolsver=config['bin'][pfamily]['tool_versions']['KRONATOOLSVER'],
+      threads: 24
+      shell: """
+module load {params.krakenver};
+module load {params.kronatoolsver};
+cd /lscratch/$SLURM_JOBID;
+kraken --db {params.bacdb} --fastq-input --gzip-compressed --threads {threads} --output {params.prefix}.krakenout --preload --paired {input.fq1} {input.fq2}
+kraken-translate --mpa-format --db {params.bacdb} {params.prefix}.krakenout |cut -f2|sort|uniq -c|sort -k1,1nr > {params.prefix}.krakentaxa
+cut -f2,3 {params.prefix}.krakenout | ktImportTaxonomy - -o {params.prefix}.kronahtml
+mv {params.prefix}.krakentaxa {output.krakentaxa}
+mv {params.prefix}.kronahtml {output.kronahtml}
+"""
 
 
    rule star1p:

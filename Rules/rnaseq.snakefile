@@ -101,60 +101,37 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
         
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
   rule all:
-     params: batch='--time=168:00:00'
-#     input: "STAR_QC","Reports/multiqc_report.html",
-     input: "Reports/multiqc_report.html",
-#            expand("{name}.RnaSeqMetrics.txt",name=samples),
-#            "postTrimQC",
-            "sampletable.txt",
-            "RawCountFile_genes_filtered.txt",
-            "RawCountFile_junctions_filtered.txt",
-            "RawCountFile_genejunctions_filtered.txt",
-            expand("{name}.star.count.overlap.txt",name=samples),
-            "RawCountFileOverlap.txt","RawCountFileStar.txt",
-            expand("{name}.rsem.genes.results",name=samples),
-            "DEG_genes/PcaReport.html","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html","DEG_rsemgenes/PcaReport.html"
-
-elif config['project']['DEG'] == "yes" and config['project']['TRIM'] == "no":
-  rule all:
-#     input: "STAR_QC","Reports/multiqc_report.html",
-     input: "Reports/multiqc_report.html",
-            "RSEMDEG_isoform/ebseq_isoform_completed.txt",
-            "RSEMDEG_gene/ebseq_gene_completed.txt",
-            "salmonrun/sleuth_completed.txt",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "sampletable.txt",
-            "DEG_genes/deseq2_pca.png",
-            "DEG_genes/edgeR_prcomp.png",
-            "RawCountFile_genes_filtered.txt",
-            "DEG_genes/Limma_MDS.png",
-            "DEG_junctions/deseq2_pca.png",
-            "DEG_junctions/edgeR_prcomp.png",
-            "RawCountFile_junctions_filtered.txt",
-            "DEG_junctions/Limma_MDS.png",
-            "DEG_genejunctions/deseq2_pca.png",
-            "DEG_genejunctions/edgeR_prcomp.png",
-            "RawCountFile_genejunctions_filtered.txt",
-            "DEG_genejunctions/Limma_MDS.png",
-            expand("{name}.star.count.overlap.txt",name=samples),
-            "RawCountFileOverlap.txt","RawCountFileStar.txt",
-            expand("{name}.rsem.genes.results",name=samples),
-            "DEG_genes/PcaReport.htm","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html"
+     params: 
+      batch='--time=168:00:00',
+     input: 
+      join(workpath,"Reports","multiqc_report.html"),
+      join(workpath,star_dir,"sampletable.txt"),
             
-     params: batch='--time=168:00:00'
-     #input: "files_to_rnaseqc.txt","STAR_QC","RawCountFile_filtered.txt","sampletable.txt","deseq2_pca.png","edgeR_prcomp.png","Limma_MDS.png"
-else:
-  rule all:
-     params: batch='--time=168:00:00'
-#     input: "STAR_QC","Reports/multiqc_report.html",
-     input: "Reports/multiqc_report.html",
-            expand("{name}.RnaSeqMetrics.txt",name=samples),
-            "RawCountFile_genes_filtered.txt",
-            "RawCountFile_genejunctions_filtered.txt",
-            expand("{name}.star.count.overlap.txt",name=samples),
-            "RawCountFileOverlap.txt","RawCountFileStar.txt",
-            expand("{name}.rsem.genes.results",name=samples),
-            "DEG_genes/PcaReport.htm","DEG_junctions/PcaReport.html","DEG_genejunctions/PcaReport.html"
+      #Subread-genes
+      
+      join(workpath,subreadg_dir,"RawCountFile_Subread_genes_filtered.txt"),
+      join(workpath,subreadg_dir,"PcaReport.html"),
+      
+      #Subread-junctions
+      
+      join(workpath,subreadj_dir,"RawCountFile_Subread_junctions_filtered.txt"),
+      join(workpath,subreadj_dir,"PcaReport.html"),
+      
+      #Subread-gene-junctions
+
+      join(workpath,subreadgj_dir,"RawCountFile_Subread_genejunctions_filtered.txt"),
+      join(workpath,subreadgj_dir,"PcaReport.html"),
+
+      #RSEM
+      
+      join(workpath,rsemg_dir,"RawCountFile_RSEM_genes_filtered.txt"), 
+      join(workpath,rsemg_dir,"PcaReport.html"),
+      expand(join(workpath,rsemg_dir,"{name}.RSEM.genes.results"),name=samples),
+      
+      expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"),name=samples),
+      join(workpath,star_dir,"RawCountFileOverlap.txt"),
+      join(workpath,star_dir,"RawCountFileStar.txt"),
+
 
 ########################################################
 
@@ -216,7 +193,7 @@ if pe=="yes":
         file1=join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),
       output: 
         out1=join(workpath,rsemg_dir,"{name}.RSEM.genes.results"),
-        out2=join(workpath,rsemg_dir,"{name}.RSEM.isoforms.results"),
+        out2=join(workpath,rsemi_dir,"{name}.RSEM.isoforms.results"),
       params:
         rname='pl:rsem',
         prefix="{name}.RSEM",
@@ -230,10 +207,12 @@ if pe=="yes":
         pythonscript=join(workpath,"Scripts","merge_rsem_results.py"),
       threads: 16
       shell: """
+if [ ! -d {params.outdir} ]; then mkdir {params.outdir}; fi
+if [ ! -d {params.outdir2} ]; then mkdir {params.outdir2}; fi
 cd {params.outdir}
 module load {params.rsemver}
 rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files
-mv {params.outdir}/{params.prefix}.isoforms.results {params.outdir2}
+mv {params.outdir}/{params.prefix}.isoforms.results {params.outdir2}/
 """
 
 if se=="yes":
@@ -257,31 +236,30 @@ if se=="yes":
         pythonscript=join(workpath,"Scripts","merge_rsem_results.py"),
       threads: 16
       shell: """
+if [ ! -d {params.outdir} ]; then mkdir {params.outdir}; fi
+if [ ! -d {params.outdir2} ]; then mkdir {params.outdir2}; fi
 cd {params.outdir}
 module load {params.rsemver}
 rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files
-mv {params.outdir}/{params.prefix}.isoforms.results {params.outdir2}
+mv {params.outdir}/{params.prefix}.isoforms.results {params.outdir2}/
 """
 
 rule rsem_merge:
-  input:
-    join(workpath,rsemg_dir),
-    join(workpath,rsemi_dir),
-  output:
-    fpkm1=join(workpath,rsemg_dir,"RSEM.genes.FPKM.all_samples.txt"),
-    fpkm2=join(workpath,rsemi_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
-  params: 
+   input:
+    files=expand(join(workpath,rsemg_dir,"{name}.RSEM.genes.results"), name=samples),
+    files2=expand(join(workpath,rsemi_dir,"{name}.RSEM.isoforms.results"), name=samples),
+   output: 
+    join(workpath,rsemg_dir,"RSEM.genes.FPKM.all_samples.txt"),
+    join(workpath,rsemi_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
+   params: 
     rname='pl:rsem_merge',
     pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
     annotate=config['references'][pfamily]['ANNOTATE'],
     pythonscript=join(workpath,"Scripts","merge_rsem_results.py"),
-  threads: 16
-  shell: """
+   shell: """
 module load {params.pythonver}
 python {params.pythonscript} {params.annotate} {rsemg_dir} {rsemi_dir}
 """
-
-
 
 
 rule rsemcounts:
@@ -564,7 +542,7 @@ Rscript pcacall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.pro
 rule EBSeq_isoform:
   input: 
     samtab=join(workpath,star_dir,"sampletable.txt"),
-    igfiles=expand(join(workpath,rsemi_dir,"{name}.RSEM.isoforms.results"), name=samples),
+    igfiles=expand(join(workpath,rsemi_dir,"{name}.RSEM.isoforms.results"),name=samples),
   output: 
     join(workpath,rsemi_dir,"EBSeq_isoform_completed.txt")
   params: 
