@@ -703,6 +703,16 @@
         "gres":"lscratch:500",
         "threads": "16"
     },
+    "subread":
+    {
+        "gres":"lscratch:500",
+        "threads": "16"
+    },
+    "subreadoverlap":
+    {
+        "gres":"lscratch:500",
+        "threads": "16"
+    },
     "salmon":
     {
         "threads": "6",

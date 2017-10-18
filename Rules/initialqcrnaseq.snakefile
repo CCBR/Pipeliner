@@ -1,6 +1,5 @@
 from snakemake.utils import R
 from os.path import join
-#testing
 configfile: "run.json"
 
 from os import listdir
@@ -30,6 +29,7 @@ star_dir="STAR_files"
 bams_dir="bams"
 log_dir="logfiles"
 rseqc_dir="RSeQC"
+kraken_dir="kraken"
 
 if not os.path.exists(join(workpath,star_dir)):
   os.mkdir(join(workpath,star_dir))
@@ -311,6 +311,8 @@ if se=="yes":
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
         expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),name=samples),
         expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),name=samples),
+        expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
+        expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
 
    rule rawfastqc:
       input: 
@@ -423,6 +425,31 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
 module load {params.bowtie2ver};
 module load {params.perlver};
 {params.fastq_screen} --conf {params.config} --outdir {params.outdir} --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1}
+"""
+
+   rule kraken_se:
+      input: 
+        fq=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
+      output: 
+        krakentaxa = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),
+        kronahtml = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),
+      params: 
+        rname='pl:kraken',
+        prefix = "{name}",
+        outdir=join(workpath,kraken_dir),
+        bacdb=config['bin'][pfamily]['tool_parameters']['KRAKENBACDB'],
+        krakenver=config['bin'][pfamily]['tool_versions']['KRAKENVER'],
+        kronatoolsver=config['bin'][pfamily]['tool_versions']['KRONATOOLSVER'],
+      threads: 24
+      shell: """
+module load {params.krakenver};
+module load {params.kronatoolsver};
+cd /lscratch/$SLURM_JOBID;
+kraken --db {params.bacdb} --fastq-input --gzip-compressed --threads {threads} --output {params.prefix}.krakenout --preload {input.fq}
+kraken-translate --mpa-format --db {params.bacdb} {params.prefix}.krakenout |cut -f2|sort|uniq -c|sort -k1,1nr > {params.prefix}.krakentaxa
+cut -f2,3 {params.prefix}.krakenout | ktImportTaxonomy - -o {params.prefix}.kronahtml
+mv {params.prefix}.krakentaxa {output.krakentaxa}
+mv {params.prefix}.kronahtml {output.kronahtml}
 """
 
    rule star1p:
@@ -626,12 +653,14 @@ rule rnaseq_multiqc:
     join(workpath,"Reports","multiqc_report.html")
    params: 
     rname="pl:multiqc",
+    outdir=join(workpath,"Reports"),
     multiqcver=config['bin'][pfamily]['tool_versions']['MULTIQCVER'],
     qcconfig=config['bin'][pfamily]['CONFMULTIQC']
    threads: 1
    shell: """
 module load {params.multiqcver}
-cd Reports && multiqc -f -c {params.qcconfig} ../
+cd {params.outdir}
+multiqc -f -c {params.qcconfig} ../
     """
 
 if pe=="yes":

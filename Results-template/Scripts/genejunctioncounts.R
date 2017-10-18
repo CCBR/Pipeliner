@@ -3,9 +3,11 @@ DIR <- args[1]
 FILES <- args[2]
 MINCOUNT <- as.numeric(args[4])
 MINSAMPLES <- as.numeric(args[5])
-
 #GTFFILE <- args[3]
 GENEINFO <- args[3]
+
+setwd(DIR)
+
 #system(paste('grep -w gene ',GTFFILE,' | cut -f1,4,5,7,9 | sed -e "s/;/\\t/g" | cut -f1,2,3,4,5,7,9 | sed -e \'s/gene_id "//g\' -e \'s/gene_type "//g\' -e \'s/gene_name "//g\' | sed -e \'s/"//g\' > gencode.gtf.pre.bed ',sep=""))
 #pregtf=read.delim('gencode.gtf.pre.bed',header=F,stringsAsFactors=F)
 pregtf=read.delim(GENEINFO,header=F,stringsAsFactors=F)
@@ -15,8 +17,6 @@ id=paste(pregtf[,5],"-",pregtf[,7],sep="")
 gtf=cbind(pregtf[,1],pregtf[,2],pregtf[,3],filler1,filler2,pregtf[,4],gsub("[[:blank:]]", "",id),gsub("[[:blank:]]", "",pregtf[,6]))
 write.table(gtf,file="gencode.gtf.filler.bed",sep="\t",col.names=F,row.names=F,quote=F)
 
-
-setwd(DIR)
 myfiles=as.character(unlist(strsplit(FILES, split=" ")))
 
 res=read.delim(myfiles[1],header=F,stringsAsFactors=F)
@@ -69,8 +69,8 @@ for(i in seq(2, length(myfiles)+1, by = 1))
   cat(i," .. done \n")
 }
 
-write.table(as.data.frame(merged),file="RawCountFile_genejunctions.txt",sep="\t",row.names=F,quote=F)
-tofilter=read.delim("RawCountFile_genejunctions.txt",stringsAsFactors=F,row.names=1)
+write.table(as.data.frame(merged),file="RawCountFile_Subread_genejunctions.txt",sep="\t",row.names=F,quote=F)
+tofilter=read.delim("RawCountFile_Subread_genejunctions.txt",stringsAsFactors=F,row.names=1)
 
 
 # Remove rows which do not pass filter
@@ -82,7 +82,7 @@ library("edgeR")
 filter <- apply(cpm(tofilter), 1, function(x) length(x[x>MINCOUNT])>=MINSAMPLES)
 #filter <- apply(myzero, 1, function(y) length(y[y>0])>=1)
 filtered=tofilter[filter,]
-write.table(as.data.frame(filtered),file="RawCountFile_genejunctions_filtered.txt",sep="\t",col.names=NA)
+write.table(as.data.frame(filtered),file="RawCountFile_Subread_genejunctions_filtered.txt",sep="\t",col.names=NA)
 dim(filtered)
 
 #Rscript genejunctioncounts.R '/scratch/gowdanb/rnatest/' 'SRR950078.p2.SJ.out.tab SRR950079.p2.SJ.out.tab SRR950080.p2.SJ.out.tab SRR950081.p2.SJ.out.tab SRR950082.p2.SJ.out.tab SRR950083.p2.SJ.out.tab SRR950084.p2.SJ.out.tab SRR950085.p2.SJ.out.tab SRR950086.p2.SJ.out.tab SRR950087.p2.SJ.out.tab' '/fdb/GENCODE/Gencode_human/release_19/gencode.v19.annotation.gtf' '5' '1'

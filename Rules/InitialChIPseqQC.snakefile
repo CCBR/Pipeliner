@@ -180,7 +180,7 @@ mv ${{sample}}.outr1.noBL.fastq.gz {params.workpath}/{output.outfq};
         params: 
             rname='pl:kraken',
             # batch='--cpus-per-task=32 --mem=200g --time=48:00:00', # does not work ... just add required resources in cluster.json ... make a new block for this rule there
-            bacdb=config['references'][pfamily]['KRAKENBACDB'],
+            bacdb=config['bin'][pfamily]['KRAKENBACDB'],
             krakenver=config['bin'][pfamily]['KRAKENVER'],
             kronatoolsver=config['bin'][pfamily]['KRONATOOLSVER'],
         threads: 32
