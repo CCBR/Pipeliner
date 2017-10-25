@@ -18,6 +18,8 @@ my $out = $name . '_readlength.txt';
 open G, ">$out";
 
 my $size = '';
+my $temp='';
+
 $cmd= 'unzip ' . $name . '.R1_fastqc.zip';
 system($cmd);
 my $file= $name . '.R1_fastqc/fastqc_data.txt';
@@ -28,7 +30,8 @@ while (<H>) {
 #  		last if m/^$/;
   		if ($_ =~ m'Sequence length') {
 #  			print $_;
-  			$size=((split ' ', $_)[2]);
+  			$temp=((split ' ', $_)[2]);
+  			$size=((split '-', $temp)[1]);
   		}
   	}
 close H;

@@ -133,6 +133,7 @@
      {
         "threads": "8",
         "mem" : "96g",
+        "time" : "10-00:00:00",
     },
     "cnvkit_somatic":
      {
@@ -158,11 +159,13 @@
      {
         "threads": "8",
         "mem" : "96g",
+        "time" : "10-00:00:00",
     },
     "manta_wgs":
     {
         "threads": "8",
         "mem" : "96g",
+        "time" : "10-00:00:00",
     },
     "conpair":
     {
@@ -186,6 +189,36 @@
     "delly_somatic":
     {
         "threads": "1",
+        "mem" : "64g",
+        "time" : "10-00:00:00",
+    },
+    "delly_somatic_del":
+    {
+        "threads": "8",
+        "mem" : "64g",
+        "time" : "10-00:00:00",
+    },
+    "delly_somatic_ins":
+    {
+        "threads": "8",
+        "mem" : "64g",
+        "time" : "10-00:00:00",
+    },
+    "delly_somatic_dup":
+    {
+        "threads": "8",
+        "mem" : "64g",
+        "time" : "10-00:00:00",
+    },
+    "delly_somatic_trans":
+    {
+        "threads": "8",
+        "mem" : "64g",
+        "time" : "10-00:00:00",
+    },
+    "delly_somatic_inv":
+    {
+        "threads": "8",
         "mem" : "64g",
         "time" : "10-00:00:00",
     },
@@ -273,159 +306,159 @@
     },
     "gatk_genotype_gvcfs":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_1":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_2":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_3":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_4":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_5":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_6":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_7":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_8":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_9":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_10":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_11":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_12":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_13":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_14":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_15":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_16":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_17":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_18":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_19":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_20":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_21":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_22":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_X":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_Y":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_gvcfs_MT":
     {
-        "threads": "2",
+        "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_genotype_somatic_gvcfs":
     {
@@ -445,7 +478,8 @@
     "gatk_haplotype_caller":
     {
         "threads": "4",
-        "mem": "64g"
+        "mem": "64g",
+        "time" : "10-00:00:00",
     },
     "gatk_realign":
     {
@@ -474,7 +508,7 @@
     },
     "novocraft_novoalign":
     {
-        "time" : "6-00:00:00",    
+        "time" : "6-00:00:00",   
         "threads": "32"
     },
     "novocraft_sort":
@@ -605,7 +639,8 @@
     "gatk_rnaseqvar_haplotype_caller":
     {
         "threads": "4",
-        "mem": "96g"
+        "mem": "96g",
+        "time" : "10-00:00:00",
     },
     "star_generate":
     {
