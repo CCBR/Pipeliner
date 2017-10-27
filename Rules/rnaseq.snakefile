@@ -1,30 +1,40 @@
 from snakemake.utils import R
 from os.path import join
+from os import listdir
+import os
 
 
 configfile: "run.json"
 
 samples=config['project']['groups']['rsamps']
 
-from os import listdir
-mypath = config['project']['workpath']
-fR1 = [f for f in listdir(mypath) if f.find("R1") > 0]
-fR2 = [f for f in listdir(mypath) if f.find("R2") > 0]
+workpath = config['project']['workpath']
+
+fR1 = [f for f in listdir(workpath) if f.find(".R1.fastq") > 0]
+expected_fR2 = [re.sub(".R1.fastq",".R2.fastq",f) for f in fR1]
+fR2 = [f for f in listdir(workpath) if f.find(".R2.fastq") > 0]
 pe = ""
 se = ""
-if len(fR1) >= 2 and len(fR2) >= 2:
-   pe="yes"
-elif len(fR1) >= 2:
-   se="yes"
+if len(fR1)-len(set(fR2).intersection(set(expected_fR2))) == 0:
+	pe="yes"
+elif len(fR1) !=0 and len(fR2) == 0:
+	se="yes"
 else:
-   pass
+	exit("Files neither single-end NOR paired-end .... Files may be missing!!\n nR1s=%d\n nR2s=%d\n"%(len(fR1),len(fR2)))
 
-workpath = config['project']['workpath']
 print("Workpath is %s"%(workpath))
+
 if pe=="yes":
   print("Pair-end raw files found.")
 elif se=="yes":
   print("Single-end raw files found.")
+
+if not os.path.exists(join(workpath,"groups.tab"):
+	exit("groups.tab file is missing!!)
+if not os.path.exists(join(workpath,"contrasts.tab"):
+	exit("contrasts.tab file is missing!!)
+
+
 trim_dir='trim'
 star_dir="STAR_files"
 bams_dir="bams"
@@ -52,8 +62,8 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
       
       #EBSeq
       
-      # join(workpath,rsemi_dir,"EBSeq_isoform_completed.txt"),
-      # join(workpath,rsemg_dir,"EBSeq_gene_completed.txt"),
+      join(workpath,rsemi_dir,"EBSeq_isoform_completed.txt"),
+      join(workpath,rsemg_dir,"EBSeq_gene_completed.txt"),
       
       #Salmon/sleuth
       
@@ -552,16 +562,15 @@ rule EBSeq_isoform:
     contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
     rsemref=config['references'][pfamily]['RSEMREF'],
     rsem=config['bin'][pfamily]['RSEM'],
-    annotate=config['references'][pfamily]['ANNOTATE'],
-    rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    annotate=config['references'][pfamily]['ANNOTATEISOFORMS'],
+    pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
     rsemver=config['bin'][pfamily]['tool_versions']['RSEMVER'],
-    rscript1=join(workpath,"Scripts","ebseq.R"),
+    script1=join(workpath,"Scripts","EBSeq.py"),
   shell: """
-cp {params.rscript1} {params.outdir}
 cd {params.outdir}
-module load {params.rver}
+module load {params.pythonver}
 module load {params.rsemver}
-Rscript ebseq.R '{params.outdir}' '{input.igfiles}' '{input.samtab}' '{params.contrasts}' '{params.rsemref}' 'isoform' '{params.annotate}'
+python {params.script1} '{params.outdir}' '{input.igfiles}' '{input.samtab}' '{params.contrasts}' '{params.rsemref}' 'isoform' '{params.annotate}'
 """
 
 rule EBSeq_gene:
@@ -578,13 +587,12 @@ rule EBSeq_gene:
     rsemref=config['references'][pfamily]['RSEMREF'],
     rsem=config['bin'][pfamily]['RSEM'],
     annotate=config['references'][pfamily]['ANNOTATE'],
-    rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
     rsemver=config['bin'][pfamily]['tool_versions']['RSEMVER'],
-    rscript1=join(workpath,"Scripts","ebseq.R"),
+    script1=join(workpath,"Scripts","EBSeq.py"),
   shell: """
-cp {params.rscript1} {params.outdir}
 cd {params.outdir}
-module load {params.rver}
+module load {params.pythonver}
 module load {params.rsemver}
-Rscript ebseq.R '{params.outdir}' '{input.igfiles}' '{input.samtab}' '{params.contrasts}' '{params.rsemref}' 'gene' '{params.annotate}'
+python {params.script1} '{params.outdir}' '{input.igfiles}' '{input.samtab}' '{params.contrasts}' '{params.rsemref}' 'gene' '{params.annotate}'
 """

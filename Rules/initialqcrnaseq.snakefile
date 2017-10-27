@@ -3,22 +3,25 @@ from os.path import join
 configfile: "run.json"
 
 from os import listdir
-mypath = config['project']['workpath']
-fR1 = [f for f in listdir(mypath) if f.find("R1") > 0]
-fR2 = [f for f in listdir(mypath) if f.find("R2") > 0]
-pe = ""
-se = ""
-if len(fR1) >= 2 and len(fR2) >= 2:
-   pe="yes"
-elif len(fR1) >= 2:
-   se="yes"
-else:
-   pass
+
 
 
 # trim_method=1 #trimmomatic
 trim_method=2 #cutadapt
 workpath = config['project']['workpath']
+
+fR1 = [f for f in listdir(workpath) if f.find(".R1.fastq") > 0]
+expected_fR2 = [re.sub(".R1.fastq",".R2.fastq",f) for f in fR1]
+fR2 = [f for f in listdir(workpath) if f.find(".R2.fastq") > 0]
+pe = ""
+se = ""
+if len(fR1)-len(set(fR2).intersection(set(expected_fR2))) == 0:
+	pe="yes"
+elif len(fR1) !=0 and len(fR2) == 0:
+	se="yes"
+else:
+	exit("Files neither single-end NOR paired-end .... Files may be missing!!\n nR1s=%d\n nR2s=%d\n"%(len(fR1),len(fR2)))
+
 print("Workpath is %s"%(workpath))
 if pe=="yes":
   print("Pair-end raw files found.")
@@ -30,15 +33,11 @@ bams_dir="bams"
 log_dir="logfiles"
 rseqc_dir="RSeQC"
 kraken_dir="kraken"
+preseq_dir="preseq"
 
-if not os.path.exists(join(workpath,star_dir)):
-  os.mkdir(join(workpath,star_dir))
-if not os.path.exists(join(workpath,trim_dir)):
-  os.mkdir(join(workpath,trim_dir))
-if not os.path.exists(join(workpath,bams_dir)):
-  os.mkdir(join(workpath,bams_dir))
-if not os.path.exists(join(workpath,rseqc_dir)):
-  os.mkdir(join(workpath,rseqc_dir))
+for d in [trim_dir,kraken_dir,bams_dir,star_dir,log_dir,rseqc_dir,preseq_dir]:
+	if not os.path.exists(join(workpath,d)):
+		os.mkdir(join(workpath,d))
 
 if pe=="yes":
 
@@ -58,6 +57,7 @@ if pe=="yes":
         expand(join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.png"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
+        expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
 
 
    rule rawfastqc:
@@ -95,23 +95,23 @@ fastqc {input} -t {threads} -o {output};
         cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
         parallelver=config['bin'][pfamily]['tool_versions']['PARALLELVER'],
         pigzver=config['bin'][pfamily]['tool_versions']['PIGZVER'],
-        fastawithadaptersetc=config['references'][pfamily]['FASTAWITHADAPTERSETC'],
-        fastawithadaptersetd=config['bin'][pfamily]['FASTAWITHADAPTERSETD'],
-        seedmismatches=config['bin'][pfamily]['SEEDMISMATCHES'],
-        palindromeclipthreshold=config['bin'][pfamily]['PALINDROMECLIPTHRESHOLD'],
-        simpleclipthreshold=config['bin'][pfamily]['SIMPLECLIPTHRESHOLD'],
-        leadingquality=config['bin'][pfamily]['LEADINGQUALITY'],
-        trailingquality=config['bin'][pfamily]['TRAILINGQUALITY'],
-        windowsize=config['bin'][pfamily]['WINDOWSIZE'],
-        windowquality=config['bin'][pfamily]['WINDOWQUALITY'],
-        targetlength=config['bin'][pfamily]['TARGETLENGTH'],
-        strictness=config['bin'][pfamily]['STRICTNESS'],
-        minlen=config['bin'][pfamily]['MINLEN'],
+        fastawithadaptersetc=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETC'],
+        fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
+        seedmismatches=config['bin'][pfamily]['tool_parameters']['SEEDMISMATCHES'],
+        palindromeclipthreshold=config['bin'][pfamily]['tool_parameters']['PALINDROMECLIPTHRESHOLD'],
+        simpleclipthreshold=config['bin'][pfamily]['tool_parameters']['SIMPLECLIPTHRESHOLD'],
+        leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
+        trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
+        windowsize=config['bin'][pfamily]['tool_parameters']['WINDOWSIZE'],
+        windowquality=config['bin'][pfamily]['tool_parameters']['WINDOWQUALITY'],
+        targetlength=config['bin'][pfamily]['tool_parameters']['TARGETLENGTH'],
+        strictness=config['bin'][pfamily]['tool_parameters']['STRICTNESS'],
+        minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
       threads:32
       shell: """
 if [ {trim_method} -eq 1 ];then
 module load {params.trimmomaticver};
-java -classpath $TRIMMOJAR   org.usadellab.trimmomatic.TrimmomaticPE -threads {threads} {input.file1} {input.file2} {output.out11} {output.out12} {output.out21} {output.out22} ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold} LEADING:{params.leadingquality} TRAILING:{params.trailingquality} MAXINFO:50:0.97 MINLEN:{params.minlen} 2> {output.err}
+java -classpath $TRIMMOJAR   org.usadellab.trimmomatic.TrimmomaticPE -threads {threads} {input.file1} {input.file2} {output.out11} {output.out12} {output.out21} {output.out22} ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold} LEADING:{params.leadingquality} TRAILING:{params.trailingquality} MINLEN:{params.minlen} 2> {output.err}
 elif [ {trim_method} -eq 2 ];then
 module load {params.cutadaptver};
 module load {params.parallelver};
@@ -181,16 +181,16 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
       params: 
         rname='pl:fqscreen',
         batch='--cpus-per-task=24 --mem=64g --time=10:00:00',
-        fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
+        fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
         outdir = join(workpath,"FQscreen"),
-        config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG'],
+        fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
         perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
         bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
       threads: 24
       shell: """
 module load {params.bowtie2ver};
 module load {params.perlver};
-{params.fastq_screen} --conf {params.config} --outdir {params.outdir} --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1} {input.file2}
+{params.fastq_screen} --conf {params.fastq_screen_config} --outdir {params.outdir} --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1} {input.file2}
         """
 
    rule kraken_pe:
@@ -211,12 +211,14 @@ module load {params.perlver};
       shell: """
 module load {params.krakenver};
 module load {params.kronatoolsver};
+if [ ! -d {params.outdir} ];then mkdir {params.outdir};fi
 cd /lscratch/$SLURM_JOBID;
-kraken --db {params.bacdb} --fastq-input --gzip-compressed --threads {threads} --output {params.prefix}.krakenout --preload --paired {input.fq1} {input.fq2}
-kraken-translate --mpa-format --db {params.bacdb} {params.prefix}.krakenout |cut -f2|sort|uniq -c|sort -k1,1nr > {params.prefix}.krakentaxa
-cut -f2,3 {params.prefix}.krakenout | ktImportTaxonomy - -o {params.prefix}.kronahtml
-mv {params.prefix}.krakentaxa {output.krakentaxa}
-mv {params.prefix}.kronahtml {output.kronahtml}
+cp -rv {params.bacdb} /lscratch/$SLURM_JOBID/;
+kraken --db /lscratch/$SLURM_JOBID/`echo {params.bacdb}|awk -F "/" '{{print \$NF}}'` --fastq-input --gzip-compressed --threads {threads} --output /lscratch/$SLURM_JOBID/{params.prefix}.krakenout --preload --paired {input.fq1} {input.fq2}
+kraken-translate --mpa-format --db /lscratch/$SLURM_JOBID/`echo {params.bacdb}|awk -F "/" '{{print \$NF}}'` /lscratch/$SLURM_JOBID/{params.prefix}.krakenout |cut -f2|sort|uniq -c|sort -k1,1nr > /lscratch/$SLURM_JOBID/{params.prefix}.krakentaxa
+cut -f2,3 /lscratch/$SLURM_JOBID/{params.prefix}.krakenout | ktImportTaxonomy - -o /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml
+mv /lscratch/$SLURM_JOBID/{params.prefix}.krakentaxa {output.krakentaxa}
+mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
 """
 
 
@@ -372,18 +374,18 @@ fastqc {input} -t {threads} -o {output};
         cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
         parallelver=config['bin'][pfamily]['tool_versions']['PARALLELVER'],
         pigzver=config['bin'][pfamily]['tool_versions']['PIGZVER'],
-        fastawithadaptersetc=config['references'][pfamily]['FASTAWITHADAPTERSETC'],
-        fastawithadaptersetd=config['bin'][pfamily]['FASTAWITHADAPTERSETD'],
-        seedmismatches=config['bin'][pfamily]['SEEDMISMATCHES'],
-        palindromeclipthreshold=config['bin'][pfamily]['PALINDROMECLIPTHRESHOLD'],
-        simpleclipthreshold=config['bin'][pfamily]['SIMPLECLIPTHRESHOLD'],
-        leadingquality=config['bin'][pfamily]['LEADINGQUALITY'],
-        trailingquality=config['bin'][pfamily]['TRAILINGQUALITY'],
-        windowsize=config['bin'][pfamily]['WINDOWSIZE'],
-        windowquality=config['bin'][pfamily]['WINDOWQUALITY'],
-        targetlength=config['bin'][pfamily]['TARGETLENGTH'],
-        strictness=config['bin'][pfamily]['STRICTNESS'],
-        minlen=config['bin'][pfamily]['MINLEN'],
+        fastawithadaptersetc=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETC'],
+        fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
+        seedmismatches=config['bin'][pfamily]['tool_parameters']['SEEDMISMATCHES'],
+        palindromeclipthreshold=config['bin'][pfamily]['tool_parameters']['PALINDROMECLIPTHRESHOLD'],
+        simpleclipthreshold=config['bin'][pfamily]['tool_parameters']['SIMPLECLIPTHRESHOLD'],
+        leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
+        trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
+        windowsize=config['bin'][pfamily]['tool_parameters']['WINDOWSIZE'],
+        windowquality=config['bin'][pfamily]['tool_parameters']['WINDOWQUALITY'],
+        targetlength=config['bin'][pfamily]['tool_parameters']['TARGETLENGTH'],
+        strictness=config['bin'][pfamily]['tool_parameters']['STRICTNESS'],
+        minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
       threads:32
       shell: """
 if [ {trim_method} -eq 1 ];then
@@ -443,16 +445,16 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
       params: 
         rname='pl:fqscreen',
         batch='--cpus-per-task=24 --mem=64g --time=10:00:00',
-        fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
+        fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
         outdir = join(workpath,"FQscreen"),
-        config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG'],
+        fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
         perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
         bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
       threads: 24
       shell: """
 module load {params.bowtie2ver};
 module load {params.perlver};
-{params.fastq_screen} --conf {params.config} --outdir {params.outdir} --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1}
+{params.fastq_screen} --conf {params.fastq_screen_config} --outdir {params.outdir} --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1}
 """
 
    rule kraken_se:
@@ -473,11 +475,12 @@ module load {params.perlver};
 module load {params.krakenver};
 module load {params.kronatoolsver};
 cd /lscratch/$SLURM_JOBID;
-kraken --db {params.bacdb} --fastq-input --gzip-compressed --threads {threads} --output {params.prefix}.krakenout --preload {input.fq}
-kraken-translate --mpa-format --db {params.bacdb} {params.prefix}.krakenout |cut -f2|sort|uniq -c|sort -k1,1nr > {params.prefix}.krakentaxa
+cp -rv {params.bacdb} /lscratch/$SLURM_JOBID/;
+kraken --db /lscratch/$SLURM_JOBID/`echo {params.bacdb}|awk -F "/" '{{print \$NF}}'` --fastq-input --gzip-compressed --threads {threads} --output /lscratch/$SLURM_JOBID/{params.prefix}.krakenout --preload {input.fq}
+kraken-translate --mpa-format --db /lscratch/$SLURM_JOBID/`echo {params.bacdb}|awk -F "/" '{{print \$NF}}'` /lscratch/$SLURM_JOBID/{params.prefix}.krakenout |cut -f2|sort|uniq -c|sort -k1,1nr > /lscratch/$SLURM_JOBID/{params.prefix}.krakentaxa
 cut -f2,3 {params.prefix}.krakenout | ktImportTaxonomy - -o {params.prefix}.kronahtml
-mv {params.prefix}.krakentaxa {output.krakentaxa}
-mv {params.prefix}.kronahtml {output.kronahtml}
+mv /lscratch/$SLURM_JOBID/{params.prefix}.krakentaxa {output.krakentaxa}
+mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
 """
 
    rule star1p:
@@ -605,6 +608,20 @@ mv /lscratch/$SLURM_JOBID/star_rg_added.sorted.dmark.bam {output.outstar2};
 mv /lscratch/$SLURM_JOBID/star_rg_added.sorted.dmark.bai {output.outstar2b};
 """        
 
+rule preseq:
+	params:
+		rname = "pl:preseq",
+		preseqver=config['bin'][pfamily]['tool_versions']['PRESEQVER'],
+	input:
+		bam = join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
+	output:
+		ccurve = join(workpath,preseq_dir,"{name}.ccurve"),
+	shell:"""
+module load {params.preseqver};
+preseq c_curve -B -o {output.ccurve} {input.bam}            
+            """
+
+
 rule stats:
    input: 
     file1=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
@@ -676,7 +693,8 @@ rule rnaseq_multiqc:
     expand(join(workpath,rseqc_dir,"{name}.Rdist.info"),name=samples),
     expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),name=samples),
     expand(join(workpath,log_dir,"{name}.flagstat.concord.txt"),name=samples),
-    expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples)
+    expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
+    expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
    output: 
     join(workpath,"Reports","multiqc_report.html")
    params: 

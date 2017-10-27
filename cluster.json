@@ -10,10 +10,20 @@
     "stats":
     {
         "mem": "110g",
+        "threads": "4",
+        "gres":"lscratch:256"
     },    
     "picard":
     {
         "mem": "110g",
+        "gres":"lscratch:256",
+        "threads":"2"
+    },    
+    "picard_dedup":
+    {
+        "mem": "110g",
+        "gres":"lscratch:256",
+        "threads":"2"
     },    
     "rawfastqc":
     {
@@ -858,7 +868,15 @@
     },
     "kraken_se":
     {
-        "mem":'200g'
+        "cpus-per-task": "24",
+        "mem":'110g',
+        "gres":"lscratch:256"
+    },
+    "kraken_pe":
+    {
+        "cpus-per-task": "24",
+        "mem":'110g',
+        "gres":"lscratch:256"
     },
     "bam2bw":
     {
