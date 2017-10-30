@@ -56,6 +56,7 @@ class PipelineFrame( Frame ) :
         self.targetspath = targetspath
         self.annotation = annotation   
         self.genome = annotation.get()
+        self.nends = -1
         
         l = Label( pipepanel, text="Data Directory:" )
         l.grid(row=1, column=1, sticky=W, padx=0, pady=10 )
@@ -120,10 +121,27 @@ class PipelineFrame( Frame ) :
         
         self.datapath.set(fname)                                    
         self.datafiles = [fn for fn in listdir(fname) if fn.endswith(filetype)]
+        fR1 = [f for f in listdir(fname) if f.find(".R1.fastq") > 0]
+        expected_fR2 = [re.sub(".R1.fastq",".R2.fastq",f) for f in fR1]
+        fR2 = [f for f in listdir(fname) if f.find(".R2.fastq") > 0]
+        nends=0 # number of ends .. single or paired
+        if len(fR1)-len(set(fR2).intersection(set(expected_fR2))) == 0:
+            nends=2
+        elif len(fR1) !=0 and len(fR2) == 0:
+            nends=1
+
         self.data_count['text'] = str( len(self.datafiles) ) 
         
         print( "Found", self.data_count['text'], filetype, "files!" )
-        
+        if nends==1:
+            print ("Single - end data!")
+            self.data_count['text'] += " ... Single - end data!"
+        elif nends==2:
+            print ("Paired - end data!")
+            self.data_count['text'] += " ... Paired - end data!"
+        else:
+            self.data_count['text'] += " ... FILES MAY BE MISSING!!!"
+        self.nends=nends        
         self.option_controller()
         
     def option_controller( self, *args, **kwargs ) :
@@ -420,7 +438,8 @@ class PipelineFrame( Frame ) :
              "cluster": "cluster_medium.json", 
              "description": gi.description.get('1.0',END), 
              "technique" : gi.technique.get(), 
-             "TRIM": "yes", 
+             "TRIM": "yes",
+             "nends": self.nends, 
             }
            } 
         J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=True)

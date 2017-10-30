@@ -24,24 +24,14 @@ samples=config['project']['groups']['rsamps']
 
 workpath = config['project']['workpath']
 
-fR1 = [f for f in listdir(workpath) if f.find(".R1.fastq") > 0]
-expected_fR2 = [re.sub(".R1.fastq",".R2.fastq",f) for f in fR1]
-fR2 = [f for f in listdir(workpath) if f.find(".R2.fastq") > 0]
-pe = ""
-se = ""
-if len(fR1)-len(set(fR2).intersection(set(expected_fR2))) == 0:
-	pe="yes"
-elif len(fR1) !=0 and len(fR2) == 0:
-	se="yes"
-else:
-	exit("Files neither single-end NOR paired-end .... Files may be missing!!\n nR1s=%d\n nR2s=%d\n"%(len(fR1),len(fR2)))
+se=""
+pe=""
+workpath = config['project']['workpath']
 
-print("Workpath is %s"%(workpath))
-
-if pe=="yes":
-  print("Pair-end raw files found.")
-elif se=="yes":
-  print("Single-end raw files found.")
+if config['project']['nends'] == 2 :
+  pe="yes"
+elif config['project']['nends'] == 1 :
+  se="yes"
 
 check_readaccess(join(workpath,"groups.tab"))
 check_readaccess(join(workpath,"contrasts.tab"))
