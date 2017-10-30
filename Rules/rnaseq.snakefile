@@ -3,6 +3,20 @@ from os.path import join
 from os import listdir
 import os
 
+def check_existence(filename):
+  if not os.path.exists(filename):
+    exit("File: %s does not exists!",filename)
+
+def check_readaccess(filename):
+  check_existence(filename)
+  if not os.access(filename,os.R_OK):
+    exit("File: %s exists, but cannot be read!",filename)
+
+def check_writeaccess(filename):
+  check_existence(filename)
+  if not os.access(filename,os.W_OK):
+    exit("File: %s exists, but cannot be read!",filename)
+
 
 configfile: "run.json"
 
@@ -29,11 +43,8 @@ if pe=="yes":
 elif se=="yes":
   print("Single-end raw files found.")
 
-if not os.path.exists(join(workpath,"groups.tab"):
-	exit("groups.tab file is missing!!)
-if not os.path.exists(join(workpath,"contrasts.tab"):
-	exit("contrasts.tab file is missing!!)
-
+check_readaccess(join(workpath,"groups.tab"))
+check_readaccess(join(workpath,"contrasts.tab"))
 
 trim_dir='trim'
 star_dir="STAR_files"
