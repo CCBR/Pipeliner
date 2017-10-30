@@ -5,17 +5,17 @@ import os
 
 def check_existence(filename):
   if not os.path.exists(filename):
-    exit("File: %s does not exists!",filename)
+    exit("File: %s does not exists!"%(filename))
 
 def check_readaccess(filename):
   check_existence(filename)
   if not os.access(filename,os.R_OK):
-    exit("File: %s exists, but cannot be read!",filename)
+    exit("File: %s exists, but cannot be read!"%(filename))
 
 def check_writeaccess(filename):
   check_existence(filename)
   if not os.access(filename,os.W_OK):
-    exit("File: %s exists, but cannot be read!",filename)
+    exit("File: %s exists, but cannot be read!"%(filename))
 
 
 configfile: "run.json"
