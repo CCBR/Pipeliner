@@ -488,6 +488,7 @@ class ChIPSeqFrame( PipelineFrame ) :
                 'annotation': gi.annotation.get(), 
                 'datapath': self.datapath.get(), 
                 'targetspath': self.targetspath.get(), 
+                'nends': self.nends, 
                 'filetype': filetype , 
                 'binset': "standard-bin", 
                 'username': gi.euser.get(), 

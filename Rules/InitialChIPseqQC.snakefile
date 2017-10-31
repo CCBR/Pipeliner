@@ -99,7 +99,7 @@ if se == 'yes' :
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
         shell: """
-rm -rf *bam.cnt
+rm -rf {workpath}/*.bam.cnt
             """
 
                    
