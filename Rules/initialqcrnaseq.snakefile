@@ -254,6 +254,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
         config=dict(a.items())
         config['project']['SJDBOVERHANG']=str(bestdbrl)
         config['project']["STARDIR"]= config['references'][pfamily]['STARDIR']+str(bestdbrl)
+        config['project']['READLENGTH']=str(rl+1)
         with open(join(workpath,'run.json'),'w') as F:
           json.dump(config, F, sort_keys = True, indent = 4,ensure_ascii=False)
         F.close()
@@ -515,6 +516,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
         config=dict(a.items())
         config['project']['SJDBOVERHANG']=str(bestdbrl)
         config['project']["STARDIR"]= config['references'][pfamily]['STARDIR']+str(bestdbrl)
+        config['project']['READLENGTH']=str(rl+1)
         with open(join(workpath,'run.json'),'w') as F:
           json.dump(config, F, sort_keys = True, indent = 4,ensure_ascii=False)
         F.close()
