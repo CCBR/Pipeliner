@@ -7,7 +7,9 @@ from tempfile import TemporaryFile
 from pysam import Samfile, FastaFile
 from collections import Counter
 
-pipehome = os.getenv('pipehome', '/data/CCBR/projects/TechDev/Pipeliner')
+from gui.utils import PIPELINER_HOME
+
+# pipehome = os.getenv('pipehome', '/data/CCBR/projects/TechDev/Pipeliner')
 #pipehome = '/home/kopardevn/Pipeliner/'
 bam_dir='bam'
 
@@ -60,7 +62,8 @@ def normalize_bam_file_chromosomes(
     
 
 configfile: "run.json"
-include: join( pipehome, "Rules", "InitialChIPseqQC.snakefile" )
+# include: join( pipehome, "Rules", "InitialChIPseqQC.snakefile" )
+include: join( PIPELINER_HOME, "Rules", "InitialChIPseqQC.snakefile" )
 
     
 workpath = config['project']['workpath']    
@@ -388,7 +391,7 @@ rule ngsplot :
         batch='--cpus-per-task=16 --mem=32g --time=24:00:00',
         name = [*samples, *inputs],
     input:
-        expand( join(bam_dir,"{name}.sorted.DD.bam"), name=[*samples,*inputs] )
+        expand( join(bam_dir,"{name}.sorted.Q5DD.bam"), name=[*samples,*inputs] )
     output:
         join("{ngsplot_dir}", "{region}.heatmap.pdf")
     run:
