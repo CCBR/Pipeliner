@@ -125,7 +125,7 @@ class PipelineFrame( Frame ) :
         expected_fR2 = [re.sub(".R1.fastq",".R2.fastq",f) for f in fR1]
         fR2 = [f for f in listdir(fname) if f.find(".R2.fastq") > 0]
         nends=0 # number of ends .. single or paired
-        if len(fR1)-len(set(fR2).intersection(set(expected_fR2))) == 0:
+        if len(fR1)-len(set(fR2).intersection(set(expected_fR2))) == 0 and len(fR1) > 0:
             nends=2
         elif len(fR1) !=0 and len(fR2) == 0:
             nends=1
