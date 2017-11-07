@@ -129,6 +129,10 @@ class PipelineFrame( Frame ) :
             nends=2
         elif len(fR1) !=0 and len(fR2) == 0:
             nends=1
+        outtxt="\n\nFastq Files found:\n"
+        for f in self.datafiles:
+            outtxt+="%s\n"%(f)
+        outtxt+="\n"
 
         self.data_count['text'] = str( len(self.datafiles) ) 
         
@@ -136,11 +140,26 @@ class PipelineFrame( Frame ) :
         if nends==1:
             print ("Single - end data!")
             self.data_count['text'] += " ... Single - end data!"
+            outtxt="\nSingle - end files:\n"
+            for f in fR1:
+                outtxt+="%s\n"%(f)
         elif nends==2:
             print ("Paired - end data!")
             self.data_count['text'] += " ... Paired - end data!"
+            outtxt="\nPaired - end files:\n"
+            for f,g in zip(sorted(fR1),sorted(fR2)):
+                outtxt+="%s\t%s\n"%(f,g)
         else:
             self.data_count['text'] += " ... FILES MAY BE MISSING!!!"
+        outtxt+="\n"
+        unclassifiedfiles=list(set(self.datafiles)-set(fR1))
+        unclassifiedfiles=list(set(unclassifiedfiles)-set(fR2))
+        if len(unclassifiedfiles)>0:
+            outtxt="\nThe following files could not be classified as SE or PE (please check the file names):\n"
+            for f in unclassifiedfiles:
+                outtxt+="%s\n"%(f)
+        outtxt+="\n"
+        print(outtxt)
         self.nends=nends        
         self.option_controller()
         
