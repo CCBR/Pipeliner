@@ -646,7 +646,7 @@ rule deeptools_prep:
     run:
         for x in extensions:
             bws=list(filter(lambda z:z.endswith(x+".bw"),input))
-            labels=list(map(lambda z:re.sub(bw_dir+"/","",z),list(map(lambda z:re.sub("."+x+".bw","",z),bws))))
+            labels=list(map(lambda z:re.sub("."+x+".bw","",z),list(map(lambda z:os.path.basename(z),bws))))
             o=open(join(workpath,bw_dir,x+".deeptools_prep"),'w')
             o.write("%s\n"%(x))
             o.write("%s\n"%(" ".join(bws)))
