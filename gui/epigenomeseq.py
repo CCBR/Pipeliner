@@ -509,6 +509,7 @@ class ChIPSeqFrame( PipelineFrame ) :
                 'gsize': gsize,
                 'groups': groups,
                 'contrast': contrast,
+                'pipehome': gi.pipehome.get(),
              }
         } 
         

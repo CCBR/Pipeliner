@@ -29,3 +29,4 @@ mv $R/HPCusagetable.txt.tmp $R/HPC_usage_table.txt
 cd $R/Reports && $R/Reports/ngser.pl ../QC ./
 #cd $R/Reports && $R/Reports/stats2html.py
 rm -rf $R/bamstats
+rm -rf $R/*bam.cnt

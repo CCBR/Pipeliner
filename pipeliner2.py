@@ -107,6 +107,8 @@ class PipelinerGUI(Tk):
         self.eplatform = eplatform=StringVar()
         eplatform.set("Illumina")
         self.technique = technique=StringVar()
+        self.pipehome = pipehome=StringVar()
+        pipehome.set(PIPELINER_HOME)
 
         editframe = Frame( self )
         editframe.grid( column=0, row=3, columnspan=3 )

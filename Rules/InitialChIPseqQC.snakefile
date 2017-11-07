@@ -90,9 +90,9 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
-        shell: """
-rm -rf {workpath}/*bam.cnt
-            """
+#         shell: """
+# rm -rf {workpath}/*bam.cnt
+#             """
 
                    
 
@@ -372,9 +372,9 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
-        shell: """
-rm -rf {workpath}/*.bam.cnt
-"""
+#         shell: """
+# rm -rf {workpath}/*.bam.cnt
+# """
 
     rule rawfastqc:
         input: 
