@@ -68,7 +68,7 @@ module load {params.fastqcver};
 fastqc {input} -t {threads} -o {output}; 
         """
 
-   rule trimmomatic_pe:
+   rule trim_pe:
       input: 
         file1=join(workpath,"{name}.R1."+config['project']['filetype']),
         file2=join(workpath,"{name}.R2."+config['project']['filetype']),        
@@ -79,7 +79,7 @@ fastqc {input} -t {threads} -o {output};
         out22=join(workpath,trim_dir,"{name}_R2_001_trim_unpaired.fastq.gz"),
         err=join(workpath,"QC","{name}_run_trimmomatic.err"),
       params: 
-        rname='pl:trimmomatic_pe',
+        rname='pl:trim_pe',
         batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
         trimmomaticver=config['bin'][pfamily]['tool_versions']['TRIMMOMATICVER'],
         cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
@@ -352,14 +352,14 @@ module load {params.fastqcver};
 fastqc {input} -t {threads} -o {output}; 
         """
 
-   rule trimmomatic_se:
+   rule trim_se:
       input: 
         file1=join(workpath,"{name}.R1."+config['project']['filetype']),
       output: 
         out11=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
         err=join(workpath,"QC","{name}_run_trimmomatic.err"),
       params: 
-        rname='pl:trimmomatic_se',
+        rname='pl:trim_se',
         batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
         trimmomaticver=config['bin'][pfamily]['tool_versions']['TRIMMOMATICVER'],
         cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
@@ -698,37 +698,37 @@ rule rnaseq_multiqc:
    shell: """
 module load {params.multiqcver}
 cd {params.outdir}
-multiqc -f -c {params.qcconfig} ../
+multiqc -f -c {params.qcconfig} --interactive -x "*slurmfiles*" ../
     """
 
-if pe=="yes":
+# if pe=="yes":
 
-   rule RNAseq_generate_QC_table:
-      input: 
-        expand(join(workpath,"QC","{name}_run_trimmomatic.err"),name=samples), 
-        expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples), 
-        expand(join(workpath,star_dir,"{name}.p2.Log.final.out"),name=samples), 
-        expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples)
-      output: 
-        config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
-      params: 
-        project=config['project']['id'],
-        flowcell=config['project']['flowcellid'],
-        rname="pl:QC_table"
-      shell: """
-module load perl/5.18.2; 
-perl Scripts/CollectPipelineStats2Tab_v2.3.pl -p {params.project} -f {params.flowcell} -d {workpath} -r 5 -e 2; 
-perl Scripts/Tab2Excel_v2.3.pl -i {params.project}_{params.flowcell} -r 5
-"""
+#    rule RNAseq_generate_QC_table:
+#       input: 
+#         expand(join(workpath,"QC","{name}_run_trimmomatic.err"),name=samples), 
+#         expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples), 
+#         expand(join(workpath,star_dir,"{name}.p2.Log.final.out"),name=samples), 
+#         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples)
+#       output: 
+#         config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
+#       params: 
+#         project=config['project']['id'],
+#         flowcell=config['project']['flowcellid'],
+#         rname="pl:QC_table"
+#       shell: """
+# module load perl/5.18.2; 
+# perl Scripts/CollectPipelineStats2Tab_v2.3.pl -p {params.project} -f {params.flowcell} -d {workpath} -r 5 -e 2; 
+# perl Scripts/Tab2Excel_v2.3.pl -i {params.project}_{params.flowcell} -r 5
+# """
 
 
-if se=="yes":
+# if se=="yes":
 
-   rule RNAseq_generate_QC_table:
-      input: expand("QC/{name}_run_trimmomatic.err",name=samples), expand("{name}.star.duplic",name=samples), expand("{name}.p2.Log.final.out",name=samples), expand("{name}.RnaSeqMetrics.txt",name=samples)
-      output: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
-      params: project=config['project']['id'],flowcell=config['project']['flowcellid'],dir=config['project']['workpath'],rname="pl:QC_table"
-      shell: "module load perl/5.18.2; perl Scripts/CollectPipelineStats2Tab_v2.3.pl -p {params.project} -f {params.flowcell} -d {params.dir} -r 5 -e 1; perl Scripts/Tab2Excel_v2.3.pl -i {params.project}_{params.flowcell} -r 5"
+#    rule RNAseq_generate_QC_table:
+#       input: expand("QC/{name}_run_trimmomatic.err",name=samples), expand("{name}.star.duplic",name=samples), expand("{name}.p2.Log.final.out",name=samples), expand("{name}.RnaSeqMetrics.txt",name=samples)
+#       output: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
+#       params: project=config['project']['id'],flowcell=config['project']['flowcellid'],dir=config['project']['workpath'],rname="pl:QC_table"
+#       shell: "module load perl/5.18.2; perl Scripts/CollectPipelineStats2Tab_v2.3.pl -p {params.project} -f {params.flowcell} -d {params.dir} -r 5 -e 1; perl Scripts/Tab2Excel_v2.3.pl -i {params.project}_{params.flowcell} -r 5"
 
 
 

@@ -739,7 +739,7 @@ rule multiqc:
     threads: 1
     shell: """
 module load {params.multiqc}
-cd Reports && multiqc -f ../
+cd Reports && multiqc -f --interactive -x "*slurmfiles*" ../
 """
 
 

@@ -7,6 +7,16 @@
         "threads": "4",
         "gres":"lscratch:256"
     },
+    "trim_pe":
+    {
+        "threads": "32",
+        "mem": "24g"
+    },
+    "trim_se":
+    {
+        "threads": "32",
+        "mem": "24g"
+    },
     "stats":
     {
         "mem": "110g",
