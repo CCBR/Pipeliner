@@ -24,6 +24,9 @@ while (<H>){
 	}
 }
 close H;
+
+#@jobs=('54856894');
+
 my $a=0;
 
 for ($a=0; $a<@jobs; $a++) {
@@ -34,10 +37,11 @@ for ($a=0; $a<@jobs; $a++) {
 my $b=0;
 my $c=0;
 my $name='';
+my $jobid='';
 my $on=0;
 
 open C, ">HPC_usage_table.txt";
-print C "JobName\tJobid\tPartition\tState\tNodes\tCPUs\tWalltime\tRuntime\tMemReq\tMemUsed\tNodelist\n";
+print C "JobName\tJobid\tPartition\tState\tNodes\tCPUs\tWalltime\tRuntime\tMemReq\tMemUsed\tNodelist\tMaxCPUUsed\tQueuetime\tCPUHours\tAccount\tUsername\n";
 
 open G, "<job_usage.txt";
 while (<G>) {
@@ -55,21 +59,59 @@ while (<G>) {
 			}
 		}
 	}
+	elsif ($_ =~ m/^JobId/) {
+		$b=0;
+		$jobid=$line[2];
+	}
 	elsif ($_ =~ m/Nodelist/) {
 		$on++;
 	}
 	if ($on==2) {
 		$on=0;
 		$c=0;
+		$cmd="jobdata " . $jobid . " >jobdata.txt";
+		system($cmd);
+		my $maxcpu='';
+		my $qtime='';
+		my $cpuhrs='';
+		my $account='';
+		my $username='';
+		open H, "<jobdata.txt";
+		while(<H>) {
+		chomp;
+		my @line2=split /\t/, $_;
+		if ($line2[0] =~ m/^max_cpu_used\b/) {
+			$maxcpu=$line2[1];
+		}
+		elsif ($line2[0] =~ m/^queued\b/) {
+			$qtime=$line2[1];
+		}
+		elsif ($line2[0] =~ m/^cpu_hours\b/) {
+			$cpuhrs=$line2[1];
+		}
+		elsif ($line2[0] =~ m/^account\b/) {
+			$account=$line2[1];
+		}
+		elsif ($line2[0] =~ m/^username\b/) {
+			$username=$line2[1];
+		}
+		}
+		close H;
+		system("rm -f jobdata.txt");
 		print C "$name";
 		for ($c=0; $c<@line; $c++) {
 			print C "\t$line[$c]";
 		}
-	print C "\n";
+		print C "\t$maxcpu";
+		print C "\t$qtime";
+		print C "\t$cpuhrs";
+		print C "\t$account";
+		print C "\t$username";
+		print C "\n";
 	}
 }
 close C;
 close G;
-close H;
 $cmd = 'rm slurmfiles.txt job_usage.txt';
 system($cmd);
+
