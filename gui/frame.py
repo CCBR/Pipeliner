@@ -11,9 +11,10 @@ from glob import glob
 from shutil import copytree
 
 import tkinter as tk
-from tkinter import Tk, END, StringVar, LEFT, TOP, BOTTOM, X, BOTH, YES, INSERT, W, E
-from tkinter import Toplevel, Text, Entry, OptionMenu, Button
-from tkinter import Canvas, HORIZONTAL, VERTICAL, Y, RIGHT, PhotoImage
+# from tkinter import Tk, END, StringVar, LEFT, TOP, BOTTOM, X, BOTH, YES, INSERT, W, E
+# from tkinter import Toplevel, Text, Entry, OptionMenu, Button
+# from tkinter import Canvas, HORIZONTAL, VERTICAL, Y, RIGHT, PhotoImage
+from tkinter import *
 
 from tkinter import ttk
 from tkinter.ttk import Label, LabelFrame, Scrollbar, Frame, Notebook, Style
@@ -140,28 +141,56 @@ class PipelineFrame( Frame ) :
         print( "Found", self.data_count['text'], filetype, "files!" )
         if nends==1:
             print ("Single - end data!")
+            outtxt_short="%d files found ... Single-end data."%(len(fR1))
             self.data_count['text'] += " ... Single - end data!"
             outtxt+="Single - end files:\n"
             for f in fR1:
                 outtxt+="%s\n"%(f)
         elif nends==2:
             print ("Paired - end data!")
+            outtxt_short="%d files found ... Paired-end data."%(len(fR1)+len(fR2))
             self.data_count['text'] += " ... Paired - end data!"
             outtxt+="Paired - end files:\n"
             for f,g in zip(sorted(fR1),sorted(fR2)):
                 outtxt+="%s\t%s\n"%(f,g)
         else:
+            outtxt_short="Some files many be missing or misnamed!!\n"
             self.data_count['text'] += " ... FILES MAY BE MISSING!!!"
         outtxt+="\n"
         unclassifiedfiles=list(set(self.datafiles)-set(fR1))
         unclassifiedfiles=list(set(unclassifiedfiles)-set(fR2))
         if len(unclassifiedfiles)>0:
+            outtxt_short+="%d files could not classified as PE or SE!"%(len(unclassifiedfiles))
             outtxt+="\nThe following files could not be classified as SE or PE (please check the file names):\n"
             for f in unclassifiedfiles:
                 outtxt+="%s\n"%(f)
         outtxt+="\n"
         print(outtxt)
-        showinfo("FILES",outtxt)
+        showinfo("FILES",outtxt_short)
+        # #define master
+        # master = Tk()
+
+        # #Horizontal (x) Scroll bar
+        # xscrollbar = Scrollbar(master, orient=HORIZONTAL)
+        # xscrollbar.pack(side=BOTTOM, fill=X)
+        # #Vertical (y) Scroll Bar
+        # yscrollbar = Scrollbar(master)
+        # yscrollbar.pack(side=RIGHT, fill=Y)
+
+        # #Text Widget
+        # text = Text(master, wrap=NONE,
+        #             xscrollcommand=xscrollbar.set,
+        #             yscrollcommand=yscrollbar.set)
+        # text.insert("1.0",outtxt)
+        # b = Button(master, text="OK", command=parent.destroy())
+        # b.pack()
+        # text.pack()
+
+        # #Configure the scrollbars
+        # xscrollbar.config(command=text.xview)
+        # yscrollbar.config(command=text.yview)
+        # #Run tkinter main loop
+        # mainloop()
         self.nends=nends        
         self.option_controller()
         
