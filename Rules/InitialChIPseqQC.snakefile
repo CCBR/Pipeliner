@@ -38,12 +38,12 @@ for d in [trim_dir,kraken_dir,bam_dir,bw_dir,ngsplot_dir,deeptools_dir,preseq_di
 
 
 # 1 is yes and 0 is no... to remove blacklisted reads after trimming....output file is still ends with trim.fastq.gz
-remove_blacklist_reads=1
+# remove_blacklist_reads=1
 # remove_blacklist_reads=0
 
 # trimming method to use
 # trim_method=1	# this is trimgalore only ... this is the fastest
-trim_method=2	# this is cutadapt with condensed adapter set... it is NOT followed by afterqc to remove polyX like it was in the past... this is the slowest
+# trim_method=2	# this is cutadapt with condensed adapter set... it is NOT followed by afterqc to remove polyX like it was in the past... this is the slowest
 # trim_method=3	# this is method1 followed by afterqc and then followed by BBDuk, idea being a) remove most blatant adapter b) remove polyX and then c) remove other primer/adapter contamination
 # trim_method=4 # trimmomatic ... leaves traces of adapters at read ends
 
