@@ -699,6 +699,8 @@ rule rnaseq_multiqc:
 module load {params.multiqcver}
 cd {params.outdir}
 multiqc -f -c {params.qcconfig} --interactive -x "*slurmfiles*" ../
+cd {workpath}/slurmfiles
+multiqc -f --interactive .
     """
 
 # if pe=="yes":
