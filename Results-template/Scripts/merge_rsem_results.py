@@ -22,7 +22,7 @@ for cols in ["expected_count","TPM","FPKM"]:
         print(samplename)
         x.columns=["gene_id",samplename+"_"+cols]
         dflist.append(x)
-    mergeddf=reduce(lambda a,b:pd.merge(a,b,,how="outer",on="gene_id"),dflist)
+    mergeddf=reduce(lambda a,b:pd.merge(a,b,how="outer",on="gene_id"),dflist)
     mergeddf.fillna('UNKNOWN',inplace=True)
     mergeddf=mergeddf.sort_values(by=['GeneName'])
     outfile=join(rsemgenesfolder,"RSEM.genes."+cols+".all_samples.txt")
