@@ -27,13 +27,18 @@ my $file= $name . '.R1_fastqc/fastqc_data.txt';
 open (H, $file);
 while (<H>) {
 	chomp;
-#  		last if m/^$/;
-  		if ($_ =~ m'Sequence length') {
-#  			print $_;
-  			$temp=((split ' ', $_)[2]);
-  			$size=((split '-', $temp)[1]);
-  		}
+#  	last if m/^$/;
+  	if ($_ =~ m'Sequence length') {
+#  		print $_;
+  		$temp=((split ' ', $_)[2]);
+  		if ($temp =~ m'-') {
+			$size=((split '-', $temp)[1]);
+	  	}
+	  	else {
+	  		$size=$temp;
+	  	}
   	}
+}
 close H;
 print G "$size\n";
 close G;
