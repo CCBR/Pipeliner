@@ -490,6 +490,7 @@ class PipelineFrame( Frame ) :
              "technique" : gi.technique.get(), 
              "TRIM": "yes",
              "nends": self.nends, 
+             'pipehome': gi.pipehome.get(),
             }
            } 
         J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=True)

@@ -3,12 +3,10 @@ use strict;
 use List::Util 'shuffle';
 use File::Temp;
 use File::Copy;
-$file = tmpnam();
-@t = split/\//,$file;
-$file = "/scratch/" . $t[-1] . ".usage.txt";
-print $file . "\n";
-copy("/home/kopardevn/test.txt",$file);
-
+my $file = tmpnam();
+my @t = split/\//,$file;
+$file = "/scratch/CCBRPipeliner/usage/" . $t[-1] . ".usage.txt";
+my $file2 = "/scratch/CCBRPipeliner/usage/" . $t[-1] . ".run.json";
 #INPUT
 
 my @line=();
@@ -121,4 +119,7 @@ close C;
 close G;
 $cmd = 'rm slurmfiles.txt job_usage.txt';
 system($cmd);
+copy("HPC_usage_table.txt",$file);
+copy("run.json",$file2);
+
 

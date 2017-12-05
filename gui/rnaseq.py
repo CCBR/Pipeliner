@@ -363,6 +363,7 @@ class RNASeqFrame( PipelineFrame ) :
                 'pairs': pairs,
                 'id': gi.eprojectid.get(), 
                 'pi': gi.epi.get(), 
+                'pipehome': gi.pipehome.get(),
                 'organism': gi.eorganism.get(), 
                 'analyst': gi.eanalyst.get(), 
                 'poc': gi.epoc.get(), 
