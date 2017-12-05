@@ -1,4 +1,4 @@
-import os
+import os,sys
 
 # This script was written specifically for RNASeqTechDev
 # returns strandness
@@ -26,7 +26,8 @@ def get_correct_strandness(basefolder,g):
         return 2 # antisense
 
 basefolder=os.getcwd() # folder that contains groups.tab file
-groupsfile=basefolder+"/groups.tab"
+# groupsfile=basefolder+"/groups.tab"
+groupsfile=sys.argv[1]
 #remove possible blank lines
 groups=filter(None,map(lambda x:x.strip().split(),open(groupsfile).readlines()))
 strandnesses=[]

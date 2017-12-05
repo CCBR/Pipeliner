@@ -126,7 +126,7 @@ class RNASeqFrame( PipelineFrame ) :
         if self.Pipeline.get() == 'initialqcrnaseq' :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
-            self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+            self.info.grid_forget()
         elif self.Pipeline.get() == 'rnaseq' :
             self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
             self.sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
@@ -363,6 +363,7 @@ class RNASeqFrame( PipelineFrame ) :
                 'pairs': pairs,
                 'id': gi.eprojectid.get(), 
                 'pi': gi.epi.get(), 
+                'pipehome': gi.pipehome.get(),
                 'organism': gi.eorganism.get(), 
                 'analyst': gi.eanalyst.get(), 
                 'poc': gi.epoc.get(), 
@@ -370,7 +371,8 @@ class RNASeqFrame( PipelineFrame ) :
                 'version':"1.0", 
                 'annotation': gi.annotation.get(), 
                 'datapath': self.datapath.get(), 
-                'targetspath': self.targetspath.get(), 
+                'targetspath': self.targetspath.get(),
+                'nends': self.nends, 
                 'filetype': filetype , 
                 'binset': "standard-bin", 
                 'username': gi.euser.get(), 

@@ -1,4 +1,3 @@
-#!/usr/local/apps/R/gcc_4.9.1/3.2.3/bin/Rscript
 library('reshape') 
 library('ggplot2')
 library('edgeR')
@@ -35,7 +34,7 @@ res2=merge(gene_name,res,by.x=1,by.y=1)
 
 #reformat and output raw counts
 res2=cbind(Ensembl_id=res2[,1],Gene_symbol=res2[,3],res2[,-c(1:9)])
-write.table(as.data.frame(res2[,-c(3)]),file="RawCount_genes_unfiltered.txt",sep="\t",row.names=F) 
+write.table(as.data.frame(res2[,-c(3)]),file="RawCountFile_Subread_genes.txt",sep="\t",row.names=F) 
 
 #using DEGlist 
 mydata<-DGEList(counts=res2[,-c(1:3)],genes=res2[,c("Ensembl_id","Gene_symbol","Length")])
@@ -54,7 +53,7 @@ res=mydata[filter,,keep.lib.sizes=FALSE]
 
 #output filtered raw counts, still output old format for the sake of pipeline, will change it soon.
 
-write.table(data.frame(cbind(symbol=paste(res$genes[,1],"|",res$genes[,2],sep=""),res$counts)),file="RawCountFile_genes_filtered.txt",sep="\t", row.names = F)
+write.table(data.frame(cbind(symbol=paste(res$genes[,1],"|",res$genes[,2],sep=""),res$counts)),file="RawCountFile_Subread_genes_filtered.txt",sep="\t", row.names = F)
 
 #draw before png
 png("HistBeforenormFilter.png")
@@ -79,4 +78,4 @@ design=model.matrix(~0+Group)
 v1 <- voom(tmm_y,design,plot=FALSE,normalize="quantile")
 ndata <- apply(v1$E, 2, function(z) ((2^z/v1$genes$Length)*1000))
 
-write.table(data.frame(tmm_y$genes[,-c(3)], ndata),file="LimmaVoom_normalized_rpkm_counts.txt",sep="\t",row.names=F)
+write.table(data.frame(tmm_y$genes[,-c(3)], ndata),file="RPKM_limma_voom_normalized_counts.txt",sep="\t",row.names=F)

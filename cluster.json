@@ -7,6 +7,67 @@
         "threads": "4",
         "gres":"lscratch:256"
     },
+    "trim_pe":
+    {
+        "threads": "32",
+        "mem": "24g"
+    },
+    "trim_se":
+    {
+        "threads": "32",
+        "mem": "24g"
+    },
+    "stats":
+    {
+        "mem": "110g",
+        "threads": "4",
+        "gres":"lscratch:256"
+    },    
+    "picard":
+    {
+        "mem": "110g",
+        "gres":"lscratch:256",
+        "threads":"2"
+    },    
+    "picard_dedup":
+    {
+        "mem": "110g",
+        "gres":"lscratch:256",
+        "threads":"2"
+    },    
+    "rawfastqc":
+    {
+        "threads": "8",
+    },    
+    "fastqc":
+    {
+        "threads": "8",
+    },
+    "deeptools_prep":
+    {
+        "mem": "4g",
+        "threads": "2",
+    },
+    "deeptools":
+    {
+        "mem": "24g",
+    },
+    "ppqt":
+    {
+        "mem": "24g"
+    },
+    "preseq":
+    {
+        "mem": "24g"
+    },
+    "dedup":
+    {
+        "mem": "24g"
+    },
+    "ngsplot":
+    {
+        "mem": "24g"
+    },
     "bicseq":
     {
         "threads": "1"
@@ -244,7 +305,8 @@
     },
     "multiqc":
     {
-        "threads": "1"
+        "threads": "2",
+        "mem" : "24g"
     },
     "fastq_screen":
     {
@@ -646,6 +708,11 @@
     {
         "threads": "1"
     },
+    "trim":
+    {
+        "threads": "16",
+        "mem": "24g"
+    },
     "trimmomatic":
     {
         "threads": "32",
@@ -687,6 +754,16 @@
         "mem": "110g"
     },
     "rsem":
+    {
+        "gres":"lscratch:500",
+        "threads": "16"
+    },
+    "subread":
+    {
+        "gres":"lscratch:500",
+        "threads": "16"
+    },
+    "subreadoverlap":
     {
         "gres":"lscratch:500",
         "threads": "16"
@@ -836,7 +913,15 @@
     },
     "kraken_se":
     {
-        "mem":'200g'
+        "cpus-per-task": "24",
+        "mem":'110g',
+        "gres":"lscratch:256"
+    },
+    "kraken_pe":
+    {
+        "cpus-per-task": "24",
+        "mem":'110g',
+        "gres":"lscratch:256"
     },
     "bam2bw":
     {

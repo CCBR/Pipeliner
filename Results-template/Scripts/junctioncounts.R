@@ -22,8 +22,8 @@ cat("1"," .. done \n")
   cat(i," .. done \n")
  }
 
-write.table(result,file="RawCountFile_junctions.txt",sep="\t",row.names=F)
-myresult=read.delim("RawCountFile_junctions.txt",row.names=1)
+write.table(result,file="RawCountFile_Subread_junctions.txt",sep="\t",row.names=F)
+myresult=read.delim("RawCountFile_Subread_junctions.txt",row.names=1)
 
 for(i in seq(1, length(myfiles), by = 1))
 {
@@ -46,5 +46,5 @@ library("edgeR")
 filter <- apply(cpm(myzero), 1, function(x) length(x[x>MINCOUNT])>=MINSAMPLES)
 #filter <- apply(myzero, 1, function(y) length(y[y>0])>=1)
 myzero=myzero[filter,]
-write.table(as.data.frame(myzero),file="RawCountFile_junctions_filtered.txt",sep="\t",col.names=NA)
+write.table(as.data.frame(myzero),file="RawCountFile_Subread_junctions_filtered.txt",sep="\t",col.names=NA)
 dim(myzero)
