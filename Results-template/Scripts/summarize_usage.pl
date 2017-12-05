@@ -1,6 +1,13 @@
 #!/usr/bin/perl -w
 use strict;
 use List::Util 'shuffle';
+use File::Temp;
+use File::Copy;
+$file = tmpnam();
+@t = split/\//,$file;
+$file = "/scratch/" . $t[-1] . ".usage.txt";
+print $file . "\n";
+copy("/home/kopardevn/test.txt",$file);
 
 #INPUT
 
