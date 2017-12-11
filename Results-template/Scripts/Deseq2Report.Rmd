@@ -1,5 +1,5 @@
 ---
-title: "Deseq2 results"
+title: "DESeq2 results"
 author: "CCBR RNAseq pipeline"
 output: html_document
 params:
@@ -17,7 +17,7 @@ params:
 
 ```{r, include=FALSE, warning=FALSE, message=FALSE}
 countMethod <- "subread"
-if(grepl("rsem",params$data)){
+if(grepl("RSEM",params$data)){
   countMethod <- "rsem"
 }
 projectId<-params$projectId
@@ -96,7 +96,7 @@ ensID=apply(array(as.character(rn)),1,function(z) unlist(strsplit(z, "\\|"))[1])
 gene=apply(array(as.character(rn)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 mydata=cbind(ensID,gene,ndata)
 
-write.table(mydata,file="Deseq2_normalized_counts.txt",sep="\t",col.names=NA)
+write.table(mydata,file="DESeq2_normalized_counts.txt",sep="\t",col.names=NA)
 #png("HistDesq2normFilter.png")
 df.m <- melt(as.data.frame(ndata))
 print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
@@ -108,18 +108,18 @@ rldm=assay(rld)
 colnames(rldm)=colnames(x)
 
 mydata=cbind(ensID,gene,rldm)
-write.table(mydata,file="Deseq2_normalized_rld.txt",sep="\t",col.names=NA)
+write.table(mydata,file="DESeq2_normalized_rld.txt",sep="\t",col.names=NA)
 
 ```
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,include=FALSE}
-png("deseq2_pca.png")
+png("DESeq2_PCA.png")
 print(plotPCA(rld, intgroup=c("condition")))
-## dev.copy(png,"deseq2_pca.png")
+## dev.copy(png,"DESeq2_PCA.png")
 dev.off()
-png("deseq2_pca_details.png")
+png("DESeq2_PCA_details.png")
 # print(plotPCA(rld, intgroup=c("condition","fileName")))
 print(plotPCA(rld, intgroup=c("condition","label")))
-## dev.copy(png,"deseq2_pca_details.png")
+## dev.copy(png,"DESeq2_PCA_details.png")
 dev.off()
 
 ```
@@ -149,7 +149,7 @@ tedf1$group = as.factor(Phenotype)
 plot3d(pca$x[,1:3],col = as.integer(tedf1$group),type="s",size=2)
 group.v<-as.vector(cell_rep)
 text3d(pca$x, pca$y, pca$z, group.v, cex=1.0, adj = 1.2)
-# rgl.postscript("pca3d_deseq2.pdf","pdf")
+# rgl.postscript("pca3d_DESeq2.pdf","pdf")
 
 ```
 ## **Similarity Heatmap**
@@ -161,9 +161,9 @@ distsRL <- dist(t(assay(rld)))
 mat <- as.matrix(distsRL)
 rownames(mat) <- colnames(mat) <- with(colData(dds),paste(condition,sampleFiles , sep=" : "))
 #if you just want the conditions use this line : rownames(mat) <- colnames(mat) <- with(colData(dds),condition)
-png("deseq2_heatmaps_samplebysample.png")
+png("DESeq2_heatmaps_samplebysample.png")
 heatmap.2(mat, trace="none", col = rev(hmcol), margin=c(16, 16))
-## dev.copy(png,"deseq2_heatmaps_samplebysample.png")
+## dev.copy(png,"DESeq2_heatmaps_samplebysample.png")
 dev.off()
 ```
 
@@ -243,22 +243,22 @@ gdw=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
 if (SPECIES=="hg19" | SPECIES=="hg38")
 {
-write.table(gup,paste0("deseq2_gene_up_path",extension),quote=F,row.names=F,col.names=F)
-write.table(gdw,paste0("deseq2_gene_dw_path",extension),quote=F,row.names=F,col.names=F)
+write.table(gup,paste0("DESeq2_gene_up_path",extension),quote=F,row.names=F,col.names=F)
+write.table(gdw,paste0("DESeq2_gene_dw_path",extension),quote=F,row.names=F,col.names=F)
 }
 else
 {
-write.table(gup,"deseq2_temp_up.txt",quote=F,row.names=F,col.names=F)
-write.table(gdw,"deseq2_temp_dw.txt",quote=F,row.names=F,col.names=F)
-system(paste0("cat deseq2_temp_up.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >deseq2_gene_up_path",extension))
-system(paste0("cat deseq2_temp_dw.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >deseq2_gene_dw_path",extension))
+write.table(gup,"DESeq2_temp_up.txt",quote=F,row.names=F,col.names=F)
+write.table(gdw,"DESeq2_temp_dw.txt",quote=F,row.names=F,col.names=F)
+system(paste0("cat DESeq2_temp_up.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >DESeq2_gene_up_path",extension))
+system(paste0("cat DESeq2_temp_dw.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >DESeq2_gene_dw_path",extension))
 }
 # extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
-system(paste0("cat deseq2_gene_up_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >deseq2_res_path_up",extension))
-system(paste0("cat deseq2_gene_dw_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >deseq2_res_path_dw",extension))
+system(paste0("cat DESeq2_gene_up_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >DESeq2_res_path_up",extension))
+system(paste0("cat DESeq2_gene_dw_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >DESeq2_res_path_dw",extension))
 
-mup=read.delim(paste0("deseq2_res_path_up",extension),header=F)
-mdw=read.delim(paste0("deseq2_res_path_dw",extension),header=F)
+mup=read.delim(paste0("DESeq2_res_path_up",extension),header=F)
+mdw=read.delim(paste0("DESeq2_res_path_dw",extension),header=F)
 colnames(mup)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
 colnames(mdw)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
 

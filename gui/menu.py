@@ -20,8 +20,8 @@ def add_menubar( root ):
 
 	#file menu
 	filemenu = Menu(menubar, tearoff=0)
-	filemenu.add_command( label="Load project", command=build_in_progress )
-	filemenu.add_command( label="Save project", command=build_in_progress )
+	# filemenu.add_command( label="Load project", command=build_in_progress )
+	# filemenu.add_command( label="Save project", command=build_in_progress )
 	filemenu.add_separator()
 	filemenu.add_command( label="Exit", command=root.quit )
 

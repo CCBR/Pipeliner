@@ -17,7 +17,7 @@ params:
 
 ```{r, include=FALSE, warning=FALSE, message=FALSE}
 countMethod <- "subread"
-if(grepl("rsem",params$data)){
+if(grepl("RSEM",params$data)){
   countMethod <- "rsem"
 }
 projectId<-params$projectId
@@ -276,7 +276,7 @@ x=rownames(final)
 ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
 gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 final=cbind(ensID,gene,final)
-write.table(final,file=paste("EdgeR_deg_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
+write.table(final,file=paste("edgeR_DEG_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
 extension=paste0("_",cons[i],".txt")
 ## pathway enrichment --------------------------------------------
 if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38")
@@ -366,10 +366,10 @@ l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mo
 
 if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype)))
 {
-system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py EdgeR_deg_",cons[i],"_all_genes.txt 2 3 ",SPECIES," ",KARYOBEDS," > EdgeR_deg_",cons[i],".input.karyo"))
-system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py EdgeR_deg_",cons[i],".input.karyo ",SPECIES))
-ki1=paste0("EdgeR_deg_",cons[i],".input.karyo1.png")
-ki2=paste0("EdgeR_deg_",cons[i],".input.karyo2.png")
+system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py edgeR_DEG_",cons[i],"_all_genes.txt 2 3 ",SPECIES," ",KARYOBEDS," > edgeR_DEG_",cons[i],".input.karyo"))
+system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py edgeR_DEG_",cons[i],".input.karyo ",SPECIES))
+ki1=paste0("edgeR_DEG_",cons[i],".input.karyo1.png")
+ki2=paste0("edgeR_DEG_",cons[i],".input.karyo2.png")
 cat("\n###KARYO PLOT",cons[i],"\n")
 cat("![](",ki1,")")
 cat("\n")
@@ -384,7 +384,7 @@ colnames(mfc)=paste(cons,"logFC",sep="_")
 colnames(mpval)=paste(cons,"pval",sep="_")
 res=as.data.frame(cbind(mfc,mpval))
 rownames(res)=rownames(res1)
-write.table(res,file="EdgeR_res_all_contrasts.txt",sep="\t",col.names=NA)
+write.table(res,file="edgeR_res_all_contrasts.txt",sep="\t",col.names=NA)
 
 l
 

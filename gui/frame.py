@@ -11,9 +11,10 @@ from glob import glob
 from shutil import copytree
 
 import tkinter as tk
-from tkinter import Tk, END, StringVar, LEFT, TOP, BOTTOM, X, BOTH, YES, INSERT, W, E
-from tkinter import Toplevel, Text, Entry, OptionMenu, Button
-from tkinter import Canvas, HORIZONTAL, VERTICAL, Y, RIGHT, PhotoImage
+# from tkinter import Tk, END, StringVar, LEFT, TOP, BOTTOM, X, BOTH, YES, INSERT, W, E
+# from tkinter import Toplevel, Text, Entry, OptionMenu, Button
+# from tkinter import Canvas, HORIZONTAL, VERTICAL, Y, RIGHT, PhotoImage
+from tkinter import *
 
 from tkinter import ttk
 from tkinter.ttk import Label, LabelFrame, Scrollbar, Frame, Notebook, Style
@@ -32,6 +33,38 @@ from gui.utils import dryrunFgColor, dryrunBgColor
 ################################
 #Base Class for each Pipeline
 ################################
+
+def namecheck(n):
+# returns errors
+# 1 does not end with ".R1.fastq.gz" or ".R2.fastq.gz"
+# 2 starts with a number
+# 3 samplename contains the word "sample"
+# 4 samplename contains the word "R1" or "R2"
+# 5 samplename contains hyphen
+    r1,r2=0,0
+    samplename=""
+    if n.find(".R1.fastq") > 0:
+        r1=1
+        samplename=n.split(".R1.fastq")[0]
+    if n.find(".R2.fastq") > 0:
+        r2=1
+        samplename=n.split(".R2.fastq")[0]
+    if r1 == 0 and r2 == 0:
+        return "filename do not end with .R1.fastq.gz or .R2.fastq.gz"
+    if samplename[0].isdigit():
+        return "samplename starts with a number"
+    samplenameupper=samplename.upper()
+    if samplenameupper.find("SAMPLE") > 0:
+        return "samplename contains the word \"sample\""
+    if samplenameupper.find("R1") > 0:
+        return "samplename contains the word \"R1\" or \"R2\""
+    if samplenameupper.find("R2") > 0:
+        return "samplename contains the word \"R1\" or \"R2\""
+    if samplename.find("-") > 0:
+        return "samplename contains hyphen"
+    return ""
+
+
 
 class PipelineFrame( Frame ) :
     def __init__( self, parent, pipeline_name, annotation, *args, **kwargs ) :
@@ -56,6 +89,7 @@ class PipelineFrame( Frame ) :
         self.targetspath = targetspath
         self.annotation = annotation   
         self.genome = annotation.get()
+        self.nends = -1
         
         l = Label( pipepanel, text="Data Directory:" )
         l.grid(row=1, column=1, sticky=W, padx=0, pady=10 )
@@ -120,10 +154,123 @@ class PipelineFrame( Frame ) :
         
         self.datapath.set(fname)                                    
         self.datafiles = [fn for fn in listdir(fname) if fn.endswith(filetype)]
+        print(self.datafiles)
+        label_found=0
+        label_error=0
+        realfilenames=[]
+        labels=[]
+        try:
+            labelfile=join(self.datapath.get(),"labels.txt")
+            if Path(labelfile).is_file():
+                label_found=1
+                l=open(labelfile)
+                llines=list(map(lambda x:x.strip().split("\t"),l.readlines()))
+                llineslen=list(set(list(map(lambda x:len(x),llines))))
+                if len(llineslen) != 1:
+                    label_error=1
+                    showerror("Label ERROR","All lines in labels.txt should have 2 tab delimited columns.")
+                    exit()
+                if llineslen[0] != 2:
+                    label_error=1
+                    showerror("Label ERROR","All lines in labels.txt should have 2 tab delimited columns.")
+                    exit()
+                for realfilename,labelname in llines:
+                    realfilenames.append(realfilename)
+                    labels.append(labelname)
+                    namecheckstr=namecheck(labelname)
+                    if namecheckstr != "":
+                        showerror("Label ERROR",namecheckstr)
+                        exit()
+                if not set(self.datafiles).issuperset(set(realfilenames)):
+                    showerror("Label Error","labels.txt has files not present in the data directory.")
+                    exit()
+                if len(set(self.datafiles).intersection(set(realfilenames)))!=0: # remove some datafiles
+                    self.datafiles=realfilenames
+
+
+        except Exception as e: 
+            showerror("ERROR",str(e))
+
+        if label_found==0:
+            fR1 = [f for f in self.datafiles if f.find(".R1.fastq") > 0]
+            expected_fR2 = [re.sub(".R1.fastq",".R2.fastq",f) for f in fR1]
+            fR2 = [f for f in self.datafiles if f.find(".R2.fastq") > 0]
+            nends=0 # number of ends .. single or paired
+        else:
+            fR1 = [f for f in labels if f.find(".R1.fastq") > 0]
+            expected_fR2 = [re.sub(".R1.fastq",".R2.fastq",f) for f in fR1]
+            fR2 = [f for f in labels if f.find(".R2.fastq") > 0]
+            nends=0 # number of ends .. single or paired            
+        if len(fR1)-len(set(fR2).intersection(set(expected_fR2))) == 0 and len(fR1) > 0:
+            nends=2
+        elif len(fR1) !=0 and len(fR2) == 0:
+            nends=1
+        outtxt="\n\nFastq Files found:\n"
+        for f in self.datafiles:
+            outtxt+="%s\n"%(f)
+        outtxt="\n"
+        print(outtxt)
+
         self.data_count['text'] = str( len(self.datafiles) ) 
-        
+        outtxt="\n"
         print( "Found", self.data_count['text'], filetype, "files!" )
-        
+        if nends==1:
+            print ("Single - end data!")
+            outtxt_short="%d files found ... Single-end data."%(len(fR1))
+            self.data_count['text'] += " ... Single - end data!"
+            outtxt+="Single - end files:\n"
+            for f in fR1:
+                outtxt+="%s\n"%(f)
+        elif nends==2:
+            print ("Paired - end data!")
+            outtxt_short="%d files found ... Paired-end data."%(len(fR1)+len(fR2))
+            self.data_count['text'] += " ... Paired - end data!"
+            outtxt+="Paired - end files:\n"
+            for f,g in zip(sorted(fR1),sorted(fR2)):
+                outtxt+="%s\t%s\n"%(f,g)
+        else:
+            outtxt_short="Some files many be missing or misnamed!!\n"
+            self.data_count['text'] += " ... FILES MAY BE MISSING!!!"
+        outtxt+="\n"
+        if label_found==0:
+            unclassifiedfiles=list(set(self.datafiles)-set(fR1))
+            unclassifiedfiles=list(set(unclassifiedfiles)-set(fR2))
+        else:
+            unclassifiedfiles=list(set(labels)-set(fR1))
+            unclassifiedfiles=list(set(unclassifiedfiles)-set(fR2))            
+        if len(unclassifiedfiles)>0:
+            outtxt_short+="%d files could not classified as PE or SE!"%(len(unclassifiedfiles))
+            outtxt+="\nThe following files could not be classified as SE or PE (please check the file names):\n"
+            for f in unclassifiedfiles:
+                outtxt+="%s\n"%(f)
+        outtxt+="\n"
+        print(outtxt)
+        showinfo("FILES",outtxt_short)
+        # #define master
+        # master = Tk()
+
+        # #Horizontal (x) Scroll bar
+        # xscrollbar = Scrollbar(master, orient=HORIZONTAL)
+        # xscrollbar.pack(side=BOTTOM, fill=X)
+        # #Vertical (y) Scroll Bar
+        # yscrollbar = Scrollbar(master)
+        # yscrollbar.pack(side=RIGHT, fill=Y)
+
+        # #Text Widget
+        # text = Text(master, wrap=NONE,
+        #             xscrollcommand=xscrollbar.set,
+        #             yscrollcommand=yscrollbar.set)
+        # text.insert("1.0",outtxt)
+        # b = Button(master, text="OK", command=parent.destroy())
+        # b.pack()
+        # text.pack()
+
+        # #Configure the scrollbars
+        # xscrollbar.config(command=text.xview)
+        # yscrollbar.config(command=text.yview)
+        # #Run tkinter main loop
+        # mainloop()
+        self.nends=nends        
         self.option_controller()
         
     def option_controller( self, *args, **kwargs ) :
@@ -402,7 +549,7 @@ class PipelineFrame( Frame ) :
              'analyst': gi.eanalyst.get(), 
              'poc': gi.epoc.get(), 
              'pipeline': self.Pipeline.get(), 
-             'version':"1.0", 
+             'version':"3.0", 
              'annotation': gi.annotation.get(), 
              'datapath': self.datapath.get(), 
              'targetspath': self.targetspath.get(), 
@@ -420,7 +567,9 @@ class PipelineFrame( Frame ) :
              "cluster": "cluster_medium.json", 
              "description": gi.description.get('1.0',END), 
              "technique" : gi.technique.get(), 
-             "TRIM": "yes", 
+             "TRIM": "yes",
+             "nends": self.nends, 
+             'pipehome': gi.pipehome.get(),
             }
            } 
         J=json.dumps(PD, sort_keys = True, indent = 4, ensure_ascii=True)
@@ -467,9 +616,9 @@ class PipelineFrame( Frame ) :
                     showinfo(FT2+"bai","Symlinks Created")
             #else:
                 #tkinter.messagebox.showinfo(FT2+"bai","Index Symlinks Not Created")
-        p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f | sed s/_fastq/.fastq/g` ; done ".format( self.workpath.get() ))
-        p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f|sed s/_R1.fastq/.R1.fastq/g`; done ".format( self.workpath.get() ))
-        p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f|sed s/_R2.fastq/.R2.fastq/g`; done ".format( self.workpath.get() ))
+        # p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f | sed s/_fastq/.fastq/g` ; done ".format( self.workpath.get() ))
+        # p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f|sed s/_R1.fastq/.R1.fastq/g`; done ".format( self.workpath.get() ))
+        # p = os.popen("for f in `ls {0}/*fastq*`;do mv $f `echo $f|sed s/_R2.fastq/.R2.fastq/g`; done ".format( self.workpath.get() ))
 
         return True
         

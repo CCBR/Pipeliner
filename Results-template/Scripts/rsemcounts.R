@@ -1,4 +1,3 @@
-#!/usr/local/apps/R/gcc_4.9.1/3.2.3/bin/Rscript
 library('reshape') 
 library('ggplot2')
 library('edgeR')
@@ -29,22 +28,22 @@ res=merge(res,temp)
 gene_name=read.delim(ANNOTATE,header=F,sep=" ")
 res2=merge(gene_name,res,by.x=1,by.y=1)
 res3=cbind(symbol=paste(res2[,1],"|",res2[,3],sep=""),res2[,-c(1,2,3,4,5)])
-write.table(as.data.frame(res3),file="RawCountFile_rsemgenes.txt",sep="\t",row.names=F) 
+write.table(as.data.frame(res3),file="RawCountFile_RSEM_genes.txt",sep="\t",row.names=F) 
 #
-mydata=read.delim("RawCountFile_rsemgenes.txt",row.names=1)
+mydata=read.delim("RawCountFile_RSEM_genes.txt",row.names=1)
 #  rounding
 mydata=round(mydata)
 val1=as.numeric(MINCOUNT)
 val2=as.numeric(MINSAMPLES)
-cat(val1," ", val2, "checking..\n",file="check.txt")
+# cat(val1," ", val2, "checking..\n",file="check.txt")
 ## filter <- apply(mydata, 1, function(x) length(x[x>val1])>=val2)
 ## res=mydata[filter,]
 tot=colSums(mydata)
 val1=(val1/max(tot))*1e6
-cat(val1," ", val2, "checking..\n",file="check2.txt")
+# cat(val1," ", val2, "checking..\n",file="check2.txt")
 filter <- apply(cpm(mydata), 1, function(x) length(x[x>val1])>=val2)
 res=mydata[filter,]
-write.table(as.data.frame(res),file="RawCountFile_rsemgenes_filtered.txt",sep="\t",col.names=NA)
+write.table(as.data.frame(res),file="RawCountFile_RSEM_genes_filtered.txt",sep="\t",col.names=NA)
 png("RSEM_HistBeforenormFilter.png")
 df.m <- melt(as.data.frame(res))
 print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='top') + scale_x_log10())

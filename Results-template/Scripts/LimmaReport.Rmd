@@ -1,5 +1,5 @@
 ---
-title: "Limma results"
+title: "limma results"
 author: "CCBR RNAseq pipeline"
 output: html_document
 params:
@@ -17,7 +17,7 @@ params:
 
 ```{r, include=FALSE, warning=FALSE, message=FALSE}
 countMethod <- "subread"
-if(grepl("rsem",params$data)){
+if(grepl("RSEM",params$data)){
   countMethod <- "rsem"
 }
 projectId<-params$projectId
@@ -91,7 +91,7 @@ design=model.matrix(~0+Group)
 contras=unlist(strsplit(CONTRASTS, split=" "))  
 # opts_knit$set(root.dir = DIR)
 # setwd(DIR)
-cat(contras,"\t",length(contras),"\t",contras[1],"\t",contras[2],"\n",file="readcontraLimma.txt")
+cat(contras,"\t",length(contras),"\t",contras[1],"\t",contras[2],"\n",file="readcontralimma.txt")
 
 cons=c()
 for(i in seq(1, length(contras), by = 2))
@@ -114,10 +114,10 @@ mydata=cbind(ensID,gene,v1$E)
 
 sf=cbind(ensID,gene,sf)
 
-write.table(sf,file="LimmaVoom_scaling_factors.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
-write.table(mydata,file="LimmaVoom_Normalized_data.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
+write.table(sf,file="limma_voom_scaling_factors.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
+write.table(mydata,file="limma_oom_normalized_data.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
 
-#png("HistLimmavoomNormFilter.png")
+#png("HistlimmavoomNormFilter.png")
 df.n <- melt(as.data.frame(v1$E))
 print(ggplot(df.n) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + ggtitle("Normalized Counts"))
 # dev.off()
@@ -125,14 +125,14 @@ print(ggplot(df.n) + geom_density(aes(x = value,colour = variable)) + labs(x = N
 ```
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,include=FALSE}
 ## MDS
-png("Limma_MDS.png")
+png("limma_MDS.png")
 ## MDS <- plotMDS(v1,xlim=c(-5,5),ylim=c(-5,5),cex=1,pch=20)
 plotMDS(v1,xlim=c(-5,5),ylim=c(-5,5),cex=1,pch=20)
-## png("Limma_MDS.png")
+## png("limma_MDS.png")
 shortname=paste(substr(colnames(v1$E),1,22))
 #text(MDS, labels=shortname, cex=0.5, pos=1)
 # print(MDS)
-## dev.copy(png, paste("Limma_MDS.png"))
+## dev.copy(png, paste("limma_MDS.png"))
 dev.off()
 
 ## 
@@ -207,7 +207,7 @@ pr2=prcomp(tedf,scale.=T)
 condition = factor(sampleinfo$condition)
 dd=cbind(tedf,condition=as.character(condition))
 
-png("LIMMA_PCA_2D.png")
+png("limma_PCA_2D.png")
 autoplot(pr2,data=dd, colour = 'condition')
 dev.off()
 ```
@@ -241,7 +241,7 @@ ebayes.fit=eBayes(fitb)
 #pval=ebayes.fit$p.value
 #colnames(pval)=paste(colnames(ebayes.fit$p.value),"pval",sep="_")
 #res=as.data.frame(cbind(logFC,pval))
-#write.table(res,file="Limma_res_all_contrasts.txt",sep="\t",col.names=NA)
+#write.table(res,file="limma_res_all_contrasts.txt",sep="\t",col.names=NA)
 #DT::datatable(res)
 
 #kp1 = htmltools::tagList()
@@ -351,10 +351,10 @@ l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mo
 # DT::datatable(volcano_data)
 #MAplot <- plot(ebayes.fit,coef=i)
 #print(MAplot)
-#dev.copy(png, paste(cons[i],"_MAplot_Limma_old.png",sep=""))
+#dev.copy(png, paste(cons[i],"_MAplot_limma_old.png",sep=""))
 #dev.off()
 dataf=data.frame("m"=all.genes.con$AveExpr,"fc"=all.genes.con$logFC,"sig"=all.genes.con$adj.P.Val<0.05)
-png(paste(cons[i],"_MAplot_Limma_v2.png",sep=""))
+png(paste(cons[i],"_MAplot_limma_v2.png",sep=""))
 plotMA(dataf,log="",main=cons[i],ylim=range(all.genes.con$logFC))
 dev.off()
 # all.genes.con$FC <- ifelse(all.genes.con$logFC<0, -1/(2^all.genes.con$logFC), 2^all.genes.con$logFC)
@@ -362,20 +362,20 @@ x=rownames(all.genes.con)
 ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
 gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 all.genes.con=cbind(ensID,gene,all.genes.con)
-write.table(all.genes.con,file=paste("Limma_deg_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
+write.table(all.genes.con,file=paste("limma_DEG_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
 
 if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype)))
 {
-system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py Limma_deg_",cons[i],"_all_genes.txt 2 3 ",SPECIES," ",KARYOBEDS," > Limma_deg_",cons[i],".input.karyo"))
-system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py Limma_deg_",cons[i],".input.karyo ",SPECIES))
-ki1=paste0("Limma_deg_",cons[i],".input.karyo1.png")
-ki2=paste0("Limma_deg_",cons[i],".input.karyo2.png")
+system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py limma_DEG_",cons[i],"_all_genes.txt 2 3 ",SPECIES," ",KARYOBEDS," > limma_DEG_",cons[i],".input.karyo"))
+system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py limma_DEG_",cons[i],".input.karyo ",SPECIES))
+ki1=paste0("limma_DEG_",cons[i],".input.karyo1.png")
+ki2=paste0("limma_DEG_",cons[i],".input.karyo2.png")
 cat("\n###KARYO PLOT",cons[i],"\n")
 cat("![](",ki1,")")
-#kp1[[i]]<-knitr::include_graphics(paste0("Limma_deg_",cons[i],".input.karyo1.png"))
+#kp1[[i]]<-knitr::include_graphics(paste0("limma_DEG_",cons[i],".input.karyo1.png"))
 cat("\n")
 cat("![](",ki2,")")
-#kp2[[i]]<-knitr::include_graphics(paste0("Limma_deg_",cons[i],".input.karyo2.png"))
+#kp2[[i]]<-knitr::include_graphics(paste0("limma_DEG_",cons[i],".input.karyo2.png"))
 cat("\n\n")
 }
 

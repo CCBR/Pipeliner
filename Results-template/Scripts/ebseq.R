@@ -4,9 +4,8 @@ FILES <- args[2]
 SAMTAB <- args[3]
 CONTRASTS <- args[4]
 RSEMREF <- args[5]
-RSEM <- args[6]
-TYPE <- args[7]
-ANNOTATE <- args[8]
+TYPE <- args[6]
+ANNOTATE <- args[7]
 
 
 
@@ -24,7 +23,7 @@ myfiles=as.character(unlist(strsplit(FILES, split=" ")))
 
 annot <- read.delim(ANNOTATE, header = F, sep = " ")
 
-s2c<-read.table(file.path(paste(DIR,"/",SAMTAB,sep="")), header=TRUE, stringsAsFactors = FALSE)
+s2c<-read.table(file.path(SAMTAB), header=TRUE, stringsAsFactors = FALSE)
 s2c<-dplyr::select(s2c, sample=sampleName, condition)
 s2c$sample<-gsub("\\..*","",s2c$sample)
 
@@ -55,16 +54,16 @@ for(f in seq(1, length(contras), by = 2)){
 	}
 	isofiles = paste(fileorder,collapse=" ")
 
-	system(paste(RSEM,"/rsem-generate-data-matrix ",isofiles," > RSEMDEG_", TYPE, "/", pairname, ".", TYPE, ".counts.matrix",sep=""))
+	system(paste("rsem-generate-data-matrix ",isofiles," > DEG_RSEM_", TYPE, "/", pairname, ".", TYPE, ".counts.matrix",sep=""))
 
-	countmatrix <- read.delim(paste("RSEMDEG_", TYPE, "/", pairname, ".", TYPE, ".counts.matrix",sep=""), header = T)
+	countmatrix <- read.delim(paste("DEG_RSEM_", TYPE, "/", pairname, ".", TYPE, ".counts.matrix",sep=""), header = T)
 	mergeannot <- merge(annot, countmatrix, by.x = 1, by.y = 1)
 	mergeannot <- cbind(gene_id = paste(mergeannot[,1],"|",mergeannot[,3], sep = ""), mergeannot[,-c(1:5)])
 	
-	write.table(data.frame(mergeannot[,-1], row.names=mergeannot[,1]),file=paste("RSEMDEG_", TYPE, "/", pairname, ".", TYPE, ".counts.matrix",sep=""),sep="\t",row.names=T)
+	write.table(data.frame(mergeannot[,-1], row.names=mergeannot[,1]),file=paste("DEG_RSEM_", TYPE, "/", pairname, ".", TYPE, ".counts.matrix",sep=""),sep="\t",row.names=T)
 
-	system(paste(RSEM,"/rsem-run-ebseq --ngvector ",RSEMREF,".transcripts.ngvec RSEMDEG_", TYPE, "/", pairname,".", TYPE, ".counts.matrix ",c1,",",c2," RSEMDEG_", TYPE, "/",pairname,".", TYPE, ".EBSeq",sep=""))
+	system(paste("rsem-run-ebseq --ngvector ",RSEMREF,".transcripts.ngvec DEG_RSEM_", TYPE, "/", pairname,".", TYPE, ".counts.matrix ",c1,",",c2," DEG_RSEM_", TYPE, "/",pairname,".", TYPE, ".EBSeq",sep=""))
 
 }
 
-write.csv(s2c, file=paste("ebseq_",TYPE,"_completed.txt", sep=""))
+write.csv(s2c, file=paste("EBSeq_",TYPE,"_completed.txt", sep=""))
