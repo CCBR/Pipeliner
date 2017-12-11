@@ -139,7 +139,7 @@
      "GTFFILE": "/fdb/GENCODE/Gencode_human/release_26/gencode.v26.annotation.gtf",
     "FUSIONGTFFILE": "/fdb/GENCODE/Gencode_human/release_26/gencode.v26.annotation.gtf",
      "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg38_genes_R26.txt",
-     "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg38_genes_R26.txt",
+     "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg38_isoforms_R26.txt",
      "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/dev/refFlatHg38_R26.txt",
      "REFFLAT2": "/data/CCBR_Pipeliner/db/PipeDB/dev/refFlatHg38_R26.txt",
      "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg38.gencode.v26.bed",
