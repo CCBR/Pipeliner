@@ -154,7 +154,6 @@ class PipelineFrame( Frame ) :
         
         self.datapath.set(fname)                                    
         self.datafiles = [fn for fn in listdir(fname) if fn.endswith(filetype)]
-        print(self.datafiles)
         label_found=0
         label_error=0
         realfilenames=[]

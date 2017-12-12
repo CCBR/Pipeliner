@@ -62,6 +62,8 @@ if se == 'yes' :
             # FastqScreen
             expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
             expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
             # Trim and remove blacklisted reads
             expand(join(workpath,trim_dir,'{name}.R1.trim.fastq.gz'), name=samples),
             # Kraken
@@ -102,19 +104,26 @@ if se == 'yes' :
         output:
             join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),
             join(workpath,"FQscreen","{name}.R1.trim_screen.png"),
+            join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),
+            join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),
         params: 
             rname='pl:fqscreen',
             bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
             perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
             fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
             fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'], 
+            fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'], 
             outdir = "FQscreen",
+            outdir2 = "FQscreen2",
         threads: 24
         shell: """
 module load {params.bowtie2ver} ;
 module load {params.perlver}; 
 {params.fastq_screen} --conf {params.fastq_screen_config} \
     --outdir {params.outdir} --subset 1000000 \
+    --aligner bowtie2 --force {input}
+{params.fastq_screen} --conf {params.fastq_screen_config2} \
+    --outdir {params.outdir2} --subset 1000000 \
     --aligner bowtie2 --force {input}
             """
 
@@ -344,6 +353,8 @@ if pe == 'yes':
             # FastqScreen
             expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
             expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
+            expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
+            expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
             	# Trim and remove blacklisted reads
             expand(join(workpath,trim_dir,'{name}.R{rn}.trim.fastq.gz'), name=samples,rn=[1,2]),
             # Kraken
@@ -482,6 +493,10 @@ fastqc {input} -t {threads} -o {output};
             join(workpath,"FQscreen","{name}.R1.trim_screen.png"),
             join(workpath,"FQscreen","{name}.R2.trim_screen.txt"),
             join(workpath,"FQscreen","{name}.R2.trim_screen.png"),
+            join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),
+            join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),
+            join(workpath,"FQscreen2","{name}.R2.trim_screen.txt"),
+            join(workpath,"FQscreen2","{name}.R2.trim_screen.png"),
         params: 
             rname='pl:fqscreen',
             bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
@@ -489,6 +504,8 @@ fastqc {input} -t {threads} -o {output};
             fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
             fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'], 
             outdir = "FQscreen",
+            fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'], 
+            outdir2 = "FQscreen2",
         threads: 24
         shell: """
 module load {params.bowtie2ver} ;
@@ -498,6 +515,12 @@ module load {params.perlver};
     --aligner bowtie2 --force {input.infq1}
 {params.fastq_screen} --conf {params.fastq_screen_config} \
     --outdir {params.outdir} --subset 1000000 \
+    --aligner bowtie2 --force {input.infq2}
+{params.fastq_screen} --conf {params.fastq_screen_config2} \
+    --outdir {params.outdir2} --subset 1000000 \
+    --aligner bowtie2 --force {input.infq1}
+{params.fastq_screen} --conf {params.fastq_screen_config2} \
+    --outdir {params.outdir2} --subset 1000000 \
     --aligner bowtie2 --force {input.infq2}
             """
 
@@ -739,7 +762,7 @@ rule multiqc:
     threads: 1
     shell: """
 module load {params.multiqc}
-cd Reports && multiqc -f --interactive -x "*slurmfiles*" ../
+cd Reports && multiqc -f --interactive -e cutadapt -d ../
 """
 
 
