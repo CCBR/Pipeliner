@@ -557,7 +557,7 @@ rule EBSeq_isoform:
   output: 
     join(workpath,rsemi_dir,"EBSeq_isoform_completed.txt")
   params: 
-    rname='pl:EBSeq',
+    rname='pl:EBSeq_isoform',
     batch='--mem=128g --cpus-per-task=8 --time=10:00:00',
     outdir=join(workpath,rsemi_dir),
     contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
@@ -581,7 +581,7 @@ rule EBSeq_gene:
   output: 
     join(workpath,rsemg_dir,"EBSeq_gene_completed.txt")
   params:
-    rname='pl:EBSeq',
+    rname='pl:EBSeq_gene',
     batch='--mem=128g --cpus-per-task=8 --time=10:00:00',
     outdir=join(workpath,rsemg_dir),
     contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
