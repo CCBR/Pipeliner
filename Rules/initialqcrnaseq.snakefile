@@ -45,9 +45,16 @@ if pe=="yes":
         expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),name=samples),
         expand(join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.txt"),name=samples),
         expand(join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.txt"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}_R2_001_trim_paired_screen.txt"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}_R2_001_trim_paired_screen.png"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
         expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
+        expand(join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),name=samples),
+        expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),
+
 
 
    rule rawfastqc:
@@ -167,13 +174,19 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
         out1=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"), 
         out2=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"), 
         out3=join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.txt"), 
-        out4=join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.png")
+        out4=join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.png"),
+        out5=join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.txt"), 
+        out6=join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.png"), 
+        out7=join(workpath,"FQscreen2","{name}_R2_001_trim_paired_screen.txt"), 
+        out8=join(workpath,"FQscreen2","{name}_R2_001_trim_paired_screen.png")
       params: 
         rname='pl:fqscreen',
         batch='--cpus-per-task=24 --mem=64g --time=10:00:00',
         fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
         outdir = join(workpath,"FQscreen"),
+        outdir2 = join(workpath,"FQscreen2"),
         fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
+        fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
         perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
         bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
       threads: 24
@@ -181,6 +194,7 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
 module load {params.bowtie2ver};
 module load {params.perlver};
 {params.fastq_screen} --conf {params.fastq_screen_config} --outdir {params.outdir} --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1} {input.file2}
+{params.fastq_screen} --conf {params.fastq_screen_config2} --outdir {params.outdir2} --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1} {input.file2}
         """
 
    rule kraken_pe:
@@ -226,7 +240,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
         rname='pl:star1p',prefix="{name}",
         batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
         starver=config['bin'][pfamily]['tool_versions']['STARVER'],
-        stardir=config['references']['rnaseq']['STARDIR'],
+        stardir=config['references'][pfamily]['STARDIR'],
         filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],
         samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],
         filtertype=config['bin'][pfamily]['FILTERTYPE'],
@@ -306,7 +320,7 @@ cat {input.files} |sort|uniq|awk -F \"\\t\" '{{if ($5>0 && $6==1) {{print}}}}'|c
         wigstrand=config['bin'][pfamily]['WIGSTRAND'],
         gtffile=config['references'][pfamily]['GTFFILE'],
         nbjuncs=config['bin'][pfamily]['NBJUNCS'],
-        stardir=config['references']['rnaseq']['STARDIR']
+        stardir=config['references'][pfamily]['STARDIR'],
       threads:32
       run:
         import glob,os
@@ -332,6 +346,8 @@ if se=="yes":
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
         expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),name=samples),
         expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.txt"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.png"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
 
@@ -432,13 +448,17 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
         file1=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
       output: 
         out1=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),
-        out2=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png")
+        out2=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),
+        out3=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),
+        out4=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png")
       params: 
         rname='pl:fqscreen',
         batch='--cpus-per-task=24 --mem=64g --time=10:00:00',
         fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
         outdir = join(workpath,"FQscreen"),
+        outdir2 = join(workpath,"FQscreen2"),
         fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
+        fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
         perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
         bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
       threads: 24
@@ -446,6 +466,7 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
 module load {params.bowtie2ver};
 module load {params.perlver};
 {params.fastq_screen} --conf {params.fastq_screen_config} --outdir {params.outdir} --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1}
+{params.fastq_screen} --conf {params.fastq_screen_config2} --outdir {params.outdir2} --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1}
 """
 
    rule kraken_se:
@@ -488,7 +509,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
         prefix="{name}",
         batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
         starver=config['bin'][pfamily]['tool_versions']['STARVER'],
-        stardir=config['references']['rnaseq']['STARDIR'],
+        stardir=config['references'][pfamily]['STARDIR'],
         filterintronmotifs=config['bin'][pfamily]['FILTERINTRONMOTIFS'],
         samstrandfield=config['bin'][pfamily]['SAMSTRANDFIELD'],
         filtertype=config['bin'][pfamily]['FILTERTYPE'],
@@ -567,7 +588,7 @@ cat {input.files} |sort|uniq|awk -F \"\\t\" '{{if ($5>0 && $6==1) {{print}}}}'|c
         wigstrand=config['bin'][pfamily]['WIGSTRAND'], 
         gtffile=config['references'][pfamily]['GTFFILE'], 
         nbjuncs=config['bin'][pfamily]['NBJUNCS'],
-        stardir=config['references']['rnaseq']['STARDIR']
+        stardir=config['references'][pfamily]['STARDIR']
       threads:32
       run:
         import glob
@@ -590,14 +611,15 @@ rule picard:
     outstar3=join(workpath,log_dir,"{name}.star.duplic")
    params: 
     rname='pl:picard',
+    sampleName="{name}",
     batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
     picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
    shell: """
 module load {params.picardver};
-java -Xmx110g  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar INPUT={input.file1} OUTPUT=/lscratch/$SLURM_JOBID/star_rg_added.sorted.bam TMP_DIR=/lscratch/$SLURM_JOBID RGID=id RGLB=library RGPL=illumina RGPU=machine RGSM=sample; 
-java -Xmx110g -jar $PICARDJARPATH/MarkDuplicates.jar INPUT=/lscratch/$SLURM_JOBID/star_rg_added.sorted.bam OUTPUT=/lscratch/$SLURM_JOBID/star_rg_added.sorted.dmark.bam TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3};
-mv /lscratch/$SLURM_JOBID/star_rg_added.sorted.dmark.bam {output.outstar2};
-mv /lscratch/$SLURM_JOBID/star_rg_added.sorted.dmark.bai {output.outstar2b};
+java -Xmx110g  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar INPUT={input.file1} OUTPUT=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam TMP_DIR=/lscratch/$SLURM_JOBID RGID=id RGLB=library RGPL=illumina RGPU=machine RGSM=sample; 
+java -Xmx110g -jar $PICARDJARPATH/MarkDuplicates.jar INPUT=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam OUTPUT=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3};
+mv /lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam {output.outstar2};
+mv /lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bai {output.outstar2b};
 """        
 
 rule preseq:
@@ -698,7 +720,7 @@ rule rnaseq_multiqc:
    shell: """
 module load {params.multiqcver}
 cd {params.outdir}
-multiqc -f -c {params.qcconfig} --interactive -x "*slurmfiles*" ../
+multiqc -f -c {params.qcconfig} --interactive -e cutadapt -d ../
 cd {workpath}/slurmfiles
 multiqc -f --interactive .
     """
