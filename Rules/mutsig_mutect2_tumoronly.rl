@@ -1,5 +1,5 @@
 import glob
-samps = len(glob.glob1(myPath,"*.recal.bam"))
+samps = len(glob.glob1(".","*.recal.bam"))
 
 if samps>10:
   if config['project']['annotation'] == "hg19":

@@ -62,14 +62,14 @@ rule rsemcounts:
 rule picard:
   input: file1= "{name}.p2.Aligned.sortedByCoord.out.bam"
   output: outstar1=temp("{name}.star_rg_added.sorted.bam"), outstar2=temp("{name}.star_rg_added.sorted.dmark.bam"),outstar3="{name}.star.duplic"
-  params: rname='pl:picard',batch='--mem=24g --time=10:00:00 --gres=lscratch:800',picardver=config['bin'][pfamily]['PICARDVER']#,picardjarpath=config['bin'][pfamily]['PICARDJARPATH']
-  shell: "module load {params.picardver}; java -Xmx10g  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar INPUT={input.file1} OUTPUT={output.outstar1} TMP_DIR=/lscratch/$SLURM_JOBID RGID=id RGLB=library RGPL=illumina RGPU=machine RGSM=sample; java -Xmx10g -jar $PICARDJARPATH/MarkDuplicates.jar INPUT={output.outstar1} OUTPUT={output.outstar2} TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3}"
+  params: rname='pl:picard',batch='--mem=24g --time=10:00:00 --gres=lscratch:800'#,picardjarpath=config['bin'][pfamily]['PICARDJARPATH']
+  shell: "module load picard/1.119; java -Xmx10g  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar INPUT={input.file1} OUTPUT={output.outstar1} TMP_DIR=/lscratch/$SLURM_JOBID RGID=id RGLB=library RGPL=illumina RGPU=machine RGSM=sample; java -Xmx10g -jar $PICARDJARPATH/MarkDuplicates.jar INPUT={output.outstar1} OUTPUT={output.outstar2} TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3}"
 
 rule stats:
   input: file1= "{name}.star_rg_added.sorted.dmark.bam"
   output: outstar1="{name}.RnaSeqMetrics.txt", outstar2="{name}.flagstat.concord.txt", outstar3="{name}.InsertSizeMetrics.txt", outstar4="{name}.InsertSizeHisto.pdf"
-  params: rname='pl:stats',batch='--mem=24g --time=10:00:00 --gres=lscratch:800',picardver=config['bin'][pfamily]['PICARDVER'],refflat=config['references'][pfamily]['REFFLAT'],rrnalist=config['references'][pfamily]['RRNALIST'],picardstrand=config['bin'][pfamily]['PICARDSTRAND']
-  shell: "module load R/3.4.0_gcc-6.2.0;module load {params.picardver}; java -Xmx10g -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar REF_FLAT={params.refflat} INPUT={input.file1} OUTPUT={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY=SECOND_READ_TRANSCRIPTION_STRAND TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT; java -Xmx10g -jar $PICARDJARPATH/CollectInsertSizeMetrics.jar INPUT={input.file1} OUTPUT={output.outstar3} HISTOGRAM_FILE={output.outstar4} MINIMUM_PCT=0.5 TMP_DIR=/lscratch/$SLURM_JOBID ;module load samtools; samtools flagstat {input.file1} > {output.outstar2}; module load python; python Scripts/bam_count_concord_stats.py {input.file1} >> {output.outstar2} "
+  params: rname='pl:stats',batch='--mem=24g --time=10:00:00 --gres=lscratch:800',refflat=config['references'][pfamily]['REFFLAT'],rrnalist=config['references'][pfamily]['RRNALIST'],picardstrand=config['bin'][pfamily]['PICARDSTRAND']
+  shell: "module load R/3.4.0_gcc-6.2.0;module load picard/1.119; java -Xmx10g -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar REF_FLAT={params.refflat} INPUT={input.file1} OUTPUT={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY=SECOND_READ_TRANSCRIPTION_STRAND TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT; java -Xmx10g -jar $PICARDJARPATH/CollectInsertSizeMetrics.jar INPUT={input.file1} OUTPUT={output.outstar3} HISTOGRAM_FILE={output.outstar4} MINIMUM_PCT=0.5 TMP_DIR=/lscratch/$SLURM_JOBID ;module load samtools; samtools flagstat {input.file1} > {output.outstar2}; module load python; python Scripts/bam_count_concord_stats.py {input.file1} >> {output.outstar2} "
 
 rule prernaseqc:
   input: expand("{name}.star_rg_added.sorted.dmark.bam", name=samples)
@@ -89,14 +89,14 @@ rule rnaseqc:
   input: "files_to_rnaseqc.txt"
   output: "STAR_QC"
   priority: 2
-  params: rname='pl:rnaseqc',batch='--mem=24g --time=48:00:00',bwaver=config['bin'][pfamily]['BWAVER'],rrnalist=config['references'][pfamily]['RRNALIST'],rnaseqcver=config['bin'][pfamily]['RNASEQCVER'],gtffile=config['references'][pfamily]['GTFFILE'],genomefile=config['references'][pfamily]['GENOMEFILE']
+  params: rname='pl:rnaseqc',batch='--mem=24g --time=48:00:00',rrnalist=config['references'][pfamily]['RRNALIST'],gtffile=config['references'][pfamily]['GTFFILE'],genomefile=config['references'][pfamily]['GENOMEFILE']
   shell: """
-         module load {params.bwaver}
+         module load bwa/0.7.15
          var="{params.rrnalist}"
          if [  $var == "-" ]; then
-                java -jar {params.rnaseqcver} -n 1000 -s {input} -t {params.gtffile} -r {params.genomefile}  -o {output}
+                java -jar /usr/local/apps/rnaseqc/1.1.8/RNA-SeQC_v1.1.8.jar -n 1000 -s {input} -t {params.gtffile} -r {params.genomefile}  -o {output}
          else
-                java -jar {params.rnaseqcver} -n 1000 -s {input} -t {params.gtffile} -r {params.genomefile} -rRNA {params.rrnalist}  -o {output}
+                java -jar /usr/local/apps/rnaseqc/1.1.8/RNA-SeQC_v1.1.8.jar -n 1000 -s {input} -t {params.gtffile} -r {params.genomefile} -rRNA {params.rrnalist}  -o {output}
          fi
          """
 
