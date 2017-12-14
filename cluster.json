@@ -526,7 +526,7 @@
     {
         "threads": "4",
         "time" : "10-00:00:00",
-        "mem": "120g"
+        "mem": "96g"
     },
     "gatk_splitcigar":
     {

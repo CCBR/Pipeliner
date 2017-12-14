@@ -1,7 +1,7 @@
 rule database_somatic:
-    input: mutect2maf=config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_merged.maf",
-           mutectmaf=config['project']['workpath']+"/mutect_out/oncotator_out/mutect_merged.maf",
-           strelkamaf=config['project']['workpath']+"/strelka_out/oncotator_out/strelka_merged.maf",
+    input: mutect2maf=config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_filtered.maf",
+           mutectmaf=config['project']['workpath']+"/mutect_out/oncotator_out/mutect_filtered.maf",
+           strelkamaf=config['project']['workpath']+"/strelka_out/oncotator_out/strelka_filtered.maf",
     output: mutect2dbase=config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             mutectdbase=config['project']['workpath']+"/mutect_out/mutect_variants.database",
             strelkadbase=config['project']['workpath']+"/strelka_out/strelka_variants.database",
