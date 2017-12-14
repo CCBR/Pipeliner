@@ -6,6 +6,6 @@ rule gatk_genotype_somatic_gvcfs:
     run:
       fl=os.popen("ls x*.gvcf").read().split()      
       var=" --variant "+" --variant ".join(fl)
-      cmd="module load GATK/3.6; GATK -m 120G GenotypeGVCFs -R {params.genome} --annotation InbreedingCoeff --annotation FisherStrand --annotation QualByDepth --annotation ChromosomeCounts  --dbsnp {params.snpsites} -o {output} -nt {threads}"+var
+      cmd="module load GATK/3.6; GATK -m 96G GenotypeGVCFs -R {params.genome} --annotation InbreedingCoeff --annotation FisherStrand --annotation QualByDepth --annotation ChromosomeCounts  --dbsnp {params.snpsites} -o {output} -nt {threads}"+var
       print(cmd)
       shell(cmd)

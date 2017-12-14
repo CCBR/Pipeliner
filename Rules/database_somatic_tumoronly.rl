@@ -1,5 +1,5 @@
 rule database_somatic_tumoronly:
-    input: mutect2maf=config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_merged.maf",
+    input: mutect2maf=config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_filtered.maf",
     output: mutect2dbase=config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
     params: rname="pl:database"
     shell: "cd mutect2_out; sed '1!b;s/#//g' {input.mutect2maf} > temp.database; module load R/3.4.0_gcc-6.2.0; Rscript ../Scripts/dedupcol.R; echo -n \"create table vcf (\\\"\" > sqlite3.commands; sed -n 1p temp.database | sed 's/#//g' | sed 's/\\t/\" text, \"/g' | sed '${{s/$/\\\" text);/}}' >> sqlite3.commands; echo \".separator \\\"\\\\t\\\"\" >> sqlite3.commands; echo \".import temp.database vcf\" >> sqlite3.commands; tail -n +2 temp.database > temp.temp.database; mv temp.temp.database temp.database; sqlite3 {output.mutect2dbase} < sqlite3.commands"
