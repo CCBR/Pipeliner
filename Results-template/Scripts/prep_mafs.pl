@@ -102,7 +102,7 @@ my @columns=(split "\t",$header);
 my $col='';
 
 my $z=0;
-for ($z=0; $z<@columns; $z++)
+for ($z=0; $z<@columns; $z++) {
 	if ($columns[$z] eq 'ExAC_AF') {
 		$col=$z;
 		last;
