@@ -115,15 +115,15 @@ while (<F>){
   	last if m/^$/;
   	@line = split "\t", $_;
 	if ($line[0] eq 'Hugo_Symbol') {
-		print D "$line[0]\n";
+		print D "$_\n";
 	}
 	else {
 		if ($line[$z] eq '-') {
-			print D "$line[0]\n";
+			print D "$_\n";
 		}
 		else {
 			if ($line[$z] <= 0.001) {
-				print D "$line[0]\n";
+				print D "$_\n";
 			}
 		}
 	}
