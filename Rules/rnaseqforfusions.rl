@@ -55,7 +55,7 @@ rule rsem:
 
 rule rsemcounts:
    input: files=expand("{name}.rsem.genes.results", name=samples)
-   output: "RawCountFile_rsemgenes_filtered.txt"
+   output: "RawCountFile_RSEM_genes_filtered.txt"
    params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
    shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/rsemcounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
 
@@ -114,38 +114,38 @@ rule rseqc:
            read_distribution.py -i {input.file1} -r {params.bedref} > {output.out4}
            """
 
-rule subread:
-   input:  file1="{name}.star_rg_added.sorted.dmark.bam",
-   output: out="{name}.star.count.info.txt", res="{name}.star.count.txt"
-   params: rname='pl:subread',batch='--time=4:00:00 --gres=lscratch:800',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
-   shell: "module load {params.subreadver}; featureCounts -T 16 -p -t exon -R -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
+#rule subread:
+#   input:  file1="{name}.star_rg_added.sorted.dmark.bam",
+#   output: out="{name}.star.count.info.txt", res="{name}.star.count.txt"
+#   params: rname='pl:subread',batch='--time=4:00:00 --gres=lscratch:800',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
+#   shell: "module load {params.subreadver}; featureCounts -T 16 -p -t exon -R -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
 
-rule subreadoverlap:
-   input:  file1="{name}.star_rg_added.sorted.dmark.bam",
-   output: out="{name}.star.count.info.overlap.txt", res="{name}.star.count.overlap.txt"
-   params: rname='pl:subreadoverlap',batch='--cpus-per-task=16 --mem=24g --time=48:00:00 --gres=lscratch:800',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
-   shell: "module load {params.subreadver}; featureCounts -T 16 -p -t exon -R -O -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
+#rule subreadoverlap:
+#   input:  file1="{name}.star_rg_added.sorted.dmark.bam",
+#   output: out="{name}.star.count.info.overlap.txt", res="{name}.star.count.overlap.txt"
+#   params: rname='pl:subreadoverlap',batch='--cpus-per-task=16 --mem=24g --time=48:00:00 --gres=lscratch:800',subreadver=config['bin'][pfamily]['SUBREADVER'],gtffile=config['references'][pfamily]['GTFFILE']
+#   shell: "module load {params.subreadver}; featureCounts -T 16 -p -t exon -R -O -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}; sed '1d' {output.out} | cut -f1,7 > {output.res}"
 
-rule genecounts: 
-   input: files=expand("{name}.star.count.txt", name=samples)
-   output: "RawCountFile_genes_filtered.txt"
-   params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
-   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/genecounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
+#rule genecounts: 
+#   input: files=expand("{name}.star.count.txt", name=samples)
+#   output: "RawCountFile_genes_filtered.txt"
+#   params: rname='pl:genecounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTGENES'],minsamples=config['project']['MINSAMPLES'],annotate=config['references'][pfamily]['ANNOTATE']
+#   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/genecounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'"
 
-rule junctioncounts: 
-   input: files=expand("{name}.p2.SJ.out.tab", name=samples)
-   output: "RawCountFile_junctions_filtered.txt"
-   params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
-   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/junctioncounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}'"
+#rule junctioncounts: 
+#   input: files=expand("{name}.p2.SJ.out.tab", name=samples)
+#   output: "RawCountFile_junctions_filtered.txt"
+#   params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],mincount=config['project']['MINCOUNTJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
+#   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/junctioncounts.R '{params.dir}' '{input.files}' '{params.mincount}' '{params.minsamples}'"
 
-rule genejunctioncounts: 
-   input: files=expand("{name}.p2.SJ.out.tab", name=samples)
-   output: "RawCountFile_genejunctions_filtered.txt"
-   params: rname='pl:genejunctions',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],geneinfo=config['references'][pfamily]['GENEINFO'],mincount=config['project']['MINCOUNTGENEJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
-   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/genejunctioncounts.R '{params.dir}' '{input.files}' '{params.geneinfo}' '{params.mincount}' '{params.minsamples}'"
+#rule genejunctioncounts: 
+#   input: files=expand("{name}.p2.SJ.out.tab", name=samples)
+#   output: "RawCountFile_Subread_genejunctions_filtered.txt"
+#   params: rname='pl:genejunctions',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],geneinfo=config['references'][pfamily]['GENEINFO'],mincount=config['project']['MINCOUNTGENEJUNCTIONS'],minsamples=config['project']['MINSAMPLES']
+#   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/genejunctioncounts.R '{params.dir}' '{input.files}' '{params.geneinfo}' '{params.mincount}' '{params.minsamples}'"
 
-rule joincounts:
-   input: files=expand("{name}.star.count.overlap.txt", name=samples),files2=expand("{name}.p2.ReadsPerGene.out.tab", name=samples)
-   output: "RawCountFileOverlap.txt","RawCountFileStar.txt"
-   params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],starstrandcol=config['bin'][pfamily]['STARSTRANDCOL']
-   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/joincounts.R '{params.dir}' '{input.files}' '{input.files2}' '{params.starstrandcol}'"
+#rule joincounts:
+#   input: files=expand("{name}.star.count.overlap.txt", name=samples),files2=expand("{name}.p2.ReadsPerGene.out.tab", name=samples)
+#   output: "RawCountFileOverlap.txt","RawCountFileStar.txt"
+#   params: rname='pl:junctioncounts',batch='--mem=8g --time=10:00:00',dir=config['project']['workpath'],starstrandcol=config['bin'][pfamily]['STARSTRANDCOL']
+#   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/joincounts.R '{params.dir}' '{input.files}' '{input.files2}' '{params.starstrandcol}'"
