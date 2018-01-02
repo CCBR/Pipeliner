@@ -5,7 +5,7 @@ use List::Util 'shuffle';
 #INPUT
 
 my $finalmaf = $ARGV[1] . '_out/oncotator_out/' . $ARGV[1] . '_merged.maf'; #to fix...
-my $filtmaf = $ARGV[1] . '_out/oncotator_out/' . $ARGV[1] . '_mergedFiltered.maf'; #to fix...
+my $filtmaf = $ARGV[1] . '_out/oncotator_out/' . $ARGV[1] . '_filtered.maf'; #to fix...
 open C, ">$finalmaf";
 open D, ">$filtmaf";
 #print C "Chromosome\tRead_1_Start\tRead_2_Start\tHighCounts\tLowCounts\tHomozygous_informative\tHeterozygous_informative\tComps\tHighProp\tLowProp\tWinner\n";
@@ -115,15 +115,15 @@ while (<F>){
   	last if m/^$/;
   	@line = split "\t", $_;
 	if ($line[0] eq 'Hugo_Symbol') {
-		print D "$line[0]\n";
+		print D "$_\n";
 	}
 	else {
 		if ($line[$z] eq '-') {
-			print D "$line[0]\n";
+			print D "$_\n";
 		}
 		else {
 			if ($line[$z] <= 0.001) {
-				print D "$line[0]\n";
+				print D "$_\n";
 			}
 		}
 	}
