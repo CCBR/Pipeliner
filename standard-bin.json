@@ -120,7 +120,7 @@
         "WINDOWQUALITY": 27,
     },
 	"FASTQ_SCREEN": "/data/CCBR_Pipeliner/db/PipeDB/bin/fastq_screen_v0.9.3/fastq_screen",
-    "ONCOFUSE": "java -Xmx24g -jar /data/CCBR/apps/oncofuse-1.1.1/Oncofuse.jar",
+    "ONCOFUSE": "java -Xmx24g -jar /data/CCBR_Pipeliner/db/PipeDB/bin/oncofuse-1.1.1/Oncofuse.jar",
 	"PYTHONPATH": "/data/CCBR_Pipeliner/db/PipeDB/bin/lib/python3.4/site-packages/",
         "MULTIQC":"multiqc/1.1", 
         "CONFMULTIQC": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/multiqc_config.yaml",    
