@@ -3,6 +3,6 @@ rule multiqc:
     output: "multiqc_report.html"
     params: fastqc=config['bin'][pfamily]['FASTQC'],adapters=config['references'][pfamily]['fastqc.adapters'],rname="pl:multiqc"
     threads: 1
-    shell:  "module load multiqc/1.1; multiqc -f -e featureCounts ."
+    shell:  "module load multiqc/1.3; multiqc -f ."
 
 

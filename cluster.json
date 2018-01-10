@@ -545,7 +545,7 @@
     },
     "gatk_realign":
     {
-        "threads": "1",
+        "threads": "2",
         "gres":"lscratch:500",
         "mem": "64g"
     },
