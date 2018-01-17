@@ -90,6 +90,7 @@ class PipelineFrame( Frame ) :
         self.annotation = annotation   
         self.genome = annotation.get()
         self.nends = -1
+        self.n_set_data_directory = 0
         
         l = Label( pipepanel, text="Data Directory:" )
         l.grid(row=1, column=1, sticky=W, padx=0, pady=10 )
@@ -149,10 +150,12 @@ class PipelineFrame( Frame ) :
         
 
     def set_data_directory( self ):
-        fname = askdirectory( initialdir = USER_HOME, 
+        fname=self.datapath.get()
+        if fname=='':
+            fname = askdirectory( initialdir = USER_HOME, 
                              title="Select Data Directory")
-        
-        self.datapath.set(fname)                                    
+            self.datapath.set(fname)
+            self.n_set_data_directory += 1
         self.datafiles = [fn for fn in listdir(fname) if fn.endswith(filetype)]
         label_found=0
         label_error=0
@@ -298,6 +301,10 @@ class PipelineFrame( Frame ) :
     def init_work_dir( self ):
         #Getting the work directory user input
         #and basic emptyness checking
+
+        if self.nends == -1 and self.n_set_data_directory == 0:
+            self.set_data_directory()
+
         fname = self.workpath.get()
         if not fname :
             #self.work_entry.config( state='normal' )
