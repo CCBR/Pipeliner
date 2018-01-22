@@ -76,7 +76,7 @@ tofilter=read.delim("RawCountFile_Subread_genejunctions.txt",stringsAsFactors=F,
 # Remove rows which do not pass filter
 cat(MINCOUNT," ", MINSAMPLES, "checking..\n")
 tot=colSums(tofilter)
-MINCOUNT=(MINCOUNT/max(tot))*1e6
+#MINCOUNT=(MINCOUNT/max(tot))*1e6
 cat(MINCOUNT," ", MINSAMPLES, "checking..\n")
 library("edgeR")
 filter <- apply(cpm(tofilter), 1, function(x) length(x[x>MINCOUNT])>=MINSAMPLES)
