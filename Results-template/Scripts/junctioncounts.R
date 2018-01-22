@@ -40,7 +40,7 @@ write.table(myzero,file="RawCountFileZero_junctions.txt",sep="\t",col.names=NA)
 # Remove rows which do not pass filter
 cat(MINCOUNT," ", MINSAMPLES, "checking..\n")
 tot=colSums(myzero)
-MINCOUNT=(MINCOUNT/max(tot))*1e6
+#MINCOUNT=(MINCOUNT/max(tot))*1e6
 cat(MINCOUNT," ", MINSAMPLES, "checking..\n")
 library("edgeR")
 filter <- apply(cpm(myzero), 1, function(x) length(x[x>MINCOUNT])>=MINSAMPLES)
