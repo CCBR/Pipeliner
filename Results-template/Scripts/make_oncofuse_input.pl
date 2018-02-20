@@ -20,7 +20,7 @@ my $input = '';
 my $outfile= $type . '/oncofuse/' . $sample . '/' . $sample . ".oncofuse.input";
 open I, ">$outfile";
 $input = $type . '/' . 'fusioninspector/' . $sample . '/' . $sample . '.fusion_predictions.final';
-my @fusion = ();
+@fusion = ();
 	
 open (J, $input);
 while (<J>) {
