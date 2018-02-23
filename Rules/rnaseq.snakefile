@@ -55,10 +55,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
   rule all:
      params: 
       batch='--time=168:00:00',
-      # input: "STAR_QC",
-      # "Reports/multiqc_report.html",
      input: 
-      join(workpath,"Reports","multiqc_report.html"),
       join(workpath,star_dir,"sampletable.txt"),
       
       #EBSeq
@@ -115,7 +112,6 @@ elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
      params: 
       batch='--time=168:00:00',
      input: 
-      join(workpath,"Reports","multiqc_report.html"),
       join(workpath,star_dir,"sampletable.txt"),
             
       #Subread-genes
@@ -406,25 +402,6 @@ rule joincounts:
    shell: """
 module load {params.rver}
 Rscript {params.rscript} '{params.outdir}' '{input.files}' '{input.files2}' '{params.starstrandcol}'
-"""
-
-
-rule rnaseq_multiqc:
-#    input: "STAR_QC/index.html","STAR_QC/report.html"
-    input:
-      join(workpath,star_dir,"sampletable.txt")
-    output:
-      join(workpath,"Reports","multiqc_report.html")
-    params:
-      rname="pl:multiqc",
-      outdir=join(workpath,"Reports"),
-      multiqcver=config['bin'][pfamily]['tool_versions']['MULTIQCVER'],
-      qcconfig=config['bin'][pfamily]['CONFMULTIQC']
-    threads: 1
-    shell:  """
-module load {params.multiqcver}
-cd {params.outdir}
-multiqc -f -c {params.qcconfig}  ../
 """
 
 rule deseq2:
