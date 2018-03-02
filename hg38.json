@@ -1,7 +1,7 @@
  {"references": {
     "exomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
-    "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/1kGenomes_ExAC_0.001freq_PON.hg38.vcf.gz",
+    "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg38.noCOSMIC_ClinVar.pon.vcf.gz",
     "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
 #    "CNVKITREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1_flatRef.cnn",
@@ -67,7 +67,7 @@
     },
     "genomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
-    "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/1kGenomes_ExAC_0.001freq_PON.hg38.vcf.gz",
+    "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg38.noCOSMIC_ClinVar.pon.vcf.gz",
     "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
     "CNVKITREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1_flatRef.cnn",
