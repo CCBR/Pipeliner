@@ -58,7 +58,7 @@ push @hugoid, $gene;
 push @count, $muts;
 
 
-open G, "<$fixedmaf";
+open G, "<$sortedmaf";
 while (<G>){
 	chomp;
   	last if m/^$/;
@@ -83,13 +83,15 @@ while (<G>){
 print C "$header\ttumor_freq\tNonsilent_gene_mutation_count\n";
 
 my $a = 0;
+my $pos=0;
+my $d=0;
 for ($a = 0; $a < @variants; $a++) {
-	my $d=0;
 	my $genecount=0;
-	for ($d=0; $d<@hugoid; $d++) {
+	for ($d=$pos; $d<@hugoid; $d++) {
 		@line=split "\t", $variants[$a];
 		if ($hugoid[$d] eq $line[0]) {
 			$genecount=$count[$d];
+			$pos=$d;
 			last;
 		}
 	}
