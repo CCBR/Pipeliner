@@ -34,7 +34,7 @@
         "MUTECT": "module load java/1.7.0_25; java -Xmx16g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar /usr/local/apps/muTect/2014-12-15/muTect-1.1.7.jar",
 #        "SVDETECT": "/data/CCBR_Pipeliner/local/apps",
 #        "BICSEQ": "/data/CCBR_Pipeliner/local/apps/BIC-seq.pl",
-        "BWA": "/usr/local/apps/bwa/0.7.15/bwa",
+        "BWA": "/usr/local/apps/bwa/0.7.17/bwa",
         "FASTQ_SCREEN": "/data/CCBR_Pipeliner/db/PipeDB/bin/fastq_screen_v0.9.3/fastq_screen"
     },
     "genomeseq": {
@@ -71,7 +71,7 @@
         "MUTECT": "module load java/1.7.0_25; java -Xmx16g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar /usr/local/apps/muTect/2014-12-15/muTect-1.1.7.jar",
 #        "SVDETECT": "/data/CCBR_Pipeliner/local/apps",
 #        "BICSEQ": "/data/CCBR_Pipeliner/local/apps/BIC-seq.pl",
-        "BWA": "/usr/local/apps/bwa/0.7.15/bwa",
+        "BWA": "/usr/local/apps/bwa/0.7.17/bwa",
         "FASTQ_SCREEN": "/data/CCBR_Pipeliner/db/PipeDB/bin/fastq_screen_v0.9.3/fastq_screen"
     },
 	 "rnaseq": {
@@ -228,7 +228,7 @@
     "SNPSIFT": "java -Xmx24g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar /usr/local/apps/snpEff/4.2/SnpSift.jar",
     "FIRSTANNO": "Scripts/vcfAnnFirst_snpEff.py",
     "MUTECT": "module load java/1.7.0_25; java -Xmx16g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar /usr/local/apps/muTect/2014-12-15/muTect-1.1.7.jar",
-    "BWA": "/usr/local/apps/bwa/0.7.15/bwa",
+    "BWA": "/usr/local/apps/bwa/0.7.17/bwa",
     "FASTQ_SCREEN": "/data/CCBR_Pipeliner/db/PipeDB/bin/fastq_screen_v0.9.3/fastq_screen",
     "PYTHONPATH": "/data/CCBR_Pipeliner/db/PipeDB/bin/lib/python3.4/site-packages/",
     "MULTIQC":"multiqc/0.9dev0", 
