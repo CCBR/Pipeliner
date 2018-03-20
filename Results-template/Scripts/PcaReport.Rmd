@@ -116,25 +116,41 @@ ddslog2= cpm(dds.ndata,log=TRUE,normalized.lib.sizes=FALSE,prior.count=0.5)
 ### Before Normalization
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-print(ggplot(melt(as.data.frame(rawlog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+#print(ggplot(melt(as.data.frame(rawlog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+
+# Interactive Plot
+normhist <- ggplotly(ggplot(melt(as.data.frame(rawlog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+normhist
 ```
 
 ### TMM
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-print(ggplot(melt(as.data.frame(ylog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+#print(ggplot(melt(as.data.frame(ylog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+
+# Interactive Plot
+tmmhist <- ggplotly(ggplot(melt(as.data.frame(ylog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+tmmhist
 ```
 
 ### DESeq2
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-print(ggplot(melt(as.data.frame(ddslog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+#print(ggplot(melt(as.data.frame(ddslog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+
+# Interactive Plot
+deshist <- ggplotly(ggplot(melt(as.data.frame(ddslog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+deshist
 ```
 
 ### Limma
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-print(ggplot(melt(as.data.frame(v1$E))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+#print(ggplot(melt(as.data.frame(v1$E))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+
+# Interactive Plot
+limmahist <- ggplotly(ggplot(melt(as.data.frame(v1$E))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+limmahist
 ```
 
 ## **PCA Plots** {.tabset}
