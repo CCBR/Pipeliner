@@ -449,8 +449,8 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
       output: 
         out1=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),
         out2=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),
-        out3=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),
-        out4=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png")
+        out3=join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.txt"),
+        out4=join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.png")
       params: 
         rname='pl:fqscreen',
         batch='--cpus-per-task=24 --mem=64g --time=10:00:00',

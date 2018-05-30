@@ -22,20 +22,20 @@ if config['project']['annotation'] == "hg19":
            expand("starfusion/fusioninspector/{x}/{x}.fusion_predictions.final",x=samples),
            expand("fusioncatcher/fusioninspector/{x}/{x}.fusion_predictions.final",x=samples),
            expand("starfusion/{x}/star-fusion.fusion_candidates.final",x=samples),
-           expand("expression/{name}.RnaSeqMetrics.txt",name=samples),
+           expand("{name}.RnaSeqMetrics.txt",name=samples),
 #           "expression/RawCountFile_genes_filtered.txt",
 #           "expression/RawCountFile_junctions_filtered.txt",
 #           "expression/RawCountFile_genejunctions_filtered.txt",
 #           expand("expression/{name}.star.count.overlap.txt",name=samples),
 #           "expression/RawCountFileOverlap.txt",
 #           "expression/RawCountFileStar.txt",
-           expand("expression/{name}.rsem.genes.results",name=samples),
-           "expression/RawCountFile_RSEM_genes_filtered.txt",
+           expand("{name}.rsem.genes.results",name=samples),
+           "RawCountFile_RSEM_genes_filtered.txt",
            expand("QC/{x}_readlength.txt",x=samples),
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.3; multiqc -f .; rm *featureCounts; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
+             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; rm *featureCounts; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
 
             """
 
@@ -63,20 +63,20 @@ elif config['project']['annotation'] == "hg38":
            expand("starfusion/fusioninspector/{x}/{x}.fusion_predictions.final",x=samples),
            expand("fusioncatcher/fusioninspector/{x}/{x}.fusion_predictions.final",x=samples),
            expand("starfusion/{x}/star-fusion.fusion_candidates.final",x=samples),
-           expand("expression/{name}.RnaSeqMetrics.txt",name=samples),
+           expand("{name}.RnaSeqMetrics.txt",name=samples),
 #           "expression/RawCountFile_genes_filtered.txt",
 #           "expression/RawCountFile_junctions_filtered.txt",
 #           "expression/RawCountFile_genejunctions_filtered.txt",
 #           expand("expression/{name}.star.count.overlap.txt",name=samples),
 #           "expression/RawCountFileOverlap.txt",
 #           "expression/RawCountFileStar.txt",
-           expand("expression/{name}.rsem.genes.results",name=samples),
-           "expression/RawCountFile_RSEM_genes_filtered.txt",
+           expand("{name}.rsem.genes.results",name=samples),
+           "RawCountFile_RSEM_genes_filtered.txt",
            expand("QC/{x}_readlength.txt",x=samples),
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.3; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
+             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
 
             """
 
@@ -100,19 +100,19 @@ elif config['project']['annotation'] == "mm10":
            expand("starfusion/fusioninspector/{x}/{x}.fusion_predictions.final",x=samples),
            expand("fusioncatcher/fusioninspector/{x}/{x}.fusion_predictions.final",x=samples),
            expand("starfusion/{x}/star-fusion.fusion_candidates.final",x=samples),
-           expand("expression/{name}.RnaSeqMetrics.txt",name=samples),
+           expand("{name}.RnaSeqMetrics.txt",name=samples),
 #           "expression/RawCountFile_genes_filtered.txt",
 #           "expression/RawCountFile_junctions_filtered.txt",
 #           "expression/RawCountFile_genejunctions_filtered.txt",
 #           expand("expression/{name}.star.count.overlap.txt",name=samples),
 #           "expression/RawCountFileOverlap.txt",
 #           "expression/RawCountFileStar.txt",
-           expand("expression/{name}.rsem.genes.results",name=samples),
-           "expression/RawCountFile_RSEM_genes_filtered.txt",
+           expand("{name}.rsem.genes.results",name=samples),
+           "RawCountFile_RSEM_genes_filtered.txt",
            expand("QC/{x}_readlength.txt",x=samples),
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.3; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
+             Scripts/fusionSummary.sh; module load multiqc/1.1; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
 
             """

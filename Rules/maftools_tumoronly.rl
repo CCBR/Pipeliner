@@ -1,5 +1,5 @@
 rule maftools_tumoronly:
-  input: mafs=expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{s}.maf",s=samples),
+  input: mutect2mafs=expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{s}.maf",s=samples),
   output: mutect2maf=config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_filtered.maf",
           mutect2summary=config['project']['workpath']+"/mutect2_out/mutect2_maf_summary.pdf",
           mutect2oncoprint=config['project']['workpath']+"/mutect2_out/mutect2_oncoplot.pdf",
