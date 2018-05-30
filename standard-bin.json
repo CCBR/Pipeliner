@@ -332,6 +332,7 @@
 "tool_parameters":{
         "FASTAWITHADAPTERSETD" : "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",
 	"FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
+        "FASTQ_SCREEN_CONFIG2": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen_2.conf",
         "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
         "TrimmomaticParameters": "---------------Trimmomatic---------Parameters-------------------",
         "SEEDMISMATCHES": 2,
