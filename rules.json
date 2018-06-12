@@ -132,7 +132,7 @@
         "database_somatic_tumoronly": ["wgs-somatic-tumoronly","exomeseq-somatic-tumoronly"],
         "svdetect": ["none"],
         "bicseq": ["none"],
-        "generate_QC_table": ["initialqc"],
+        "generate_QC_table": ["none"],
         "star.align": ["rnaseqvargerm"],
         "star.align.2": ["rnaseqvargerm"],
         "picard.rnaseqvar.headers": ["rnaseqvargerm"],

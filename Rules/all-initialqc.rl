@@ -12,11 +12,11 @@ rule all_initialqc:
             "multiqc_report.html",
             expand("QC/{s}_run_trimmomatic.err",s=samples),
             expand("QC/{s}.qualimapReport/genome_results.txt",s=samples),
-            config['project']['id']+"_"+config['project']['flowcellid']+".xlsx",
+#            config['project']['id']+"_"+config['project']['flowcellid']+".xlsx",
             config['project']['workpath']+"/exome_targets.bed"
     output:
     params: rname="final"
     shell:  """
-             mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; mv *bam_stats bamstats/; mv *.bam_stats.err bamstats/; mv *.bam.err bamstats/; rm *sorted.bam.bai; mv *sorted.txt logfiles/
+             mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
 
             """

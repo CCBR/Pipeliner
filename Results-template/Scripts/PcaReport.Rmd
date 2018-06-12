@@ -116,25 +116,29 @@ ddslog2= cpm(dds.ndata,log=TRUE,normalized.lib.sizes=FALSE,prior.count=0.5)
 ### Before Normalization
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-print(ggplot(melt(as.data.frame(rawlog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+beforehist <- ggplotly(ggplot(melt(as.data.frame(rawlog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+beforehist
 ```
 
 ### TMM
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-print(ggplot(melt(as.data.frame(ylog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+tmmhist <- ggplotly(ggplot(melt(as.data.frame(ylog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+tmmhist
 ```
 
 ### DESeq2
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-print(ggplot(melt(as.data.frame(ddslog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+deshist <- ggplotly(ggplot(melt(as.data.frame(ddslog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+deshist
 ```
 
 ### Limma
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-print(ggplot(melt(as.data.frame(v1$E))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+limmahist <- ggplotly(ggplot(melt(as.data.frame(v1$E))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+limmahist
 ```
 
 ## **PCA Plots** {.tabset}
@@ -156,16 +160,31 @@ before.pc1 = round(before.pca$sdev[1]^2/sum(before.pca$sdev^2)*100,2)
 before.pc2 = round(before.pca$sdev[2]^2/sum(before.pca$sdev^2)*100,2)
 before.pc3 = round(before.pca$sdev[3]^2/sum(before.pca$sdev^2)*100,2)
 
+pcafactor = as.factor(sampleinfo$condition)
+
+library(RColorBrewer)
+
+col <- brewer.pal(nlevels(pcafactor), "Paired")
+
+p <- plot_ly(as.data.frame(before.pca$x[,1:3]), x = ~PC1, y = ~PC2, z = ~PC3, color = pcafactor, colors = col, hoverinfo="text",
+             hovertext = ~sampleinfo$label) %>%
+  add_markers() %>%
+  layout(title = "Before Normalization PCA plot", 
+         scene = list(xaxis = list(title = paste0("PC1 (",before.pc1,"%)")),
+                      yaxis = list(title = paste0("PC2 (",before.pc2,"%)")),
+                      zaxis = list(title = paste0("PC3 (",before.pc3,"%)"))))
+
+p
 
 # plot(before.pca,type="lines")  #Decide how many PC's are relevant for plotting
   #before.pca$x[,1:3]  #look at first 3 PC's
 
-plot3d(before.pca$x[,1:3],col = as.integer(before.tedf1$group),type="s",size=2,main="PCA before normalization",xlab=paste0("PC1 (",before.pc1,"%)"),ylab=paste0("PC2 (",before.pc2,"%)"),zlab=paste0("PC3 (",before.pc3,"%)"))
-group.v<-as.vector(cell_rep)
-text3d(before.pca$x, before.pca$y, before.pca$z, group.v, cex=1.0, adj = 1.2)
-legend3d("topright", legend = levels(sampleinfo$condition), pch = 16, col = as.numeric(as.factor(levels(sampleinfo$condition))), cex=0.5)
+#plot3d(before.pca$x[,1:3],col = as.integer(before.tedf1$group),type="s",size=2,main="PCA before normalization",xlab=paste0("PC1 (",before.pc1,"%)"),ylab=paste0("PC2 (",before.pc2,"%)"),zlab=paste0("PC3 (",before.pc3,"%)"))
+#group.v<-as.vector(cell_rep)
+#text3d(before.pca$x, before.pca$y, before.pca$z, group.v, cex=1.0, adj = 1.2)
+#legend3d("topright", legend = levels(sampleinfo$condition), pch = 16, col = as.numeric(as.factor(levels(sampleinfo$condition))), cex=0.5)
 #rgl.postscript("pca3d_raw.pdf","pdf")
-rgl.snapshot("pca3d_raw.png","png")
+#rgl.snapshot("pca3d_raw.png","png")
 
 ```
 
@@ -186,16 +205,31 @@ edgeR.pc1 = round(edgeR.pca$sdev[1]^2/sum(edgeR.pca$sdev^2)*100,2)
 edgeR.pc2 = round(edgeR.pca$sdev[2]^2/sum(edgeR.pca$sdev^2)*100,2)
 edgeR.pc3 = round(edgeR.pca$sdev[3]^2/sum(edgeR.pca$sdev^2)*100,2)
 
+pcafactor = as.factor(sampleinfo$condition)
+
+library(RColorBrewer)
+
+col <- brewer.pal(nlevels(pcafactor), "Paired")
+
+p <- plot_ly(as.data.frame(edgeR.pca$x[,1:3]), x = ~PC1, y = ~PC2, z = ~PC3, color = pcafactor, colors = col, hoverinfo="text",
+             hovertext = ~sampleinfo$label) %>%
+  add_markers() %>%
+  layout(title = "edgeR PCA plot", 
+         scene = list(xaxis = list(title = paste0("PC1 (",edgeR.pc1,"%)")),
+                      yaxis = list(title = paste0("PC2 (",edgeR.pc2,"%)")),
+                      zaxis = list(title = paste0("PC3 (",edgeR.pc3,"%)"))))
+
+p
 
 # plot(edgeR.pca,type="lines")  #Decide how many PC's are relevant for plotting
   #edgeR.pca$x[,1:3]  #look at first 3 PC's
 
-plot3d(edgeR.pca$x[,1:3],col = as.integer(edgeR.tedf1$group),type="s",size=2,main="PCA after TMM normalization",xlab=paste0("PC1 (",edgeR.pc1,"%)"),ylab=paste0("PC2 (",edgeR.pc2,"%)"),zlab=paste0("PC3 (",edgeR.pc3,"%)"))
-group.v<-as.vector(cell_rep)
-text3d(edgeR.pca$x, edgeR.pca$y, edgeR.pca$z, group.v, cex=1.0, adj = 1.2)
-legend3d("topright", legend = levels(sampleinfo$condition), pch = 16, col = as.numeric(as.factor(levels(sampleinfo$condition))), cex=0.5)
+#plot3d(edgeR.pca$x[,1:3],col = as.integer(edgeR.tedf1$group),type="s",size=2,main="PCA after TMM normalization",xlab=paste0("PC1 (",edgeR.pc1,"%)"),ylab=paste0("PC2 (",edgeR.pc2,"%)"),zlab=paste0("PC3 (",edgeR.pc3,"%)"))
+#group.v<-as.vector(cell_rep)
+#text3d(edgeR.pca$x, edgeR.pca$y, edgeR.pca$z, group.v, cex=1.0, adj = 1.2)
+#legend3d("topright", legend = levels(sampleinfo$condition), pch = 16, col = as.numeric(as.factor(levels(sampleinfo$condition))), cex=0.5)
 #rgl.postscript("pca3d_edgeR.pdf","pdf")
-rgl.snapshot("pca3d_edgeR.png","png")
+#rgl.snapshot("pca3d_edgeR.png","png")
 
 ```
 
@@ -221,13 +255,28 @@ deseq2.pc1 = round(deseq2.pca$sdev[1]^2/sum(deseq2.pca$sdev^2)*100,2)
 deseq2.pc2 = round(deseq2.pca$sdev[2]^2/sum(deseq2.pca$sdev^2)*100,2)
 deseq2.pc3 = round(deseq2.pca$sdev[3]^2/sum(deseq2.pca$sdev^2)*100,2)
 
+pcafactor = as.factor(sampleinfo$condition)
 
-plot3d(deseq2.pca$x[,1:3],col = as.integer(deseq2.tedf1$group),type="s",size=2,main="PCA after DESeq2 normalization",xlab=paste0("PC1 (",deseq2.pc1,"%)"),ylab=paste0("PC2 (",deseq2.pc2,"%)"),zlab=paste0("PC3 (",deseq2.pc3,"%)"))
-group.v<-as.vector(cell_rep)
-text3d(deseq2.pca$x, deseq2.pca$y, deseq2.pca$z, group.v, cex=1.0, adj = 1.2)
-legend3d("topright", legend = levels(sampleinfo$condition), pch = 16, col = as.numeric(as.factor(levels(sampleinfo$condition))), cex=0.5)
+library(RColorBrewer)
+
+col <- brewer.pal(nlevels(pcafactor), "Paired")
+
+p <- plot_ly(as.data.frame(deseq2.pca$x[,1:3]), x = ~PC1, y = ~PC2, z = ~PC3, color = pcafactor, colors = col, hoverinfo="text",
+             hovertext = ~sampleinfo$label) %>%
+  add_markers() %>%
+  layout(title = "DESeq2 PCA plot", 
+         scene = list(xaxis = list(title = paste0("PC1 (",deseq2.pc1,"%)")),
+                      yaxis = list(title = paste0("PC2 (",deseq2.pc2,"%)")),
+                      zaxis = list(title = paste0("PC3 (",deseq2.pc3,"%)"))))
+
+p
+
+#plot3d(deseq2.pca$x[,1:3],col = as.integer(deseq2.tedf1$group),type="s",size=2,main="PCA after DESeq2 normalization",xlab=paste0("PC1 (",deseq2.pc1,"%)"),ylab=paste0("PC2 (",deseq2.pc2,"%)"),zlab=paste0("PC3 (",deseq2.pc3,"%)"))
+#group.v<-as.vector(cell_rep)
+#text3d(deseq2.pca$x, deseq2.pca$y, deseq2.pca$z, group.v, cex=1.0, adj = 1.2)
+#legend3d("topright", legend = levels(sampleinfo$condition), pch = 16, col = as.numeric(as.factor(levels(sampleinfo$condition))), cex=0.5)
 #rgl.postscript("pca3d_deseq2.pdf","pdf")
-rgl.snapshot("pca3d_deseq2.png","png")
+#rgl.snapshot("pca3d_deseq2.png","png")
 
 ```
 
@@ -249,13 +298,29 @@ limma.pc1 = round(limma.pca$sdev[1]^2/sum(limma.pca$sdev^2)*100,2)
 limma.pc2 = round(limma.pca$sdev[2]^2/sum(limma.pca$sdev^2)*100,2)
 limma.pc3 = round(limma.pca$sdev[3]^2/sum(limma.pca$sdev^2)*100,2)
 
+pcafactor = as.factor(sampleinfo$condition)
 
-plot3d(limma.pca$x[,1:3],col = as.integer(limma.tedf1$group),type="s",size=2,main="PCA after Limma normalization",xlab=paste0("PC1 (",limma.pc1,"%)"),ylab=paste0("PC2 (",limma.pc2,"%)"),zlab=paste0("PC3 (",limma.pc3,"%)"))
-group.v<-as.vector(cell_rep)
-text3d(limma.pca$x, limma.pca$y, limma.pca$z, group.v, cex=1.0, adj = 1.2)
-legend3d("topright", legend = levels(sampleinfo$condition), pch = 16, col = as.numeric(as.factor(levels(sampleinfo$condition))), cex=0.5)
+library(RColorBrewer)
+
+col <- brewer.pal(nlevels(pcafactor), "Paired")
+
+p <- plot_ly(as.data.frame(limma.pca$x[,1:3]), x = ~PC1, y = ~PC2, z = ~PC3, color = pcafactor, colors = col, hoverinfo="text",
+             hovertext = ~sampleinfo$label) %>%
+  add_markers() %>%
+  layout(title = "Limma PCA plot", 
+         scene = list(xaxis = list(title = paste0("PC1 (",limma.pc1,"%)")),
+                      yaxis = list(title = paste0("PC2 (",limma.pc2,"%)")),
+                      zaxis = list(title = paste0("PC3 (",limma.pc3,"%)"))))
+
+p
+
+
+#plot3d(limma.pca$x[,1:3],col = as.integer(limma.tedf1$group),type="s",size=2,main="PCA after Limma normalization",xlab=paste0("PC1 (",limma.pc1,"%)"),ylab=paste0("PC2 (",limma.pc2,"%)"),zlab=paste0("PC3 (",limma.pc3,"%)"))
+#group.v<-as.vector(cell_rep)
+#text3d(limma.pca$x, limma.pca$y, limma.pca$z, group.v, cex=1.0, adj = 1.2)
+#legend3d("topright", legend = levels(sampleinfo$condition), pch = 16, col = as.numeric(as.factor(levels(sampleinfo$condition))), cex=0.5)
 #rgl.postscript("pca3d_limma.pdf","pdf")
-rgl.snapshot("pca3d_limma.png","png")
+#rgl.snapshot("pca3d_limma.png","png")
 
 ```
 

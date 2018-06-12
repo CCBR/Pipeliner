@@ -6,7 +6,9 @@ FILE2 <- args[3]
 FILE3 <- args[4]
 setwd(DIR)
 mymaf <- read.maf(FILE1)
-plotmafSummary(mymaf,file=FILE2)
+pdf(FILE2)
+plotmafSummary(mymaf)
+dev.off()
 pdf(FILE3)
 oncoplot(mymaf,writeMatrix=TRUE,showTumorSampleBarcodes=TRUE)
 dev.off()

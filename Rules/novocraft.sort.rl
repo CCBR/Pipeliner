@@ -3,6 +3,6 @@ rule novocraft_sort:
      output: temp("{x}.sorted.bam")
      params: novosort=config['bin'][pfamily]['NOVOSORT'],rname="pl:novosort"
      threads: 8
-     shell:  "module load novocraft/3.02.10;{params.novosort} -t /scratch -m 100G --threads {threads} -s -i -o {output} {input};"
+     shell:  "module load novocraft/3.08.02; novosort -t /scratch -m 100G --threads {threads} -s -i -o {output} {input};"
 
 

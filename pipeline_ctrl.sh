@@ -1,7 +1,7 @@
 #!/bin/bash
 
 module load python/3.5
-module load perl/5.8.9
+module load perl/5.12.5  # was 5.8.9 (unsupported) 
 
 #PBS -N PipelineTest
 

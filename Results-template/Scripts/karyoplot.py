@@ -8,6 +8,28 @@ import math
 import numpy
 plt.switch_backend('agg')
 
+def findChromosomes(karyofn):
+	fh = open(karyofn)
+	p1List, p2List,p3List = [], [], []
+
+	for line in fh:
+		linelist = line.strip().split()
+		chromosome = linelist[0].lstrip("chr")
+		try:
+			int(chromosome)
+			if chromosome not in p1List and int(chromosome) <= 12:
+				p1List.append(chromosome)
+			elif chromosome not in p2List and int(chromosome) >=13:
+				p2List.append(chromosome)
+		except ValueError:
+			if chromosome not in p3List and (chromosome == "Y" or chromosome == "X"):
+				p3List.append(chromosome)
+
+	fh.close()
+
+	print(p1List,p2List,p3List)
+	return p1List, p2List, p3List
+
 def karyoplot(karyo_filename, metadata={}, part=1):
 	'''
 	To create a karyo_filename go to: http://genome.ucsc.edu/cgi-bin/hgTables 
@@ -45,8 +67,14 @@ def karyoplot(karyo_filename, metadata={}, part=1):
 	ax.set_ylim([0.0, DIM])
 
 	def get_chromosome_length(chromosome):
-		chromosome_start = float(min([x[1] for x in karyo_dict[chromosome]]))
-		chromosome_end = float(max(x[2] for x in karyo_dict[chromosome]))
+		
+		try:
+			chromosome_start = float(min([x[1] for x in karyo_dict[chromosome]]))
+			chromosome_end = float(max(x[2] for x in karyo_dict[chromosome]))
+
+		except ValueError:
+			chromosome_start = 0.0 # no differentially expressed regions, dummy value
+			chromosome_end = 1000000.0   # no differentially expressed regions, dummy value 
 		chromosome_length = chromosome_end - chromosome_start
 
 		#return int(chromosome_length*1.05)
@@ -145,37 +173,51 @@ def karyoplot(karyo_filename, metadata={}, part=1):
 
 		ax.text(x_start, y_end - (DIM * 0.07), chromosome)
 
+
+	p1,p2,p3 = findChromosomes(karyo_filename)
 	if part==1:
-		plot_chromosome('1', 1)
-		plot_chromosome('2', 2)
-		plot_chromosome('3', 3)
-		plot_chromosome('4', 4)
-		plot_chromosome('5', 5)
-		plot_chromosome('6', 6)
-		plot_chromosome('7', 7)
-		plot_chromosome('8', 8)
-		plot_chromosome('9', 9)
-		plot_chromosome('10', 10)
-		plot_chromosome('11', 11)
-		plot_chromosome('12', 12)
+		for chromNUM in sorted(p1):
+			plot_chromosome(str(chromNUM), int(chromNUM))
+		#plot_chromosome('1', 1)
+		#plot_chromosome('2', 2)
+		#plot_chromosome('3', 3)
+		#plot_chromosome('4', 4)
+		#plot_chromosome('5', 5)
+		#plot_chromosome('6', 6)
+		#plot_chromosome('7', 7)
+		#plot_chromosome('8', 8)
+		#plot_chromosome('9', 9)
+		#plot_chromosome('10', 10)
+		#plot_chromosome('11', 11)
+		#plot_chromosome('12', 12)
 
 
 	elif part==2:
-		plot_chromosome('13', 1)
-		plot_chromosome('14', 2)
-		plot_chromosome('15', 3)
-		plot_chromosome('16', 4)
-		plot_chromosome('17', 5)
-		plot_chromosome('18', 6)
-		plot_chromosome('19', 7)
-		
-		if "hg" in species:
-			plot_chromosome('20', 8)
-			plot_chromosome('21', 9)
-			plot_chromosome('22', 10)
+		counter = 1
+		for chromNUM in sorted(p2):
+			plot_chromosome(str(chromNUM), counter)
+			counter += 1
 
-		plot_chromosome('X', 11)
-		plot_chromosome('Y', 12)
+		if "X" or "x" in p3:
+			plot_chromosome('X', 11)
+		elif "Y" or "y" in p3:
+			plot_chromosome('Y', 12)
+
+		#plot_chromosome('13', 1)
+		#plot_chromosome('14', 2)
+		#plot_chromosome('15', 3)
+		#plot_chromosome('16', 4)
+		#plot_chromosome('17', 5)
+		#plot_chromosome('18', 6)
+		#plot_chromosome('19', 7)
+		
+		#if "hg" in species:
+			#plot_chromosome('20', 8)
+			#plot_chromosome('21', 9)
+			#plot_chromosome('22', 10)
+
+		#plot_chromosome('X', 11)
+		#plot_chromosome('Y', 12)
 
 	elif part==0:
 		#print("HERE1")
@@ -189,7 +231,9 @@ def karyoplot(karyo_filename, metadata={}, part=1):
 	return
 
 import sys
+print(sys.argv)
 fn = sys.argv[1]
+findChromosomes(fn)
 species = sys.argv[2]
 #print('plotting..')
 karyoplot(fn, part=1)

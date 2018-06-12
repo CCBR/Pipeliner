@@ -675,7 +675,7 @@ def makeunitswarm():
     F=open("project.json","r")
     config=eval(F.read())
     for u in config['project']['units']:
-        S=S+"module load python/3.4.0; samples=\""+ u + "\"; snakemake -s Snakefile\n"
+        S=S+"module load python/3.5.0; samples=\""+ u + "\"; snakemake -s Snakefile\n"
     tkinter.messagebox.showinfo("Swarm",S)
     F=open("../"+PL+".swarm","w")
     F.write(S)
@@ -686,7 +686,7 @@ def makepairswarm():
     F=open("project.json","r")
     config=eval(F.read())
     for u in config['project']['pairs'].values():
-        S=S+"module load python/3.4.0; samples=\""+ ' '.join(u) + "\"; snakemake -s Snakefile\n"
+        S=S+"module load python/3.5.0; samples=\""+ ' '.join(u) + "\"; snakemake -s Snakefile\n"
     tkinter.messagebox.showinfo("Swarm",S)
     F=open("../"+PL+".swarm","w")
     F.write(S)

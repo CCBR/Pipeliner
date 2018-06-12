@@ -1,3 +1,4 @@
+
 ---
 title: "DESeq2 results"
 author: "CCBR RNAseq pipeline"
@@ -143,12 +144,32 @@ Phenotype=sampleinfo$condition
 cell_rep=sampleinfo$label
 tedf1$group = as.factor(Phenotype)
 
+pc1 = round(pca$sdev[1]^2/sum(pca$sdev^2)*100,2)
+pc2 = round(pca$sdev[2]^2/sum(pca$sdev^2)*100,2)
+pc3 = round(pca$sdev[3]^2/sum(pca$sdev^2)*100,2)
+
+pcafactor = as.factor(sampleinfo$condition)
+
+library(RColorBrewer)
+
+col <- brewer.pal(nlevels(pcafactor), "Paired")
+
+p <- plot_ly(as.data.frame(pca$x[,1:3]), x = ~PC1, y = ~PC2, z = ~PC3, color = pcafactor, colors = col, hoverinfo="text",
+             hovertext = ~sampleinfo$label) %>%
+  add_markers() %>%
+  layout(title = "PCA plot", 
+         scene = list(xaxis = list(title = paste0("PC1 (",pc1,"%)")),
+                      yaxis = list(title = paste0("PC2 (",pc2,"%)")),
+                      zaxis = list(title = paste0("PC3 (",pc3,"%)"))))
+
+p
+
 # plot(pca,type="lines")  #Decide how many PC's are relevant for plotting
   #pca$x[,1:3]  #look at first 3 PC's
 
-plot3d(pca$x[,1:3],col = as.integer(tedf1$group),type="s",size=2)
-group.v<-as.vector(cell_rep)
-text3d(pca$x, pca$y, pca$z, group.v, cex=1.0, adj = 1.2)
+#plot3d(pca$x[,1:3],col = as.integer(tedf1$group),type="s",size=2)
+#group.v<-as.vector(cell_rep)
+#text3d(pca$x, pca$y, pca$z, group.v, cex=1.0, adj = 1.2)
 # rgl.postscript("pca3d_DESeq2.pdf","pdf")
 
 ```

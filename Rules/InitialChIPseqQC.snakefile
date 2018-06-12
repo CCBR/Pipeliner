@@ -160,7 +160,6 @@ fastqc {input} -t {threads} -o {output}
             picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             parallelver=config['bin'][pfamily]['tool_versions']['PARALLELVER'],
-            pigzver=config['bin'][pfamily]['tool_versions']['PIGZVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
             minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
             javaram="64g",
@@ -168,7 +167,6 @@ fastqc {input} -t {threads} -o {output}
         shell: """
 module load {params.cutadaptver};
 module load {params.parallelver};
-module load {params.pigzver};
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
 cd /lscratch/$SLURM_JOBID
 sample=`echo {input.infq}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
@@ -333,7 +331,7 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
             picardver=config['bin'][pfamily]['PICARDVER'],
         shell:
             """
-            module load samtools/1.5; 
+            module load samtools/1.6; 
             samtools flagstat {input.file1} > {output.outstar2}; 
             echo 0 >> {output.outstar2};
             echo 0 >> {output.outstar2};
@@ -419,7 +417,6 @@ fastqc {input} -t {threads} -o {output};
             blacklistbwaindex=config['references'][pfamily]['BLACKLISTBWAINDEX'],
             picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
             parallelver=config['bin'][pfamily]['tool_versions']['PARALLELVER'],
-            pigzver=config['bin'][pfamily]['tool_versions']['PIGZVER'],
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
             minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
@@ -428,7 +425,6 @@ fastqc {input} -t {threads} -o {output};
         shell: """
 module load {params.cutadaptver};
 module load {params.parallelver};
-module load {params.pigzver};
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
 cd /lscratch/$SLURM_JOBID
 sample=`echo {input.file1}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`

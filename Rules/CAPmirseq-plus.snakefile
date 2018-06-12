@@ -179,7 +179,7 @@ rule mirseq_mirdeep2:
     shell: """
 
 ###module load viennarna
-module load bowtie/1.1.1
+module load bowtie/1.2.2
 module load randfold
 module load mirdeep
 

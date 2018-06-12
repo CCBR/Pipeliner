@@ -91,7 +91,6 @@ fastqc {input} -t {threads} -o {output};
         trimmomaticver=config['bin'][pfamily]['tool_versions']['TRIMMOMATICVER'],
         cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
         parallelver=config['bin'][pfamily]['tool_versions']['PARALLELVER'],
-        pigzver=config['bin'][pfamily]['tool_versions']['PIGZVER'],
         fastawithadaptersetc=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETC'],
         fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
         seedmismatches=config['bin'][pfamily]['tool_parameters']['SEEDMISMATCHES'],
@@ -112,7 +111,6 @@ java -classpath $TRIMMOJAR   org.usadellab.trimmomatic.TrimmomaticPE -threads {t
 elif [ {trim_method} -eq 2 ];then
 module load {params.cutadaptver};
 module load {params.parallelver};
-module load {params.pigzver};
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
 cd /lscratch/$SLURM_JOBID
 sample=`echo {input.file1}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
@@ -380,7 +378,6 @@ fastqc {input} -t {threads} -o {output};
         trimmomaticver=config['bin'][pfamily]['tool_versions']['TRIMMOMATICVER'],
         cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
         parallelver=config['bin'][pfamily]['tool_versions']['PARALLELVER'],
-        pigzver=config['bin'][pfamily]['tool_versions']['PIGZVER'],
         fastawithadaptersetc=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETC'],
         fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
         seedmismatches=config['bin'][pfamily]['tool_parameters']['SEEDMISMATCHES'],
@@ -401,7 +398,6 @@ java -classpath $TRIMMOJAR   org.usadellab.trimmomatic.TrimmomaticSE -threads {t
 elif [ {trim_method} -eq 2 ];then
 module load {params.cutadaptver};
 module load {params.parallelver};
-module load {params.pigzver};
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
 cd /lscratch/$SLURM_JOBID
 sample=`echo {input.file1}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
@@ -616,8 +612,8 @@ rule picard:
     picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
    shell: """
 module load {params.picardver};
-java -Xmx110g  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar INPUT={input.file1} OUTPUT=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam TMP_DIR=/lscratch/$SLURM_JOBID RGID=id RGLB=library RGPL=illumina RGPU=machine RGSM=sample; 
-java -Xmx110g -jar $PICARDJARPATH/MarkDuplicates.jar INPUT=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam OUTPUT=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3};
+java -Xmx110g  -jar $PICARDJARPATH/picard.jar AddOrReplaceReadGroups I={input.file1} O=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam TMP_DIR=/lscratch/$SLURM_JOBID RGID=id RGLB=library RGPL=illumina RGPU=machine RGSM=sample; 
+java -Xmx110g -jar $PICARDJARPATH/picard.jar MarkDuplicates I=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam O=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3};
 mv /lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam {output.outstar2};
 mv /lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bai {output.outstar2b};
 """        
@@ -651,9 +647,9 @@ rule stats:
     rrnalist=config['references'][pfamily]['RRNALIST'],
     picardstrand=config['bin'][pfamily]['PICARDSTRAND']
    shell: """
-module load R/3.4.0_gcc-6.2.0;
+module load R/3.5;
 module load {params.picardver};
-java -Xmx110g -jar $PICARDJARPATH/CollectRnaSeqMetrics.jar REF_FLAT={params.refflat} INPUT={input.file1} OUTPUT={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY=SECOND_READ_TRANSCRIPTION_STRAND TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT;
+java -Xmx110g -jar $PICARDJARPATH/picard.jar CollectRnaSeqMetrics REF_FLAT={params.refflat} I={input.file1} O={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY=SECOND_READ_TRANSCRIPTION_STRAND TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT;
 module load {params.samtoolsver};
 samtools flagstat {input.file1} > {output.outstar2};
 module load python/3.5;
@@ -706,18 +702,23 @@ rule rnaseq_multiqc:
    input: 
     expand(join(workpath,rseqc_dir,"{name}.Rdist.info"),name=samples),
     expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),name=samples),
+    #expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),name=samples),
     expand(join(workpath,log_dir,"{name}.flagstat.concord.txt"),name=samples),
     expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
+    expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),
     expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
    output: 
     join(workpath,"Reports","multiqc_report.html")
    params: 
     rname="pl:multiqc",
+    logsdir=join(workpath,log_dir),
     outdir=join(workpath,"Reports"),
     multiqcver=config['bin'][pfamily]['tool_versions']['MULTIQCVER'],
     qcconfig=config['bin'][pfamily]['CONFMULTIQC']
    threads: 1
    shell: """
+sed -i 's/MarkDuplicates/picard.sam.MarkDuplicates/g' {params.logsdir}/*.star.duplic
+sed -i 's/CollectRnaSeqMetrics/picard.analysis.CollectRnaSeqMetrics/g' {params.logsdir}/*.RnaSeqMetrics.txt
 module load {params.multiqcver}
 cd {params.outdir}
 multiqc -f -c {params.qcconfig} --interactive -e cutadapt -d ../
@@ -772,3 +773,5 @@ cd {rseqc_dir}
 infer_experiment.py -r {params.bedref} -i {input.file1} > {output.out1}
 read_distribution.py -i {input.file1} -r {params.bedref} > {output.out4}
 """
+
+

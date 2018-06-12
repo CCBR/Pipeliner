@@ -15,7 +15,7 @@ $status = 0;
 $cmd = '';
 $time = 300; #amount of time (seconds) to wait between pings to AVIA
 
-$cmd="/usr/local/bin/curl  https://avia-abcc.ncifcrf.gov/apps/site/upload_viz -X POST -F user_file=\@$vcf -F user.ver=$species -F user_inputformat=bed -F user_api=cFMdtEdwm34iVzXOZ6 -F 'user_email=" . $email . "|nih.gov' --insecure -F user_id=$id";
+$cmd="curl https://avia-abcc.ncifcrf.gov/apps/site/upload_viz -X POST -F user_file=\@$vcf -F user.ver=$species -F user_inputformat=bed -F user_api=cFMdtEdwm34iVzXOZ6 -F 'user_email=" . $email . "|nih.gov' --insecure -F user_id=$id";
 
 print STDERR "Executing command: $cmd\n";
 
@@ -39,8 +39,8 @@ while ($status == 0) {
 	while (<G>){
 		chomp;
   		last if m/^$/;
-  		if (($_ =~ m/INFO/) || ($_ =~ m/ERROR/)) {
-	  		if ($_ =~ m/is ready for download/) {
+  		if (($_ =~ m/INFO/) || ($_ =~ m/completed/)) {
+	  		if ($_ =~ m/completed/) {
 				$status++;
 			}
 			elsif ($_ =~ m/is not accessible/) {

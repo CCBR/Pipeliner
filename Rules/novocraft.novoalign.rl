@@ -12,7 +12,7 @@ rule novocraft_novoalign:
 #     message: "Executing NovoAlign Rule."
      threads: 32
      version: "1.0"
-     shell: "module load novocraft/3.02.10; novoalign -c {threads} -d {params.novoindex} -a {params.adapter1} {params.adapter2} -H 10 -k -K {output.qcal} -i PE 180,50 -o SAM -f {input} | {params.sam} view -bS - > {output.bam};"
-#     shell: "module load novocraft/3.02.10; novoalign -c {threads} -d {params.novoindex} -a {params.adapter1} {params.adapter2} -H 10 -k -K {output.qcal} -i PE 180,50 -o SAM -f {input} > {output.sam};"
+     shell: "module load novocraft/3.08.02; novoalign -c {threads} -d {params.novoindex} -a {params.adapter1} {params.adapter2} -H 10 -k -K {output.qcal} -i PE 180,50 -o SAM -f {input} | {params.sam} view -bS - > {output.bam};"
+#     shell: "module load novocraft/3.08.02; novoalign -c {threads} -d {params.novoindex} -a {params.adapter1} {params.adapter2} -H 10 -k -K {output.qcal} -i PE 180,50 -o SAM -f {input} > {output.sam};"
 
 #{params.qcal} {output.qcal} {output.qcal}.qcalreport.pdf;

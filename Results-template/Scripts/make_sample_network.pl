@@ -12,9 +12,9 @@ my $vcf=shift;
 
 $cmd = 'module load vcftools; vcftools --vcf ' . $vcf . ' --plink --remove-indels --out plink';
 system($cmd);
-$cmd = 'module load plink/1.07; plink --file plink --distance-matrix --out distance --cluster';
+$cmd = 'module load plink/1.9.0-beta4.4; plink --file plink --distance-matrix --out distance';
 system($cmd);
-$cmd = 'cut -f 1 -d \' \' distance.cluster2 > samples.txt';
+$cmd = 'cut -f 1 -d \' \' distance.mdist.id > samples.txt';
 system($cmd);
 
 #open directory (SWITCH CHROMOSOME ARM HERE)
@@ -73,9 +73,9 @@ for ($a = 0; $a < @samples; $a++) {
 }
 close O;
 
-$cmd = 'module load phylip; neighbor << EOF' . "\n" . 'distance.matrix' . "\n" . "N\nY\nEOF";
+$cmd = 'module load phylip/3.697; neighbor << EOF' . "\n" . 'distance.matrix' . "\n" . "N\nY\nEOF";
 system($cmd);
-$cmd = 'module load phylip; drawtree << EOF' . "\nouttree\n" . 'Scripts/fontfile' . "\nP\nW\n3000\n3000\nC\n" . '0.75' . "\nL\nR\nY\nEOF";
+$cmd = 'module load phylip/3.697; drawtree << EOF' . "\nouttree\n" . 'Scripts/fontfile' . "\nP\nW\n3000\n3000\nC\n" . '0.75' . "\nL\nR\nY\nEOF";
 system($cmd);
 $cmd = 'mv plotfile sample_network.bmp';
 system($cmd);

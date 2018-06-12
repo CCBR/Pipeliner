@@ -382,6 +382,7 @@ rule genejunctioncounts:
     rscript=join(workpath,"Scripts","genejunctioncounts.R")
    shell: """
 module load {params.rver}
+module load bedtools/2.27.1
 Rscript {params.rscript} '{params.outdir}' '{input.files}' '{params.geneinfo}' '{params.mincount}' '{params.minsamples}'
 """
 
@@ -525,7 +526,7 @@ Rscript pcacall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.pro
 #   input: samtab = "sampletable.txt", bam=expand("salmonrun/{name}/quant.sf", name=samples)
 #   output: "salmonrun/sleuth_completed.txt"
 #   params: rname='pl:sleuth',batch='--mem=128g --cpus-per-task=8 --time=10:00:00',dir=config['project']['workpath'],pipeRlib=config['bin'][pfamily]['PIPERLIB'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']),species=config['project']['annotation']
-#   shell: "module load R/3.4.0_gcc-6.2.0; Rscript Scripts/sleuth.R '{params.dir}' '{params.pipeRlib}' '{input.samtab}' '{params.contrasts}' '{params.species}'"
+#   shell: "module load R/3.5; Rscript Scripts/sleuth.R '{params.dir}' '{params.pipeRlib}' '{input.samtab}' '{params.contrasts}' '{params.species}'"
 
 rule EBSeq_isoform:
   input: 
