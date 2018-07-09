@@ -288,7 +288,7 @@ rule ChIPseeker :
             #fix_chrom(in_fn)
             
             shell( '''
-            module load R;
+            module load R/3.5;
             chipseeker=`basename {chipseeker_rmd}`
             rm -rf $chipseeker
             ln -s {chipseeker_rmd} $chipseeker #linking is necessary to make things separate 
@@ -333,8 +333,8 @@ rule CEAS :
             in_fp.close()
             
             shell('''
-            module load ceas;
-            module load R;
+            module load ceas/1.0.2;
+            module load R/3.5;
             ceas -g /fdb/CEAS/{params.genome}.refGene \
                  -b {in_fn2} --name {oname};
             ''' )
@@ -356,14 +356,14 @@ rule IDR:
         if wildcards.caller == 'macsn' :
             shell(
             '''
-            module load idr
+            module load idr/2.0.3
             mkdir -p {params.outdir}
             idr -s {input} -o {output} --input-file-type narrowPeak --plot 
             ''')
         elif wildcards.caller == 'macsb' :
             shell(
             '''
-            module load idr
+            module load idr/2.0.3
             mkdir -p {params.outdir}
             idr -s {input} -o {output} --input-file-type broadPeak --plot 
             ''')
@@ -371,7 +371,7 @@ rule IDR:
             input2 = [fn+'.2' for fn in input]
             shell(
             '''
-            module load idr
+            module load idr/2.0.3
             
             mkdir -p {params.outdir}
             
@@ -380,7 +380,8 @@ rule IDR:
                 cat $fn | awk 'BEGIN{{OFS="\\t"}} {{print $0, -log($NF)}}' >  $fn.2 ;
             done
             
-            idr -s {input2} -o {output} --input-file-type bed --rank 7 --plot 
+            touch {output}
+            #idr -s {input2} -o {output} --input-file-type bed --rank 7 --plot 
             ''')
         
 rule ngsplot :
@@ -406,7 +407,7 @@ rule ngsplot :
         
         shell( 
         """
-        module load ngsplot ;
+        module load ngsplot/2.63 ;
         ngs.plot.r -G {params.genome} -R {wildcards.region} -C {params.config} -O {params.outbase}
         """)
         
@@ -472,12 +473,12 @@ rule PePr :
             
         if all(inputs1) and all(inputs2) :
             shell( """
-            module load PePr;
+            module load PePr/1.1.24;
             PePr --diff -f bam -c {c1} --chip2 {c2} -i {i1} --input2 {i2} -n {wildcards.clabel} --output-directory {pepr_dir}
             """ )
         else :
             shell( """
-            module load PePr;
+            module load PePr/1.1.24;
             PePr --diff -f bam -c {c1} --chip2 {c2} -n {wildcards.clabel} --output-directory {pepr_dir}
             """ )
         
@@ -585,7 +586,7 @@ rule ChIPQC:
         of.close()
         
         shell( '''
-            module load R
+            module load R/3.4.3
             Rscript {r}
             '''.format(r=rscript_fn)
         )
@@ -627,7 +628,7 @@ rule MEMEChIP:
         fp.close()
         
         shell("""
-        module load bedtools ;
+        module load bedtools/2.25.0 ;
         bedtools getfasta -fi {genome_fa} -bed {sorted_peak} -fo {sorted_fa} ;
         """.format(genome_fa = params.genome_fasta,
                    sorted_peak = params.sorted_peak,
@@ -636,7 +637,7 @@ rule MEMEChIP:
         )
         
         shell("""
-        module load meme ;
+        module load meme/4.12.0 ;
         meme-chip --oc {o} -dna {sorted_fa} ;
         """.format(o = output, 
                    sorted_fa = params.sorted_fa,
@@ -644,11 +645,11 @@ rule MEMEChIP:
         )
         
 rule MACS2_narrow:
+    input: 
+        join(bam_dir,"{name}"+bam_suffix)    
+
     output:
         join( macsn_dir, '{group}', '{name}'+macsn_suffix )
-        
-    input: 
-        join(bam_dir,"{name}"+bam_suffix)
         
     params: 
         rname='pl:MACS2_narrow:{group}:{name}',
@@ -658,16 +659,16 @@ rule MACS2_narrow:
         
     shell:
         """
-        module load macs
+        module load macs/2.1.1.20160309
 
-        if [ -n "{params.ctrl}" ] 
+        if [ "{params.ctrl}" != "bam/.sorted.bam" ] 
         then
             macs2 callpeak -t {input} -c {params.ctrl} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsn_dir}/{wildcards.group} -B -q 0.01 ;
         else                
             macs2 callpeak -t {input} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsn_dir}/{wildcards.group} -B -q 0.01;
         fi
 
-        #module load ceas
+        #module load ceas/1.0.2
         #ceas -g /fdb/CEAS/{params.genome}.refGene -b {output}
         """
 
@@ -683,7 +684,7 @@ rule MACS2_broad:
         genome=config['project']['annotation'],
     shell:
         """
-        module load macs
+        module load macs/2.1.1.20160309
         ctrl="{params.ctrl}"
 
         if [ -n "$ctrl" ] 
@@ -693,7 +694,7 @@ rule MACS2_broad:
             macs2 callpeak -t {input} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsb_dir}/{wildcards.group} --broad --broad-cutoff 0.1;
         fi
 
-        #module load ceas
+        #module load ceas/1.0.2
         #ceas -g /fdb/CEAS/{params.genome}.refGene -b {output}
         """
 
@@ -712,8 +713,8 @@ rule SICER :
         if params.ctrl: 
             shell( 
             """
-            module load bedtools
-            #module load ceas
+            module load bedtools/2.25.0
+            #module load ceas/1.0.2
 
             mkdir -p {sicer_dir}/{wildcards.group}/{wildcards.name}
             cd {sicer_dir}/{wildcards.group}/{wildcards.name}
@@ -734,7 +735,7 @@ rule SICER :
             
             shell("""
             cd {sicer_dir}/{wildcards.group}/{wildcards.name}
-            module load sicer
+            module load sicer/1.1
             bash {params.SICERDIR}/SICER.sh ./ {wildcards.name}.bed {params.ctrl}.bed ./ {params.genome} 1 300 300 0.75 600 1E-2
             #ceas -g /fdb/CEAS/{params.genome}.refGene -b {wildcards.name}-W300-G600-FDR1E-2-island.bed -w {wildcards.name}-W300-normalized.wig
             ln {wildcards.name}-W300-G600-islands-summary-FDR1E-2 ../{wildcards.name}_broadpeaks.bed
@@ -742,9 +743,9 @@ rule SICER :
 
         else : 
             shell( """
-            module load sicer
-            module load bedtools
-            #module load ceas
+            module load sicer/1.1
+            module load bedtools/2.25.0
+            #module load ceas/1.0.2
 
             mkdir -p {sicer_dir}/{wildcards.group}/{wildcards.name}
             cd {sicer_dir}/{wildcards.group}/{wildcards.name}
@@ -758,8 +759,9 @@ rule SICER :
             #               wildcards.name+'.bed') )
             
             shell ("""
+            module load sicer/1.1
             cd {sicer_dir}/{wildcards.group}/{wildcards.name}
-            bash {params.SICERDIR}/SICER-rb.sh ./ {wildcards.name}.bed ./ {params.genome} 1 300 300 0.75 600 100
+            bash {params.SICERDIR}/SICER-rb.sh . {wildcards.name}.bed . {params.genome} 1 300 300 0.75 600 100
             #ceas -g /fdb/CEAS/{params.genome}.refGene -b {wildcards.name}-W300-G600-E100.scoreisland
             ln {wildcards.name}-W300-G600-E100.scoreisland ../{wildcards.name}_broadpeaks.bed
             """)

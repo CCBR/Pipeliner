@@ -28,6 +28,8 @@
 # -rf , if plot or rdata or narrowPeak file exists replace it. If not used then the run is aborted if the plot or Rdata or narrowPeak file exists
 # -clean, if present will remove the original chip and control files after reading them in. CAUTION: Use only if the script calling run_spp.R is creating temporary files
 
+library(caTools)
+
 args <- commandArgs(trailingOnly=TRUE); # Read Arguments from command line
 nargs = length(args); # number of arguments
 

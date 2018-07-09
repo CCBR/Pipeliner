@@ -76,8 +76,8 @@ class RNASeqFrame( PipelineFrame ) :
         self.om3 = OptionMenu(eframe, rStrand, *rStrands, command=self.option_controller)
         #self.om3.grid(row=5,column=1,sticky=W,padx=10,pady=5)
         
-        rDegs = ["no, Do not Report Differentially Expressed Genes",
-                              "yes, Report Differentially Expressed Genes"]
+        rDegs = ["yes, Report Differentially Expressed Genes",
+                              "no, Do not Report Differentially Expressed Genes"]
         self.rDeg = rDeg = StringVar()
         rDeg.set(rDegs[0])
         self.om4 = OptionMenu(eframe, rDeg, *rDegs, command=self.option_controller)

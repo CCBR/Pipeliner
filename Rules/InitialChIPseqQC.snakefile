@@ -186,7 +186,7 @@ module load {params.bwaver};
 module load {params.samtoolsver};
 module load {params.picardver};
 bwa mem -t {threads} {params.blacklistbwaindex} ${{sample}}.outr1.fastq | samtools view -@{threads} -f4 -b -o ${{sample}}.bam
-java -Xmx{params.javaram} -jar $PICARDJARPATH/SamToFastq.jar VALIDATION_STRINGENCY=SILENT INPUT=${{sample}}.bam FASTQ=${{sample}}.outr1.noBL.fastq
+java -Xmx{params.javaram} -jar $PICARDJARPATH/picard.jar SamToFastq VALIDATION_STRINGENCY=SILENT INPUT=${{sample}}.bam FASTQ=${{sample}}.outr1.noBL.fastq
 pigz -p 16 ${{sample}}.outr1.noBL.fastq;
 mv ${{sample}}.outr1.noBL.fastq.gz {output.outfq};
             """
@@ -451,7 +451,7 @@ module load {params.bwaver};
 module load {params.samtoolsver};
 module load {params.picardver};
 bwa mem -t {threads} {params.blacklistbwaindex} ${{sample}}.outr1.fastq ${{sample}}.outr2.fastq | samtools view -@{threads} -f4 -b -o ${{sample}}.bam
-java -Xmx{params.javaram} -jar $PICARDJARPATH/SamToFastq.jar \
+java -Xmx{params.javaram} -jar $PICARDJARPATH/picard.jar SamToFastq \
 VALIDATION_STRINGENCY=SILENT \
 INPUT=${{sample}}.bam \
 FASTQ=${{sample}}.outr1.noBL.fastq \
@@ -599,7 +599,7 @@ rule picard_dedup:
 module load {params.samtoolsver};
 module load {params.picardver}; 
 java -Xmx{params.javaram} \
-  -jar $PICARDJARPATH/AddOrReplaceReadGroups.jar \
+  -jar $PICARDJARPATH/picard.jar AddOrReplaceReadGroups \
   INPUT={input.bam2} \
   OUTPUT={output.out4} \
   TMP_DIR=/lscratch/$SLURM_JOBID \
@@ -609,7 +609,7 @@ java -Xmx{params.javaram} \
   RGPU=machine \
   RGSM=sample; 
 java -Xmx{params.javaram} \
-  -jar $PICARDJARPATH/MarkDuplicates.jar \
+  -jar $PICARDJARPATH/picard.jar MarkDuplicates \
   INPUT={output.out4} \
   OUTPUT={output.out5} \
   TMP_DIR=/lscratch/$SLURM_JOBID \
@@ -646,9 +646,9 @@ rule bam2bw:
                 genomelen+=int(l)
         excludedchrs=list(set(chrs)-set(includedchrs))
         commoncmd="module load {params.deeptoolsver};"
-        cmd1="bamCoverage --bam "+input.bam1+" -o "+output.outbw1+" --binSize 2 --smoothLength 5 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeTo1x "+str(genomelen)
+        cmd1="bamCoverage --bam "+input.bam1+" -o "+output.outbw1+" --binSize 2 --smoothLength 5 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
         shell(commoncmd+cmd1)
-        cmd4="bamCoverage --bam "+input.bam4+" -o "+output.outbw4+" --binSize 2 --smoothLength 5 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeTo1x "+str(genomelen)
+        cmd4="bamCoverage --bam "+input.bam4+" -o "+output.outbw4+" --binSize 2 --smoothLength 5 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
         if pe=="yes":
             cmd4+=" --centerReads"
         shell(commoncmd+cmd4)
@@ -689,7 +689,7 @@ rule deeptools:
     threads: 32
     run:
         import re
-        commoncmd="module load {params.deeptoolsver};"
+        commoncmd="module load {params.deeptoolsver}; module load python;"
         listfile=list(map(lambda z:z.strip().split(),open(input[0],'r').readlines()))
         ext=listfile[0][0]
         bws=listfile[1]

@@ -51,13 +51,13 @@ class ChIPSeqFrame( PipelineFrame ) :
         #om.pack(side=LEFT,padx=20,pady=5)
         om.grid(row=3,column=1,sticky=W,padx=20,pady=5)
 
-        readtypes = ['Single', 'Paired']
-        self.readtype = readtype = StringVar()
-        readtype.set(readtypes[0])
-        readtype_menu = OptionMenu(eframe, readtype, *readtypes)
-        readtype_menu.grid(row=3, column=3, sticky=E, pady=5)
-        readtype_label = Label(eframe, text="-end   ")
-        readtype_label.grid( row=3, column=4, stick=W, pady=5)
+        #readtypes = ['Single', 'Paired']
+        #self.readtype = readtype = StringVar()
+        #readtype.set(readtypes[0])
+        #readtype_menu = OptionMenu(eframe, readtype, *readtypes)
+        #readtype_menu.grid(row=3, column=3, sticky=E, pady=5)
+        #readtype_label = Label(eframe, text="-end   ")
+        #readtype_label.grid( row=3, column=4, stick=W, pady=5)
 
         self.add_info(eframe)
         self.option_controller()
@@ -503,7 +503,8 @@ class ChIPSeqFrame( PipelineFrame ) :
                 "cluster": "cluster_medium.json", 
                 "description": gi.description.get('1.0',END), 
                 "technique" : gi.technique.get(), 
-                'readtype': self.readtype.get(),
+                #'readtype': self.readtype.get(),
+                'readtype': self.nends,
                 'pairs': {'na':'na'},
                 'peaks': peaks,
                 'gsize': gsize,

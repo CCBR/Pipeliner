@@ -6,6 +6,6 @@ rule svaba_germline:
      run:
         fl=os.popen("ls *.recal.bam").read().split()      
         var=" -t ../"+" -t ../".join(fl)
-        cmd="mkdir -p svaba_out; cd svaba_out; module load gcc; /data/CCBR/apps/svaba/bin/svaba run -a svaba -p {threads} --germline -G {params.genome}"+var
+        cmd="mkdir -p svaba_out; cd svaba_out; module load gcc; /data/CCBR_Pipeliner/db/PipeDB/bin/svaba/svaba/bin/svaba run -a svaba -p {threads} --germline -G {params.genome}"+var
         print(cmd)
         shell(cmd)
