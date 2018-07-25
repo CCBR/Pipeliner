@@ -895,21 +895,28 @@
     },
     "scrna_initial":
     {
-        "partition" : "largemem",
-        "threads": "32",
-        "mem": "1000g"
+        "threads": "4",
+        "mem": "100g"
     },
     "scrna_jackstraw":
     {
-        "partition" : "largemem",
-        "threads": "32",
-        "mem": "1000g"
+        "threads": "4",
+        "mem": "100g"
     },
     "scrna_cluster":
     {
-        "partition" : "largemem",
-        "threads": "32",
-        "mem": "1000g"
+        "threads": "4",
+        "mem": "100g"
+    },
+    "scrna_cca":
+    {
+        "threads": "4",
+        "mem": "100g"
+    },
+    "scrna_multicluster":
+    {
+        "threads": "4",
+        "mem": "100g"
     },
     "kraken_se":
     {
