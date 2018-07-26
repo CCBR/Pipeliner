@@ -360,6 +360,7 @@ if(doCycleRegress){
       if(isMouse){
         annotation <- org.Mm.eg.db
       }
+      genes <- rownames(sce_filtered_temp)
       g2e <- AnnotationDbi::select(x=annotation,
                                    keys=genes,column="ENSEMBL",keytype="SYMBOL")
       #Hack to deal with many-to-one situations in annotation mapping
