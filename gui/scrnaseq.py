@@ -148,6 +148,18 @@ class scRNASeqFrame( PipelineFrame ) :
         docycleregressL.grid(row=11,column=1,sticky=W,padx=10,pady=5)
         cycle_om.grid(row=11,column=2,sticky=W,padx=0,pady=5)
 
+        usecycleregressL_c = Label(clusterOpts, text="Use cell cycle regressed data? ")
+        docycleregress.set(scrCycleDropdown[0])
+        cycle_om_c = OptionMenu(clusterOpts, docycleregress, *scrCycleDropdown)
+        usecycleregressL_c.grid(row=10,column=1,sticky=W,padx=10,pady=5)
+        cycle_om_c.grid(row=10,column=2,sticky=W,padx=0,pady=5)
+
+        usecycleregressL_mc = Label(multiclusterOpts, text="Use cell cycle regressed data? ")
+        docycleregress.set(scrCycleDropdown[0])
+        cycle_om_mc = OptionMenu(multiclusterOpts, docycleregress, *scrCycleDropdown)
+        usecycleregressL_mc.grid(row=10,column=1,sticky=W,padx=10,pady=5)
+        cycle_om_mc.grid(row=10,column=2,sticky=W,padx=0,pady=5)
+
 
         groups_buttonL = Label(qcOpts, text="SAMPLE INFORMATION: ")
         groups_button = Button(qcOpts, 
