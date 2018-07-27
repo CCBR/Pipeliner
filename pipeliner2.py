@@ -125,7 +125,7 @@ class PipelinerGUI(Tk):
         l = Label( pipeline_panel, text="Pipeline Family:" )
         l.grid(row=1,column=1,sticky=W,padx=0,pady=5)
         
-        annotations=['hg19','mm10','mm9','hg38']
+        annotations=['hg19','mm10','mm9','hg38','GRCh38']
         self.annotation = annotation = StringVar()
         annotation.set(annotations[0])
         #annotation.trace('w', lambda *_ :settargets(annotation) )

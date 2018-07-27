@@ -42,8 +42,8 @@ class scRNASeqFrame( PipelineFrame ) :
         
         label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
         label.grid(row=3,column=0,sticky=W,padx=10,pady=5)
-        PipelineLabels=["CellRanger","Initial/QC","Clustering" ]
-        Pipelines=["cellranger","scrnaseqinit","scrnaseqcluster"]
+        PipelineLabels=["CellRanger","Initial/QC","Clustering","Multi-Sample Clustering" ]
+        Pipelines=["cellranger","scrnaseqinit","scrnaseqcluster", "scrnaseqmulticluster"]
 
         self.label2pipeline = { k:v for k,v in zip(PipelineLabels, Pipelines)}
         
@@ -98,6 +98,21 @@ class scRNASeqFrame( PipelineFrame ) :
         
         clusterOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
         
+
+        self.multiclusterOpts = multiclusterOpts = LabelFrame( eframe,
+                                                text = "Multi-Sample Clustering and tSNE Options")
+
+        scrccsL = Label(multiclusterOpts, text="Include canonical components 1 through ")
+        scrccsE = Entry(multiclusterOpts, bd =2, width=3, textvariable=scrPCs)
+        scrmcresL = Label(multiclusterOpts, text="with clustering resolution: ")
+        scrmcresE = Entry(multiclusterOpts, bd =2, width=3, textvariable=scrRes)
+
+        scrccsL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
+        scrccsE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
+        scrmcresL.grid(row=9,column=3,sticky=W,padx=5,pady=5)
+        scrmcresE.grid(row=9,column=4,sticky=W,padx=0,pady=5)
+
+
         self.qcOpts = qcOpts = LabelFrame( eframe, 
                                               text="Initial Settings" )
         countL = Label( qcOpts, text="Counts/Matrix Dir:" )
@@ -116,9 +131,86 @@ class scRNASeqFrame( PipelineFrame ) :
                              text="Open Directory", 
                              command=self.set_count_directory )
         count_button.grid( row=9, column=5 )
+
+        self.mattype = mattype = StringVar()
+        mattypeL = Label(qcOpts, text="Count matrix format: ")
+        scrMatTypeDropdown = ["cellranger", "cellranger_raw", "zumi", "biorad"]
+        mattype.set(scrMatTypeDropdown[0])
+        mattype_om = OptionMenu(qcOpts, mattype, *scrMatTypeDropdown)
+        mattypeL.grid(row=10,column=1,sticky=W,padx=10,pady=5)
+        mattype_om.grid(row=10,column=2,sticky=W,padx=0,pady=5)
+        
+        self.docycleregress = docycleregress = StringVar()
+        docycleregressL = Label(qcOpts, text="Do cell cycle regression? ")
+        scrCycleDropdown = ["TRUE", "FALSE"]
+        docycleregress.set(scrCycleDropdown[0])
+        cycle_om = OptionMenu(qcOpts, docycleregress, *scrCycleDropdown)
+        docycleregressL.grid(row=11,column=1,sticky=W,padx=10,pady=5)
+        cycle_om.grid(row=11,column=2,sticky=W,padx=0,pady=5)
+
+        usecycleregressL_c = Label(clusterOpts, text="Use cell cycle regressed data? ")
+        docycleregress.set(scrCycleDropdown[0])
+        cycle_om_c = OptionMenu(clusterOpts, docycleregress, *scrCycleDropdown)
+        usecycleregressL_c.grid(row=10,column=1,sticky=W,padx=10,pady=5)
+        cycle_om_c.grid(row=10,column=2,sticky=W,padx=0,pady=5)
+
+        usecycleregressL_mc = Label(multiclusterOpts, text="Use cell cycle regressed data? ")
+        docycleregress.set(scrCycleDropdown[0])
+        cycle_om_mc = OptionMenu(multiclusterOpts, docycleregress, *scrCycleDropdown)
+        usecycleregressL_mc.grid(row=10,column=1,sticky=W,padx=10,pady=5)
+        cycle_om_mc.grid(row=10,column=2,sticky=W,padx=0,pady=5)
+
+
+        groups_buttonL = Label(qcOpts, text="SAMPLE INFORMATION: ")
+        groups_button = Button(qcOpts, 
+                                            text="Set Groups", 
+                                            command = self.popup_groups )
+        groups_buttonL.grid(row=12,column=1,sticky=W,padx=10,pady=5)
+        groups_button.grid(row=12,column=2,sticky=W,padx=0,pady=5)
         #####################
         
         self.option_controller()
+
+    def popup_groups( self ) :
+        self.popup_window( "Groups Information", "groups.tab" )
+
+    def popup_window( self, text, filename ) :
+        top = Toplevel()
+  
+        info = LabelFrame(top, text=text )#"Group Information")
+        info_text = Text(info,
+                              width=50,
+                              height=8,
+                              #bg=projectBgColor,
+                              #fg=projectFgColor,
+                              font=("nimbus mono bold","11")
+                             )
+        
+        def savefunc() :
+            self.writepaste( filename, info_text ) 
+        
+        def loadfunc() :
+            self.readpaste( filename, info_text ) 
+        
+        info_save_button = Button(info, 
+                                  text="Save", 
+                                  command = savefunc )
+        info_load_button = Button(info,
+                                  text="Load",
+                                  command = loadfunc )
+
+        #self.pairs_load_button.pack( side=BOTTOM, padx=5, pady=5 )
+        #self.pairs_save_button.pack( side=BOTTOM, padx=5, pady=5 )
+
+        info_load_button.grid( row=5, column=5, padx=10, pady=5 )
+        info_save_button.grid( row=5, column=6, padx=10, pady=5 )
+        info_text.grid(row=1,  rowspan=3, 
+                       column=1,  columnspan=7,
+                       padx=5, pady=5 )
+
+        info.grid(row=7,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+        top.focus_force()
+    
     def set_count_directory( self ):
         fname = askdirectory( initialdir = USER_HOME, 
                              title="Select Data Directory")
@@ -135,14 +227,22 @@ class scRNASeqFrame( PipelineFrame ) :
             self.clusterOpts.grid_forget()
             self.crOpts.grid(row=8,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
             self.qcOpts.grid_forget()
+            self.multiclusterOpts.grid_forget()
         elif self.Pipeline.get() == 'scrnaseqcluster' :
             self.clusterOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
             self.crOpts.grid_forget()
             self.qcOpts.grid_forget()
+            self.multiclusterOpts.grid_forget()
         elif self.Pipeline.get() == 'scrnaseqinit' :
             self.clusterOpts.grid_forget()
             self.crOpts.grid_forget()
             self.qcOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
+            self.multiclusterOpts.grid_forget()
+        elif self.Pipeline.get() == 'scrnaseqmulticluster' :
+            self.clusterOpts.grid_forget()
+            self.crOpts.grid_forget()
+            self.qcOpts.grid_forget()
+            self.multiclusterOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
 
 
             
@@ -335,8 +435,11 @@ class scRNASeqFrame( PipelineFrame ) :
                 "CRID": self.scrCRID.get(),
                 "EXPECTED": self.scrExpected.get(),
                 "COUNTSPATH": self.countpath.get(),
+                "MATTYPE": self.mattype.get(),
+                "DOCYCLEREGRESS": self.docycleregress.get(),
                 "RESOLUTION": self.scrRes.get(),
-                "PCS": self.scrPCs.get()
+                "PCS": self.scrPCs.get(),
+                "groups": groups
              }
         } 
         
