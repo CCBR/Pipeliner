@@ -590,10 +590,10 @@ rule picard_dedup:
         out6=join(workpath,bam_dir,"{name}.bwa.Q5.duplic"), 
     params:
         rname='pl:dedup',
-        batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
+        batch='--mem=98g --time=10:00:00 --gres=lscratch:800',
         picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
         samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-        javaram='110g',
+        javaram='96g',
     shell: 
             """
 module load {params.samtoolsver};

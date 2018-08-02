@@ -31,7 +31,7 @@
     },    
     "picard_dedup":
     {
-        "mem": "110g",
+        "mem": "98g",
         "gres":"lscratch:256",
         "threads":"2"
     },    
@@ -711,7 +711,7 @@
     "trim":
     {
         "threads": "16",
-        "mem": "24g"
+        "mem": "66g"
     },
     "trimmomatic":
     {

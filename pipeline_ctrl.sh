@@ -1,7 +1,6 @@
 #!/bin/bash
 
 module load python/3.5
-module load perl/5.12.5  # was 5.8.9 (unsupported) 
 
 #PBS -N PipelineTest
 
@@ -17,6 +16,9 @@ if [ -f $R/HPC_usage_table.txt ]; then
 	modtime1=`stat -c %y $R/HPC_usage_table.txt|awk -F "." '{print $1}'|sed 's/ /_/g' -|sed 's/:/_/g'|sed 's/-/_/g' -`
 	mv $R/HPC_usage_table.txt $R/HPC_usage_table.txt.${modtime1}
 fi
+
+module load perl/5.24.3
+
 perl Scripts/summarize_usage.pl
 python Scripts/filter_usage_summary.py > $R/HPCusagetable.txt.tmp
 mv $R/HPCusagetable.txt.tmp $R/HPC_usage_table.txt

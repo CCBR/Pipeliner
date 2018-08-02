@@ -546,28 +546,28 @@ rule ChIPQC:
 
         for g, v in groups.items() :
             for i,(chp,inp) in enumerate(v) :
-                if inp :
-                    print(
-                        cnames[chp], 
-                        cnames[g],
-                        i+1, 
-                        join(bam_dir,chp+'.sorted.bam'),
-                        cnames[inp],
-                        join(bam_dir,inp+'.sorted.bam'),
-                        join(peak_dir, g, chp+suffix),
-                        file=sfp, sep="\t"
-                    )
-                else :
-                    print(
-                        cnames[chp], 
-                        cnames[g],
-                        i+1, 
-                        join(bam_dir,chp+'.sorted.bam'),
-                        '',
-                        '',
-                        join(peak_dir, g, chp+suffix),
-                        file=sfp, sep="\t"
-                    )
+                #if inp :
+                #    print(
+                #        cnames[chp], 
+                #        cnames[g],
+                #        i+1, 
+                #        join(bam_dir,chp+'.sorted.bam'),
+                #        cnames[inp],
+                #        join(bam_dir,inp+'.sorted.bam'),
+                #        join(peak_dir, g, chp+suffix),
+                #        file=sfp, sep="\t"
+                #    )
+                #else :
+                print(
+                    cnames[chp], 
+                    cnames[g],
+                    i+1, 
+                    join(bam_dir,chp+'.sorted.bam'),
+                    '',
+                    '',
+                    join(peak_dir, g, chp+suffix),
+                    file=sfp, sep="\t"
+                )
 
         ofp = open( chipqcin_fn, 'w' )
         ofp.write( sfp.getvalue() )

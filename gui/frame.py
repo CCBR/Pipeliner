@@ -658,7 +658,7 @@ class PipelineFrame( Frame ) :
     def dryrun( self ) :
         self.makejson("none")
         #self.run_button.config( state='active' )
-        return self.cmd( "--dryrun -s %s/Snakefile --rerun-incomplete -d %s" % ( self.workpath.get(), self.workpath.get())) 
+        return self.cmd( "--dryrun -p -s %s/Snakefile --rerun-incomplete -d %s" % ( self.workpath.get(), self.workpath.get())) 
     
     def runslurm( self ) :
         #global snakemakeRun

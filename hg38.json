@@ -72,6 +72,7 @@
     "CNVKITGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
     "CNVKITREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1_flatRef.cnn",
     "CNVKITACCESS": "/data/CCBR_Pipeliner/db/PipeDB/lib/access-5k-mappable.grch38.bed",
+    "CNVKITWGSTARGETS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg38_cnvkit_wgs_targets.bed",
     "CNVKITANTITARGETS": "/data/CCBR_Pipeliner/db/PipeDB/lib/fake.antitargetcoverage.cnn",
     "ADMIXTUREKEY": "/data/CCBR_Pipeliner/db/PipeDB/lib/1k_genomes_superpop_key.txt",
     "ADMIXTUREREFS": "5",
