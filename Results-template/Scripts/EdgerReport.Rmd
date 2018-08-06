@@ -298,6 +298,19 @@ ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
 gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 final=cbind(ensID,gene,final)
 write.table(final,file=paste("edgeR_DEG_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
+
+#Reformatted DEG File
+edgerout=read.table(paste("edgeR_DEG_",cons[i],"_all_genes.txt",sep=""),header = TRUE)
+edgerout=edgerout[,which(names(edgerout) %in% c("X","gene","logFC","PValue"))]
+edgerout$fc=2^edgerout$logFC
+down_reg=edgerout$logFC<0
+edgerout$fc[down_reg]=-1/edgerout$fc[down_reg]
+edgerout=edgerout[,c("X","gene","fc","logFC","PValue")]
+colnames(edgerout)=c("ensid_gene","gene","fc","log2fc","pvalue")
+edgerout$fdr=p.adjust(edgerout$pvalue,method='fdr',n=length(edgerout$pvalue))
+edgerout$gsea_ranking_score=-log10(edgerout$pvalue)*sign(edgerout$log2fc)
+write.table(edgerout,file=paste("edgeR_DEG_",cons[i],"_all_genes.txt",sep=""),row.names=FALSE,col.names=TRUE,quote=FALSE,sep="\t")
+
 extension=paste0("_",cons[i],".txt")
 ## pathway enrichment --------------------------------------------
 if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38")
@@ -387,7 +400,7 @@ l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mo
 
 if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype)))
 {
-system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py edgeR_DEG_",cons[i],"_all_genes.txt 2 3 ",SPECIES," ",KARYOBEDS," > edgeR_DEG_",cons[i],".input.karyo"))
+system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py edgeR_DEG_",cons[i],"_all_genes.txt 1 3 ",SPECIES," ",KARYOBEDS," > edgeR_DEG_",cons[i],".input.karyo"))
 system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py edgeR_DEG_",cons[i],".input.karyo ",SPECIES))
 ki1=paste0("edgeR_DEG_",cons[i],".input.karyo1.png")
 ki2=paste0("edgeR_DEG_",cons[i],".input.karyo2.png")

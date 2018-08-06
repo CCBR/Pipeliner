@@ -364,9 +364,22 @@ gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 all.genes.con=cbind(ensID,gene,all.genes.con)
 write.table(all.genes.con,file=paste("limma_DEG_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
 
+#Reformatted DEG File
+limmaout=read.table(paste("limma_DEG_",cons[i],"_all_genes.txt",sep=""), header = TRUE)
+limmaout=limmaout[,which(names(limmaout) %in% c("X","gene","logFC","P.Value"))]
+limmaout$fc=2^limmaout$logFC
+down_reg=limmaout$logFC<0
+limmaout$fc[down_reg]=-1/limmaout$fc[down_reg]
+limmaout=limmaout[,c("X","gene","fc","logFC","P.Value")]
+colnames(limmaout)=c("ensid_gene","gene","fc","log2fc","pvalue")
+limmaout$fdr=p.adjust(limmaout$pvalue,method='fdr',n=length(limmaout$pvalue))
+limmaout$gsea_ranking_score=-log10(limmaout$pvalue)*sign(limmaout$log2fc)
+write.table(limmaout,file=paste("limma_DEG_",cons[i],"_all_genes.txt",sep=""),row.names=FALSE,col.names=TRUE,quote=FALSE,sep="\t")
+
+
 if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype)))
 {
-system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py limma_DEG_",cons[i],"_all_genes.txt 2 3 ",SPECIES," ",KARYOBEDS," > limma_DEG_",cons[i],".input.karyo"))
+system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py limma_DEG_",cons[i],"_all_genes.txt 1 3 ",SPECIES," ",KARYOBEDS," > limma_DEG_",cons[i],".input.karyo"))
 system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py limma_DEG_",cons[i],".input.karyo ",SPECIES))
 ki1=paste0("limma_DEG_",cons[i],".input.karyo1.png")
 ki2=paste0("limma_DEG_",cons[i],".input.karyo2.png")
