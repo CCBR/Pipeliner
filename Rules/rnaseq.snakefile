@@ -17,12 +17,21 @@ def check_writeaccess(filename):
   if not os.access(filename,os.W_OK):
     exit("File: %s exists, but cannot be read!"%(filename))
 
+def createConstrasts(cList):
+  contrastsList = []
+  for i in range(0, len(cList)-1, 2):
+    contrastsList.append("-".join(cList[i:i+2]))
+  return contrastsList
+
+
 
 configfile: "run.json"
 
 samples=config['project']['groups']['rsamps']
 
-workpath = config['project']['workpath']
+workpath=config['project']['workpath']
+
+contrastsList = createConstrasts(config['project']['contrasts']['rcontrasts'])
 
 se=""
 pe=""
@@ -74,6 +83,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
       join(workpath,subreadg_dir,"edgeR_prcomp.png"),
       join(workpath,subreadg_dir,"limma_MDS.png"),
       join(workpath,subreadg_dir,"PcaReport.html"),
+      expand(join(workpath,subreadg_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
       
       #Subread-junctions
       
@@ -82,6 +92,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
       join(workpath,subreadj_dir,"edgeR_prcomp.png"),
       join(workpath,subreadj_dir,"limma_MDS.png"),
       join(workpath,subreadj_dir,"PcaReport.html"),
+      expand(join(workpath,subreadj_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
       
       #Subread-gene-junctions
 
@@ -90,6 +101,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
       join(workpath,subreadgj_dir,"edgeR_prcomp.png"),
       join(workpath,subreadgj_dir,"limma_MDS.png"),
       join(workpath,subreadgj_dir,"PcaReport.html"),
+      expand(join(workpath,subreadgj_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
 
       #RSEM
       
@@ -98,6 +110,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
       join(workpath,rsemg_dir,"edgeR_prcomp.png"),
       join(workpath,rsemg_dir,"limma_MDS.png"),
       join(workpath,rsemg_dir,"PcaReport.html"),
+      expand(join(workpath,rsemg_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
       expand(join(workpath,rsemg_dir,"{name}.RSEM.genes.results"),name=samples),
       join(workpath,rsemg_dir,"RSEM.genes.FPKM.all_samples.txt"),
       join(workpath,rsemi_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
@@ -105,6 +118,9 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
       expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"),name=samples),
       join(workpath,star_dir,"RawCountFileOverlap.txt"),
       join(workpath,star_dir,"RawCountFileStar.txt"),
+
+
+
             
         
 elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
@@ -490,6 +506,30 @@ module load {params.rver}
 Rscript limmacall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}'
 """
 
+rule vennDiagram:
+  input:
+    join(workpath,"DEG_{dtype}","limma_MDS.png"),
+    join(workpath,"DEG_{dtype}","edgeR_prcomp.png"),
+    join(workpath,"DEG_{dtype}","DESeq2_PCA.png"),
+    limmafile=join(workpath,"DEG_{dtype}","limma_DEG_{group1}-{group2}_all_genes.txt"),
+    deseq2file=join(workpath,"DEG_{dtype}","edgeR_DEG_{group1}-{group2}_all_genes.txt"),
+    edgeRfile=join(workpath,"DEG_{dtype}","DESeq2_deg_{group1}_vs_{group2}.txt"),
+  output: 
+    join(workpath,"DEG_{dtype}","limma_edgeR_DESeq2_{group1}-{group2}_vennDiagram.png")
+  params:
+    rname='pl:vennDiagram',
+    batch='--mem=12g --time=2:00:00',
+    outdir=join(workpath,"DEG_{dtype}"),
+    dtype="{dtype}",
+    rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    rscript=join(workpath,"Scripts","limma_edgeR_DESeq2_venn.R"),
+  shell: """
+cp {params.rscript} {params.outdir}
+cd {params.outdir}
+module load {params.rver}
+Rscript {params.rscript} --contrast '{wildcards.group1}-{wildcards.group2}' --limma '{input.limmafile}' --edgeR '{input.edgeRfile}' --DESeq2 '{input.deseq2file}'
+"""
+
 rule pca:
   input: 
     file1=join(workpath,star_dir,"sampletable.txt"),
@@ -575,3 +615,4 @@ module load {params.pythonver}
 module load {params.rsemver}
 python {params.script1} '{params.outdir}' '{input.igfiles}' '{input.samtab}' '{params.contrasts}' '{params.rsemref}' 'gene' '{params.annotate}'
 """
+
