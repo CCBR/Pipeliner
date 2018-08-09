@@ -17,12 +17,12 @@ def check_writeaccess(filename):
   if not os.access(filename,os.W_OK):
     exit("File: %s exists, but cannot be read!"%(filename))
 
-def createConstrasts(cList):
+
+def createConstrasts(cList, delim):
   contrastsList = []
   for i in range(0, len(cList)-1, 2):
-    contrastsList.append("-".join(cList[i:i+2]))
+    contrastsList.append(delim.join(cList[i:i+2]))
   return contrastsList
-
 
 
 configfile: "run.json"
@@ -31,7 +31,8 @@ samples=config['project']['groups']['rsamps']
 
 workpath=config['project']['workpath']
 
-contrastsList = createConstrasts(config['project']['contrasts']['rcontrasts'])
+contrastsList = createConstrasts(config['project']['contrasts']['rcontrasts'], "-")
+deseqcontrastList = createConstrasts(config['project']['contrasts']['rcontrasts'], "_vs_")
 
 se=""
 pe=""
@@ -84,6 +85,9 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
       join(workpath,subreadg_dir,"limma_MDS.png"),
       join(workpath,subreadg_dir,"PcaReport.html"),
       expand(join(workpath,subreadg_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
+      expand(join(workpath,subreadg_dir,"limma_DEG_{con}_all_genes.txt"),con=contrastsList),
+      expand(join(workpath,subreadg_dir,"edgeR_DEG_{con}_all_genes.txt"),con=contrastsList),
+      expand(join(workpath,subreadg_dir,"DESeq2_deg_{con}.txt"),con=deseqcontrastList),
       
       #Subread-junctions
       
@@ -93,6 +97,10 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
       join(workpath,subreadj_dir,"limma_MDS.png"),
       join(workpath,subreadj_dir,"PcaReport.html"),
       expand(join(workpath,subreadj_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
+      expand(join(workpath,subreadj_dir,"limma_DEG_{con}_all_genes.txt"),con=contrastsList),
+      expand(join(workpath,subreadj_dir,"edgeR_DEG_{con}_all_genes.txt"),con=contrastsList),
+      expand(join(workpath,subreadj_dir,"DESeq2_deg_{con}.txt"),con=deseqcontrastList),
+
       
       #Subread-gene-junctions
 
@@ -102,6 +110,9 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
       join(workpath,subreadgj_dir,"limma_MDS.png"),
       join(workpath,subreadgj_dir,"PcaReport.html"),
       expand(join(workpath,subreadgj_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
+      expand(join(workpath,subreadgj_dir,"limma_DEG_{con}_all_genes.txt"),con=contrastsList),
+      expand(join(workpath,subreadgj_dir,"edgeR_DEG_{con}_all_genes.txt"),con=contrastsList),
+      expand(join(workpath,subreadgj_dir,"DESeq2_deg_{con}.txt"),con=deseqcontrastList),
 
       #RSEM
       
@@ -110,10 +121,13 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
       join(workpath,rsemg_dir,"edgeR_prcomp.png"),
       join(workpath,rsemg_dir,"limma_MDS.png"),
       join(workpath,rsemg_dir,"PcaReport.html"),
-      expand(join(workpath,rsemg_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
       expand(join(workpath,rsemg_dir,"{name}.RSEM.genes.results"),name=samples),
       join(workpath,rsemg_dir,"RSEM.genes.FPKM.all_samples.txt"),
       join(workpath,rsemi_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
+      expand(join(workpath,rsemg_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
+      expand(join(workpath,rsemg_dir,"limma_DEG_{con}_all_genes.txt"),con=contrastsList),
+      expand(join(workpath,rsemg_dir,"edgeR_DEG_{con}_all_genes.txt"),con=contrastsList),
+      expand(join(workpath,rsemg_dir,"DESeq2_deg_{con}.txt"),con=deseqcontrastList),
 
       expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"),name=samples),
       join(workpath,star_dir,"RawCountFileOverlap.txt"),
@@ -427,6 +441,7 @@ rule deseq2:
     file2=join(workpath,"DEG_{dtype}","RawCountFile_{dtype}_filtered.txt"),
   output:
     join(workpath,"DEG_{dtype}","DESeq2_PCA.png"),
+    expand(join(workpath,"DEG_{{dtype}}","DESeq2_deg_{con}.txt"),con=deseqcontrastList),
   params:
     rname='pl:deseq2',
     batch='--mem=24g --time=10:00:00',
@@ -456,6 +471,7 @@ rule edgeR:
     file2=join(workpath,"DEG_{dtype}","RawCountFile_{dtype}_filtered.txt"),
   output:
     join(workpath,"DEG_{dtype}","edgeR_prcomp.png"),
+    expand(join(workpath,"DEG_{{dtype}}","edgeR_DEG_{con}_all_genes.txt"),con=contrastsList),
   params: 
     rname='pl:edgeR',
     batch='--mem=24g --time=10:00:00',
@@ -483,7 +499,8 @@ rule limmavoom:
     file1=join(workpath,star_dir,"sampletable.txt"),
     file2=join(workpath,"DEG_{dtype}","RawCountFile_{dtype}_filtered.txt"),
   output: 
-    join(workpath,"DEG_{dtype}","limma_MDS.png")
+    join(workpath,"DEG_{dtype}","limma_MDS.png"),
+    expand(join(workpath,"DEG_{{dtype}}","limma_DEG_{con}_all_genes.txt"),con=contrastsList),
   params:
     rname='pl:limmavoom',
     batch='--mem=24g --time=10:00:00',
@@ -508,12 +525,9 @@ Rscript limmacall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.c
 
 rule vennDiagram:
   input:
-    join(workpath,"DEG_{dtype}","limma_MDS.png"),
-    join(workpath,"DEG_{dtype}","edgeR_prcomp.png"),
-    join(workpath,"DEG_{dtype}","DESeq2_PCA.png"),
-    limmafile=join(workpath,"DEG_{dtype}","limma_DEG_{group1}-{group2}_all_genes.txt"),
-    deseq2file=join(workpath,"DEG_{dtype}","edgeR_DEG_{group1}-{group2}_all_genes.txt"),
-    edgeRfile=join(workpath,"DEG_{dtype}","DESeq2_deg_{group1}_vs_{group2}.txt"),
+    file1=join(workpath,"DEG_{dtype}","limma_DEG_{group1}-{group2}_all_genes.txt"),
+    file2=join(workpath,"DEG_{dtype}","edgeR_DEG_{group1}-{group2}_all_genes.txt"),
+    file3=join(workpath,"DEG_{dtype}","DESeq2_deg_{group1}_vs_{group2}.txt"),
   output: 
     join(workpath,"DEG_{dtype}","limma_edgeR_DESeq2_{group1}-{group2}_vennDiagram.png")
   params:
@@ -527,7 +541,7 @@ rule vennDiagram:
 cp {params.rscript} {params.outdir}
 cd {params.outdir}
 module load {params.rver}
-Rscript {params.rscript} --contrast '{wildcards.group1}-{wildcards.group2}' --limma '{input.limmafile}' --edgeR '{input.edgeRfile}' --DESeq2 '{input.deseq2file}'
+Rscript {params.rscript} --contrast '{wildcards.group1}-{wildcards.group2}' --limma '{input.file1}' --edgeR '{input.file2}' --DESeq2 '{input.file3}'
 """
 
 rule pca:
