@@ -1,5 +1,5 @@
 # Test
-##PLEASE CLICK [HERE](https://github.com/CCBR/Pipeliner/blob/master/PipelinerVer1.0_documentation.pdf) TO VIEW/DOWNLOAD THE FULL PIPELINER MANUAL 
+##PLEASE CLICK [HERE](https://github.com/CCBR/Pipeliner/wiki) TO VIEW MORE INFORMATION ABOUT EACH OF OUR PIPELINES 
 
 #Pipeliner
 
