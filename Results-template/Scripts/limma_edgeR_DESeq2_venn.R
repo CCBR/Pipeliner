@@ -64,7 +64,7 @@ x.genes=limma_filt$ensid_gene
 y.genes=edger_filt$ensid_gene
 z.genes=deseq2_filt$ensid_gene
 
-vennD=Venn(SetNames = c("limma","DESeq2","edgeR"), 
+vennD=Venn(SetNames = c("limma","edgeR","DESeq2"), 
            Weight=c(`100`=length(setdiff(x.genes,union(y.genes,z.genes))),
                     `010`=length(setdiff(y.genes,union(x.genes,z.genes))),
                     `110`=length(setdiff(intersect(x.genes,y.genes),z.genes)),
