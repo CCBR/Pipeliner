@@ -612,17 +612,17 @@
     "qualimap":
     {
         "threads": "8",
-        "mem": "48g"
+        "mem": "96g"
     },
     "qualimap_rna":
     {
         "threads": "8",
-        "mem": "48g"
+        "mem": "96g"
     },
     "qualimap_wgs":
     {
         "threads": "8",
-        "mem": "48g"
+        "mem": "96g"
     },
     "samtools_flagstats_dedup":
     {
