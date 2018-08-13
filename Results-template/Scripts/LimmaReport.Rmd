@@ -115,7 +115,7 @@ mydata=cbind(ensID,gene,v1$E)
 sf=cbind(ensID,gene,sf)
 
 write.table(sf,file="limma_voom_scaling_factors.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
-write.table(mydata,file="limma_oom_normalized_data.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
+write.table(mydata,file="limma_voom_normalized_data.txt",row.names=TRUE,col.names=NA,sep="\t",quote=FALSE)
 
 #png("HistlimmavoomNormFilter.png")
 df.n <- melt(as.data.frame(v1$E))

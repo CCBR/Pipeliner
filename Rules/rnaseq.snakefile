@@ -32,6 +32,11 @@ samples=config['project']['groups']['rsamps']
 workpath=config['project']['workpath']
 
 contrastsList = createConstrasts(config['project']['contrasts']['rcontrasts'])
+cpm_cutoff_list = config['project']['contrasts']['rcontrasts_cpm_cutoff']
+
+contrasts_w_cpm_cutoff_list = []
+for i in zip(contrastsList,cpm_cutoff_list):
+	contrasts_w_cpm_cutoff_list.append(str(i[0])+"_"+str(i[1]))
 
 se=""
 pe=""
@@ -50,398 +55,53 @@ star_dir="STAR_files"
 bams_dir="bams"
 log_dir="logfiles"
 rseqc_dir="RSeQC"
-rsemi_dir="DEG_RSEM_isoforms"
-rsemg_dir="DEG_RSEM_genes"
-salmon_dir="Salmon"
-subreadg_dir="DEG_Subread_genes"
-subreadj_dir="DEG_Subread_junctions"
-subreadgj_dir="DEG_Subread_genejunctions"
-
+# rsemi_dir="DEG_RSEM_isoforms"
+# rsemg_dir="DEG_RSEM_genes"
+# salmon_dir="Salmon"
+# subreadg_dir="DEG_Subread_genes"
+# subreadj_dir="DEG_Subread_junctions"
+# subreadgj_dir="DEG_Subread_genejunctions"
 
 
 
 if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
-  rule all:
-     params: 
-      batch='--time=168:00:00',
-     input: 
-      join(workpath,star_dir,"sampletable.txt"),
-      
-      #EBSeq
-      
-      join(workpath,rsemi_dir,"EBSeq_isoform_completed.txt"),
-      join(workpath,rsemg_dir,"EBSeq_gene_completed.txt"),
-      
-      #Salmon/sleuth
-      
-      # join(workpath,salmon_dir,"sleuth_completed.txt",
-      
-      #Subread-genes
-      
-      join(workpath,subreadg_dir,"RawCountFile_Subread_genes_filtered.txt"),
-      join(workpath,subreadg_dir,"DESeq2_PCA.png"),
-      join(workpath,subreadg_dir,"edgeR_prcomp.png"),
-      join(workpath,subreadg_dir,"limma_MDS.png"),
-      join(workpath,subreadg_dir,"PcaReport.html"),
-      expand(join(workpath,subreadg_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
-      
-      #Subread-junctions
-      
-      join(workpath,subreadj_dir,"RawCountFile_Subread_junctions_filtered.txt"),
-      join(workpath,subreadj_dir,"DESeq2_PCA.png"),
-      join(workpath,subreadj_dir,"edgeR_prcomp.png"),
-      join(workpath,subreadj_dir,"limma_MDS.png"),
-      join(workpath,subreadj_dir,"PcaReport.html"),
-      expand(join(workpath,subreadj_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
-      
-      #Subread-gene-junctions
+	rule all:
+		params: 
+			batch="--time=168:00:00",
+		
+		
+		input: 
+			expand(join(workpath,"DEG_{deg_dir}","EBSeq_isoform_completed.txt"),deg_dir=contrasts_w_cpm_cutoff_list),
+			expand(join(workpath,"DEG_{deg_dir}","EBSeq_gene_completed.txt"),deg_dir=contrasts_w_cpm_cutoff_list),
+			expand(join(workpath,"DEG_{deg_dir}","RawCountFile_RSEM_genes_filtered.txt"), deg_dir=contrasts_w_cpm_cutoff_list),
+			expand(join(workpath,"DEG_{deg_dir}","DESeq2_PCA.png"),deg_dir=contrasts_w_cpm_cutoff_list),
+			expand(join(workpath,"DEG_{deg_dir}","edgeR_prcomp.png"),deg_dir=contrasts_w_cpm_cutoff_list),
+			expand(join(workpath,"DEG_{deg_dir}","limma_MDS.png"),deg_dir=contrasts_w_cpm_cutoff_list),
+# 			expand(join(workpath,"DEG_{deg_dir}","PcaReport.html"),deg_dir=contrasts_w_cpm_cutoff_list),
+# 			expand(join(workpath,rsemg_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
 
-      join(workpath,subreadgj_dir,"RawCountFile_Subread_genejunctions_filtered.txt"),
-      join(workpath,subreadgj_dir,"DESeq2_PCA.png"),
-      join(workpath,subreadgj_dir,"edgeR_prcomp.png"),
-      join(workpath,subreadgj_dir,"limma_MDS.png"),
-      join(workpath,subreadgj_dir,"PcaReport.html"),
-      expand(join(workpath,subreadgj_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
-
-      #RSEM
-      
-      join(workpath,rsemg_dir,"RawCountFile_RSEM_genes_filtered.txt"), 
-      join(workpath,rsemg_dir,"DESeq2_PCA.png"),
-      join(workpath,rsemg_dir,"edgeR_prcomp.png"),
-      join(workpath,rsemg_dir,"limma_MDS.png"),
-      join(workpath,rsemg_dir,"PcaReport.html"),
-      expand(join(workpath,rsemg_dir,"limma_edgeR_DESeq2_{con}_vennDiagram.png"),con=contrastsList),
-      expand(join(workpath,rsemg_dir,"{name}.RSEM.genes.results"),name=samples),
-      join(workpath,rsemg_dir,"RSEM.genes.FPKM.all_samples.txt"),
-      join(workpath,rsemi_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
-
-      expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"),name=samples),
-      join(workpath,star_dir,"RawCountFileOverlap.txt"),
-      join(workpath,star_dir,"RawCountFileStar.txt"),
-
-
-
-            
-        
-elif config['project']['DEG'] == "no" and config['project']['TRIM'] == "yes":
-  rule all:
-     params: 
-      batch='--time=168:00:00',
-     input: 
-      join(workpath,star_dir,"sampletable.txt"),
-            
-      #Subread-genes
-      
-      join(workpath,subreadg_dir,"RawCountFile_Subread_genes_filtered.txt"),
-      join(workpath,subreadg_dir,"PcaReport.html"),
-      
-      #Subread-junctions
-      
-      join(workpath,subreadj_dir,"RawCountFile_Subread_junctions_filtered.txt"),
-      join(workpath,subreadj_dir,"PcaReport.html"),
-      
-      #Subread-gene-junctions
-
-      join(workpath,subreadgj_dir,"RawCountFile_Subread_genejunctions_filtered.txt"),
-      join(workpath,subreadgj_dir,"PcaReport.html"),
-
-      #RSEM
-      
-      join(workpath,rsemg_dir,"RawCountFile_RSEM_genes_filtered.txt"), 
-      join(workpath,rsemg_dir,"PcaReport.html"),
-      expand(join(workpath,rsemg_dir,"{name}.RSEM.genes.results"),name=samples),
-      
-      expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"),name=samples),
-      join(workpath,star_dir,"RawCountFileOverlap.txt"),
-      join(workpath,star_dir,"RawCountFileStar.txt"),
-
-
-########################################################
-
-##############################################
-
-rule get_strandness:
-  input: 
-    groupsfile=join(workpath,"groups.tab"),
-  output: 
-    outfile=join(workpath,log_dir,"strandness.txt"),
-    outdir=join(workpath,log_dir)
-  params: 
-    rname='pl:get_strandness',
-    pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
-    pythonscript=join(workpath,"Scripts","get_strandness.py")
-  run:
-    import os
-    os.chdir(output.outdir)
-    os.system("module load "+params.pythonver+";python "+params.pythonscript+" "+input.groupsfile+" > "+output.outfile)
-    strandfile=open(output.outfile,'r')
-    strandness=strandfile.readline().strip()
-    strandfile.close()
-    A=open(join(workpath,"run.json"),'r')
-    a=eval(A.read())
-    A.close()
-    config=dict(a.items())
-    config['project']['STRANDED']=strandness
-    with open(join(workpath,'run.json'),'w') as F:
-      json.dump(config, F, sort_keys = True, indent = 4,ensure_ascii=False)
-    F.close()
-   
-rule samplecondition:
-   input: 
-    files=expand(join(workpath,star_dir,"{name}.star.count.txt"), name=samples)
-   output: 
-    out1=join(workpath,star_dir,"sampletable.txt")
-   params: 
-    rname='pl:samplecondition',
-    batch='--mem=4g --time=10:00:00', 
-    groups=config['project']['groups']['rgroups'],
-    labels=config['project']['groups']['rlabels'],
-    gtffile=config['references'][pfamily]['GTFFILE']
-   run:
-        with open(output.out1, "w") as out:
-            out.write("sampleName\tfileName\tcondition\tlabel\n")
-            i=0
-            for f in input.files:
-                out.write("%s\t"  % f)
-                out.write("%s\t"  % f)
-                out.write("%s\t" % params.groups[i])
-                out.write("%s\n" % params.labels[i])                
-                i=i+1
-            out.close()
-
-if pe=="yes":
-
-   rule rsem:
-      input: 
-        file1=join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),
-      output: 
-        out1=join(workpath,rsemg_dir,"{name}.RSEM.genes.results"),
-        out2=join(workpath,rsemi_dir,"{name}.RSEM.isoforms.results"),
-      params:
-        rname='pl:rsem',
-        prefix="{name}.RSEM",
-        outdir=join(workpath,rsemg_dir),
-        outdir2=join(workpath,rsemi_dir),
-        batch='--cpus-per-task=16 --mem=32g --time=24:00:00',
-        rsemref=config['references'][pfamily]['RSEMREF'],
-        rsemver=config['bin'][pfamily]['tool_versions']['RSEMVER'],
-        pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
-        annotate=config['references'][pfamily]['ANNOTATE'],
-        pythonscript=join(workpath,"Scripts","merge_rsem_results.py"),
-      threads: 16
-      shell: """
-if [ ! -d {params.outdir} ]; then mkdir {params.outdir}; fi
-if [ ! -d {params.outdir2} ]; then mkdir {params.outdir2}; fi
-cd {params.outdir}
-module load {params.rsemver}
-rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files
-mv {params.outdir}/{params.prefix}.isoforms.results {params.outdir2}/
-"""
-
-if se=="yes":
-
-   rule rsem:
-      input:
-        file1=join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),
-      output:
-        out1=join(workpath,rsemg_dir,"{name}.RSEM.genes.results"),
-        out2=join(workpath,rsemi_dir,"{name}.RSEM.isoforms.results"),
-      params: 
-        rname='pl:rsem',
-        prefix="{name}.RSEM",
-        outdir=join(workpath,rsemg_dir),
-        outdir2=join(workpath,rsemi_dir),
-        batch='--cpus-per-task=16 --mem=32g --time=24:00:00',
-        rsemref=config['references'][pfamily]['RSEMREF'],
-        rsemver=config['bin'][pfamily]['tool_versions']['RSEMVER'],
-        pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
-        annotate=config['references'][pfamily]['ANNOTATE'],
-        pythonscript=join(workpath,"Scripts","merge_rsem_results.py"),
-      threads: 16
-      shell: """
-if [ ! -d {params.outdir} ]; then mkdir {params.outdir}; fi
-if [ ! -d {params.outdir2} ]; then mkdir {params.outdir2}; fi
-cd {params.outdir}
-module load {params.rsemver}
-rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files
-mv {params.outdir}/{params.prefix}.isoforms.results {params.outdir2}/
-"""
-
-rule rsem_merge:
-   input:
-    files=expand(join(workpath,rsemg_dir,"{name}.RSEM.genes.results"), name=samples),
-    files2=expand(join(workpath,rsemi_dir,"{name}.RSEM.isoforms.results"), name=samples),
-   output: 
-    join(workpath,rsemg_dir,"RSEM.genes.FPKM.all_samples.txt"),
-    join(workpath,rsemi_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
-   params: 
-    rname='pl:rsem_merge',
-    pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
-    annotate=config['references'][pfamily]['ANNOTATE'],
-    pythonscript=join(workpath,"Scripts","merge_rsem_results.py"),
-   shell: """
-module load {params.pythonver}
-python {params.pythonscript} {params.annotate} {rsemg_dir} {rsemi_dir}
-"""
-
-
-rule rsemcounts:
-   input:
-    files=expand(join(workpath,rsemg_dir,"{name}.RSEM.genes.results"), name=samples),
-   output: 
-    join(workpath,rsemg_dir,"RawCountFile_RSEM_genes_filtered.txt"),
-   params: 
-    rname='pl:rsemcounts',
-    batch='--mem=8g --time=10:00:00',
-    outdir=join(workpath,rsemg_dir),
-    mincount=config['project']['MINCOUNTGENES'],
-    minsamples=config['project']['MINSAMPLES'],
-    annotate=config['references'][pfamily]['ANNOTATE'],
-    rver=config['bin'][pfamily]['tool_versions']['RVER'],
-    rscript=join(workpath,"Scripts","rsemcounts.R")
-   shell: """
-cd {params.outdir}
-module load {params.rver}
-Rscript {params.rscript} '{params.outdir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'
-"""
-
-
-rule subread:
-   input:
-    file1=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
-    file2=join(workpath,log_dir,"strandness.txt")
-   output:
-    out=join(workpath,star_dir,"{name}.star.count.info.txt"),
-    res=join(workpath,star_dir,"{name}.star.count.txt"),
-   params:
-    rname='pl:subread',
-    batch='--time=4:00:00 --gres=lscratch:800',
-    subreadver=config['bin'][pfamily]['tool_versions']['SUBREADVER'],
-    gtffile=config['references'][pfamily]['GTFFILE'],
-   threads: 16
-   shell: """
-module load {params.subreadver}
-featureCounts -T {threads} -s `cat {input.file2}` -p -t exon -R -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}
-sed '1d' {output.out} | cut -f1,7 > {output.res}
-"""
-
-rule subreadoverlap:
-   input: 
-    file1=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
-    file2=join(workpath,log_dir,"strandness.txt")
-   output:
-    out=join(workpath,star_dir,"{name}.star.count.info.overlap.txt"),
-    res=join(workpath,star_dir,"{name}.star.count.overlap.txt")
-   params: 
-    rname='pl:subreadoverlap',
-    batch='--cpus-per-task=16 --mem=24g --time=48:00:00 --gres=lscratch:800',
-    subreadver=config['bin'][pfamily]['tool_versions']['SUBREADVER'],
-    gtffile=config['references'][pfamily]['GTFFILE']
-   threads: 16
-   shell: """
-module load {params.subreadver}
-featureCounts -T {threads} -s `cat {input.file2}` -p -t exon -R -O -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}
-sed '1d' {output.out} | cut -f1,7 > {output.res}
-"""
-
-rule genecounts: 
-   input:
-    file1=expand(join(workpath,star_dir,"{name}.star.count.txt"), name=samples),
-    file2=join(workpath,star_dir,"sampletable.txt")
-   output:
-    join(workpath,subreadg_dir,"RawCountFile_Subread_genes_filtered.txt")
-   params: 
-    rname='pl:genecounts',
-    batch='--mem=8g --time=10:00:00',
-    outdir=join(workpath,subreadg_dir),
-    mincount=config['project']['MINCOUNTGENES'],
-    minsamples=config['project']['MINSAMPLES'],
-    annotate=config['references'][pfamily]['ANNOTATE'],
-    rver=config['bin'][pfamily]['tool_versions']['RVER'],
-    rscript=join(workpath,"Scripts","genecounts.R"),
-   shell: """
-module load {params.rver}
-Rscript {params.rscript} '{params.outdir}' '{input.file1}' '{params.mincount}' '{params.minsamples}' '{params.annotate}' '{input.file2}'
-"""
-
-rule junctioncounts: 
-   input: 
-    files=expand(join(workpath,star_dir,"{name}.p2.SJ.out.tab"), name=samples)
-   output:
-    join(workpath,subreadj_dir,"RawCountFile_Subread_junctions_filtered.txt")
-   params:
-    rname='pl:junctioncounts',
-    batch='--mem=8g --time=10:00:00',
-    outdir=join(workpath,subreadj_dir),
-    mincount=config['project']['MINCOUNTJUNCTIONS'],
-    minsamples=config['project']['MINSAMPLES'],
-    rver=config['bin'][pfamily]['tool_versions']['RVER'],
-    rscript=join(workpath,"Scripts","junctioncounts.R"),
-   shell: """
-module load {params.rver}
-Rscript {params.rscript} '{params.outdir}' '{input.files}' '{params.mincount}' '{params.minsamples}'
-"""
-
-rule genejunctioncounts: 
-   input:
-    files=expand(join(workpath,star_dir,"{name}.p2.SJ.out.tab"), name=samples)
-   output: 
-    join(workpath,subreadgj_dir,"RawCountFile_Subread_genejunctions_filtered.txt")
-   params:
-    rname='pl:genejunctions',
-    batch='--mem=8g --time=10:00:00',
-    outdir=join(workpath,subreadgj_dir),
-    geneinfo=config['references'][pfamily]['GENEINFO'],
-    mincount=config['project']['MINCOUNTGENEJUNCTIONS'],
-    minsamples=config['project']['MINSAMPLES'],
-    rver=config['bin'][pfamily]['tool_versions']['RVER'],
-    rscript=join(workpath,"Scripts","genejunctioncounts.R")
-   shell: """
-module load {params.rver}
-module load bedtools/2.27.1
-Rscript {params.rscript} '{params.outdir}' '{input.files}' '{params.geneinfo}' '{params.mincount}' '{params.minsamples}'
-"""
-
-rule joincounts:
-   input: 
-    files=expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"), name=samples),
-    files2=expand(join(workpath,star_dir,"{name}.p2.ReadsPerGene.out.tab"), name=samples)
-   output: 
-    out1=join(workpath,star_dir,"RawCountFileOverlap.txt"),
-    out2=join(workpath,star_dir,"RawCountFileStar.txt")
-   params: 
-    rname='pl:junctioncounts',
-    batch='--mem=8g --time=10:00:00',
-    outdir=join(workpath,star_dir),
-    starstrandcol=config['bin'][pfamily]['STARSTRANDCOL'],
-    rver=config['bin'][pfamily]['tool_versions']['RVER'],
-    rscript=join(workpath,"Scripts","joincounts.R")
-   shell: """
-module load {params.rver}
-Rscript {params.rscript} '{params.outdir}' '{input.files}' '{input.files2}' '{params.starstrandcol}'
-"""
 
 rule deseq2:
-  input:
-    file1=join(workpath,star_dir,"sampletable.txt"),
-    file2=join(workpath,"DEG_{dtype}","RawCountFile_{dtype}_filtered.txt"),
-  output:
-    join(workpath,"DEG_{dtype}","DESeq2_PCA.png"),
-  params:
-    rname='pl:deseq2',
-    batch='--mem=24g --time=10:00:00',
-    outdir=join(workpath,"DEG_{dtype}"),
-    contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
-    dtype="{dtype}",
-    refer=config['project']['annotation'],
-    projectId=config['project']['id'],
-    projDesc=config['project']['description'],
-    gtffile=config['references'][pfamily]['GTFFILE'],
-    karyobeds=config['references'][pfamily]['KARYOBEDS'],
-    rver=config['bin'][pfamily]['tool_versions']['RVER'],
-    rscript1=join(workpath,"Scripts","deseq2call.R"),
-    rscript2=join(workpath,"Scripts","Deseq2Report.Rmd"),
-  shell: """
+	input:
+		file1=join(workpath,"DEG_{degdir}","sampletable.txt"),
+		file2=join(workpath,"DEG_{degdir}","RawCountFile_RSEM_genes_filtered.txt"),
+	output:
+		join(workpath,"DEG_{degdir}","DESeq2_PCA.png"),
+	params:
+		rname='pl:deseq2',
+		batch='--mem=24g --time=10:00:00',
+		outdir=join(workpath,"DEG_{degdir}"),
+		contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
+		dtype="RSEM_genes",
+		refer=config['project']['annotation'],
+		projectId=config['project']['id'],
+		projDesc=config['project']['description'],
+		gtffile=config['references'][pfamily]['GTFFILE'],
+		karyobeds=config['references'][pfamily]['KARYOBEDS'],
+		rver=config['bin'][pfamily]['tool_versions']['RVER'],
+		rscript1=join(workpath,"Scripts","deseq2call.R"),
+		rscript2=join(workpath,"Scripts","Deseq2Report.Rmd"),
+	shell: """
 cp {params.rscript1} {params.outdir}
 cp {params.rscript2} {params.outdir}
 cd {params.outdir}
@@ -452,16 +112,16 @@ Rscript deseq2call.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.
 
 rule edgeR:
   input:
-    file1=join(workpath,star_dir,"sampletable.txt"),
-    file2=join(workpath,"DEG_{dtype}","RawCountFile_{dtype}_filtered.txt"),
+    file1=join(workpath,"DEG_{degdir}","sampletable.txt"),
+    file2=join(workpath,"DEG_{degdir}","RawCountFile_RSEM_genes_filtered.txt"),
   output:
-    join(workpath,"DEG_{dtype}","edgeR_prcomp.png"),
+    join(workpath,"DEG_{degdir}","edgeR_prcomp.png"),
   params: 
     rname='pl:edgeR',
     batch='--mem=24g --time=10:00:00',
-    outdir=join(workpath,"DEG_{dtype}"),
+    outdir=join(workpath,"DEG_{degdir}"),
     contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
-    dtype="{dtype}",
+    dtype="RSEM_genes",
     refer=config['project']['annotation'],
     projectId=config['project']['id'],
     projDesc=config['project']['description'],
@@ -480,16 +140,16 @@ Rscript edgeRcall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.c
 
 rule limmavoom:
   input: 
-    file1=join(workpath,star_dir,"sampletable.txt"),
-    file2=join(workpath,"DEG_{dtype}","RawCountFile_{dtype}_filtered.txt"),
+    file1=join(workpath,"DEG_{degdir}","sampletable.txt"),
+    file2=join(workpath,"DEG_{degdir}","RawCountFile_RSEM_genes_filtered.txt"),
   output: 
-    join(workpath,"DEG_{dtype}","limma_MDS.png")
+    join(workpath,"DEG_{degdir}","limma_MDS.png")
   params:
     rname='pl:limmavoom',
     batch='--mem=24g --time=10:00:00',
-    outdir=join(workpath,"DEG_{dtype}"),
+    outdir=join(workpath,"DEG_{degdir}"),
     contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
-    dtype="{dtype}",
+    dtype="RSEM_genes",
     refer=config['project']['annotation'],
     projectId=config['project']['id'],
     projDesc=config['project']['description'],
@@ -567,24 +227,48 @@ Rscript pcacall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.pro
 #   output: "salmonrun/sleuth_completed.txt"
 #   params: rname='pl:sleuth',batch='--mem=128g --cpus-per-task=8 --time=10:00:00',dir=config['project']['workpath'],pipeRlib=config['bin'][pfamily]['PIPERLIB'],contrasts=" ".join(config['project']['contrasts']['rcontrasts']),species=config['project']['annotation']
 #   shell: "module load R/3.5; Rscript Scripts/sleuth.R '{params.dir}' '{params.pipeRlib}' '{input.samtab}' '{params.contrasts}' '{params.species}'"
+# 
+rule init_deg:
+	input:
+		samtab=join(workpath,star_dir,"sampletable.txt"),
+		rawcountstab=join(workpath,"DEG_ALL","RawCountFile_RSEM_genes.txt"),
+	output:
+		folders=expand(join(workpath,"DEG_{deg_dir}"),deg_dir=contrasts_w_cpm_cutoff_list),
+		samtabs=expand(join(workpath,"DEG_{deg_dir}","sampletable.txt"),deg_dir=contrasts_w_cpm_cutoff_list),
+		filteredcountstabs=expand(join(workpath,"DEG_{deg_dir}","RawCountFile_RSEM_genes_filtered.txt"),deg_dir=contrasts_w_cpm_cutoff_list),
+	params:
+		rname="pl:init_deg_dir",
+		scripts_dir=join(workpath,"Scripts"),
+		rscript=join(workpath,"Scripts","filtersamples.R"),
+		minsamples=config['project']['MINSAMPLES'],
+		rver=config['bin'][pfamily]['tool_versions']['RVER'],
+	shell:"""
+for f in {output.folders};do
+if [ ! -d $f ]; then mkdir $f ;fi
+python {params.scripts_dir}/filtersamples.py $f {params.rver} {params.rscript} {input.samtab} {input.rawcountstab} {params.minsamples} $f/sampletable.txt $f/RawCountFile_RSEM_genes_filtered.txt
+done
+"""
 
 rule EBSeq_isoform:
   input: 
     samtab=join(workpath,star_dir,"sampletable.txt"),
-    igfiles=expand(join(workpath,rsemi_dir,"{name}.RSEM.isoforms.results"),name=samples),
+    samtab2s=expand(join(workpath,"DEG_{deg_dir}","sampletable.txt"),deg_dir=contrasts_w_cpm_cutoff_list),
+    igfiles=expand(join(workpath,"DEG_ALL","{name}.RSEM.isoforms.results"),name=samples),
+    outdirs=expand(join(workpath,"DEG_{deg_dir}"),deg_dir=contrasts_w_cpm_cutoff_list),
   output: 
-    join(workpath,rsemi_dir,"EBSeq_isoform_completed.txt")
-  params: 
-    rname='pl:EBSeq_isoform',
-    batch='--mem=128g --cpus-per-task=8 --time=10:00:00',
-    outdir=join(workpath,rsemi_dir),
-    contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
-    rsemref=config['references'][pfamily]['RSEMREF'],
-    rsem=config['bin'][pfamily]['RSEM'],
-    annotate=config['references'][pfamily]['ANNOTATEISOFORMS'],
-    pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
-    rsemver=config['bin'][pfamily]['tool_versions']['RSEMVER'],
-    script1=join(workpath,"Scripts","EBSeq.py"),
+    join(workpath,"DEG_{deg_dir}","EBSeq_isoform_completed.txt"),
+  params:
+  	rname='pl:EBSeq_isoform',
+  	batch='--mem=128g --cpus-per-task=8 --time=10:00:00',
+  	workpath=workpath,
+  	outdir=join(workpath,"DEG_{deg_dir}"),
+  	contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
+  	rsemref=config['references'][pfamily]['RSEMREF'],
+  	rsem=config['bin'][pfamily]['RSEM'],
+  	annotate=config['references'][pfamily]['ANNOTATEISOFORMS'],
+  	pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
+  	rsemver=config['bin'][pfamily]['tool_versions']['RSEMVER'],
+  	script1=join(workpath,"Scripts","EBSeq.py"),
   shell: """
 cd {params.outdir}
 module load {params.pythonver}
@@ -595,13 +279,13 @@ python {params.script1} '{params.outdir}' '{input.igfiles}' '{input.samtab}' '{p
 rule EBSeq_gene:
   input: 
     samtab=join(workpath,star_dir,"sampletable.txt"),
-    igfiles=expand(join(workpath,rsemg_dir,"{name}.RSEM.genes.results"), name=samples),
+    igfiles=expand(join(workpath,"DEG_ALL","{name}.RSEM.genes.results"), name=samples),
   output: 
-    join(workpath,rsemg_dir,"EBSeq_gene_completed.txt")
+    join(workpath,"DEG_{deg_dir}","EBSeq_gene_completed.txt"),
   params:
     rname='pl:EBSeq_gene',
     batch='--mem=128g --cpus-per-task=8 --time=10:00:00',
-    outdir=join(workpath,rsemg_dir),
+    outdir=join(workpath,"DEG_{deg_dir}"),
     contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
     rsemref=config['references'][pfamily]['RSEMREF'],
     rsem=config['bin'][pfamily]['RSEM'],
