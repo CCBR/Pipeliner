@@ -715,7 +715,8 @@ java -Xmx110g  -jar $PICARDJARPATH/picard.jar AddOrReplaceReadGroups I={input.fi
 java -Xmx110g -jar $PICARDJARPATH/picard.jar MarkDuplicates I=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam O=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3};
 mv /lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam {output.outstar2};
 mv /lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bai {output.outstar2b};
-"""        
+sed -i 's/MarkDuplicates/picard.sam.MarkDuplicates/g' {output.outstar3};
+"""
 
 rule preseq:
 	params:
@@ -749,6 +750,7 @@ rule stats:
 module load R/3.5;
 module load {params.picardver};
 java -Xmx110g -jar $PICARDJARPATH/picard.jar CollectRnaSeqMetrics REF_FLAT={params.refflat} I={input.file1} O={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY=SECOND_READ_TRANSCRIPTION_STRAND TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT;
+sed -i 's/CollectRnaSeqMetrics/picard.analysis.CollectRnaSeqMetrics/g' {output.outstar1}
 module load {params.samtoolsver};
 samtools flagstat {input.file1} > {output.outstar2};
 module load python/3.5;
@@ -816,8 +818,6 @@ rule rnaseq_multiqc:
     qcconfig=config['bin'][pfamily]['CONFMULTIQC']
    threads: 1
    shell: """
-sed -i 's/MarkDuplicates/picard.sam.MarkDuplicates/g' {params.logsdir}/*.star.duplic
-sed -i 's/CollectRnaSeqMetrics/picard.analysis.CollectRnaSeqMetrics/g' {params.logsdir}/*.RnaSeqMetrics.txt
 module load {params.multiqcver}
 cd {params.outdir}
 multiqc -f -c {params.qcconfig} --interactive -e cutadapt -d ../
@@ -1075,3 +1075,4 @@ if [ ! -f {params.rscript2} ]; then cp {params.scripts_dir}/{params.rscript2} {p
 module load {params.rver}
 Rscript {params.rscript1} '{params.outdir}' '{output.outhtml}' '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}' 
 """
+
