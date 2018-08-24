@@ -748,6 +748,8 @@ rule multiqc:
         expand(join(workpath,bam_dir,"{name}.bwa.Q5.duplic"), name=samples),
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
         expand(join(workpath,preseq_dir,"{name}.ccurve"), name=samples),
+	expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
+	expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
         join(workpath,"QC"),
         join(workpath,"rawQC"),            
     output:
@@ -755,10 +757,11 @@ rule multiqc:
     params:
         rname="pl:multiqc",
         multiqc=config['bin'][pfamily]['tool_versions']['MULTIQCVER'],
+	qcconfig=config['bin'][pfamily]['CONFMULTIQC'],
     threads: 1
     shell: """
 module load {params.multiqc}
-cd Reports && multiqc -f --interactive -e cutadapt -d ../
+cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt -d ../
 """
 
 
