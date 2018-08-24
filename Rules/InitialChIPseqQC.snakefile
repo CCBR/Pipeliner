@@ -92,6 +92,10 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
+            # QC Table
+            expand(join(workpath,"QC","{name}.nrf"), name=samples),
+            expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
+            join(workpath,"QCTable.txt"),
 #         shell: """
 # rm -rf {workpath}/*bam.cnt
 #             """
@@ -381,6 +385,10 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
+            # QC Table
+            expand(join(workpath,"QC","{name}.nrf"), name=samples),
+            expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
+            join(workpath,"QCTable.txt"),
 #         shell: """
 # rm -rf {workpath}/*.bam.cnt
 # """
@@ -741,17 +749,79 @@ rule preseq:
 module load {params.preseqver};
 preseq c_curve -B -o {output.ccurve} {input.bam}            
         """
+rule NRF:
+    input:
+        bam=join(workpath,bam_dir,"{name}.sorted.bam"),
+    params:
+        rname='pl:NRF',
+        samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
+        rver=config['bin'][pfamily]['tool_versions']['RVER'],
+        preseqver=config['bin'][pfamily]['tool_versions']['PRESEQVER'],
+        nrfscript=join(workpath,"Scripts","atac_nrf.py "),            
 
+    output:
+        preseq=join(workpath,"QC","{name}.preseq.dat"),
+        preseqlog=join(workpath,"QC","{name}.preseq.log"),
+        nrf=join(workpath,"QC","{name}.nrf"),
+    threads: 16
+    shell: """
+module load {params.preseqver};
+
+preseq lc_extrap -P -B -o {output.preseq} {input.bam} -seed 12345 -v -l 100000000000 2> {output.preseqlog}
+python {params.nrfscript} {output.preseqlog} > {output.nrf}
+        """
+
+rule QCstats:
+    input:
+        flagstat=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
+        ddflagstat=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
+        nrf=join(workpath,"QC","{name}.nrf"),
+        ppqt=join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+    params:
+        rname='pl:QCstats',
+        filterCollate=join(workpath,"Scripts","filterMetrics"),   
+
+    output:
+        sampleQCfile=join(workpath,"QC","{name}.qcmetrics"),
+    threads: 16
+    shell: """
+# Number of reads
+grep 'in total' {input.flagstat} | awk '{{print $1,$3}}' | {params.filterCollate} {wildcards.name} tnreads > {output.sampleQCfile}
+# Number of mapped reads
+grep 'mapped (' {input.flagstat} | awk '{{print $1,$3}}' | {params.filterCollate} {wildcards.name} mnreads >> {output.sampleQCfile}
+# Number of uniquely mapped reads
+grep 'mapped (' {input.ddflagstat} | awk '{{print $1,$3}}' | {params.filterCollate} {wildcards.name} unreads >> {output.sampleQCfile}
+# NRF, PCB1, PCB2
+cat {input.nrf} | {params.filterCollate} {wildcards.name} nrf >> {output.sampleQCfile}
+# NSC, RSC, Qtag
+awk '{{print $(NF-2),$(NF-1),$NF}}' {input.ppqt} | {params.filterCollate} {wildcards.name} ppqt >> {output.sampleQCfile}
+            """
+
+rule QCTable:
+    input:
+       expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
+    params:
+        rname='pl:QCTable',
+        inputstring=" ".join(expand(join(workpath,"QC","{name}.qcmetrics"), name=samples)),
+        filterCollate=join(workpath,"Scripts","createtable"),
+
+    output:
+        qctable=join(workpath,"QCTable.txt"),
+    threads: 16
+    shell: """
+cat {params.inputstring} | {params.filterCollate} > {output.qctable}
+            """
 
 rule multiqc:
     input: 
         expand(join(workpath,bam_dir,"{name}.bwa.Q5.duplic"), name=samples),
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
         expand(join(workpath,preseq_dir,"{name}.ccurve"), name=samples),
-	expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
-	expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
-        join(workpath,"QC"),
-        join(workpath,"rawQC"),            
+        expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
+        expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
+        join(workpath,"QCTable.txt"),
+        join(workpath,"rawQC"),
+        join(workpath,"QC"),         
     output:
         join(workpath,"Reports","multiqc_report.html")
     params:
