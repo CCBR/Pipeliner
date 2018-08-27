@@ -309,10 +309,10 @@
     "TARGET_DATA": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References",
 
     },
-     
      },
 
-     "chipseq":{},
-     
-    }
+   "chipseq":{
+     "GENOMECHR": "/fdb/igenomes/Homo_sapiens/UCSC/hg38/Sequence/Chromosomes/",
+      },
+   }
 }

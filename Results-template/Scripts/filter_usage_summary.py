@@ -1,8 +1,14 @@
+from __future__ import print_function
 import os
+
 files = list(filter(lambda x:"HPC_usage_table.txt" in x,os.listdir("./")))
+#print(files)
+
 lines = list()
 for f in files:
-	lines.extend(open(f).readlines())
+	#ignore existing "._" files created by sublime text 
+	if not f.startswith('._'):
+		lines.extend(open(f).readlines())
 outlines=list()
 outlines.append(lines.pop(0))
 lines=list(filter(lambda x:not x.startswith("Job"),lines))

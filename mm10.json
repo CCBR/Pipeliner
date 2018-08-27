@@ -256,18 +256,18 @@
                        "chrX","chrY","chrM"],
             "EXONS": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_UCSCexons.bed",
             "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
-	    "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
+            "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
             "FASTAWITHADAPTERSETD": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",
             "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
-            "GENOMEFILE": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/ref.fa",	 
+            "GENOMECHR": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/Chromosomes/",
+            "GENOMEFILE": "/fdb/STAR_2.4.2a/GENCODE/Gencode_mouse/release_M4/ref.fa",
             "GTFFILE": "/fdb/STAR_2.4.2a/UCSC/mm10/genes.gtf",
             "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
             "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/lib/SS_mouse_exome_mm10_reformat.bed",
             "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/lib/mm10.len",
             "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/dev/gencode.vM12.annotation.rRNA.interval_list",
-            }, 
+            },
 
-
-  }
+      }
 
  }

@@ -7,15 +7,9 @@ from tempfile import TemporaryFile
 from pysam import Samfile, FastaFile
 from collections import Counter
 
-# pipehome = os.getenv('pipehome', '/data/CCBR/projects/TechDev/Pipeliner')
-#pipehome = '/home/kopardevn/Pipeliner/'
 bam_dir='bam'
 
-def normalize_bam_file_chromosomes(
-    bamfns,
-    obamfns=[],
-    suffix='.common_chrom.bam' ) :
-    
+def normalize_bam_file_chromosomes(bamfns, obamfns=[], suffix='.common_chrom.bam'):
     counts = []
     for bamfn1 in bamfns :
         bam1 = Samfile(bamfn1)
@@ -24,16 +18,16 @@ def normalize_bam_file_chromosomes(
         for aread1 in bam1 :
             if aread1.is_unmapped :
                 continue
-            cnt1[ aread1.reference_name ] += 1 
+            cnt1[aread1.reference_name] += 1 
         bam1.close()
         counts.append(cnt1)
     
     common = None
     for cnt in counts :
         if common != None :
-            common = common.intersection( cnt )
+            common = common.intersection(cnt)
         else :
-            common = set( cnt )
+            common = set(cnt)
     
     #################
     # check if common chromosomes exists!
@@ -45,8 +39,8 @@ def normalize_bam_file_chromosomes(
         if obamfns :
             obamfn1 = obamfns[i] #list of output BAM filenames
         else :
-            obamfn1 = bamfn1.replace( '.bam', '.common_chrom.bam' )
-        obam1 = Samfile( obamfn1, 'wb', template=bam1 )
+            obamfn1 = bamfn1.replace('.bam', '.common_chrom.bam')
+        obam1 = Samfile(obamfn1, 'wb', template=bam1)
         
         for aread1 in bam1:
             if aread1.is_unmapped :
@@ -69,7 +63,7 @@ pipehome = config['project']['pipehome']
 
 print(pipehome)
 
-include: join( pipehome, "Rules", "InitialChIPseqQC.snakefile" )
+include: join(pipehome, "Rules", "InitialChIPseqQC.snakefile")
 
 bam_suffix = '.sorted.bam'
 #####################
@@ -104,7 +98,8 @@ print( 'ogroups:', ogroups, file=sys.stderr)
 #####################
 macsn_dir = 'macs_narrow'
 macsb_dir = 'macs_broad'
-sicer_dir = "sicer"
+sicer_dir = 'sicer'
+gem_dir = 'gem'
 peak_dirs = [macsn_dir, macsb_dir, sicer_dir]
 
 macsn_suffix = '_peaks.narrowPeak'
@@ -139,7 +134,7 @@ chipseeker_dir = 'ChIPseeker'
 #now it is deprecated
 #because I put the chr from BWA process
 #in InitialChIPseqQC pipeline.
-def fix_chrom( fn ) :
+def fix_chrom(fn) :
     changed = 0
     fp = TemporaryFile('w+')
     for l in open( fn ) :
@@ -163,121 +158,86 @@ def fix_chrom( fn ) :
 #####################
 # Local programs
 #####################
-#chipseeker_rmd = join( pipehome, 'ChIPseeker.rmd' )
-#chipseeker_r = join( pipehome, 'runChIPseeker.R' )
-chipseeker_rmd = join( 'Scripts' , 'ChIPseeker.rmd' )
-chipseeker_r = join( 'Scripts' , 'runChIPseeker.R' )
+chipseeker_rmd = join('Scripts' , 'ChIPseeker.rmd')
+chipseeker_r = join('Scripts' , 'runChIPseeker.R')
     
 if genome == 'hg19' :
     rule ChIPseq:
         params: 
             batch='--time=168:00:00'
-        input: 
-            expand(
-                join('ChIPQC','{caller}','ChIPQCreport.html'),
-                caller=callers
-            ),
-            [ join(macsn_dir, "{g}", "{n}"+macsn_suffix ).format( n=n, g=g )
-             for n,g in zip(samples, ogroups) ],
-            #expand(
-            #    join(macsn_dir,"{group}","{name}"+macsn_suffix),
-            #    zip, name=samples,
-            #         group=ogroups
-            #),
-            [join(macsb_dir,"{g}","{n}"+macsb_suffix).format(n=n,g=g) for n,g in zip(samples, ogroups) ],
+        input:
+            ## ChIPQC 
+            expand(join('ChIPQC','{caller}','ChIPQCreport.html'), caller=callers),
+            
+            ## Peak Calling [macs (narrow and broad), gem (narrow), sicer(broad)]
+            [join(macsn_dir, "{g}", "{n}" + macsn_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
+            [join(macsb_dir, "{g}", "{n}" + macsb_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
+            [join(sicer_dir, "{g}", "{n}" + sicer_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
+            [join(gem_dir, "{g}", "{n}", "{n}" + ".GEM_events.txt").format(n=n, g=g) for n,g in zip(samples, ogroups)],
 
-            [join(sicer_dir,"{g}","{n}"+sicer_suffix).format(n=n,g=g) for n,g in zip(samples, ogroups) ],
-            #expand( 
-            #    join(sicer_dir,"{group}","{name}"+sicer_suffix), 
-            #    zip, name=samples, 
-            #         group=ogroups
-            #),
-
+            ## MEME
             [join(memechip_dir,'{g}','{n}_memechip').format(n=n,g=g) for n,g in zip(samples, ogroups) ],
-            #expand( 
-            #    join(memechip_dir,"{group}","{name}_memechip"), 
-            #    zip, name=samples, 
-            #         group=ogroups
-            #),
-            #expand( join("{dir}","{group}.idrValue.txt"), 
-            #       group = groups, 
-            #       dir = [idr_mn_dir, idr_mb_dir, idr_sc_dir]),
-            expand( join(pepr_dir,'{clabel}__PePr_chip1_peaks.bed'),
-                   clabel=clabels ),
-            expand( join(pepr_dir,'{clabel}__PePr_chip2_peaks.bed'),
-                   clabel=clabels ),
+            
+            ## PePr
+            expand(join(pepr_dir,'{clabel}__PePr_chip1_peaks.bed'), clabel=clabels ),
+            expand(join(pepr_dir,'{clabel}__PePr_chip2_peaks.bed'), clabel=clabels ),
 
-            expand( join(ngsplot_dir, "{region}.heatmap.pdf"),
-                   region=ngsplot_regions ),
-            expand( join(idr_dir,'{caller}','{group}.idrValue.txt'), 
-                   caller=callers, group=groups ),
-            expand( expand( join(ceas_dir, '{caller}', '{{group}}', '{{name}}.pdf'), 
-                   caller=callers), zip, group=ogroups, name=samples ),
-            expand(expand(join(chipseeker_dir, '{caller}', '{{group}}', '{{name}}.html'),
-                caller=callers), zip, group=ogroups, name=samples),
-            #"Reports/multiqc_report.html",
+            ## NGS plot
+            expand(join(ngsplot_dir, "{region}.heatmap.pdf"), region=ngsplot_regions ),
+            
+            ## IDR
+            expand(join(idr_dir,'{caller}','{group}.idrValue.txt'), caller=callers, group=groups ),
+            
+            ## CEAS
+            expand(expand( join(ceas_dir, '{caller}', '{{group}}', '{{name}}.pdf'), caller=callers), zip, group=ogroups, name=samples ),
+            
+            ## ChIPSeeker
+            expand(expand(join(chipseeker_dir, '{caller}', '{{group}}', '{{name}}.html'), caller=callers), zip, group=ogroups, name=samples),
+            
 else :
     rule ChIPseq:
         params: 
             batch='--time=168:00:00'
-        input: 
-            expand(
-                join('ChIPQC','{caller}','ChIPQCreport.html'),
-                caller=callers
-            ),
-            [ join(macsn_dir, "{g}", "{n}"+macsn_suffix ).format( n=n, g=g )
-             for n,g in zip(samples, ogroups) ],
-            #expand(
-            #    join(macsn_dir,"{group}","{name}"+macsn_suffix),
-            #    zip, name=samples,
-            #         group=ogroups
-            #),
-            [join(macsb_dir,"{g}","{n}"+macsb_suffix).format(n=n,g=g) for n,g in zip(samples, ogroups) ],
-
-            [join(sicer_dir,"{g}","{n}"+sicer_suffix).format(n=n,g=g) for n,g in zip(samples, ogroups) ],
-            #expand( 
-            #    join(sicer_dir,"{group}","{name}"+sicer_suffix), 
-            #    zip, name=samples, 
-            #         group=ogroups
-            #),
-
+        input:
+            ## ChIPQC
+            expand(join('ChIPQC','{caller}','ChIPQCreport.html'), caller=callers),
+            
+            ## Peak Calling [macs (narrow and broad), gem (narrow), sicer(broad)]
+            [join(macsn_dir, "{g}", "{n}" + macsn_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
+            [join(macsb_dir, "{g}", "{n}" + macsb_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
+            [join(sicer_dir, "{g}", "{n}" + sicer_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
+            [join(gem_dir, "{g}", "{n}", "{n}" + ".GEM_events.txt").format(n=n, g=g) for n,g in zip(samples, ogroups)],
+            
+            ## MEME
             [join(memechip_dir,'{g}','{n}_memechip').format(n=n,g=g) for n,g in zip(samples, ogroups) ],
-            #expand( 
-            #    join(memechip_dir,"{group}","{name}_memechip"), 
-            #    zip, name=samples, 
-            #         group=ogroups
-            #),
-            #expand( join("{dir}","{group}.idrValue.txt"), 
-            #       group = groups, 
-            #       dir = [idr_mn_dir, idr_mb_dir, idr_sc_dir]),
-            expand( join(pepr_dir,'{clabel}__PePr_chip1_peaks.bed'),
-                   clabel=clabels ),
-            expand( join(pepr_dir,'{clabel}__PePr_chip2_peaks.bed'),
-                   clabel=clabels ),
+            
+            ##PePr
+            expand(join(pepr_dir,'{clabel}__PePr_chip1_peaks.bed'), clabel=clabels ),
+            expand(join(pepr_dir,'{clabel}__PePr_chip2_peaks.bed'), clabel=clabels ),
 
-            expand( join(ngsplot_dir, "{region}.heatmap.pdf"),
-                   region=ngsplot_regions ),
-            expand( join(idr_dir,'{caller}','{group}.idrValue.txt'), 
-                   caller=callers, group=groups ),
-            #expand( expand( join(ceas_dir, '{caller}', '{{group}}', '{{name}}.pdf'), 
-            #       caller=callers), zip, group=ogroups, name=samples ),
-            expand(expand(join(chipseeker_dir, '{caller}', '{{group}}', '{{name}}.html'),
-                caller=callers), zip, group=ogroups, name=samples),
+            ## NGS plot
+            expand(join(ngsplot_dir, "{region}.heatmap.pdf"), region=ngsplot_regions ),
+            
+            ## IDR
+            expand(join(idr_dir,'{caller}','{group}.idrValue.txt'), caller=callers, group=groups ),
+            
+            ## CEAS
+            #expand( expand( join(ceas_dir, '{caller}', '{{group}}', '{{name}}.pdf'), caller=callers), zip, group=ogroups, name=samples ),
+            
+            ## ChIPSeeker
+            expand(expand(join(chipseeker_dir, '{caller}', '{{group}}', '{{name}}.html'), caller=callers), zip, group=ogroups, name=samples),
 
 rule ChIPseeker :
     params:
         rname="pl:ChIPseeker:{group}:{name}",
         genome = config['project']['annotation']
     input:
-        join( macsn_dir, '{group}', '{name}'+macsn_suffix ),
-        join( macsb_dir, '{group}', '{name}'+macsb_suffix ),
-        join( sicer_dir, '{group}', '{name}'+sicer_suffix ),
+        join(macsn_dir, '{group}', '{name}'+macsn_suffix),
+        join(macsb_dir, '{group}', '{name}'+macsb_suffix),
+        join(sicer_dir, '{group}', '{name}'+sicer_suffix),
         
     output:
-        expand(
-            join(chipseeker_dir, '{caller}', '{{group}}', '{{name}}.html'),
-            caller=callers
-        )
+        expand(join(chipseeker_dir, '{caller}', '{{group}}', '{{name}}.html'), caller=callers)
     shadow: 'shallow'
         
     run:
@@ -298,26 +258,19 @@ rule ChIPseeker :
 rule CEAS :
     params:
         rname="pl:CEAS:{group}:{name}",
-        outdirs = lambda w: [join(ceas_dir, caller, w.group)
-                             for caller in callers ],
-        outnames = lambda w: [join(ceas_dir, caller, w.group, w.name) 
-                              for caller in callers ],
+        outdirs = lambda w: [join(ceas_dir, caller, w.group) for caller in callers],
+        outnames = lambda w: [join(ceas_dir, caller, w.group, w.name) for caller in callers],
         genome = config['project']['annotation'],
     input:
-        join( macsn_dir, '{group}', '{name}'+macsn_suffix ),
-        join( macsb_dir, '{group}', '{name}'+macsb_suffix ),
-        join( sicer_dir, '{group}', '{name}'+sicer_suffix ),
+        join(macsn_dir, '{group}', '{name}'+macsn_suffix),
+        join(macsb_dir, '{group}', '{name}'+macsb_suffix),
+        join(sicer_dir, '{group}', '{name}'+sicer_suffix),
     output:
-        expand(
-            join(ceas_dir, '{caller}', '{{group}}', '{{name}}.pdf'),
-            caller=callers
-        )
+        expand(join(ceas_dir, '{caller}', '{{group}}', '{{name}}.pdf'), caller=callers)
         
     run:
-        #print( 'outdirs:', params.outdirs )
-        #print( 'outnames:', params.outnames )
-        
-        for in_fn, odir, oname in zip(input, params.outdirs, params.outnames) :    
+
+        for in_fn, odir, oname in zip(input, params.outdirs, params.outnames):    
             shell( '''
             mkdir -p {odir};
             ''')
@@ -326,9 +279,9 @@ rule CEAS :
             #cleaned up file in the ceas directory
             in_fn2 = join(odir,basename(in_fn)) #cleaned input
             in_fp = open(in_fn2, 'w')
-            for l in open(in_fn) :
+            for l in open(in_fn):
                 line = l.split()
-                if len(line[0]) < 6 :
+                if len(line[0]) < 6:
                     print( "\t".join(line[:5]), file=in_fp )
             in_fp.close()
             
@@ -345,29 +298,26 @@ rule IDR:
         outdir=join(idr_dir,'{caller}'),
     
     input:
-        lambda w: [
-            join(caller2dir[w.caller], w.group, c + caller2suffix[w.caller]) 
-            for c in groups[w.group]
-        ]
+        lambda w: [join(caller2dir[w.caller], w.group, c + caller2suffix[w.caller]) for c in groups[w.group]]
         
     output:
         join( idr_dir, '{caller}', '{group}.idrValue.txt' )
     run:
-        if wildcards.caller == 'macsn' :
+        if wildcards.caller == 'macsn':
             shell(
             '''
             module load idr/2.0.3
             mkdir -p {params.outdir}
             idr -s {input} -o {output} --input-file-type narrowPeak --plot 
             ''')
-        elif wildcards.caller == 'macsb' :
+        elif wildcards.caller == 'macsb':
             shell(
             '''
             module load idr/2.0.3
             mkdir -p {params.outdir}
             idr -s {input} -o {output} --input-file-type broadPeak --plot 
             ''')
-        elif wildcards.caller == 'sicer' :
+        elif wildcards.caller == 'sicer':
             input2 = [fn+'.2' for fn in input]
             shell(
             '''
@@ -388,12 +338,12 @@ rule ngsplot :
     params:
         rname="pl:NGSplot:{region}",
         genome = config['project']['annotation'],
-        outbase = join( '{ngsplot_dir}', '{region}' ),
+        outbase = join('{ngsplot_dir}', '{region}'),
         config = '{region}.config',
-        batch='--cpus-per-task=16 --mem=32g --time=24:00:00',
+        batch= '--cpus-per-task=16 --mem=32g --time=24:00:00',
         name = [*samples, *inputs],
     input:
-        expand( join(bam_dir,"{name}.sorted.Q5DD.bam"), name=[*samples,*inputs] )
+        expand(join(bam_dir,"{name}.sorted.Q5DD.bam"), name=[*samples,*inputs])
     output:
         join("{ngsplot_dir}", "{region}.heatmap.pdf")
     run:
@@ -646,98 +596,82 @@ rule MEMEChIP:
         
 rule MACS2_narrow:
     input: 
-        join(bam_dir,"{name}"+bam_suffix)    
+        join(bam_dir,'{name}.sorted.Q5DD.bam')    
 
     output:
-        join( macsn_dir, '{group}', '{name}'+macsn_suffix )
+        join(macsn_dir, '{group}', '{name}_peaks.narrowPeak')
         
     params: 
         rname='pl:MACS2_narrow:{group}:{name}',
         gsize=config['project']['gsize'],
-        ctrl = lambda w : join(bam_dir,chip2input[w.name] + bam_suffix),
+        #Must use lambda function here (snakemake does not recogize wildcards.variablename in params section)
+        ctrl =  lambda wildcards :join(bam_dir, config['project']['peaks']['inputs'][wildcards.name], '.sorted.Q5DD.bam'),
         genome=config['project']['annotation'],
         
     shell:
         """
         module load macs/2.1.1.20160309
 
-        if [ "{params.ctrl}" != "bam/.sorted.bam" ] 
+        if [ "{params.ctrl}" != "bam/.sorted.Q5DD.bam" ] 
         then
             macs2 callpeak -t {input} -c {params.ctrl} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsn_dir}/{wildcards.group} -B -q 0.01 ;
         else                
             macs2 callpeak -t {input} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsn_dir}/{wildcards.group} -B -q 0.01;
         fi
-
-        #module load ceas/1.0.2
-        #ceas -g /fdb/CEAS/{params.genome}.refGene -b {output}
         """
 
 rule MACS2_broad:
     input: 
-        join( bam_dir, "{name}.sorted.bam")
+        join(bam_dir, '{name}.sorted.Q5DD.bam')
     output:
-        join( macsb_dir, '{group}', '{name}'+macsb_suffix )
+        join(macsb_dir, '{group}', '{name}_peaks.broadPeak')
     params: 
         rname='pl:MACS2_broad:{group}:{name}',
         gsize=config['project']['gsize'],
-        ctrl = lambda w : config['project']['peaks']['inputs'][w.name],
+        #Must use lambda function here (snakemake does not recogize wildcards.variablename in params section)
+        ctrl =  lambda wildcards :join(bam_dir, config['project']['peaks']['inputs'][wildcards.name], '.sorted.Q5DD.bam'),
         genome=config['project']['annotation'],
     shell:
         """
         module load macs/2.1.1.20160309
-        ctrl="{params.ctrl}"
 
-        if [ -n "$ctrl" ] 
+        if [ "{params.ctrl}" != "bam/.sorted.Q5DD.bam" ] 
         then
-            macs2 callpeak -t {input} -c {bam_dir}/${{ctrl}}.sorted.bam -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsb_dir}/{wildcards.group} --broad --broad-cutoff 0.1 ;
+            macs2 callpeak -t {input} -c {params.ctrl} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsb_dir}/{wildcards.group} --broad --broad-cutoff 0.1 ;
         else 
             macs2 callpeak -t {input} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsb_dir}/{wildcards.group} --broad --broad-cutoff 0.1;
         fi
-
-        #module load ceas/1.0.2
-        #ceas -g /fdb/CEAS/{params.genome}.refGene -b {output}
         """
 
 rule SICER :       
     input:
-        join(bam_dir,"{name}.sorted.bam")
+        join(bam_dir,"{name}.sorted.Q5DD.bam")
     output:
-        #lambda w: join(sicer,groups[w.name],w.name+sicer_suffix),
-        join( sicer_dir, '{group}', '{name}'+sicer_suffix )
+        join(sicer_dir, '{group}', '{name}_broadpeaks.bed')
     params:
         rname = "pl:SICER:{group}:{name}",
-        ctrl = lambda w : config['project']['peaks']['inputs'][w.name],
+        #Must use lambda function here (snakemake does not recogize snakewildcards.variablename in params section)
+        inputname = lambda wildcards : config['project']['peaks']['inputs'][wildcards.name],
+        ctrl =  lambda wildcards :join(bam_dir, config['project']['peaks']['inputs'][wildcards.name], '.sorted.Q5DD.bam'),
         SICERDIR = "/usr/local/apps/sicer/1.1",
         genome = config['project']['annotation'],
     run:
-        if params.ctrl: 
+        if params.ctrl != "bam/.sorted.Q5DD.bam": 
             shell( 
             """
             module load bedtools/2.25.0
-            #module load ceas/1.0.2
 
             mkdir -p {sicer_dir}/{wildcards.group}/{wildcards.name}
             cd {sicer_dir}/{wildcards.group}/{wildcards.name}
 
             bamToBed -i ../../../{input} > {wildcards.name}.bed
-            bamToBed -i ../../../{bam_dir}/{params.ctrl}.sorted.bam > {params.ctrl}.bed
+            bamToBed -i ../../../{params.ctrl} > {params.inputname}.bed
             """)
-            
-            #fix_chrom( join(sicer_dir,
-            #               wildcards.group,
-            #               wildcards.name,
-            #               wildcards.name+'.bed') )
-            
-            #fix_chrom( join(sicer_dir, 
-            #               wildcards.group, 
-            #               wildcards.name, 
-            #               params.ctrl+'.bed') )
             
             shell("""
             cd {sicer_dir}/{wildcards.group}/{wildcards.name}
             module load sicer/1.1
-            bash {params.SICERDIR}/SICER.sh ./ {wildcards.name}.bed {params.ctrl}.bed ./ {params.genome} 1 300 300 0.75 600 1E-2
-            #ceas -g /fdb/CEAS/{params.genome}.refGene -b {wildcards.name}-W300-G600-FDR1E-2-island.bed -w {wildcards.name}-W300-normalized.wig
+            bash {params.SICERDIR}/SICER.sh ./ {wildcards.name}.bed {params.inputname}.bed ./ {params.genome} 1 300 300 0.75 600 1E-2
             ln {wildcards.name}-W300-G600-islands-summary-FDR1E-2 ../{wildcards.name}_broadpeaks.bed
             """)
 
@@ -745,7 +679,6 @@ rule SICER :
             shell( """
             module load sicer/1.1
             module load bedtools/2.25.0
-            #module load ceas/1.0.2
 
             mkdir -p {sicer_dir}/{wildcards.group}/{wildcards.name}
             cd {sicer_dir}/{wildcards.group}/{wildcards.name}
@@ -753,19 +686,38 @@ rule SICER :
             bamToBed -i ../../../{input} > {wildcards.name}.bed
             """)
             
-            #fix_chrom( join(sicer_dir, 
-            #               wildcards.group, 
-            #               wildcards.name, 
-            #               wildcards.name+'.bed') )
-            
             shell ("""
             module load sicer/1.1
             cd {sicer_dir}/{wildcards.group}/{wildcards.name}
             bash {params.SICERDIR}/SICER-rb.sh . {wildcards.name}.bed . {params.genome} 1 300 300 0.75 600 100
-            #ceas -g /fdb/CEAS/{params.genome}.refGene -b {wildcards.name}-W300-G600-E100.scoreisland
             ln {wildcards.name}-W300-G600-E100.scoreisland ../{wildcards.name}_broadpeaks.bed
             """)
             
             
+rule GEM:
+    input: 
+        join(bam_dir, '{name}.sorted.Q5DD.bam')
+    output:
+        join(gem_dir, '{group}', '{name}', '{name}.GEM_events.txt')
+    params: 
+        rname='pl:GEM:{name}',
+        chromsizes=config['references']['ChIPseq']['REFLEN'],
+        # Add to json
+        readDist='/usr/local/apps/gem/3.0/Read_Distribution_default.txt',
+        genome=config['references']['ChIPseq']['GENOMECHR'],
+        #Must use lambda function here (snakemake does not recogize wildcards.variablename in params section)
+        ctrl =  lambda wildcards :join(bam_dir, config['project']['peaks']['inputs'][wildcards.name], '.sorted.Q5DD.bam'),
+    threads: 32
+    shell:
+        """
+        module load gem/3.0
 
-                        
+        if [ "{params.ctrl}" != "bam/.sorted.Q5DD.bam" ] 
+        then
+            java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.chromsizes} --genome {params.genome} --expt {input} --ctrl {params.ctrl} --f SAM --out gem/{wildcards.group}/{wildcards.name} --k_min 6 --k_max 13 --outNP --outBED
+        else 
+            java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.chromsizes} --genome {params.genome} --expt {input} --f SAM --out gem/{wildcards.group}/{wildcards.name} --k_min 6 --k_max 13 --outNP --outBED
+        fi
+        """
+
+
