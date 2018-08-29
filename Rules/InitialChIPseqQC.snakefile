@@ -774,7 +774,7 @@ python {params.nrfscript} {output.preseqlog} > {output.nrf}
 rule QCstats:
     input:
         flagstat=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
-	infq=join(workpath,"{name}.R1.fastq.gz"),	
+        infq=join(workpath,"{name}.R1.fastq.gz"),	
         ddflagstat=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
         nrf=join(workpath,"QC","{name}.nrf"),
         ppqt=join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
@@ -801,7 +801,7 @@ awk '{{print $(NF-2),$(NF-1),$NF}}' {input.ppqt} | {params.filterCollate} {wildc
 
 rule QCTable:
     input:
-       expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
+        expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
     params:
         rname='pl:QCTable',
         inputstring=" ".join(expand(join(workpath,"QC","{name}.qcmetrics"), name=samples)),
