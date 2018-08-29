@@ -23,7 +23,8 @@ def createConstrasts(cList):
     contrastsList.append("-".join(cList[i:i+2]))
   return contrastsList
 
-
+def get_cpm_cutoff(degdir,contrasts_w_cpm_cutoff_list,cpm_cutoff_list):
+	return cpm_cutoff_list[contrasts_w_cpm_cutoff_list.index(degdir)]
 
 configfile: "run.json"
 
@@ -33,10 +34,11 @@ workpath=config['project']['workpath']
 
 contrastsList = createConstrasts(config['project']['contrasts']['rcontrasts'])
 cpm_cutoff_list = config['project']['contrasts']['rcontrasts_cpm_cutoff']
+mincounts = config['project']['contrasts']['rcontrasts_min_counts']
 
 contrasts_w_cpm_cutoff_list = []
-for i in zip(contrastsList,cpm_cutoff_list):
-	contrasts_w_cpm_cutoff_list.append(str(i[0])+"_"+str(i[1]))
+for i in zip(contrastsList,cpm_cutoff_list,mincounts):
+	contrasts_w_cpm_cutoff_list.append(str(i[0])+"_"+str(i[1]))+"_"+str(i[2]))
 
 se=""
 pe=""
@@ -238,14 +240,13 @@ rule init_deg:
 		filteredcountstabs=expand(join(workpath,"DEG_{deg_dir}","RawCountFile_RSEM_genes_filtered.txt"),deg_dir=contrasts_w_cpm_cutoff_list),
 	params:
 		rname="pl:init_deg_dir",
-		scripts_dir=join(workpath,"Scripts"),
 		rscript=join(workpath,"Scripts","filtersamples.R"),
-		minsamples=config['project']['MINSAMPLES'],
 		rver=config['bin'][pfamily]['tool_versions']['RVER'],
+		pyscript=join(workpath,"Scripts","filtersamples.R"),
 	shell:"""
 for f in {output.folders};do
 if [ ! -d $f ]; then mkdir $f ;fi
-python {params.scripts_dir}/filtersamples.py $f {params.rver} {params.rscript} {input.samtab} {input.rawcountstab} {params.minsamples} $f/sampletable.txt $f/RawCountFile_RSEM_genes_filtered.txt
+python {params.pyscript} $f {params.rver} {params.rscript} {input.samtab} {input.rawcountstab} $f/sampletable.txt $f/RawCountFile_RSEM_genes_filtered.txt
 done
 """
 

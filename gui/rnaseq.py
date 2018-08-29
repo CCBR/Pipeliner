@@ -126,7 +126,7 @@ class RNASeqFrame( PipelineFrame ) :
         if self.Pipeline.get() == 'initialqcrnaseq' :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
-            self.info.grid_forget()
+            self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
         elif self.Pipeline.get() == 'rnaseq' :
             self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
             self.sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
@@ -253,16 +253,19 @@ class RNASeqFrame( PipelineFrame ) :
     ##        grp=[]
             cont=[]
             cont_cpm_cutoff=[]
+            cont_mincount=[]
     ##        lbl=[]
             for x in f:
                   xsplit=x.split()
-                  if len(xsplit) == 3:
+                  if len(xsplit) == 4:
                      cont.append(xsplit[0])
                      cont.append(xsplit[1])
                      cont_cpm_cutoff.append(xsplit[2])
+                     cont_mincount.append(xsplit[3])
                      
             D["rcontrasts"]=cont
             D["rcontrasts_cpm_cutoff"]=cont_cpm_cutoff
+            D["rcontrasts_min_counts"]=cont_mincount
     #        contrasts["rcontrasts"]=cont
             contrasts=D
         except:
