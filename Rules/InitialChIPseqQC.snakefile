@@ -774,6 +774,7 @@ python {params.nrfscript} {output.preseqlog} > {output.nrf}
 rule QCstats:
     input:
         flagstat=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
+	infq=join(workpath,"{name}.R1.fastq.gz"),	
         ddflagstat=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
         nrf=join(workpath,"QC","{name}.nrf"),
         ppqt=join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
@@ -786,7 +787,8 @@ rule QCstats:
     threads: 16
     shell: """
 # Number of reads
-grep 'in total' {input.flagstat} | awk '{{print $1,$3}}' | {params.filterCollate} {wildcards.name} tnreads > {output.sampleQCfile}
+#grep 'in total' {input.flagstat} | awk '{{print $1,$3}}' | {params.filterCollate} {wildcards.name} tnreads > {output.sampleQCfile}
+zcat {input.infq} | wc -l | {params.filterCollate} {wildcards.name} tnreads > {output.sampleQCfile}
 # Number of mapped reads
 grep 'mapped (' {input.flagstat} | awk '{{print $1,$3}}' | {params.filterCollate} {wildcards.name} mnreads >> {output.sampleQCfile}
 # Number of uniquely mapped reads

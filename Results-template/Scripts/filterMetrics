@@ -44,6 +44,8 @@ import sys
 def add(i1, i2):
 	return int(i1) + int(i2)
 
+def divide(num):
+	return int(num/4.0)
 
 def getmetadata(type):
 	metadata = []
@@ -54,11 +56,11 @@ def getmetadata(type):
 	elif type == 'nrf':
 		metadata = ["NRF", "PBC1", "PBC2"]
 	elif type == 'tnreads':
-		metadata = 'NumberofReads'
+		metadata = 'NReads'
 	elif type == 'mnreads':
-                metadata = 'NumberofMappedReads'
+                metadata = 'NMappedReads'
 	elif type == 'unreads':
-                metadata = 'NumberofUniquelyMappedReads'
+                metadata = 'NUniqMappedReads'
 	return metadata	
 	
 
@@ -67,8 +69,12 @@ def filteredData(sample, ftype):
 		linelist = line.strip().split()
 		if 'reads' in ftype:
 			mtypes = getmetadata(ftype)
-			v1, v2 = linelist[0], linelist[1]
-			print("{}\t{}\t{}".format(sample, mtypes, add(v1,v2)))
+			if ftype == 'tnreads':
+				v1 = int(linelist[0])
+				print("{}\t{}\t{}".format(sample, mtypes, divide(v1)))
+			else:
+				v1, v2 = linelist[0], linelist[1]
+				print("{}\t{}\t{}".format(sample, mtypes, add(v1,v2)))
 		elif ftype == 'ppqt' or ftype == 'ngsqc' or ftype == 'nrf':
 			mtypes = getmetadata(ftype)
 			for i in range(len(linelist)):
