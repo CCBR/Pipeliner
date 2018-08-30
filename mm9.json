@@ -94,17 +94,17 @@
         },
             
         "rnaseq":{
-            "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/lib/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M1/ref.fa", 
-            "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/lib/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M1/genes.gtf",
-            "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/lib/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M1/genes-",
-            "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/lib/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M1/Mm9_M1_genes.txt",
-            "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/lib/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M1/Mm9_M1_isoforms.txt",
-            "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/lib/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M1/refFlat_mm9_M1.txt",
-            "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M1/mm9_refseq.bed",
-            "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/lib/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M1/mm9_M1_geneinfo.bed",
+            "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/ref.fa", 
+            "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/genes.gtf",
+            "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/STAR/2.5.2b/genes-",
+            "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/annotate.genes.txt",
+            "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/annotate.isoforms.txt",
+            "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/refFlat.txt",
+            "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/genes.ref.bed",
+            "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/geneinfo.bed",
             "KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/dev/karyobeds/mm9.M1/",
-            "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/rsem1.3.0/mm9_M1/mm9_M1",
-            "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/lib/STAR_indices/2.5.2b/GENCODE/Gencode_mouse/release_M1/mm9_M1.rRNA.interval_list",
+            "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/rsemref/mm9",
+            "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/mm9_M1.rRNA.interval_list",
 
             },
                 
@@ -166,17 +166,18 @@
         },
             
         "ChIPseq":{
-            "BWA": "/fdb/igenomes/Mus_musculus/UCSC/mm9/Sequence/BWAIndex/genome.fa",
-            "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/lib/mm9.blacklist_chrM.fa",
+            "BWA": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/indexes/mm9",
+            "BOWTIE2INDEX": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/indexes/mm9",
+            "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/indexes/mm9.blacklist.chrM",
             "CHROMS": ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10",
                        "chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19",
                        "chrX","chrY","chrM"],
             "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
-	    "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
+	        "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
             "FASTAWITHADAPTERSETD": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",
-            "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm9/Sequence/WholeGenomeFasta/genome.fa",
+            "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/ref.fa",
             "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
-            "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/lib/mm9.len",            
+            "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/indexes/mm9.fa.sizes",            
         }, 
     }
 }
