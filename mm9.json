@@ -104,7 +104,7 @@
             "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/geneinfo.bed",
             "KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/dev/karyobeds/mm9.M1/",
             "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/rsemref/mm9",
-            "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/mm9_M1.rRNA.interval_list",
+            "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/mm9.rRNA_interval_list",
 
             },
                 
