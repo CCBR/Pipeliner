@@ -97,20 +97,20 @@ class RNASeqFrame( PipelineFrame ) :
         #rMincount.trace('w', lambda a,b,c,x="rmincount": makejson(x))
 
         #Filter out genes < [5] read counts in < [2] samples
-        rminsamplesL = Label(sampleLF, text="Include genes with >=") # in")
-        rmincountE = Entry(sampleLF, bd =2, width=3, textvariable=rMincount)
-        rmincountL = Label(sampleLF, text="CPM in  >=")
-        rminsamplesE = Entry(sampleLF, bd =2, width=3, textvariable=rMinsamples)
-        rminsamplesR = Label(sampleLF, text="samples")
+#         rminsamplesL = Label(sampleLF, text="Include genes with >=") # in")
+#         rmincountE = Entry(sampleLF, bd =2, width=3, textvariable=rMincount)
+#         rmincountL = Label(sampleLF, text="CPM in  >=")
+#         rminsamplesE = Entry(sampleLF, bd =2, width=3, textvariable=rMinsamples)
+#         rminsamplesR = Label(sampleLF, text="samples")
+#         
+#         rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
+#         rmincountE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
+#         rmincountL.grid(row=9,column=3,sticky=W,padx=5,pady=5)
+#         rminsamplesE.grid(row=9,column=4,sticky=W,padx=0,pady=5)
+#         rminsamplesR.grid(row=9,column=5,sticky=W,padx=10,pady=5)
+#         #rMinsamples.trace('w', lambda a,b,c,x="rmincount": makejson(x))
         
-        rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
-        rmincountE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
-        rmincountL.grid(row=9,column=3,sticky=W,padx=5,pady=5)
-        rminsamplesE.grid(row=9,column=4,sticky=W,padx=0,pady=5)
-        rminsamplesR.grid(row=9,column=5,sticky=W,padx=10,pady=5)
-        #rMinsamples.trace('w', lambda a,b,c,x="rmincount": makejson(x))
-        
-        sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
+        sampleLF.grid( row=6, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
         #####################
         
         self.add_info(eframe)
