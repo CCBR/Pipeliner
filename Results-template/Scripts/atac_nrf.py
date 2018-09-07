@@ -1,7 +1,7 @@
 from __future__ import print_function
 import sys
 preseq_log=sys.argv[1]
-with open(preseq_log, 'rb') as fp:
+with open(preseq_log, 'r') as fp:
         for line in fp:
             if line.startswith('TOTAL READS'):
                 tot_reads = float(line.strip().split("= ")[1])
