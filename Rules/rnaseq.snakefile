@@ -38,7 +38,7 @@ mincounts = config['project']['contrasts']['rcontrasts_min_counts']
 
 contrasts_w_cpm_cutoff_list = []
 for i in zip(contrastsList,cpm_cutoff_list,mincounts):
-	contrasts_w_cpm_cutoff_list.append(str(i[0])+"_"+str(i[1]))+"_"+str(i[2]))
+	contrasts_w_cpm_cutoff_list.append(str(i[0])+"_"+str(i[1])+"_"+str(i[2]))
 
 se=""
 pe=""
