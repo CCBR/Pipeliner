@@ -1063,7 +1063,7 @@ rule pca:
 #     contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
     dtype="{dtype}",
     projectId=config['project']['id'],
-    projDesc=config['project']['description'],
+    projDesc=config['project']['description'].rstrip('\n'),
     rver=config['bin'][pfamily]['tool_versions']['RVER'],
     scripts_dir=join(workpath,"Scripts"),
     rscript1="pcacall.R",
