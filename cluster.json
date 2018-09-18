@@ -2,7 +2,7 @@
     "__default__" :
     {
         "mem" : "48g",
-        "time" : "96:00:00",
+        "time" : "10-00:00:00",
         "partition" : "ccr,norm",
         "threads": "4",
         "gres":"lscratch:256"
@@ -25,13 +25,13 @@
     },    
     "picard":
     {
-        "mem": "110g",
+        "mem": "96g",
         "gres":"lscratch:256",
         "threads":"2"
     },    
     "picard_dedup":
     {
-        "mem": "98g",
+        "mem": "96g",
         "gres":"lscratch:256",
         "threads":"2"
     },    
@@ -140,8 +140,8 @@
     },
     "starfusion":
     {
-        "threads": "1",
-        "mem" : "48g",
+        "threads": "32",
+        "mem" : "96g",
         "time" : "10-00:00:00",
     },
     "vcf2maf_tumoronly":
