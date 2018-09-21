@@ -1,5 +1,5 @@
 rule qualimap_wgs:
-    input:  "{x}.dedup.bam"
+    input:  "{x}.recal.bam"
     output: "QC/{x}.qualimapReport","QC/{x}.qualimapReport/genome_results.txt"
     threads: 8
     params: qualimap=config['bin'][pfamily]['QUALIMAP'],organism=config['references'][pfamily]['ORGANISM'],rname="pl:wgs_qualimap"

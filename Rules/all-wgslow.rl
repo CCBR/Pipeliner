@@ -16,6 +16,16 @@ if config['project']['annotation'] == "hg19":
            expand("{s}"+".g.vcf",s=samples),
            expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
            "admixture_out/admixture_table.tsv",
+           expand("{s}.recal.bam",s=samples),
+           expand("QC/{s}.R1_fastqc.html",s=samples),
+#          expand("QC/{s}.R1."+config['project']['filetype']+"_filtered",s=samples),
+#          expand("{s}.R1.trimmed.fastq.bz2",s=samples),
+#          expand("QC/{s}.qualimapReport",s=samples),
+           expand("QC/{s}.{r}.trimmed_fastqc.html",s=samples,r=['R1','R1']),
+           expand("QC/{s}.{r}.trimmed_screen.txt",s=samples,r=['R1','R1']),
+           expand("QC/{s}.{r}.trimmed_screen.png",s=samples,r=['R1','R1']),
+           expand("QC/{s}_run_trimmomatic.err",s=samples),
+           expand("QC/{s}.qualimapReport/genome_results.txt",s=samples),
 
     output: 
     params: rname="final"
@@ -41,7 +51,17 @@ elif config['project']['annotation'] == "hg38":
            config['project']['workpath']+"/svaba_out/svaba.log",
            expand("{s}"+".g.vcf",s=samples),
            expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
-           "admixture_out/admixture_table.tsv"
+           "admixture_out/admixture_table.tsv",
+           expand("{s}.recal.bam",s=samples),
+           expand("QC/{s}.R1_fastqc.html",s=samples),
+#          expand("QC/{s}.R1."+config['project']['filetype']+"_filtered",s=samples),
+#          expand("{s}.R1.trimmed.fastq.bz2",s=samples),
+#          expand("QC/{s}.qualimapReport",s=samples),
+           expand("QC/{s}.{r}.trimmed_fastqc.html",s=samples,r=['R1','R1']),
+           expand("QC/{s}.{r}.trimmed_screen.txt",s=samples,r=['R1','R1']),
+           expand("QC/{s}.{r}.trimmed_screen.png",s=samples,r=['R1','R1']),
+           expand("QC/{s}_run_trimmomatic.err",s=samples),
+           expand("QC/{s}.qualimapReport/genome_results.txt",s=samples),
 
     output: 
     params: rname="final"
@@ -66,7 +86,17 @@ elif config['project']['annotation'] == "mm10":
            config['project']['workpath']+"/delly_out/insertions.bcf",
            config['project']['workpath']+"/svaba_out/svaba.log",
            expand("canvas_out/{s}/CNV.vcf.gz", s=samples),
-           "admixture_out/admixture_table.tsv"
+           "admixture_out/admixture_table.tsv",
+           expand("{s}.recal.bam",s=samples),
+           expand("QC/{s}.R1_fastqc.html",s=samples),
+#          expand("QC/{s}.R1."+config['project']['filetype']+"_filtered",s=samples),
+#          expand("{s}.R1.trimmed.fastq.bz2",s=samples),
+#          expand("QC/{s}.qualimapReport",s=samples),
+           expand("QC/{s}.{r}.trimmed_fastqc.html",s=samples,r=['R1','R1']),
+           expand("QC/{s}.{r}.trimmed_screen.txt",s=samples,r=['R1','R1']),
+           expand("QC/{s}.{r}.trimmed_screen.png",s=samples,r=['R1','R1']),
+           expand("QC/{s}_run_trimmomatic.err",s=samples),
+           expand("QC/{s}.qualimapReport/genome_results.txt",s=samples),
     output: 
     params: rname="final"
     shell:  """
