@@ -28,24 +28,12 @@ trim_dir='trim'
 kraken_dir='kraken'
 bam_dir='bam'
 bw_dir='bigwig'
-ngsplot_dir='bam'
 deeptools_dir='deeptools'
 preseq_dir='preseq'
 
-for d in [trim_dir,kraken_dir,bam_dir,bw_dir,ngsplot_dir,deeptools_dir,preseq_dir]:
+for d in [trim_dir,kraken_dir,bam_dir,bw_dir,deeptools_dir,preseq_dir]:
 	if not os.path.exists(join(workpath,d)):
 		os.mkdir(join(workpath,d))
-
-
-# 1 is yes and 0 is no... to remove blacklisted reads after trimming....output file is still ends with trim.fastq.gz
-# remove_blacklist_reads=1
-# remove_blacklist_reads=0
-
-# trimming method to use
-# trim_method=1	# this is trimgalore only ... this is the fastest
-# trim_method=2	# this is cutadapt with condensed adapter set... it is NOT followed by afterqc to remove polyX like it was in the past... this is the slowest
-# trim_method=3	# this is method1 followed by afterqc and then followed by BBDuk, idea being a) remove most blatant adapter b) remove polyX and then c) remove other primer/adapter contamination
-# trim_method=4 # trimmomatic ... leaves traces of adapters at read ends
 
 
 #print(samples)
@@ -77,13 +65,6 @@ if se == 'yes' :
             # PhantomPeakQualTools
             expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
             expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
-            # ngs.plot
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tss.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tss.km.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tes.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tes.km.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.genebody.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.genebody.km.heatmap.pdf"),name=samples,ext=extensions2),
             # deeptools
             expand(join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
@@ -99,37 +80,6 @@ if se == 'yes' :
 #         shell: """
 # rm -rf {workpath}/*bam.cnt
 #             """
-
-                   
-
-    rule fastq_screen:
-        input: 
-            join(workpath,trim_dir,"{name}.R1.trim.fastq.gz")
-        output:
-            join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),
-            join(workpath,"FQscreen","{name}.R1.trim_screen.png"),
-            join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),
-            join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),
-        params: 
-            rname='pl:fqscreen',
-            bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
-            perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
-            fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
-            fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'], 
-            fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'], 
-            outdir = "FQscreen",
-            outdir2 = "FQscreen2",
-        threads: 24
-        shell: """
-module load {params.bowtie2ver} ;
-module load {params.perlver}; 
-{params.fastq_screen} --conf {params.fastq_screen_config} \
-    --outdir {params.outdir} --subset 1000000 \
-    --aligner bowtie2 --force {input}
-{params.fastq_screen} --conf {params.fastq_screen_config2} \
-    --outdir {params.outdir2} --subset 1000000 \
-    --aligner bowtie2 --force {input}
-            """
     
     rule trim: # actually trim, filter polyX and remove black listed reads
         input:
@@ -287,25 +237,6 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
              touch {output.of1}
              touch {output.of2}
              """
-
-    rule stats:
-        input:
-            file1= join(workpath,bam_dir,"{name}.bwa_rg_added.sorted.dmark.bam"),
-        output:
-            outstar2=join(workpath,bam_dir,"{name}.flagstat.concord.txt"),
-        params: 
-            rname='pl:stats',
-            batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
-            picardver=config['bin'][pfamily]['PICARDVER'],
-        shell:
-            """
-            module load samtools/1.6; 
-            samtools flagstat {input.file1} > {output.outstar2}; 
-            echo 0 >> {output.outstar2};
-            echo 0 >> {output.outstar2};
-            #samtools view -f 0x2 {input.file1} | wc -l >>{output.outstar2}; 
-            #samtools view {input.file1} | grep -w -c NH:i:1  >>{output.outstar2}
-            """
             
 if pe == 'yes':
     rule InitialChIPseqQC:
@@ -332,15 +263,8 @@ if pe == 'yes':
             # BWA --> BigWig
             expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions), 
             # PhantomPeakQualTools
-            # expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
-            # expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
-            # ngs.plot
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tss.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tss.km.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tes.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tes.km.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.genebody.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.genebody.km.heatmap.pdf"),name=samples,ext=extensions2),
+             expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
+             expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
             # deeptools
             expand(join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
@@ -418,47 +342,6 @@ mv /lscratch/$SLURM_JOBID/${{sample}}.outr1.noBL.fastq.gz {output.outfq1};
 mv /lscratch/$SLURM_JOBID/${{sample}}.outr2.noBL.fastq.gz {output.outfq2};
 """
 
-    rule fastq_screen:
-        input: 
-            infq1 = join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
-            infq2 = join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
-        output:
-            join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),
-            join(workpath,"FQscreen","{name}.R1.trim_screen.png"),
-            join(workpath,"FQscreen","{name}.R2.trim_screen.txt"),
-            join(workpath,"FQscreen","{name}.R2.trim_screen.png"),
-            join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),
-            join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),
-            join(workpath,"FQscreen2","{name}.R2.trim_screen.txt"),
-            join(workpath,"FQscreen2","{name}.R2.trim_screen.png"),
-        params: 
-            rname='pl:fqscreen',
-            bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
-            perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
-            fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
-            fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'], 
-            outdir = "FQscreen",
-            fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'], 
-            outdir2 = "FQscreen2",
-        threads: 24
-        shell: """
-module load {params.bowtie2ver} ;
-module load {params.perlver}; 
-{params.fastq_screen} --conf {params.fastq_screen_config} \
-    --outdir {params.outdir} --subset 1000000 \
-    --aligner bowtie2 --force {input.infq1}
-{params.fastq_screen} --conf {params.fastq_screen_config} \
-    --outdir {params.outdir} --subset 1000000 \
-    --aligner bowtie2 --force {input.infq2}
-{params.fastq_screen} --conf {params.fastq_screen_config2} \
-    --outdir {params.outdir2} --subset 1000000 \
-    --aligner bowtie2 --force {input.infq1}
-{params.fastq_screen} --conf {params.fastq_screen_config2} \
-    --outdir {params.outdir2} --subset 1000000 \
-    --aligner bowtie2 --force {input.infq2}
-            """
-
-
     rule kraken_pe:
         input:
             fq1 = rules.trim.output.outfq1,
@@ -517,6 +400,29 @@ samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
 
+    rule ppqt:
+        input:
+            bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
+            bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+        output:
+            ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
+            pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
+            ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+            pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
+        params:
+            rname="pl:ppqt",
+            batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
+            samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
+            rver=config['bin'][pfamily]['tool_versions']['RVER'],
+        shell:
+            """
+            module load {params.samtoolsver};
+            module load {params.rver};
+            Rscript Scripts/phantompeakqualtools/run_spp.R \
+            -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
+            Rscript Scripts/phantompeakqualtools/run_spp.R \
+            -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
+            """
 
 rule picard_dedup:
     input: 
@@ -644,27 +550,6 @@ rule deeptools:
         shell(commoncmd+cmd)
         shell("rm -rf "+input[0])
 
-rule NGSPLOT:
-    input:
-        bam= join(workpath,bam_dir,"{name}.bam"),
-    output:
-        tssmax=join(workpath,ngsplot_dir,"{name}.tss.max.heatmap.pdf"),
-        tsskm=join(workpath,ngsplot_dir,"{name}.tss.km.heatmap.pdf"),
-        tesmax=join(workpath,ngsplot_dir,"{name}.tes.max.heatmap.pdf"),
-        teskm=join(workpath,ngsplot_dir,"{name}.tes.km.heatmap.pdf"),
-        genebodymax=join(workpath,ngsplot_dir,"{name}.genebody.max.heatmap.pdf"),
-        genebodykm=join(workpath,ngsplot_dir,"{name}.genebody.km.heatmap.pdf"),
-    params:
-        rname="pl:ngsplot",
-        batch='--mem=48g --time=10:00:00 --gres=lscratch:800',
-        genome = config['project']['annotation'],
-        ngsplotver = config['bin'][pfamily]['tool_versions']['NGSPLOTVER'],
-    threads: 32
-    shell:
-        """
-        sh Scripts/plotngsplot.sh {params.ngsplotver} {input.bam} {params.genome}
-        """               
-
 
 rule preseq:
     params:
@@ -722,7 +607,7 @@ fi
 module load {params.fastqcver};
 fastqc {input} -t {threads} -o {output}
             """
-	    
+
 rule fastqc:
     params:
         rname='pl:fastqc',
@@ -740,6 +625,46 @@ mkdir -p {output};
 module load {params.fastqcver};
 fastqc {input} -t {threads} -o {output}
             """
+
+rule fastq_screen:
+    input:
+        join(workpath,trim_dir,"{name}.R1.trim.fastq.gz") if \
+            SE == "yes" else \
+            expand(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),name=samples,rn=[1,2])
+    output:
+        join(workpath,"FQscreen","{name}.R1.trim_screen.txt") if \
+            SE == "yes" else \
+            expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
+        join(workpath,"FQscreen","{name}.R1.trim_screen.png") if \
+            SE == "yes" else \
+            expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
+        join(workpath,"FQscreen2","{name}.R1.trim_screen.txt") if \
+            SE == "yes" else \
+            expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
+        join(workpath,"FQscreen2","{name}.R1.trim_screen.png") if \
+            SE == "yes" else \
+            expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
+        params:
+            rname='pl:fqscreen',
+            bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
+            perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
+            fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
+            fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
+            fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
+            outdir = "FQscreen",
+            outdir2 = "FQscreen2",
+        threads: 24
+        shell: """
+module load {params.bowtie2ver} ;
+module load {params.perlver};
+{params.fastq_screen} --conf {params.fastq_screen_config} \
+    --outdir {params.outdir} --subset 1000000 \
+    --aligner bowtie2 --force {input}
+{params.fastq_screen} --conf {params.fastq_screen_config2} \
+    --outdir {params.outdir2} --subset 1000000 \
+    --aligner bowtie2 --force {input}
+            """
+
 
 rule QCstats:
     input:
