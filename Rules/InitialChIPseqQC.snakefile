@@ -81,7 +81,7 @@ if se == 'yes' :
 # rm -rf {workpath}/*bam.cnt
 #             """
     
-    rule trim: # actually trim, filter polyX and remove black listed reads
+    rule trim_se: # actually trim, filter polyX and remove black listed reads
         input:
             infq=join(workpath,"{name}.R1.fastq.gz"),
         output:
@@ -125,8 +125,7 @@ java -Xmx{params.javaram} -jar $PICARDJARPATH/picard.jar SamToFastq VALIDATION_S
 pigz -p 16 ${{sample}}.outr1.noBL.fastq;
 mv ${{sample}}.outr1.noBL.fastq.gz {output.outfq};
             """
-
-               
+            
     rule kraken_se:
         input:
             fq = join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
@@ -168,7 +167,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
                 cmd="sh Scripts/kraken_process_taxa.sh "+f+" "+t+" >> "+output.kraken_taxa_summary
                 shell(cmd)
 
-    rule BWA:
+    rule BWA_se:
         input:
             infq=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
         params:
@@ -195,48 +194,6 @@ samtools view -b -q 6 {output.outbam1} -o {output.outbam2}
 samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
-                
-
-    rule ppqt:
-        input:
-            bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
-            bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-        output:
-            ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
-            pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
-            ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
-            pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
-        params:
-            rname="pl:ppqt",
-            batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
-            samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-            rver=config['bin'][pfamily]['tool_versions']['RVER'],
-        shell:
-            """
-            module load {params.samtoolsver};
-            module load {params.rver};
-            Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
-            Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
-            """
-
-
-    rule shiftstats:
-        input: 
-            if1 = "{name}.sorted.bam",
-            if2 = "{name}.sorted.rmdup.bam" 
-        output:
-            of1 = "{name}.shifts",
-            of2 = "{name}.rmdup.shifts"
-        params:
-            rname='pl:shiftstats',
-            batch='--mem=24g --time=10:00:00 --gres=lscratch:800'
-        shell: 
-             """
-             touch {output.of1}
-             touch {output.of2}
-             """
             
 if pe == 'yes':
     rule InitialChIPseqQC:
@@ -281,7 +238,7 @@ if pe == 'yes':
 # rm -rf {workpath}/*.bam.cnt
 # """
     
-    rule trim: # trim, remove PolyX and remove BL reads
+    rule trim_pe: # trim, remove PolyX and remove BL reads
         input:
             file1=join(workpath,"{name}.R1.fastq.gz"),
             file2=join(workpath,"{name}.R2.fastq.gz"),
@@ -371,7 +328,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.krakentaxa {output.krakentaxa}
 mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
 """
 
-    rule BWA:
+    rule BWA_pe:
         input:
             infq1 = rules.trim.output.outfq1,
             infq2 = rules.trim.output.outfq2,
@@ -400,30 +357,6 @@ samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
 
-    rule ppqt:
-        input:
-            bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
-            bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-        output:
-            ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
-            pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
-            ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
-            pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
-        params:
-            rname="pl:ppqt",
-            batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
-            samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-            rver=config['bin'][pfamily]['tool_versions']['RVER'],
-        shell:
-            """
-            module load {params.samtoolsver};
-            module load {params.rver};
-            Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
-            Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
-            """
-
 rule picard_dedup:
     input: 
         bam2=join(workpath,bam_dir,"{name}.sorted.Q5.bam")
@@ -437,7 +370,7 @@ rule picard_dedup:
         batch='--mem=98g --time=10:00:00 --gres=lscratch:800',
         picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
         samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-        javaram='96g',
+        javaram='16g',
     shell: 
             """
 module load {params.samtoolsver};
@@ -463,7 +396,28 @@ java -Xmx{params.javaram} \
 samtools index {output.out5}
 samtools flagstat {output.out5} > {output.out5f}
             """
-
+rule ppqt:
+    input:
+        bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
+        bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+    output:
+        ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
+        pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
+        ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+        pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
+    params:
+        rname="pl:ppqt",
+        batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
+        samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
+        rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    shell: """
+module load {params.samtoolsver};
+module load {params.rver};
+Rscript Scripts/phantompeakqualtools/run_spp.R \
+    -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
+Rscript Scripts/phantompeakqualtools/run_spp.R \
+    -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
+            """
                                     
 rule bam2bw:
     input:
@@ -516,8 +470,6 @@ rule deeptools_prep:
             o.write("%s\n"%(" ".join(labels)))
             o.close()            
 
-            
-
 rule deeptools:
     input:
         join(workpath,bw_dir,"{ext}.deeptools_prep"),
@@ -549,7 +501,6 @@ rule deeptools:
         cmd="plotPCA -in "+join(deeptools_dir,ext+".npz")+" -o "+join(deeptools_dir,"pca."+ext+".pdf")
         shell(commoncmd+cmd)
         shell("rm -rf "+input[0])
-
 
 rule preseq:
     params:
