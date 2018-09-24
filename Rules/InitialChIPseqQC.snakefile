@@ -579,33 +579,28 @@ fastqc {input} -t {threads} -o {output}
 
 rule fastq_screen:
     input:
-        join(workpath,trim_dir,"{name}.R1.trim.fastq.gz") if \
-            SE == "yes" else \
+        join(workpath,trim_dir,"{name}.R1.trim.fastq.gz") if SE == "yes" else \
             expand(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),name=samples,rn=[1,2])
     output:
-        join(workpath,"FQscreen","{name}.R1.trim_screen.txt") if \
-            SE == "yes" else \
+        join(workpath,"FQscreen","{name}.R1.trim_screen.txt") if SE == "yes" else \
             expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
-        join(workpath,"FQscreen","{name}.R1.trim_screen.png") if \
-            SE == "yes" else \
+        join(workpath,"FQscreen","{name}.R1.trim_screen.png") if SE == "yes" else \
             expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
-        join(workpath,"FQscreen2","{name}.R1.trim_screen.txt") if \
-            SE == "yes" else \
+        join(workpath,"FQscreen2","{name}.R1.trim_screen.txt") if SE == "yes" else \
             expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
-        join(workpath,"FQscreen2","{name}.R1.trim_screen.png") if \
-            SE == "yes" else \
+        join(workpath,"FQscreen2","{name}.R1.trim_screen.png") if SE == "yes" else \
             expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
-        params:
-            rname='pl:fqscreen',
-            bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
-            perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
-            fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
-            fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
-            fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
-            outdir = "FQscreen",
-            outdir2 = "FQscreen2",
-        threads: 24
-        shell: """
+    params:
+        rname='pl:fqscreen',
+        bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
+        perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
+        fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
+        fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
+        fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
+        outdir = "FQscreen",
+        outdir2 = "FQscreen2",
+    threads: 24
+    shell: """
 module load {params.bowtie2ver} ;
 module load {params.perlver};
 {params.fastq_screen} --conf {params.fastq_screen_config} \
