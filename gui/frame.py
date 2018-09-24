@@ -600,9 +600,23 @@ class PipelineFrame( Frame ) :
                 p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
                 Out = p.stdout.read()
             else:
-                cmd="for f in `ls {0}*[._]{1}`;do ln -s $f {2};done".format(data,FT, self.workpath.get())        
+                cmd="for f in `ls {0}*[._]{1}`;do ln -s $f {2};done".format(data,FT, self.workpath.get())
                 p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
                 Out = p.stdout.read()
+                if pl == 'ExomeSeq' or pl == 'GenomeSeq':
+                    print("\n\nChecking for 'bams/' or 'gvcfs/' directories...")
+                    if os.path.isdir(os.path.join(data,"bams")):
+                        print("Found 'bams/' directory: Symlinking bam files!")
+                        bamspath = os.path.join(data,"bams")
+                        cmd="for f in `ls {0}/*[._]ba{{m,i}}`;do ln -s $f {1};done".format(bamspath,self.workpath.get())
+                        #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
+                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                    if os.path.isdir(os.path.join(data,"gvcfs")):
+                        print("Found 'gvcfs/' directory: Symlinking vcf files!")
+                        gvcfspath = os.path.join(data,"gvcfs")
+                        cmd="for f in `ls {0}/*[._]vcf`;do ln -s $f {1};done".format(gvcfspath,self.workpath.get())
+                        #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
+                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
 
         except Exception as e: 
             showerror("Error",str(e))
