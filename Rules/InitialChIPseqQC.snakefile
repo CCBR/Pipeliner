@@ -301,8 +301,8 @@ mv /lscratch/$SLURM_JOBID/${{sample}}.outr2.noBL.fastq.gz {output.outfq2};
 
     rule kraken_pe:
         input:
-            fq1 = rules.trim.output.outfq1,
-            fq2 = rules.trim.output.outfq2,
+            fq1 = join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
+            fq2 = join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
         output:
             krakentaxa = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),
             kronahtml = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),
@@ -330,8 +330,8 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
 
     rule BWA_pe:
         input:
-            infq1 = rules.trim.output.outfq1,
-            infq2 = rules.trim.output.outfq2,
+            infq1 = join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
+            infq2 = join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
         params:
             d=join(workpath,bam_dir),
             rname='pl:bwa',
@@ -579,16 +579,16 @@ fastqc {input} -t {threads} -o {output}
 
 rule fastq_screen:
     input:
-        join(workpath,trim_dir,"{name}.R1.trim.fastq.gz") if SE == "yes" else \
+        join(workpath,trim_dir,"{name}.R1.trim.fastq.gz") if se == "yes" else \
             expand(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),name=samples,rn=[1,2])
     output:
-        join(workpath,"FQscreen","{name}.R1.trim_screen.txt") if SE == "yes" else \
+        join(workpath,"FQscreen","{name}.R1.trim_screen.txt") if se == "yes" else \
             expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
-        join(workpath,"FQscreen","{name}.R1.trim_screen.png") if SE == "yes" else \
+        join(workpath,"FQscreen","{name}.R1.trim_screen.png") if se == "yes" else \
             expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
-        join(workpath,"FQscreen2","{name}.R1.trim_screen.txt") if SE == "yes" else \
+        join(workpath,"FQscreen2","{name}.R1.trim_screen.txt") if se == "yes" else \
             expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
-        join(workpath,"FQscreen2","{name}.R1.trim_screen.png") if SE == "yes" else \
+        join(workpath,"FQscreen2","{name}.R1.trim_screen.png") if se == "yes" else \
             expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
     params:
         rname='pl:fqscreen',
