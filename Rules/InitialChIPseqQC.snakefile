@@ -580,7 +580,7 @@ fastqc {input} -t {threads} -o {output}
 rule fastq_screen:
     input:
         join(workpath,trim_dir,"{name}.R1.trim.fastq.gz") if se == "yes" else \
-            expand(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),name=samples,rn=[1,2])
+            expand(join(workpath,trim_dir,"{name}.R{rn}.trim.fastq.gz"),name=samples,rn=[1,2])
     output:
         join(workpath,"FQscreen","{name}.R1.trim_screen.txt") if se == "yes" else \
             expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
