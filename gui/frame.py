@@ -604,7 +604,8 @@ class PipelineFrame( Frame ) :
                     if os.path.isdir(os.path.join(data,"bams")):
                         print("Found 'bams/' directory: Symlinking bam files!")
                         bamspath = os.path.join(data,"bams")
-                        cmd="for f in `ls {0}/*[._]ba{{m,i}}`;do ln -s $f {1};done".format(bamspath,self.workpath.get())
+                        #cmd="for f in `ls {0}/*[._]ba{{m,i}}`;do ln -s $f {1};done".format(bamspath,self.workpath.get())
+                        cmd="for f in `ls {0}/*[._]ba{{m,i}}`;do ln -s $f {1};done && rename .bam .recal.bam {1}/*[._]ba{{m,i}}".format(bamspath,self.workpath.get())
                         #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
                         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
                     if os.path.isdir(os.path.join(data,"gvcfs")):
@@ -622,7 +623,8 @@ class PipelineFrame( Frame ) :
                     if os.path.isdir(os.path.join(data,"bams")):
                         print("Found 'bams/' directory: Symlinking bam files!")
                         bamspath = os.path.join(data,"bams")
-                        cmd="for f in `ls {0}/*[._]ba{{m,i}}`;do ln -s $f {1};done".format(bamspath,self.workpath.get())
+                        #cmd="for f in `ls {0}/*[._]ba{{m,i}}`;do ln -s $f {1};done".format(bamspath,self.workpath.get())
+                        cmd="for f in `ls {0}/*[._]ba{{m,i}}`;do ln -s $f {1};done && rename .bam .recal.bam {1}/*[._]ba{{m,i}}".format(bamspath,self.workpath.get())
                         #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
                         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
                     if os.path.isdir(os.path.join(data,"gvcfs")):
