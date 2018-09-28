@@ -4,7 +4,7 @@ from os.path import join
 import numpy
 
 sampletable=pd.read_csv(sys.argv[3],header=0,sep="\t")
-sampletable['sampleName']=sampletable['sampleName'].map(lambda x:x.split("/")[-1].split(".")[0])
+sampletable['sampleName']=sampletable['sampleName'].map(lambda x:x.split("/")[-1].split(".star.count.")[0])
 
 outdir=sys.argv[1]
 igfiles=sys.argv[2].split()

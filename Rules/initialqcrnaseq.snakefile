@@ -4,6 +4,19 @@ configfile: "run.json"
 
 from os import listdir
 
+def check_existence(filename):
+  if not os.path.exists(filename):
+    exit("File: %s does not exists!"%(filename))
+
+def check_readaccess(filename):
+  check_existence(filename)
+  if not os.access(filename,os.R_OK):
+    exit("File: %s exists, but cannot be read!"%(filename))
+
+def check_writeaccess(filename):
+  check_existence(filename)
+  if not os.access(filename,os.W_OK):
+    exit("File: %s exists, but cannot be read!"%(filename))
 
 # trim_method=1 #trimmomatic
 trim_method=2 #cutadapt
@@ -24,10 +37,14 @@ log_dir="logfiles"
 rseqc_dir="RSeQC"
 kraken_dir="kraken"
 preseq_dir="preseq"
+degall_dir="DEG_ALL"
 
-for d in [trim_dir,kraken_dir,bams_dir,star_dir,log_dir,rseqc_dir,preseq_dir]:
+dtypes=["RSEM_genes","Subread_junctions","Subread_genejunctions","Subread_genes"]
+
+for d in [trim_dir,kraken_dir,bams_dir,star_dir,log_dir,rseqc_dir,preseq_dir,degall_dir]:
 	if not os.path.exists(join(workpath,d)):
 		os.mkdir(join(workpath,d))
+
 
 if pe=="yes":
 
@@ -54,7 +71,21 @@ if pe=="yes":
         expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
         expand(join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),name=samples),
         expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),
-
+        join(workpath,log_dir,"strandness.txt"),
+        join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
+    	join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
+    	join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
+    	expand(join(workpath,star_dir,"{name}.star.count.info.txt"),name=samples),
+    	expand(join(workpath,star_dir,"{name}.star.count.txt"),name=samples),
+    	join(workpath,star_dir,"sampletable.txt"),
+    	join(workpath,degall_dir,"RawCountFile_Subread_genes_filtered.txt"),
+    	join(workpath,degall_dir,"RawCountFile_Subread_junctions_filtered.txt"),
+    	join(workpath,degall_dir,"RawCountFile_Subread_genejunctions_filtered.txt"),
+        join(workpath,star_dir,"RawCountFileOverlap.txt"),
+        join(workpath,star_dir,"RawCountFileStar.txt"),    	
+        expand(join(workpath,star_dir,"{name}.star.count.info.overlap.txt"),name=samples),
+        expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"),name=samples),
+        expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
 
 
    rule rawfastqc:
@@ -348,7 +379,24 @@ if se=="yes":
         expand(join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.png"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
+        join(workpath,log_dir,"strandness.txt"),
+        join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
+    	join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
+    	join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
+    	expand(join(workpath,star_dir,"{name}.star.count.info.txt"),name=samples),
+    	expand(join(workpath,star_dir,"{name}.star.count.txt"),name=samples),
+    	join(workpath,star_dir,"sampletable.txt"),
+    	join(workpath,degall_dir,"RawCountFile_Subread_genes_filtered.txt"),
+    	join(workpath,degall_dir,"RawCountFile_Subread_junctions_filtered.txt"),
+    	join(workpath,degall_dir,"RawCountFile_Subread_genejunctions_filtered.txt"),
+        join(workpath,star_dir,"RawCountFileOverlap.txt"),
+        join(workpath,star_dir,"RawCountFileStar.txt"),
+        expand(join(workpath,star_dir,"{name}.star.count.info.overlap.txt"),name=samples),
+        expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"),name=samples),
+        expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
 
+   
+        
    rule rawfastqc:
       input: 
         expand("{name}.R1.fastq.gz", name=samples), 
@@ -595,7 +643,58 @@ cat {input.files} |sort|uniq|awk -F \"\\t\" '{{if ($5>0 && $6==1) {{print}}}}'|c
         shell(cmd)
         cmd="sleep 120;cd {workpath};mv {workpath}/{star_dir}/{params.prefix}.Aligned.toTranscriptome.out.bam {workpath}/{bams_dir}; mv {workpath}/{star_dir}/{params.prefix}.Log.final.out {workpath}/{log_dir}"
         shell(cmd)
+        
 
+rule samplecondition:
+   input: 
+    files=expand(join(workpath,star_dir,"{name}.star.count.txt"), name=samples)
+   output: 
+    out1=join(workpath,star_dir,"sampletable.txt")
+   params: 
+    rname='pl:samplecondition',
+    batch='--mem=4g --time=10:00:00', 
+    groups=config['project']['groups']['rgroups'],
+    labels=config['project']['groups']['rlabels'],
+    gtffile=config['references'][pfamily]['GTFFILE']
+   run:
+        with open(output.out1, "w") as out:
+            out.write("sampleName\tfileName\tcondition\tlabel\n")
+            i=0
+            for f in input.files:
+                out.write("%s\t"  % f)
+                out.write("%s\t"  % f)
+                out.write("%s\t" % params.groups[i])
+                out.write("%s\n" % params.labels[i])                
+                i=i+1
+            out.close()
+
+rule get_strandness:
+  input: 
+    groupsfile=join(workpath,"groups.tab"),
+    files=expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
+  output: 
+    outfile=join(workpath,log_dir,"strandness.txt"),
+    outdir=join(workpath,log_dir)
+  params: 
+    rname='pl:get_strandness',
+    pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
+    pythonscript=join(workpath,"Scripts","get_strandness.py")
+  run:
+    import os
+    os.chdir(output.outdir)
+    check_readaccess(input.groupsfile)
+    os.system("module load "+params.pythonver+";python "+params.pythonscript+" "+input.groupsfile+" > "+output.outfile)
+    strandfile=open(output.outfile,'r')
+    strandness=strandfile.readline().strip()
+    strandfile.close()
+    A=open(join(workpath,"run.json"),'r')
+    a=eval(A.read())
+    A.close()
+    config=dict(a.items())
+    config['project']['STRANDED']=strandness
+    with open(join(workpath,'run.json'),'w') as F:
+      json.dump(config, F, sort_keys = True, indent = 4,ensure_ascii=False)
+    F.close()
 
 
 rule picard:
@@ -616,7 +715,8 @@ java -Xmx110g  -jar $PICARDJARPATH/picard.jar AddOrReplaceReadGroups I={input.fi
 java -Xmx110g -jar $PICARDJARPATH/picard.jar MarkDuplicates I=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam O=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3};
 mv /lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam {output.outstar2};
 mv /lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bai {output.outstar2b};
-"""        
+sed -i 's/MarkDuplicates/picard.sam.MarkDuplicates/g' {output.outstar3};
+"""
 
 rule preseq:
 	params:
@@ -650,6 +750,7 @@ rule stats:
 module load R/3.5;
 module load {params.picardver};
 java -Xmx110g -jar $PICARDJARPATH/picard.jar CollectRnaSeqMetrics REF_FLAT={params.refflat} I={input.file1} O={output.outstar1} RIBOSOMAL_INTERVALS={params.rrnalist}  STRAND_SPECIFICITY=SECOND_READ_TRANSCRIPTION_STRAND TMP_DIR=/lscratch/$SLURM_JOBID  VALIDATION_STRINGENCY=SILENT;
+sed -i 's/CollectRnaSeqMetrics/picard.analysis.CollectRnaSeqMetrics/g' {output.outstar1}
 module load {params.samtoolsver};
 samtools flagstat {input.file1} > {output.outstar2};
 module load python/3.5;
@@ -717,8 +818,6 @@ rule rnaseq_multiqc:
     qcconfig=config['bin'][pfamily]['CONFMULTIQC']
    threads: 1
    shell: """
-sed -i 's/MarkDuplicates/picard.sam.MarkDuplicates/g' {params.logsdir}/*.star.duplic
-sed -i 's/CollectRnaSeqMetrics/picard.analysis.CollectRnaSeqMetrics/g' {params.logsdir}/*.RnaSeqMetrics.txt
 module load {params.multiqcver}
 cd {params.outdir}
 multiqc -f -c {params.qcconfig} --interactive -e cutadapt -d ../
@@ -726,35 +825,96 @@ cd {workpath}/slurmfiles
 multiqc -f --interactive .
     """
 
-# if pe=="yes":
+if pe=="yes":
 
-#    rule RNAseq_generate_QC_table:
-#       input: 
-#         expand(join(workpath,"QC","{name}_run_trimmomatic.err"),name=samples), 
-#         expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples), 
-#         expand(join(workpath,star_dir,"{name}.p2.Log.final.out"),name=samples), 
-#         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples)
-#       output: 
-#         config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
-#       params: 
-#         project=config['project']['id'],
-#         flowcell=config['project']['flowcellid'],
-#         rname="pl:QC_table"
-#       shell: """
-# module load perl/5.18.2; 
-# perl Scripts/CollectPipelineStats2Tab_v2.3.pl -p {params.project} -f {params.flowcell} -d {workpath} -r 5 -e 2; 
-# perl Scripts/Tab2Excel_v2.3.pl -i {params.project}_{params.flowcell} -r 5
-# """
+   rule rsem:
+      input: 
+        file1=join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),
+      output: 
+        out1=join(workpath,degall_dir,"{name}.RSEM.genes.results"),
+        out2=join(workpath,degall_dir,"{name}.RSEM.isoforms.results"),
+      params:
+        rname='pl:rsem',
+        prefix="{name}.RSEM",
+        outdir=join(workpath,degall_dir),
+        batch='--cpus-per-task=16 --mem=32g --time=24:00:00',
+        rsemref=config['references'][pfamily]['RSEMREF'],
+        rsemver=config['bin'][pfamily]['tool_versions']['RSEMVER'],
+        pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
+        annotate=config['references'][pfamily]['ANNOTATE'],
+        pythonscript=join(workpath,"Scripts","merge_rsem_results.py"),
+      threads: 16
+      shell: """
+if [ ! -d {params.outdir} ]; then mkdir {params.outdir}; fi
+cd {params.outdir}
+module load {params.rsemver}
+rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files
+"""
+
+if se=="yes":
+
+   rule rsem:
+      input:
+        file1=join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),
+      output:
+        out1=join(workpath,degall_dir,"{name}.RSEM.genes.results"),
+        out2=join(workpath,degall_dir,"{name}.RSEM.isoforms.results"),
+      params: 
+        rname='pl:rsem',
+        prefix="{name}.RSEM",
+        outdir=join(workpath,degall_dir),
+        batch='--cpus-per-task=16 --mem=32g --time=24:00:00',
+        rsemref=config['references'][pfamily]['RSEMREF'],
+        rsemver=config['bin'][pfamily]['tool_versions']['RSEMVER'],
+        pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
+        annotate=config['references'][pfamily]['ANNOTATE'],
+        pythonscript=join(workpath,"Scripts","merge_rsem_results.py"),
+      threads: 16
+      shell: """
+if [ ! -d {params.outdir} ]; then mkdir {params.outdir}; fi
+cd {params.outdir}
+module load {params.rsemver}
+rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files
+"""
 
 
-# if se=="yes":
+rule rsem_merge:
+   input:
+    files=expand(join(workpath,degall_dir,"{name}.RSEM.genes.results"), name=samples),
+    files2=expand(join(workpath,degall_dir,"{name}.RSEM.isoforms.results"), name=samples),
+   output: 
+    join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
+    join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
+   params: 
+    rname='pl:rsem_merge',
+    pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
+    annotate=config['references'][pfamily]['ANNOTATE'],
+    pythonscript=join(workpath,"Scripts","merge_rsem_results.py"),
+   shell: """
+module load {params.pythonver}
+python {params.pythonscript} {params.annotate} {degall_dir} {degall_dir}
+"""
 
-#    rule RNAseq_generate_QC_table:
-#       input: expand("QC/{name}_run_trimmomatic.err",name=samples), expand("{name}.star.duplic",name=samples), expand("{name}.p2.Log.final.out",name=samples), expand("{name}.RnaSeqMetrics.txt",name=samples)
-#       output: config['project']['id']+"_"+config['project']['flowcellid']+".xlsx"
-#       params: project=config['project']['id'],flowcell=config['project']['flowcellid'],dir=config['project']['workpath'],rname="pl:QC_table"
-#       shell: "module load perl/5.18.2; perl Scripts/CollectPipelineStats2Tab_v2.3.pl -p {params.project} -f {params.flowcell} -d {params.dir} -r 5 -e 1; perl Scripts/Tab2Excel_v2.3.pl -i {params.project}_{params.flowcell} -r 5"
 
+rule rsemcounts:
+   input:
+    files=expand(join(workpath,degall_dir,"{name}.RSEM.genes.results"), name=samples),
+   output: 
+    join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
+   params: 
+    rname='pl:rsemcounts',
+    batch='--mem=8g --time=10:00:00',
+    outdir=join(workpath,degall_dir),
+    mincount=config['project']['MINCOUNTGENES'],
+    minsamples=config['project']['MINSAMPLES'],
+    annotate=config['references'][pfamily]['ANNOTATE'],
+    rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    rscript=join(workpath,"Scripts","rsemcounts.R")
+   shell: """
+cd {params.outdir}
+module load {params.rver}
+Rscript {params.rscript} '{params.outdir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'
+"""
 
 
 rule rseqc:
@@ -774,4 +934,145 @@ infer_experiment.py -r {params.bedref} -i {input.file1} > {output.out1}
 read_distribution.py -i {input.file1} -r {params.bedref} > {output.out4}
 """
 
+
+rule subread:
+   input:
+    file1=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
+    file2=join(workpath,log_dir,"strandness.txt")
+   output:
+    out=join(workpath,star_dir,"{name}.star.count.info.txt"),
+    res=join(workpath,star_dir,"{name}.star.count.txt"),
+   params:
+    rname='pl:subread',
+    batch='--time=4:00:00 --gres=lscratch:800',
+    subreadver=config['bin'][pfamily]['tool_versions']['SUBREADVER'],
+    gtffile=config['references'][pfamily]['GTFFILE'],
+   threads: 16
+   shell: """
+module load {params.subreadver}
+featureCounts -T {threads} -s `cat {input.file2}` -p -t exon -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}
+sed '1d' {output.out} | cut -f1,7 > {output.res}
+"""
+
+rule genecounts: 
+   input:
+    file1=expand(join(workpath,star_dir,"{name}.star.count.txt"), name=samples),
+    file2=join(workpath,star_dir,"sampletable.txt")
+   output:
+    join(workpath,degall_dir,"RawCountFile_Subread_genes_filtered.txt")
+   params: 
+    rname='pl:genecounts',
+    batch='--mem=8g --time=10:00:00',
+    outdir=join(workpath,degall_dir),
+    mincount=config['project']['MINCOUNTGENES'],
+    minsamples=config['project']['MINSAMPLES'],
+    annotate=config['references'][pfamily]['ANNOTATE'],
+    rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    rscript=join(workpath,"Scripts","genecounts.R"),
+   shell: """
+module load {params.rver}
+Rscript {params.rscript} '{params.outdir}' '{input.file1}' '{params.mincount}' '{params.minsamples}' '{params.annotate}' '{input.file2}'
+"""
+
+rule junctioncounts: 
+   input: 
+    files=expand(join(workpath,star_dir,"{name}.p2.SJ.out.tab"), name=samples)
+   output:
+    join(workpath,degall_dir,"RawCountFile_Subread_junctions_filtered.txt")
+   params:
+    rname='pl:junctioncounts',
+    batch='--mem=8g --time=10:00:00',
+    outdir=join(workpath,degall_dir),
+    mincount=config['project']['MINCOUNTJUNCTIONS'],
+    minsamples=config['project']['MINSAMPLES'],
+    rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    rscript=join(workpath,"Scripts","junctioncounts.R"),
+   shell: """
+module load {params.rver}
+Rscript {params.rscript} '{params.outdir}' '{input.files}' '{params.mincount}' '{params.minsamples}'
+"""
+
+rule genejunctioncounts: 
+   input:
+    files=expand(join(workpath,star_dir,"{name}.p2.SJ.out.tab"), name=samples)
+   output: 
+    join(workpath,degall_dir,"RawCountFile_Subread_genejunctions_filtered.txt")
+   params:
+    rname='pl:genejunctions',
+    batch='--mem=8g --time=10:00:00',
+    outdir=join(workpath,degall_dir),
+    geneinfo=config['references'][pfamily]['GENEINFO'],
+    mincount=config['project']['MINCOUNTGENEJUNCTIONS'],
+    minsamples=config['project']['MINSAMPLES'],
+    rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    rscript=join(workpath,"Scripts","genejunctioncounts.R")
+   shell: """
+module load {params.rver}
+module load bedtools/2.27.1
+Rscript {params.rscript} '{params.outdir}' '{input.files}' '{params.geneinfo}' '{params.mincount}' '{params.minsamples}'
+"""
+
+rule joincounts:
+   input: 
+    files=expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"), name=samples),
+    files2=expand(join(workpath,star_dir,"{name}.p2.ReadsPerGene.out.tab"), name=samples)
+   output: 
+    out1=join(workpath,star_dir,"RawCountFileOverlap.txt"),
+    out2=join(workpath,star_dir,"RawCountFileStar.txt")
+   params: 
+    rname='pl:junctioncounts',
+    batch='--mem=8g --time=10:00:00',
+    outdir=join(workpath,star_dir),
+    starstrandcol=config['bin'][pfamily]['STARSTRANDCOL'],
+    rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    rscript=join(workpath,"Scripts","joincounts.R")
+   shell: """
+module load {params.rver}
+Rscript {params.rscript} '{params.outdir}' '{input.files}' '{input.files2}' '{params.starstrandcol}'
+"""
+
+rule subreadoverlap:
+   input: 
+    file1=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
+    file2=join(workpath,log_dir,"strandness.txt")
+   output:
+    out=join(workpath,star_dir,"{name}.star.count.info.overlap.txt"),
+    res=join(workpath,star_dir,"{name}.star.count.overlap.txt")
+   params: 
+    rname='pl:subreadoverlap',
+    batch='--cpus-per-task=16 --mem=24g --time=48:00:00 --gres=lscratch:800',
+    subreadver=config['bin'][pfamily]['tool_versions']['SUBREADVER'],
+    gtffile=config['references'][pfamily]['GTFFILE']
+   threads: 16
+   shell: """
+module load {params.subreadver}
+featureCounts -T {threads} -s `cat {input.file2}` -p -t exon -O -g gene_id -a {params.gtffile} --tmpDir /lscratch/$SLURM_JOBID  -o {output.out}  {input.file1}
+sed '1d' {output.out} | cut -f1,7 > {output.res}
+"""
+
+rule pca:
+  input: 
+    file1=join(workpath,star_dir,"sampletable.txt"),
+    file2=join(workpath,degall_dir,"RawCountFile_{dtype}_filtered.txt"),
+  output: 
+    outhtml=join(workpath,degall_dir,"PcaReport_{dtype}.html")
+  params: 
+    rname='pl:pca',
+    batch='--mem=24g --time=10:00:00',
+    outdir=join(workpath,degall_dir),
+#     contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
+    dtype="{dtype}",
+    projectId=config['project']['id'],
+    projDesc=config['project']['description'].rstrip('\n'),
+    rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    scripts_dir=join(workpath,"Scripts"),
+    rscript1="pcacall.R",
+    rscript2="PcaReport.Rmd",
+  shell: """
+cd {params.outdir}
+if [ ! -f {params.rscript1} ]; then cp {params.scripts_dir}/{params.rscript1} {params.outdir}/;fi
+if [ ! -f {params.rscript2} ]; then cp {params.scripts_dir}/{params.rscript2} {params.outdir}/;fi
+module load {params.rver}
+Rscript {params.rscript1} '{params.outdir}' '{output.outhtml}' '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}' 
+"""
 

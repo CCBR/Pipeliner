@@ -441,12 +441,17 @@ class PipelineFrame( Frame ) :
     ##        sampl=[]
     ##        grp=[]
             cont=[]
+            cont_cpm_cutoff=[]
     ##        lbl=[]
             for x in f:
-                  if len(x.split()) == 2:
-                     cont.append(x.split()[0])
-                     cont.append(x.split()[1])
+                  xsplit=x.split()
+                  if len(xsplit) == 3:
+                     cont.append(xsplit[0])
+                     cont.append(xsplit[1])
+                     cont_cpm_cutoff.append(xsplit[2])
+                     
             D["rcontrasts"]=cont
+            D["rcontrasts_cpm_cutoff"]=cont_cpm_cutoff
     #        contrasts["rcontrasts"]=cont
             contrasts=D
         except:

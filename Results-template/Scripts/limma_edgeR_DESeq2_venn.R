@@ -1,4 +1,4 @@
-#Example Usage: Rscript limma_edgeR_DESeq2_venn.R --contrast 'group1-group2' --limma limma_DEG_{group1}-{group2}_all_genes.txt --edgeR edgeR_DEG_{group1}-{group2}_all_genes.txt --DESeq2 DESeq2_deg_{group1}_vs_{group2}.txt
+#Example Usage: Rscript limma_edgeR_DESeq2_venn.R --limma limma_DEG_{group1}-{group2}_all_genes.txt --edgeR edgeR_DEG_{group1}-{group2}_all_genes.txt --DESeq2 DESeq2_deg_{group1}_vs_{group2}.txt
 
 rm(list=ls())
 library(Vennerable)
@@ -17,8 +17,8 @@ filter_by_fc_fdr <-function(df,fdr_cutoff,upreg_fc_cutoff,downreg_fc_cutoff) {
 
 parser <- ArgumentParser()
 
-parser$add_argument("-c", "--contrast", type="character", required=TRUE,
-                    help="contrast for differential expression")
+#parser$add_argument("-c", "--contrast", type="character", required=TRUE,
+#                    help="contrast for differential expression")
 
 parser$add_argument("-l", "--limma", type="character", required=TRUE,
                     help="reformatted limma output filename ")
@@ -73,7 +73,7 @@ vennD=Venn(SetNames = c("limma","edgeR","DESeq2"),
                     `011`=length(setdiff(intersect(z.genes,y.genes),x.genes)),
                     `111`=length(intersect(intersect(x.genes,y.genes),z.genes))))
 
-outfile = paste("limma_edgeR_DESeq2_",args$contrast,"_vennDiagram.png",sep="")
+outfile = paste("limma_edgeR_DESeq2_","vennDiagram.png",sep="")
 
 png(outfile)
 plot(vennD, doWeights = FALSE, type = "circles")
