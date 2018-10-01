@@ -22,7 +22,8 @@ elif config['project']['nends'] == 1 :
 
 # extensions = [ "sorted.normalized", "sorted.Q5.normalized", "sorted.DD.normalized", "sorted.Q5DD.normalized"]
 extensions = [ "sorted.normalized", "sorted.Q5DD.normalized"]
-extensions2 = list(map(lambda x:re.sub(".normalized","",x),extensions))
+bwterm = ".normalized"
+extensions2 = list(map(lambda x:re.sub(bwterm","",x),extensions))
 
 trim_dir='trim'
 kraken_dir='kraken'
@@ -71,6 +72,9 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
+	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
+	    expand(join(workpath,deeptools_dir,"fingerprint.raw.{ext}.tab"),ext=extensions2),
+	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -228,7 +232,10 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
-            # preseq
+       	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
+	    expand(join(workpath,deeptools_dir,"fingerprint.raw.{ext}.tab"),ext=extensions2),
+	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
+	    # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
             expand(join(workpath,"QC","{name}.nrf"), name=samples),
@@ -453,34 +460,41 @@ rule bam2bw:
 
 rule deeptools_prep:
     input:
-        expand(join(workpath,bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
+        bw=expand(join(workpath,bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
+        bam=expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
     output:
         expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions),
+        expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2),
     params:
         rname="pl:deeptools_prep",
         batch="--mem=10g --time=1:00:00",
     threads: 1
     run:
-        for x in extensions:
-            bws=list(filter(lambda z:z.endswith(x+".bw"),input))
-            labels=list(map(lambda z:re.sub("."+x+".bw","",z),list(map(lambda z:os.path.basename(z),bws))))
-            o=open(join(workpath,bw_dir,x+".deeptools_prep"),'w')
-            o.write("%s\n"%(x))
+        for x in extensions2:
+            bws=list(filter(lambda z:z.endswith(x+bwterm+".bw"),input.bw))
+            bams=list(filter(lambda z:z.endswith(x+".bam"),input.bam))
+            labels=list(map(lambda z:re.sub("."+x+bwterm+".bw","",z),
+                list(map(lambda z:os.path.basename(z),bws))))
+            o=open(join(workpath,bw_dir,x+bwterm+".deeptools_prep"),'w')
+            o.write("%s\n"%(x+bwterm))
             o.write("%s\n"%(" ".join(bws)))
             o.write("%s\n"%(" ".join(labels)))
-            o.close()            
+            o.close()
+            o2=open(join(workpath,bam_dir,x+".deeptools_prep"),'w')
+            o2.write("%s\n"%(x))
+            o2.write("%s\n"%(" ".join(bams)))
+            o2.write("%s\n"%(" ".join(labels)))
+            o2.close()
 
-rule deeptools:
+rule deeptools_QC:
     input:
         join(workpath,bw_dir,"{ext}.deeptools_prep"),
     output:
         join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),
-        join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),
         join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),
-        join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),
-        join(workpath,deeptools_dir,"pca.{ext}.pdf"),        
+        join(workpath,deeptools_dir,"pca.{ext}.pdf"),
     params:
-        rname="pl:deeptools",
+        rname="pl:deeptools_QC",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
     threads: 32
     run:
@@ -492,15 +506,36 @@ rule deeptools:
         labels=listfile[2]
         cmd="multiBigwigSummary bins -b "+" ".join(bws)+" -l "+" ".join(labels)+" -out "+join(deeptools_dir,ext+".npz")
         shell(commoncmd+cmd)
-        for cm in ["spearman", "pearson"]:
-            for pt in ["heatmap", "scatterplot"]:
-                cmd="plotCorrelation -in "+join(deeptools_dir,ext+".npz")+" -o "+join(deeptools_dir,cm+"_"+pt+"."+ext+".pdf")+" -c "+cm+" -p "+pt+" --skipZeros --removeOutliers"
-                if pt=="heatmap":
-                    cmd+=" --plotNumbers"
-                shell(commoncmd+cmd)
+        for pt in ["heatmap", "scatterplot"]:
+            cmd="plotCorrelation -in "+join(deeptools_dir,ext+".npz")+" -o "+join(deeptools_dir,"spearman_"+pt+"."+ext+".pdf")+" -c 'spearman' -p "+pt+" --skipZeros --removeOutliers"
+            if pt=="heatmap":
+                cmd+=" --plotNumbers"
+            shell(commoncmd+cmd)
         cmd="plotPCA -in "+join(deeptools_dir,ext+".npz")+" -o "+join(deeptools_dir,"pca."+ext+".pdf")
         shell(commoncmd+cmd)
-        shell("rm -rf "+input[0])
+
+rule deeptools_fingerprint:
+    input:
+        join(workpath,bam_dir,"{ext}.deeptools_prep")
+    output:
+        image=join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),
+        raw=join(workpath,deeptools_dir,"fingerprint.raw.{ext}.tab"),
+        metrics=join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),
+    params:
+        rname="pl:deeptools_fingerprint",
+        deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
+    threads: 32
+    run:
+        import re
+        commoncmd="module load {params.deeptoolsver}; module load python;"
+        listfile=list(map(lambda z:z.strip().split(),open(input[0],'r').readlines()))
+        ext=listfile[0][0]
+        bams=listfile[1]
+        labels=listfile[2]
+        cmd="plotFingerprint -b "+" ".join(bams)+" --labels "+" ".join(labels)+" --skipZeros --outQualityMetrics "+output.metrics+" --plotFile "+output.image+" --outRawCounts "+output.raw
+        if se == "yes":
+            cmd+=" -e 200"
+        shell(commoncmd+cmd)
 
 rule preseq:
     params:
