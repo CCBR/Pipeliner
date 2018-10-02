@@ -23,7 +23,7 @@ elif config['project']['nends'] == 1 :
 # extensions = [ "sorted.normalized", "sorted.Q5.normalized", "sorted.DD.normalized", "sorted.Q5DD.normalized"]
 extensions = [ "sorted.normalized", "sorted.Q5DD.normalized"]
 bwterm = ".normalized"
-extensions2 = list(map(lambda x:re.sub(bwterm","",x),extensions))
+extensions2 = list(map(lambda x:re.sub(bwterm,"",x),extensions))
 
 trim_dir='trim'
 kraken_dir='kraken'
@@ -67,13 +67,10 @@ if se == 'yes' :
             expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
             expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
             # deeptools
-            expand(join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
 	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
-	    expand(join(workpath,deeptools_dir,"fingerprint.raw.{ext}.tab"),ext=extensions2),
 	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
@@ -227,13 +224,10 @@ if pe == 'yes':
              expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
              expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
             # deeptools
-            expand(join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
        	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
-	    expand(join(workpath,deeptools_dir,"fingerprint.raw.{ext}.tab"),ext=extensions2),
 	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
 	    # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
@@ -490,8 +484,8 @@ rule deeptools_QC:
     input:
         join(workpath,bw_dir,"{ext}.deeptools_prep"),
     output:
-        join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),
-        join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),
+        join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),
+        join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),
         join(workpath,deeptools_dir,"pca.{ext}.pdf"),
     params:
         rname="pl:deeptools_QC",
