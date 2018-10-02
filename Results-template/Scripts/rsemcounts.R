@@ -43,7 +43,7 @@ val1=(val1/max(tot))*1e6
 # cat(val1," ", val2, "checking..\n",file="check2.txt")
 filter <- apply(cpm(mydata), 1, function(x) length(x[x>val1])>=val2)
 res=mydata[filter,]
-write.table(as.data.frame(res),file="RawCountFile_RSEM_genes_filtered.txt",sep="\t",col.names=NA)
+write.table(as.data.frame(res),file="RawCountFile_RSEM_genes_filtered.txt",sep="\t",col.names=NA,quote=F)
 png("RSEM_HistBeforenormFilter.png")
 df.m <- melt(as.data.frame(res))
 print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='top') + scale_x_log10())
@@ -54,7 +54,7 @@ y = DGEList(counts=res)
 y <- calcNormFactors(y,method="TMM")
 ndata= cpm(y,log=FALSE,normalized.lib.sizes=TRUE)
 ## save it 
-write.table(ndata,file="RSEM_CPM_TMM_counts.txt",sep="\t",col.names=NA)
+write.table(ndata,file="RSEM_CPM_TMM_counts.txt",sep="\t",col.names=NA,quote=F)
 	## unfiltered normalization
 y2 = DGEList(counts=mydata)
 y2 <- calcNormFactors(y2,method="TMM")

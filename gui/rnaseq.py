@@ -97,20 +97,20 @@ class RNASeqFrame( PipelineFrame ) :
         #rMincount.trace('w', lambda a,b,c,x="rmincount": makejson(x))
 
         #Filter out genes < [5] read counts in < [2] samples
-        rminsamplesL = Label(sampleLF, text="Include genes with >=") # in")
-        rmincountE = Entry(sampleLF, bd =2, width=3, textvariable=rMincount)
-        rmincountL = Label(sampleLF, text="CPM in  >=")
-        rminsamplesE = Entry(sampleLF, bd =2, width=3, textvariable=rMinsamples)
-        rminsamplesR = Label(sampleLF, text="samples")
+#         rminsamplesL = Label(sampleLF, text="Include genes with >=") # in")
+#         rmincountE = Entry(sampleLF, bd =2, width=3, textvariable=rMincount)
+#         rmincountL = Label(sampleLF, text="CPM in  >=")
+#         rminsamplesE = Entry(sampleLF, bd =2, width=3, textvariable=rMinsamples)
+#         rminsamplesR = Label(sampleLF, text="samples")
+#         
+#         rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
+#         rmincountE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
+#         rmincountL.grid(row=9,column=3,sticky=W,padx=5,pady=5)
+#         rminsamplesE.grid(row=9,column=4,sticky=W,padx=0,pady=5)
+#         rminsamplesR.grid(row=9,column=5,sticky=W,padx=10,pady=5)
+#         #rMinsamples.trace('w', lambda a,b,c,x="rmincount": makejson(x))
         
-        rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
-        rmincountE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
-        rmincountL.grid(row=9,column=3,sticky=W,padx=5,pady=5)
-        rminsamplesE.grid(row=9,column=4,sticky=W,padx=0,pady=5)
-        rminsamplesR.grid(row=9,column=5,sticky=W,padx=10,pady=5)
-        #rMinsamples.trace('w', lambda a,b,c,x="rmincount": makejson(x))
-        
-        sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
+        sampleLF.grid( row=6, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
         #####################
         
         self.add_info(eframe)
@@ -126,7 +126,7 @@ class RNASeqFrame( PipelineFrame ) :
         if self.Pipeline.get() == 'initialqcrnaseq' :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
-            self.info.grid_forget()
+            self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
         elif self.Pipeline.get() == 'rnaseq' :
             self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
             self.sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
@@ -252,12 +252,20 @@ class RNASeqFrame( PipelineFrame ) :
     ##        sampl=[]
     ##        grp=[]
             cont=[]
+            cont_cpm_cutoff=[]
+            cont_mincount=[]
     ##        lbl=[]
             for x in f:
-                  if len(x.split()) == 2:
-                     cont.append(x.split()[0])
-                     cont.append(x.split()[1])
+                  xsplit=x.split()
+                  if len(xsplit) == 4:
+                     cont.append(xsplit[0])
+                     cont.append(xsplit[1])
+                     cont_cpm_cutoff.append(xsplit[2])
+                     cont_mincount.append(xsplit[3])
+                     
             D["rcontrasts"]=cont
+            D["rcontrasts_cpm_cutoff"]=cont_cpm_cutoff
+            D["rcontrasts_min_counts"]=cont_mincount
     #        contrasts["rcontrasts"]=cont
             contrasts=D
         except:

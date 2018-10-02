@@ -125,9 +125,9 @@ class PipelinerGUI(Tk):
         l = Label( pipeline_panel, text="Pipeline Family:" )
         l.grid(row=1,column=1,sticky=W,padx=0,pady=5)
         
-        annotations=['hg19','mm10','mm9','hg38','GRCh38']
+        annotations=['hg19','mm10','mm9','hg38','hs37d5','hs38d1','GRCh38']
         self.annotation = annotation = StringVar()
-        annotation.set(annotations[0])
+        annotation.set('Select the genome')
         #annotation.trace('w', lambda *_ :settargets(annotation) )
         
         om = OptionMenu(pipeline_panel, annotation, *annotations, command=self.set_pipeline)
@@ -249,41 +249,64 @@ class PipelinerGUI(Tk):
         
     def set_pipeline( self, *args ) :
         print( "set_pipeline", *args )
-        print( self.pfamily )
+        print( self.pfamily.get() )
+        print( self.annotation.get() )
+        annotation=self.annotation.get()
+        set1=['Select the genome','hg19','mm10','mm9','hg38','hs37d5','hs38d1']
+        set2=['Select the genome','hg19','mm10','mm9','hg38']
+        set3=['Select the genome','GRCh38']
 
         if self.pipelineframe :
             self.notebook.forget( self.pipelineframe )
             
         if self.pfamily.get() == 'exomeseq' :
             print( 'exomeseq' )
+            if not annotation in set2:
+            	outtxt_short="%s is not supported in this pipeline!"%(annotation)
+            	showinfo("WARNING",outtxt_short)
             self.pipelineframe = ExomeSeqFrame( self.notebook, 
                                                'ExomeSeq', #self.pfamily.get(), 
                                                self.annotation, global_info=self )
 
         elif self.pfamily.get() == 'genomeseq' :
             print( 'genomeseq' )
+            if not annotation in set2:
+            	outtxt_short="%s is not supported in this pipeline!"%(annotation)
+            	showinfo("WARNING",outtxt_short)
             self.pipelineframe = GenomeSeqFrame( self.notebook, 
                                                'GenomeSeq', #self.pfamily.get(), 
                                                self.annotation, global_info=self )
 
        	elif self.pfamily.get() == 'mirseq' :
             print( 'mirseq' )
+            if not annotation in set2:
+            	outtxt_short="%s is not supported in this pipeline!"%(annotation)
+            	showinfo("WARNING",outtxt_short)
             self.pipelineframe = MiRSeqFrame( self.notebook, 
                                                'miR-Seq', #self.pfamily.get(), 
                                                self.annotation, global_info=self )
      
         elif self.pfamily.get() == 'ChIPseq' :
             print( 'ChIPseq' )
+            if not annotation in set1:
+            	outtxt_short="%s is not supported in this pipeline!"%(annotation)
+            	showinfo("WARNING",outtxt_short)
             self.pipelineframe = ChIPSeqFrame( self.notebook, 
                                                'ChIPseq',#self.pfamily.get(), 
                                                self.annotation, global_info=self )
         elif self.pfamily.get() == 'rnaseq' :
             print( 'rnaseq' )
+            if not annotation in set1:
+            	outtxt_short="%s is not supported in this pipeline!"%(annotation)
+            	showinfo("WARNING",outtxt_short)
             self.pipelineframe = RNASeqFrame( self.notebook, 
                                                'RNAseq',#self.pfamily.get(), 
                                                self.annotation, global_info=self )
         elif self.pfamily.get() == 'scrnaseq' :
             print( 'scrnaseq' )
+            if not annotation in set3:
+            	outtxt_short="%s is not supported in this pipeline!"%(annotation)
+            	showinfo("WARNING",outtxt_short)
             self.pipelineframe = scRNASeqFrame( self.notebook, 
                                                'scRNAseq',#self.pfamily.get(), 
                                                self.annotation, global_info=self )
