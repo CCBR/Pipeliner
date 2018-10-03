@@ -67,8 +67,8 @@ if se == 'yes' :
             expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
             expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
             # deeptools
-            expand(join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
 	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
 	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
@@ -224,8 +224,8 @@ if pe == 'yes':
              expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
              expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
             # deeptools
-            expand(join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
        	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
 	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
@@ -457,8 +457,8 @@ rule deeptools_prep:
         bw=expand(join(workpath,bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
         bam=expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
     output:
-        expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions),
-        expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2),
+        temp(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions)),
+        temp(expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2)),
     params:
         rname="pl:deeptools_prep",
         batch="--mem=10g --time=1:00:00",
@@ -484,9 +484,10 @@ rule deeptools_QC:
     input:
         join(workpath,bw_dir,"{ext}.deeptools_prep"),
     output:
-        join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),
-        join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),
-        join(workpath,deeptools_dir,"pca.{ext}.pdf"),
+        heatmap=join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),
+        scatter=join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),
+        pca=join(workpath,deeptools_dir,"pca.{ext}.pdf"),
+	npz=temp(join(workpath,deeptools_dir,"{ext}.npz")),
     params:
         rname="pl:deeptools_QC",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
@@ -498,22 +499,21 @@ rule deeptools_QC:
         ext=listfile[0][0]
         bws=listfile[1]
         labels=listfile[2]
-        cmd="multiBigwigSummary bins -b "+" ".join(bws)+" -l "+" ".join(labels)+" -out "+join(deeptools_dir,ext+".npz")
-        shell(commoncmd+cmd)
-        for pt in ["heatmap", "scatterplot"]:
-            cmd="plotCorrelation -in "+join(deeptools_dir,ext+".npz")+" -o "+join(deeptools_dir,"spearman_"+pt+"."+ext+".pdf")+" -c 'spearman' -p "+pt+" --skipZeros --removeOutliers"
-            if pt=="heatmap":
-                cmd+=" --plotNumbers"
-            shell(commoncmd+cmd)
-        cmd="plotPCA -in "+join(deeptools_dir,ext+".npz")+" -o "+join(deeptools_dir,"pca."+ext+".pdf")
-        shell(commoncmd+cmd)
+        cmd1="multiBigwigSummary bins -b "+" ".join(bws)+" -l "+" ".join(labels)+" -out "+output.npz
+        cmd2="plotCorrelation -in "+output.npz+" -o "+output.heatmap+" -c 'spearman' -p 'heatmap' --skipZeros --removeOutliers --plotNumbers"
+	cmd3="plotCorrelation -in "+output.npz+" -o "+output.scatter+" -c 'spearman' -p 'scatterplot' --skipZeros --removeOutliers"
+        cmd4="plotPCA -in "+output.npz+" -o "+output.pca
+	shell(commoncmd+cmd1)
+        shell(commoncmd+cmd2)
+	shell(commoncmd+cmd3)
+	shell(commoncmd+cmd4)
 
 rule deeptools_fingerprint:
     input:
         join(workpath,bam_dir,"{ext}.deeptools_prep")
     output:
         image=join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),
-        raw=join(workpath,deeptools_dir,"fingerprint.raw.{ext}.tab"),
+        raw=temp(join(workpath,deeptools_dir,"fingerprint.raw.{ext}.tab")),
         metrics=join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),
     params:
         rname="pl:deeptools_fingerprint",
@@ -693,7 +693,8 @@ rule multiqc:
         expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
         join(workpath,"QCTable.txt"),
         join(workpath,"rawQC"),
-        join(workpath,"QC"),         
+        join(workpath,"QC"),
+	expand(join(workpath,deeptools_dir,"fingerprint.raw.{ext}.tab"),ext=extensions2),
     output:
         join(workpath,"Reports","multiqc_report.html")
     params:
