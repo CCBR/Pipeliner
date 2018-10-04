@@ -1,5 +1,5 @@
 rule qualimap:
-    input:  bam="{x}.dedup.bam",
+    input:  bam="{x}.recal.bam",
             bed=config['project']['workpath']+"/exome_targets.bed"
     output: dir="QC/{x}.qualimapReport",txt="QC/{x}.qualimapReport/genome_results.txt"
     threads: 8
