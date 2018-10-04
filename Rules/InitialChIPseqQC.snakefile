@@ -491,7 +491,6 @@ rule deeptools_QC:
     params:
         rname="pl:deeptools_QC",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
-    threads: 32
     run:
         import re
         commoncmd="module load {params.deeptoolsver}; module load python;"
@@ -518,7 +517,7 @@ rule deeptools_fingerprint:
     params:
         rname="pl:deeptools_fingerprint",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
-    threads: 32
+	batch="--cpus-per-task=8"
     run:
         import re
         commoncmd="module load {params.deeptoolsver}; module load python;"
@@ -526,7 +525,7 @@ rule deeptools_fingerprint:
         ext=listfile[0][0]
         bams=listfile[1]
         labels=listfile[2]
-        cmd="plotFingerprint -b "+" ".join(bams)+" --labels "+" ".join(labels)+" --skipZeros --outQualityMetrics "+output.metrics+" --plotFile "+output.image+" --outRawCounts "+output.raw
+        cmd="plotFingerprint -b "+" ".join(bams)+" --labels "+" ".join(labels)+" -p 4 --skipZeros --outQualityMetrics "+output.metrics+" --plotFile "+output.image+" --outRawCounts "+output.raw
         if se == "yes":
             cmd+=" -e 200"
         shell(commoncmd+cmd)

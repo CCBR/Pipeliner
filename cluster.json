@@ -876,6 +876,18 @@
         'threads': '32'
     },
 
+    'BWA_pe':
+    {
+        'mem': '64g',
+        'threads': '32'
+    },
+
+    'BWA_se':
+    {
+        'mem': '64g',
+        'threads': '32'
+    },
+
     'trim_step4':
     {
         'threads': '16'
