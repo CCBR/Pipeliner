@@ -72,6 +72,10 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
 	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
 	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
+	    expand(join(workpath,deeptools_dir,"metagene_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"metagene_profile.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"TSS_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"TSS_profile.{ext}.pdf"),ext=extensions),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -229,6 +233,10 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
        	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
 	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
+            expand(join(workpath,deeptools_dir,"metagene_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"metagene_profile.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"TSS_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"TSS_profile.{ext}.pdf"),ext=extensions),
 	    # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -529,6 +537,43 @@ rule deeptools_fingerprint:
         if se == "yes":
             cmd+=" -e 200"
         shell(commoncmd+cmd)
+
+rule deeptools_genes:
+    input:
+        join(workpath,bw_dir,"{ext}.deeptools_prep"),
+    output:
+        metaheat=join(workpath,deeptools_dir,"metagene_heatmap.{ext}.pdf"),
+        TSSheat=join(workpath,deeptools_dir,"TSS_heatmap.{ext}.pdf"),
+        metaline=join(workpath,deeptools_dir,"metagene_profile.{ext}.pdf"),
+        TSSline=join(workpath,deeptools_dir,"TSS_profile.{ext}.pdf"),
+        metamat=temp(join(workpath,deeptools_dir,"metagene.{ext}.mat.gz")),
+        TSSmat=temp(join(workpath,deeptools_dir,"TSS.{ext}.mat.gz")),
+        bed=temp(join(workpath,deeptools_dir,"geneinfo.{ext}.bed")),
+    params:
+        rname="pl:deeptools_genes",
+        deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
+        prebed=config['references'][pfamily]['GENEINFO']
+    run:
+        import re
+        commoncmd="module load {params.deeptoolsver}; module load python;"
+        listfile=list(map(lambda z:z.strip().split(),open(input[0],'r').readlines()))
+        ext=listfile[0][0]
+        bws=listfile[1]
+        labels=listfile[2]
+	cmd1="awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' "+params.prebed+" > "+output.bed
+        cmd2="computeMatrix scale-regions -S "+" ".join(bws)+" -R "+output.bed+" -p 4 --upstream 1000 --regionBodyLength 2000 --downstream 1000 --skipZeros -o "+output.metamat+" --samplesLabel "+" ".join(labels)
+        cmd3="computeMatrix reference-point -S "+" ".join(bws)+" -R "+output.bed+" -p 4 --referencePoint TSS --upstream 3000 --downstream 3000 --skipZeros -o "+output.TSSmat+" --samplesLabel "+" ".join(labels)
+        cmd4="plotHeatmap -m "+output.metamat+" -out "+output.metaheat+" --colorMap 'PuOr_r' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
+        cmd5="plotHeatmap -m "+output.TSSmat+" -out "+output.TSSheat+" --colorMap 'RdBu_r' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
+        cmd6="plotProfile -m "+output.metamat+" -out "+output.metaline+" --plotHeight 15 --plotWidth 15 --perGroup --yAxisLabel 'average RPGC' --plotType 'se' --legendLocation upper-right"
+        cmd7="plotProfile -m "+output.TSSmat+" -out "+output.TSSline+" --plotHeight 15 --plotWidth 15 --perGroup --yAxisLabel 'average RPGC' --plotType 'se' --legendLocation upper-left"
+        shell(commoncmd+cmd1)
+        shell(commoncmd+cmd2)
+        shell(commoncmd+cmd3)
+        shell(commoncmd+cmd4)
+        shell(commoncmd+cmd5)
+        shell(commoncmd+cmd6)
+        shell(commoncmd+cmd7)
 
 rule preseq:
     params:
