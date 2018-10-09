@@ -25,6 +25,12 @@ extensions = [ "sorted.normalized", "sorted.Q5DD.normalized"]
 bwterm = ".normalized"
 extensions2 = list(map(lambda x:re.sub(bwterm,"",x),extensions))
 
+chip2input = config['project']['peaks']['inputs']
+sampleswinput = []
+for input in chip2input:
+	if chip2input[input] != '':
+		sampleswinput.append(input)
+
 trim_dir='trim'
 kraken_dir='kraken'
 bam_dir='bam'
@@ -453,9 +459,9 @@ rule bam2bw:
                 genomelen+=int(l)
         excludedchrs=list(set(chrs)-set(includedchrs))
         commoncmd="module load {params.deeptoolsver};"
-        cmd1="bamCoverage --bam "+input.bam1+" -o "+output.outbw1+" --binSize 2 --smoothLength 5 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
+        cmd1="bamCoverage --bam "+input.bam1+" -o "+output.outbw1+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
         shell(commoncmd+cmd1)
-        cmd4="bamCoverage --bam "+input.bam4+" -o "+output.outbw4+" --binSize 2 --smoothLength 5 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
+        cmd4="bamCoverage --bam "+input.bam4+" -o "+output.outbw4+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
         if pe=="yes":
             cmd4+=" --centerReads"
         shell(commoncmd+cmd4)
@@ -574,6 +580,20 @@ rule deeptools_genes:
         shell(commoncmd+cmd5)
         shell(commoncmd+cmd6)
         shell(commoncmd+cmd7)
+
+rule inputnorm:
+    input:
+        join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.bw")
+    output:
+        join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw")
+    params:
+        ctrl = lambda w : join(workpath,bw_dir,chip2input[w.name] + ".sorted.Q5DD.normalized.bw"),
+	rname="pl:inputnorm",
+        deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
+    shell: """
+module load {params.deeptoolsver};
+bigwigCompare --binSize 25 --outFileName {output} --outFileFormat 'bigwig' --bigwig1 {input} --bigwig2 {params.ctrl} --operation 'subtract' --skipNonCoveredRegions -p $SLURM_CPUS_PER_TASK;
+	"""
 
 rule preseq:
     params:
