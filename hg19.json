@@ -167,7 +167,7 @@
 #    "SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/rsem1.3.0/human_gencode.transcripts.fa",
     "STARREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/Star_refs/hs37d5/genes-",
 #    "RRNALIST2": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5/annotation/gencode.v19.annotation.gtf.rRNA.interval_list",
-    "STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh37_gencode_v19_CTAT_lib_July272016_prebuilt",
+    "STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh37_v19_CTAT_lib_Feb092018/ctat_genome_lib_build_dir",
     "FUSCATCHDAT": "/usr/local/apps/fusioncatcher/1.00/fusioncatcher/data/human_v90",
     "FUSCATCHCONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_hg38_configuration.cfg",
     "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
