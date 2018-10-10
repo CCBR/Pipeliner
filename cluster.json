@@ -9,13 +9,13 @@
     },
     "trim_pe":
     {
-        "threads": "32",
-        "mem": "24g"
+        "threads": "16",
+        "mem": "66g"
     },
     "trim_se":
     {
-        "threads": "32",
-        "mem": "24g"
+        "threads": "16",
+        "mem": "66g"
     },
     "stats":
     {
@@ -871,6 +871,18 @@
     },
     
     'BWA':
+    {
+        'mem': '64g',
+        'threads': '32'
+    },
+
+    'BWA_pe':
+    {
+        'mem': '64g',
+        'threads': '32'
+    },
+
+    'BWA_se':
     {
         'mem': '64g',
         'threads': '32'

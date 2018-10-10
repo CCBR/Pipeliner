@@ -261,6 +261,7 @@
 	        "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
             "FASTAWITHADAPTERSETD": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",
             "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/ref.fa",
+	    "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/geneinfo.bed",
             "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
             "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.fa.sizes",
             }, 

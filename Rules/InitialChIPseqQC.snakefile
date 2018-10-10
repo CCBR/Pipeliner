@@ -24,28 +24,22 @@ elif config['project']['nends'] == 1 :
 extensions = [ "sorted.normalized", "sorted.Q5DD.normalized"]
 extensions2 = list(map(lambda x:re.sub(".normalized","",x),extensions))
 
+chip2input = config['project']['peaks']['inputs']
+sampleswinput = []
+for input in chip2input:
+	if chip2input[input] != '':
+		sampleswinput.append(input)
+
 trim_dir='trim'
 kraken_dir='kraken'
 bam_dir='bam'
 bw_dir='bigwig'
-ngsplot_dir='bam'
 deeptools_dir='deeptools'
 preseq_dir='preseq'
 
-for d in [trim_dir,kraken_dir,bam_dir,bw_dir,ngsplot_dir,deeptools_dir,preseq_dir]:
+for d in [trim_dir,kraken_dir,bam_dir,bw_dir,deeptools_dir,preseq_dir]:
 	if not os.path.exists(join(workpath,d)):
 		os.mkdir(join(workpath,d))
-
-
-# 1 is yes and 0 is no... to remove blacklisted reads after trimming....output file is still ends with trim.fastq.gz
-# remove_blacklist_reads=1
-# remove_blacklist_reads=0
-
-# trimming method to use
-# trim_method=1	# this is trimgalore only ... this is the fastest
-# trim_method=2	# this is cutadapt with condensed adapter set... it is NOT followed by afterqc to remove polyX like it was in the past... this is the slowest
-# trim_method=3	# this is method1 followed by afterqc and then followed by BBDuk, idea being a) remove most blatant adapter b) remove polyX and then c) remove other primer/adapter contamination
-# trim_method=4 # trimmomatic ... leaves traces of adapters at read ends
 
 
 #print(samples)
@@ -77,19 +71,16 @@ if se == 'yes' :
             # PhantomPeakQualTools
             expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
             expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
-            # ngs.plot
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tss.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tss.km.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tes.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tes.km.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.genebody.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.genebody.km.heatmap.pdf"),name=samples,ext=extensions2),
             # deeptools
             expand(join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
+	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
+	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
+	    expand(join(workpath,deeptools_dir,"metagene_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"metagene_profile.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"TSS_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"TSS_profile.{ext}.pdf"),ext=extensions),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -99,58 +90,8 @@ if se == 'yes' :
 #         shell: """
 # rm -rf {workpath}/*bam.cnt
 #             """
-
-                   
-
-    rule fastq_screen:
-        input: 
-            join(workpath,trim_dir,"{name}.R1.trim.fastq.gz")
-        output:
-            join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),
-            join(workpath,"FQscreen","{name}.R1.trim_screen.png"),
-            join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),
-            join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),
-        params: 
-            rname='pl:fqscreen',
-            bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
-            perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
-            fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
-            fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'], 
-            fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'], 
-            outdir = "FQscreen",
-            outdir2 = "FQscreen2",
-        threads: 24
-        shell: """
-module load {params.bowtie2ver} ;
-module load {params.perlver}; 
-{params.fastq_screen} --conf {params.fastq_screen_config} \
-    --outdir {params.outdir} --subset 1000000 \
-    --aligner bowtie2 --force {input}
-{params.fastq_screen} --conf {params.fastq_screen_config2} \
-    --outdir {params.outdir2} --subset 1000000 \
-    --aligner bowtie2 --force {input}
-            """
-
-    rule rawfastqc:
-        input: 
-            expand(join(workpath,"{name}.R1.fastq.gz"), name=samples), 
-        output: 
-            join(workpath,'rawQC'),
-        priority: 2
-        params: 
-            rname='pl:rawfastqc',
-            batch='--cpus-per-task=32 --mem=100g --time=48:00:00',
-            fastqcver=config['bin'][pfamily]['tool_versions']['FASTQCVER']
-        threads: 32
-        shell: """
-if [ ! -d {output} ]; then
-mkdir {output};
-fi
-module load {params.fastqcver}; 
-fastqc {input} -t {threads} -o {output}
-            """
     
-    rule trim: # actually trim, filter polyX and remove black listed reads
+    rule trim_se: # actually trim, filter polyX and remove black listed reads
         input:
             infq=join(workpath,"{name}.R1.fastq.gz"),
         output:
@@ -194,8 +135,7 @@ java -Xmx{params.javaram} -jar $PICARDJARPATH/picard.jar SamToFastq VALIDATION_S
 pigz -p 16 ${{sample}}.outr1.noBL.fastq;
 mv ${{sample}}.outr1.noBL.fastq.gz {output.outfq};
             """
-
-               
+            
     rule kraken_se:
         input:
             fq = join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
@@ -210,7 +150,7 @@ mv ${{sample}}.outr1.noBL.fastq.gz {output.outfq};
             bacdb=config['bin'][pfamily]['tool_parameters']['KRAKENBACDB'],
             krakenver=config['bin'][pfamily]['tool_versions']['KRAKENVER'],
             kronatoolsver=config['bin'][pfamily]['tool_versions']['KRONATOOLSVER'],
-        threads: 32
+        threads: 16
         shell: """
 module load {params.krakenver};
 module load {params.kronatoolsver};
@@ -237,24 +177,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
                 cmd="sh Scripts/kraken_process_taxa.sh "+f+" "+t+" >> "+output.kraken_taxa_summary
                 shell(cmd)
 
-    rule fastqc:  
-        params:
-            rname='pl:fastqc',
-            batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
-            fastqcver=config['bin'][pfamily]['tool_versions']['FASTQCVER']
-        input:
-            expand(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),name=samples),
-        output: join(workpath,"QC")
-        priority: 2
-        threads: 32
-        shell: 
-            """
-mkdir -p {output};
-module load {params.fastqcver}; 
-fastqc {input} -t {threads} -o {output}
-            """
-
-    rule BWA:
+    rule BWA_se:
         input:
             infq=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
         params:
@@ -281,67 +204,6 @@ samtools view -b -q 6 {output.outbam1} -o {output.outbam2}
 samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
-                
-
-    rule ppqt:
-        input:
-            bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
-            bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-        output:
-            ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
-            pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
-            ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
-            pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
-        params:
-            rname="pl:ppqt",
-            batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
-            samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-            rver=config['bin'][pfamily]['tool_versions']['RVER'],
-        shell:
-            """
-            module load {params.samtoolsver};
-            module load {params.rver};
-            Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
-            Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
-            """
-
-
-    rule shiftstats:
-        input: 
-            if1 = "{name}.sorted.bam",
-            if2 = "{name}.sorted.rmdup.bam" 
-        output:
-            of1 = "{name}.shifts",
-            of2 = "{name}.rmdup.shifts"
-        params:
-            rname='pl:shiftstats',
-            batch='--mem=24g --time=10:00:00 --gres=lscratch:800'
-        shell: 
-             """
-             touch {output.of1}
-             touch {output.of2}
-             """
-
-    rule stats:
-        input:
-            file1= join(workpath,bam_dir,"{name}.bwa_rg_added.sorted.dmark.bam"),
-        output:
-            outstar2=join(workpath,bam_dir,"{name}.flagstat.concord.txt"),
-        params: 
-            rname='pl:stats',
-            batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
-            picardver=config['bin'][pfamily]['PICARDVER'],
-        shell:
-            """
-            module load samtools/1.6; 
-            samtools flagstat {input.file1} > {output.outstar2}; 
-            echo 0 >> {output.outstar2};
-            echo 0 >> {output.outstar2};
-            #samtools view -f 0x2 {input.file1} | wc -l >>{output.outstar2}; 
-            #samtools view {input.file1} | grep -w -c NH:i:1  >>{output.outstar2}
-            """
             
 if pe == 'yes':
     rule InitialChIPseqQC:
@@ -368,22 +230,19 @@ if pe == 'yes':
             # BWA --> BigWig
             expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions), 
             # PhantomPeakQualTools
-            # expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
-            # expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
-            # ngs.plot
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tss.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tss.km.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tes.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tes.km.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.genebody.max.heatmap.pdf"),name=samples,ext=extensions2),
-            # expand(join(workpath,ngsplot_dir,"{name}.{ext}.genebody.km.heatmap.pdf"),name=samples,ext=extensions2),
+             expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
+             expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
             # deeptools
             expand(join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
-            # preseq
+       	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
+	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
+            expand(join(workpath,deeptools_dir,"metagene_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"metagene_profile.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"TSS_heatmap.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"TSS_profile.{ext}.pdf"),ext=extensions),
+	    # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
             expand(join(workpath,"QC","{name}.nrf"), name=samples),
@@ -392,25 +251,8 @@ if pe == 'yes':
 #         shell: """
 # rm -rf {workpath}/*.bam.cnt
 # """
-
-    rule rawfastqc:
-        input: 
-            expand(join(workpath,"{name}.R{rn}.fastq.gz"), name=samples,rn=[1,2]), 
-        output: 
-            join(workpath,"rawQC")
-        priority: 2
-        params: 
-            rname='pl:rawfastqc',
-            batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
-            fastqcver=config['bin'][pfamily]['tool_versions']['FASTQCVER'],
-        threads: 32
-        shell: """
-mkdir -p {output};
-module load {params.fastqcver};
-fastqc {input} -t {threads} -o {output}; 
-        """
     
-    rule trim: # trim, remove PolyX and remove BL reads
+    rule trim_pe: # trim, remove PolyX and remove BL reads
         input:
             file1=join(workpath,"{name}.R1.fastq.gz"),
             file2=join(workpath,"{name}.R2.fastq.gz"),
@@ -429,7 +271,7 @@ fastqc {input} -t {threads} -o {output};
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
             minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
             javaram="64g",
-        threads: 32
+        threads: 16
         shell: """
 module load {params.cutadaptver};
 module load {params.parallelver};
@@ -471,68 +313,10 @@ mv /lscratch/$SLURM_JOBID/${{sample}}.outr1.noBL.fastq.gz {output.outfq1};
 mv /lscratch/$SLURM_JOBID/${{sample}}.outr2.noBL.fastq.gz {output.outfq2};
 """
 
-    rule fastqc:
-        input: 
-            expand(join(workpath,trim_dir,"{name}.R{rn}.trim.fastq.gz"), name=samples,rn=[1,2]), 
-        output: 
-            join(workpath,"QC")
-        priority: 2
-        params: 
-            rname='pl:rawfastqc',
-            batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
-            fastqcver=config['bin'][pfamily]['tool_versions']['FASTQCVER'],
-        threads: 32
-        shell: """
-mkdir -p {output};
-module load {params.fastqcver};
-fastqc {input} -t {threads} -o {output}; 
-        """
-
-    rule fastq_screen:
-        input: 
-            infq1 = join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
-            infq2 = join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
-        output:
-            join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),
-            join(workpath,"FQscreen","{name}.R1.trim_screen.png"),
-            join(workpath,"FQscreen","{name}.R2.trim_screen.txt"),
-            join(workpath,"FQscreen","{name}.R2.trim_screen.png"),
-            join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),
-            join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),
-            join(workpath,"FQscreen2","{name}.R2.trim_screen.txt"),
-            join(workpath,"FQscreen2","{name}.R2.trim_screen.png"),
-        params: 
-            rname='pl:fqscreen',
-            bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
-            perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
-            fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
-            fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'], 
-            outdir = "FQscreen",
-            fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'], 
-            outdir2 = "FQscreen2",
-        threads: 24
-        shell: """
-module load {params.bowtie2ver} ;
-module load {params.perlver}; 
-{params.fastq_screen} --conf {params.fastq_screen_config} \
-    --outdir {params.outdir} --subset 1000000 \
-    --aligner bowtie2 --force {input.infq1}
-{params.fastq_screen} --conf {params.fastq_screen_config} \
-    --outdir {params.outdir} --subset 1000000 \
-    --aligner bowtie2 --force {input.infq2}
-{params.fastq_screen} --conf {params.fastq_screen_config2} \
-    --outdir {params.outdir2} --subset 1000000 \
-    --aligner bowtie2 --force {input.infq1}
-{params.fastq_screen} --conf {params.fastq_screen_config2} \
-    --outdir {params.outdir2} --subset 1000000 \
-    --aligner bowtie2 --force {input.infq2}
-            """
-
-
     rule kraken_pe:
         input:
-            fq1 = rules.trim.output.outfq1,
-            fq2 = rules.trim.output.outfq2,
+            fq1 = join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
+            fq2 = join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
         output:
             krakentaxa = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),
             kronahtml = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),
@@ -558,10 +342,10 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.krakentaxa {output.krakentaxa}
 mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
 """
 
-    rule BWA:
+    rule BWA_pe:
         input:
-            infq1 = rules.trim.output.outfq1,
-            infq2 = rules.trim.output.outfq2,
+            infq1 = join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
+            infq2 = join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
         params:
             d=join(workpath,bam_dir),
             rname='pl:bwa',
@@ -587,7 +371,6 @@ samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
 
-
 rule picard_dedup:
     input: 
         bam2=join(workpath,bam_dir,"{name}.sorted.Q5.bam")
@@ -601,7 +384,7 @@ rule picard_dedup:
         batch='--mem=98g --time=10:00:00 --gres=lscratch:800',
         picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
         samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-        javaram='96g',
+        javaram='16g',
     shell: 
             """
 module load {params.samtoolsver};
@@ -627,7 +410,28 @@ java -Xmx{params.javaram} \
 samtools index {output.out5}
 samtools flagstat {output.out5} > {output.out5f}
             """
-
+rule ppqt:
+    input:
+        bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
+        bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+    output:
+        ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
+        pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
+        ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+        pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
+    params:
+        rname="pl:ppqt",
+        batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
+        samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
+        rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    shell: """
+module load {params.samtoolsver};
+module load {params.rver};
+Rscript Scripts/phantompeakqualtools/run_spp.R \
+    -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
+Rscript Scripts/phantompeakqualtools/run_spp.R \
+    -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
+            """
                                     
 rule bam2bw:
     input:
@@ -654,47 +458,52 @@ rule bam2bw:
                 genomelen+=int(l)
         excludedchrs=list(set(chrs)-set(includedchrs))
         commoncmd="module load {params.deeptoolsver};"
-        cmd1="bamCoverage --bam "+input.bam1+" -o "+output.outbw1+" --binSize 2 --smoothLength 5 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
+        cmd1="bamCoverage --bam "+input.bam1+" -o "+output.outbw1+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
         shell(commoncmd+cmd1)
-        cmd4="bamCoverage --bam "+input.bam4+" -o "+output.outbw4+" --binSize 2 --smoothLength 5 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
+        cmd4="bamCoverage --bam "+input.bam4+" -o "+output.outbw4+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
         if pe=="yes":
             cmd4+=" --centerReads"
         shell(commoncmd+cmd4)
 
 rule deeptools_prep:
     input:
-        expand(join(workpath,bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
+        bw=expand(join(workpath,bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
+        bam=expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
     output:
-        expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions),
+        temp(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions)),
+        temp(expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2)),
     params:
         rname="pl:deeptools_prep",
         batch="--mem=10g --time=1:00:00",
     threads: 1
     run:
-        for x in extensions:
-            bws=list(filter(lambda z:z.endswith(x+".bw"),input))
-            labels=list(map(lambda z:re.sub("."+x+".bw","",z),list(map(lambda z:os.path.basename(z),bws))))
-            o=open(join(workpath,bw_dir,x+".deeptools_prep"),'w')
-            o.write("%s\n"%(x))
+        for x in extensions2:
+            bws=list(filter(lambda z:z.endswith(x+".normalized.bw"),input.bw))
+            bams=list(filter(lambda z:z.endswith(x+".bam"),input.bam))
+            labels=list(map(lambda z:re.sub("."+x+".normalized.bw","",z),
+                list(map(lambda z:os.path.basename(z),bws))))
+            o=open(join(workpath,bw_dir,x+"normalized.deeptools_prep"),'w')
+            o.write("%s\n"%(x+".normalized"))
             o.write("%s\n"%(" ".join(bws)))
             o.write("%s\n"%(" ".join(labels)))
-            o.close()            
+            o.close()
+            o2=open(join(workpath,bam_dir,x+".deeptools_prep"),'w')
+            o2.write("%s\n"%(x))
+            o2.write("%s\n"%(" ".join(bams)))
+            o2.write("%s\n"%(" ".join(labels)))
+            o2.close()
 
-            
-
-rule deeptools:
+rule deeptools_QC:
     input:
         join(workpath,bw_dir,"{ext}.deeptools_prep"),
     output:
-        join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),
-        join(workpath,deeptools_dir,"pearson_heatmap.{ext}.pdf"),
-        join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),
-        join(workpath,deeptools_dir,"pearson_scatterplot.{ext}.pdf"),
-        join(workpath,deeptools_dir,"pca.{ext}.pdf"),        
+        heatmap=join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),
+        scatter=join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),
+        pca=join(workpath,deeptools_dir,"pca.{ext}.pdf"),
+	npz=temp(join(workpath,deeptools_dir,"{ext}.npz")),
     params:
-        rname="pl:deeptools",
+        rname="pl:deeptools_QC",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
-    threads: 32
     run:
         import re
         commoncmd="module load {params.deeptoolsver}; module load python;"
@@ -702,39 +511,88 @@ rule deeptools:
         ext=listfile[0][0]
         bws=listfile[1]
         labels=listfile[2]
-        cmd="multiBigwigSummary bins -b "+" ".join(bws)+" -l "+" ".join(labels)+" -out "+join(deeptools_dir,ext+".npz")
-        shell(commoncmd+cmd)
-        for cm in ["spearman", "pearson"]:
-            for pt in ["heatmap", "scatterplot"]:
-                cmd="plotCorrelation -in "+join(deeptools_dir,ext+".npz")+" -o "+join(deeptools_dir,cm+"_"+pt+"."+ext+".pdf")+" -c "+cm+" -p "+pt+" --skipZeros --removeOutliers"
-                if pt=="heatmap":
-                    cmd+=" --plotNumbers"
-                shell(commoncmd+cmd)
-        cmd="plotPCA -in "+join(deeptools_dir,ext+".npz")+" -o "+join(deeptools_dir,"pca."+ext+".pdf")
-        shell(commoncmd+cmd)
-        shell("rm -rf "+input[0])
+        cmd1="multiBigwigSummary bins -b "+" ".join(bws)+" -l "+" ".join(labels)+" -out "+output.npz
+        cmd2="plotCorrelation -in "+output.npz+" -o "+output.heatmap+" -c 'spearman' -p 'heatmap' --skipZeros --removeOutliers --plotNumbers"
+	cmd3="plotCorrelation -in "+output.npz+" -o "+output.scatter+" -c 'spearman' -p 'scatterplot' --skipZeros --removeOutliers"
+        cmd4="plotPCA -in "+output.npz+" -o "+output.pca
+	shell(commoncmd+cmd1)
+        shell(commoncmd+cmd2)
+	shell(commoncmd+cmd3)
+	shell(commoncmd+cmd4)
 
-rule NGSPLOT:
+rule deeptools_fingerprint:
     input:
-        bam= join(workpath,bam_dir,"{name}.bam"),
+        join(workpath,bam_dir,"{ext}.deeptools_prep")
     output:
-        tssmax=join(workpath,ngsplot_dir,"{name}.tss.max.heatmap.pdf"),
-        tsskm=join(workpath,ngsplot_dir,"{name}.tss.km.heatmap.pdf"),
-        tesmax=join(workpath,ngsplot_dir,"{name}.tes.max.heatmap.pdf"),
-        teskm=join(workpath,ngsplot_dir,"{name}.tes.km.heatmap.pdf"),
-        genebodymax=join(workpath,ngsplot_dir,"{name}.genebody.max.heatmap.pdf"),
-        genebodykm=join(workpath,ngsplot_dir,"{name}.genebody.km.heatmap.pdf"),
+        image=join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),
+        raw=temp(join(workpath,deeptools_dir,"fingerprint.raw.{ext}.tab")),
+        metrics=join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),
     params:
-        rname="pl:ngsplot",
-        batch='--mem=48g --time=10:00:00 --gres=lscratch:800',
-        genome = config['project']['annotation'],
-        ngsplotver = config['bin'][pfamily]['tool_versions']['NGSPLOTVER'],
-    threads: 32
-    shell:
-        """
-        sh Scripts/plotngsplot.sh {params.ngsplotver} {input.bam} {params.genome}
-        """               
+        rname="pl:deeptools_fingerprint",
+        deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
+	batch="--cpus-per-task=8"
+    run:
+        import re
+        commoncmd="module load {params.deeptoolsver}; module load python;"
+        listfile=list(map(lambda z:z.strip().split(),open(input[0],'r').readlines()))
+        ext=listfile[0][0]
+        bams=listfile[1]
+        labels=listfile[2]
+        cmd="plotFingerprint -b "+" ".join(bams)+" --labels "+" ".join(labels)+" -p 4 --skipZeros --outQualityMetrics "+output.metrics+" --plotFile "+output.image+" --outRawCounts "+output.raw
+        if se == "yes":
+            cmd+=" -e 200"
+        shell(commoncmd+cmd)
 
+rule deeptools_genes:
+    input:
+        join(workpath,bw_dir,"{ext}.deeptools_prep"),
+    output:
+        metaheat=join(workpath,deeptools_dir,"metagene_heatmap.{ext}.pdf"),
+        TSSheat=join(workpath,deeptools_dir,"TSS_heatmap.{ext}.pdf"),
+        metaline=join(workpath,deeptools_dir,"metagene_profile.{ext}.pdf"),
+        TSSline=join(workpath,deeptools_dir,"TSS_profile.{ext}.pdf"),
+        metamat=temp(join(workpath,deeptools_dir,"metagene.{ext}.mat.gz")),
+        TSSmat=temp(join(workpath,deeptools_dir,"TSS.{ext}.mat.gz")),
+        bed=temp(join(workpath,deeptools_dir,"geneinfo.{ext}.bed")),
+    params:
+        rname="pl:deeptools_genes",
+        deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
+        prebed=config['references'][pfamily]['GENEINFO']
+    run:
+        import re
+        commoncmd="module load {params.deeptoolsver}; module load python;"
+        listfile=list(map(lambda z:z.strip().split(),open(input[0],'r').readlines()))
+        ext=listfile[0][0]
+        bws=listfile[1]
+        labels=listfile[2]
+	cmd1="awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' "+params.prebed+" > "+output.bed
+        cmd2="computeMatrix scale-regions -S "+" ".join(bws)+" -R "+output.bed+" -p 4 --upstream 1000 --regionBodyLength 2000 --downstream 1000 --skipZeros -o "+output.metamat+" --samplesLabel "+" ".join(labels)
+        cmd3="computeMatrix reference-point -S "+" ".join(bws)+" -R "+output.bed+" -p 4 --referencePoint TSS --upstream 3000 --downstream 3000 --skipZeros -o "+output.TSSmat+" --samplesLabel "+" ".join(labels)
+        cmd4="plotHeatmap -m "+output.metamat+" -out "+output.metaheat+" --colorMap 'PuOr_r' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
+        cmd5="plotHeatmap -m "+output.TSSmat+" -out "+output.TSSheat+" --colorMap 'RdBu_r' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
+        cmd6="plotProfile -m "+output.metamat+" -out "+output.metaline+" --plotHeight 15 --plotWidth 15 --perGroup --yAxisLabel 'average RPGC' --plotType 'se' --legendLocation upper-right"
+        cmd7="plotProfile -m "+output.TSSmat+" -out "+output.TSSline+" --plotHeight 15 --plotWidth 15 --perGroup --yAxisLabel 'average RPGC' --plotType 'se' --legendLocation upper-left"
+        shell(commoncmd+cmd1)
+        shell(commoncmd+cmd2)
+        shell(commoncmd+cmd3)
+        shell(commoncmd+cmd4)
+        shell(commoncmd+cmd5)
+        shell(commoncmd+cmd6)
+        shell(commoncmd+cmd7)
+
+rule inputnorm:
+    input:
+        join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.bw")
+    output:
+        join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw")
+    params:
+        ctrl = lambda w : join(workpath,bw_dir,chip2input[w.name] + ".sorted.Q5DD.normalized.bw"),
+	rname="pl:inputnorm",
+        deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
+    shell: """
+module load {params.deeptoolsver};
+bigwigCompare --binSize 25 --outFileName {output} --outFileFormat 'bigwig' --bigwig1 {input} --bigwig2 {params.ctrl} --operation 'subtract' --skipNonCoveredRegions -p $SLURM_CPUS_PER_TASK;
+	"""
 
 rule preseq:
     params:
@@ -749,6 +607,7 @@ rule preseq:
 module load {params.preseqver};
 preseq c_curve -B -o {output.ccurve} {input.bam}            
         """
+	
 rule NRF:
     input:
         bam=join(workpath,bam_dir,"{name}.sorted.bam"),
@@ -770,6 +629,80 @@ module load {params.preseqver};
 preseq lc_extrap -P -B -o {output.preseq} {input.bam} -seed 12345 -v -l 100000000000 2> {output.preseqlog}
 python {params.nrfscript} {output.preseqlog} > {output.nrf}
         """
+
+rule rawfastqc:
+    input:
+        expand(join(workpath,"{name}.R1.fastq.gz"), name=samples) if \
+            se == "yes" else \
+            expand(join(workpath,"{name}.R{rn}.fastq.gz"), name=samples,rn=[1,2])
+    output:
+        join(workpath,'rawQC'),
+    priority: 2
+    params:
+        rname='pl:rawfastqc',
+        batch='--cpus-per-task=32 --mem=100g --time=48:00:00',
+        fastqcver=config['bin'][pfamily]['tool_versions']['FASTQCVER']
+    threads: 32
+    shell: """
+if [ ! -d {output} ]; then
+mkdir {output};
+fi
+module load {params.fastqcver};
+fastqc {input} -t {threads} -o {output}
+            """
+
+rule fastqc:
+    params:
+        rname='pl:fastqc',
+        batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
+        fastqcver=config['bin'][pfamily]['tool_versions']['FASTQCVER']
+    input:
+        expand(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),name=samples) if \
+            se == "yes" else \
+            expand(join(workpath,trim_dir,"{name}.R{rn}.trim.fastq.gz"), name=samples,rn=[1,2])
+    output: join(workpath,"QC")
+    priority: 2
+    threads: 32
+    shell: """
+mkdir -p {output};
+module load {params.fastqcver};
+fastqc {input} -t {threads} -o {output}
+            """
+
+rule fastq_screen:
+    input:
+        join(workpath,trim_dir,"{name}.R1.trim.fastq.gz") if se == "yes" else \
+            expand(join(workpath,trim_dir,"{name}.R{rn}.trim.fastq.gz"),name=samples,rn=[1,2])
+    output:
+        join(workpath,"FQscreen","{name}.R1.trim_screen.txt") if se == "yes" else \
+            expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
+        join(workpath,"FQscreen","{name}.R1.trim_screen.png") if se == "yes" else \
+            expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
+        join(workpath,"FQscreen2","{name}.R1.trim_screen.txt") if se == "yes" else \
+            expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
+        join(workpath,"FQscreen2","{name}.R1.trim_screen.png") if se == "yes" else \
+            expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
+    params:
+        rname='pl:fqscreen',
+        bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
+        perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
+        fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
+        fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
+        fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
+        outdir = "FQscreen",
+        outdir2 = "FQscreen2",
+    threads: 24
+    shell: """
+module load {params.bowtie2ver} ;
+module load {params.perlver};
+{params.fastq_screen} --conf {params.fastq_screen_config} \
+    --outdir {params.outdir} --subset 1000000 \
+    --aligner bowtie2 --force {input}
+{params.fastq_screen} --conf {params.fastq_screen_config2} \
+    --outdir {params.outdir2} --subset 1000000 \
+    --aligner bowtie2 --force {input}
+            """
+
 
 rule QCstats:
     input:
@@ -823,7 +756,8 @@ rule multiqc:
         expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
         join(workpath,"QCTable.txt"),
         join(workpath,"rawQC"),
-        join(workpath,"QC"),         
+        join(workpath,"QC"),
+	expand(join(workpath,deeptools_dir,"fingerprint.raw.{ext}.tab"),ext=extensions2),
     output:
         join(workpath,"Reports","multiqc_report.html")
     params:
@@ -835,5 +769,4 @@ rule multiqc:
 module load {params.multiqc}
 cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt -d ../
 """
-
 

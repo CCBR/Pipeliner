@@ -67,7 +67,7 @@ class ChIPSeqFrame( PipelineFrame ) :
     def option_controller( self, *args, **kwargs ) :
         PipelineFrame.option_controller( self )
         if self.Pipeline.get() == 'InitialChIPseqQC' :
-            self.info.grid_forget()
+       	    self.info.grid(row=7,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
         else :
        	    self.info.grid(row=7,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
     
@@ -77,13 +77,14 @@ class ChIPSeqFrame( PipelineFrame ) :
             self.peakinfo_button = Button(self.info, 
                                             text="Set Peak Infomation", 
                                             command = self.popup_peakinfo )
-            
-            self.contrast_button = Button(self.info, 
-                                            text="Set Groups to compare peaks", 
-                                            command = self.popup_window_contrast )
-            
             self.peakinfo_button.grid( row=5, column=5, padx=10, pady=5 )
-            self.contrast_button.grid( row=5, column=6, padx=10, pady=5 )
+
+            if self.Pipeline.get() == 'ChIPseq' :
+                self.contrast_button = Button(self.info, 
+                                                text="Set Groups to compare peaks", 
+                                                command = self.popup_window_contrast )
+                self.contrast_button.grid( row=5, column=6, padx=10, pady=5 )
+            
             
     def popup_peakinfo( self ) :
         self.popup_window( "Peak Information",
@@ -447,7 +448,7 @@ class ChIPSeqFrame( PipelineFrame ) :
         peaks = {}
         contrast = []
         groups = {}
-        if self.Pipeline.get() == 'ChIPseq' :
+        if self.Pipeline.get() == 'ChIPseq' or self.Pipeline.get() == 'InitialChIPseqQC':
             ################################
             #peak calling info!
             ################################
@@ -468,9 +469,10 @@ class ChIPSeqFrame( PipelineFrame ) :
             ################################
             #Contrast info processing!
             ################################
-            for l in open( join(self.workpath.get(),self.contrast_fn)) :
-                c1, c2 = l.split()
-                contrast.append( [c1, c2] )
+            if self.Pipeline.get() == 'ChIPseq':
+                for l in open( join(self.workpath.get(),self.contrast_fn)) :
+                    c1, c2 = l.split()
+                    contrast.append( [c1, c2] )
     
         gi = self.global_info
         PD={
@@ -518,5 +520,4 @@ class ChIPSeqFrame( PipelineFrame ) :
         gi.jsonconf.delete("1.0", END)    
         gi.jsonconf.insert(INSERT, J)
         self.saveproject(gi.jsonconf.get("1.0",END))
-    
-   
+

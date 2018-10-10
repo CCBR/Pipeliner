@@ -333,6 +333,7 @@
             "FASTAWITHADAPTERSETD": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",
             "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
             "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/ref.fa",
+	    "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/geneinfo.bed",
             "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
             "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/indexes/hg19.fa.sizes",
         },
