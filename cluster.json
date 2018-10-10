@@ -9,13 +9,13 @@
     },
     "trim_pe":
     {
-        "threads": "32",
-        "mem": "24g"
+        "threads": "16",
+        "mem": "66g"
     },
     "trim_se":
     {
-        "threads": "32",
-        "mem": "24g"
+        "threads": "16",
+        "mem": "66g"
     },
     "stats":
     {
