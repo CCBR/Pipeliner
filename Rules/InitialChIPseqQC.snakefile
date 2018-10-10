@@ -22,8 +22,7 @@ elif config['project']['nends'] == 1 :
 
 # extensions = [ "sorted.normalized", "sorted.Q5.normalized", "sorted.DD.normalized", "sorted.Q5DD.normalized"]
 extensions = [ "sorted.normalized", "sorted.Q5DD.normalized"]
-bwterm = ".normalized"
-extensions2 = list(map(lambda x:re.sub(bwterm,"",x),extensions))
+extensions2 = list(map(lambda x:re.sub(".normalized","",x),extensions))
 
 chip2input = config['project']['peaks']['inputs']
 sampleswinput = []
@@ -151,7 +150,7 @@ mv ${{sample}}.outr1.noBL.fastq.gz {output.outfq};
             bacdb=config['bin'][pfamily]['tool_parameters']['KRAKENBACDB'],
             krakenver=config['bin'][pfamily]['tool_versions']['KRAKENVER'],
             kronatoolsver=config['bin'][pfamily]['tool_versions']['KRONATOOLSVER'],
-        threads: 32
+        threads: 16
         shell: """
 module load {params.krakenver};
 module load {params.kronatoolsver};
@@ -272,7 +271,7 @@ if pe == 'yes':
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
             minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
             javaram="64g",
-        threads: 32
+        threads: 16
         shell: """
 module load {params.cutadaptver};
 module load {params.parallelver};
@@ -479,12 +478,12 @@ rule deeptools_prep:
     threads: 1
     run:
         for x in extensions2:
-            bws=list(filter(lambda z:z.endswith(x+bwterm+".bw"),input.bw))
+            bws=list(filter(lambda z:z.endswith(x+".normalized.bw"),input.bw))
             bams=list(filter(lambda z:z.endswith(x+".bam"),input.bam))
-            labels=list(map(lambda z:re.sub("."+x+bwterm+".bw","",z),
+            labels=list(map(lambda z:re.sub("."+x+".normalized.bw","",z),
                 list(map(lambda z:os.path.basename(z),bws))))
-            o=open(join(workpath,bw_dir,x+bwterm+".deeptools_prep"),'w')
-            o.write("%s\n"%(x+bwterm))
+            o=open(join(workpath,bw_dir,x+"normalized.deeptools_prep"),'w')
+            o.write("%s\n"%(x+".normalized"))
             o.write("%s\n"%(" ".join(bws)))
             o.write("%s\n"%(" ".join(labels)))
             o.close()
