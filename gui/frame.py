@@ -352,7 +352,17 @@ class PipelineFrame( Frame ) :
             showinfo( "Success", "The work directory has successfully initialized!")
         else :
             showerror( "Symlink failed", "" )
-    
+ 
+    def popup_warning(self, filename):
+        try:
+            fname = self.workpath.get() + '/' + filename
+            fh = open(fname, 'r')
+            return False
+        except IOError:
+            print("Could not find required file {} in your working directory:{}".format(filename, self.workpath.get()))
+            showerror("Error","{0} file not found!\nDid you initialize the working directory?\nDid you copy {0} into the working directory?".format(filename))
+            return True
+
     def popup_window( self, text, filename ) :
         top = Toplevel()
   
@@ -691,6 +701,11 @@ class PipelineFrame( Frame ) :
         return
     
     def dryrun( self ) :
+        pl = self.pipeline_name
+        print("Drying-running: {}".format(pl))
+        if pl == 'RNAseq':
+            if self.popup_warning('groups.tab') or self.popup_warning('contrasts.tab'):
+                return
         self.makejson("none")
         #self.run_button.config( state='active' )
         return self.cmd( "--dryrun -p -s %s/Snakefile --rerun-incomplete -d %s" % ( self.workpath.get(), self.workpath.get())) 
