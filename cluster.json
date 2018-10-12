@@ -9,12 +9,12 @@
     },
     "trim_pe":
     {
-        "threads": "16",
+        "threads": "32",
         "mem": "66g"
     },
     "trim_se":
     {
-        "threads": "16",
+        "threads": "32",
         "mem": "66g"
     },
     "stats":

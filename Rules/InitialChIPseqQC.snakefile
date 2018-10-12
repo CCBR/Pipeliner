@@ -27,8 +27,29 @@ extensions2 = list(map(lambda x:re.sub(".normalized","",x),extensions))
 chip2input = config['project']['peaks']['inputs']
 sampleswinput = []
 for input in chip2input:
-	if chip2input[input] != '':
+	if chip2input[input] != 'NA':
 		sampleswinput.append(input)
+
+if len(sampleswinput) == 0:
+    inputnorm = [""]
+else:
+    inputnorm = ["",".inputnorm"]
+
+groupdata = config['project']['groups']
+
+groupdatawinput = {}
+for group, chips in groupdata.items() :
+    tmp = [ ]
+    for chip in chips :
+        if chip in samples:
+            tmp.append(chip)
+            input = chip2input[chip]
+            if input != 'NA':
+                tmp.append(input)
+    if len(tmp) != 0:
+        groupdatawinput[group]=set(tmp)
+
+groups = list(groupdatawinput.keys())
 
 trim_dir='trim'
 kraken_dir='kraken'
@@ -77,10 +98,10 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
 	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
 	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
-	    expand(join(workpath,deeptools_dir,"metagene_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"metagene_profile.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"TSS_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"TSS_profile.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
+            expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
+            expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
+            expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -238,10 +259,10 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
        	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
 	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
-            expand(join(workpath,deeptools_dir,"metagene_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"metagene_profile.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"TSS_heatmap.{ext}.pdf"),ext=extensions),
-            expand(join(workpath,deeptools_dir,"TSS_profile.{ext}.pdf"),ext=extensions),
+            expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
+            expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
+            expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
+            expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
 	    # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -465,6 +486,7 @@ rule bam2bw:
             cmd4+=" --centerReads"
         shell(commoncmd+cmd4)
 
+
 rule deeptools_prep:
     input:
         bw=expand(join(workpath,bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
@@ -472,6 +494,8 @@ rule deeptools_prep:
     output:
         temp(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions)),
         temp(expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2)),
+        temp(expand(join(workpath,bw_dir,"{group}.{ext}.deeptools_prep"),group=groups,ext=extensions)),
+        temp(expand(join(workpath,bw_dir,"{group}.{ext}.inputnorm.deeptools_prep"),group=groups,ext=extensions)),
     params:
         rname="pl:deeptools_prep",
         batch="--mem=10g --time=1:00:00",
@@ -482,7 +506,10 @@ rule deeptools_prep:
             bams=list(filter(lambda z:z.endswith(x+".bam"),input.bam))
             labels=list(map(lambda z:re.sub("."+x+".normalized.bw","",z),
                 list(map(lambda z:os.path.basename(z),bws))))
-            o=open(join(workpath,bw_dir,x+"normalized.deeptools_prep"),'w')
+            bws2=list(filter(lambda z:z.endswith(x+".normalized.inputnorm.bw"),input.bw))
+            labels2=list(map(lambda z:re.sub("."+x+".normalized.inputnorm.bw","",z),
+                list(map(lambda z:os.path.basename(z),bws2))))
+            o=open(join(workpath,bw_dir,x+".normalized.deeptools_prep"),'w')
             o.write("%s\n"%(x+".normalized"))
             o.write("%s\n"%(" ".join(bws)))
             o.write("%s\n"%(" ".join(labels)))
@@ -492,6 +519,23 @@ rule deeptools_prep:
             o2.write("%s\n"%(" ".join(bams)))
             o2.write("%s\n"%(" ".join(labels)))
             o2.close()
+            for group in groups:
+                iter = [ i for i in range(len(labels)) if labels[i] in groupdatawinput[group] ]
+                bws3 = [ bws[i] for i in iter ]
+                labels3 = [ labels[i] for i in iter ]
+                o3=open(join(workpath,bw_dir,group+"."+x+".normalized.deeptools_prep"),'w')
+                o3.write("%s\n"%(x+".normalized"))
+                o3.write("%s\n"%(" ".join(bws3)))
+                o3.write("%s\n"%(" ".join(labels3)))
+                o3.close()
+                iter2 = [ i for i in range(len(labels2)) if labels2[i] in groupdatawinput[group] ]
+                bws4 = [ bws2[i] for i in iter2 ]
+                labels4 = [ labels2[i] for i in iter2 ]
+                o4=open(join(workpath,bw_dir,group+"."+x+".normalized.inputnorm.deeptools_prep"),'w')
+                o4.write("%s\n"%(x+".normalized.inputnorm"))
+                o4.write("%s\n"%(" ".join(bws4)))
+                o4.write("%s\n"%(" ".join(labels4)))
+                o4.close()
 
 rule deeptools_QC:
     input:
@@ -545,15 +589,15 @@ rule deeptools_fingerprint:
 
 rule deeptools_genes:
     input:
-        join(workpath,bw_dir,"{ext}.deeptools_prep"),
+        join(workpath,bw_dir,"{group}.{ext}{norm}.deeptools_prep")
     output:
-        metaheat=join(workpath,deeptools_dir,"metagene_heatmap.{ext}.pdf"),
-        TSSheat=join(workpath,deeptools_dir,"TSS_heatmap.{ext}.pdf"),
-        metaline=join(workpath,deeptools_dir,"metagene_profile.{ext}.pdf"),
-        TSSline=join(workpath,deeptools_dir,"TSS_profile.{ext}.pdf"),
-        metamat=temp(join(workpath,deeptools_dir,"metagene.{ext}.mat.gz")),
-        TSSmat=temp(join(workpath,deeptools_dir,"TSS.{ext}.mat.gz")),
-        bed=temp(join(workpath,deeptools_dir,"geneinfo.{ext}.bed")),
+        metaheat=join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"),
+        TSSheat=join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}{norm}.pdf"),
+        metaline=join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}{norm}.pdf"),
+        TSSline=join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}{norm}.pdf"),
+        metamat=temp(join(workpath,deeptools_dir,"{group}.metagene.{ext}{norm}.mat.gz")),
+        TSSmat=temp(join(workpath,deeptools_dir,"{group}.TSS.{ext}{norm}.mat.gz")),
+        bed=temp(join(workpath,deeptools_dir,"{group}.geneinfo.{ext}{norm}.bed")),
     params:
         rname="pl:deeptools_genes",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
