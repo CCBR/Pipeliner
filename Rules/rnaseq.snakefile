@@ -261,7 +261,7 @@ rule pca:
     file1=join(workpath,star_dir,"sampletable.txt"),
     file2=join(workpath,"DEG_{dtype}","RawCountFile_RSEM_genes_filtered.txt"),
   output: 
-    join(workpath,"DEG_{dtype}","PcaReport.html")
+    outhtml=join(workpath,"DEG_{dtype}","PcaReport.html")
   params: 
     rname='pl:pca',
     batch='--mem=24g --time=10:00:00',
@@ -278,7 +278,7 @@ cp {params.rscript1} {params.outdir}
 cp {params.rscript2} {params.outdir}
 cd {params.outdir}
 module load {params.rver}
-Rscript pcacall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}'
+Rscript pcacall.R '{params.outdir}' '{output.outhtml}' '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}'
 """
 
 rule vennDiagram:
