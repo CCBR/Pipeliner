@@ -453,13 +453,15 @@ Rscript Scripts/phantompeakqualtools/run_spp.R \
 Rscript Scripts/phantompeakqualtools/run_spp.R \
     -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
             """
-                                    
+
 rule bam2bw:
     input:
         bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
         bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+        ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
+        ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
     output:
-        outbw1=join(workpath,bw_dir,"{name}.sorted.normalized.bw"), 
+        outbw1=join(workpath,bw_dir,"{name}.sorted.normalized.bw"),
         outbw4=join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.bw"),
     params:
         rname="pl:bam2bw",
@@ -480,22 +482,32 @@ rule bam2bw:
         excludedchrs=list(set(chrs)-set(includedchrs))
         commoncmd="module load {params.deeptoolsver};"
         cmd1="bamCoverage --bam "+input.bam1+" -o "+output.outbw1+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
-        shell(commoncmd+cmd1)
         cmd4="bamCoverage --bam "+input.bam4+" -o "+output.outbw4+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
         if pe=="yes":
+            cmd1+=" --centerReads"
             cmd4+=" --centerReads"
-        shell(commoncmd+cmd4)
-
+        else:
+            if len([i for i in uniq_inputs if i in input.bam1]) != 0:
+                cmd1+=" -e 200"
+                cmd4+=" -e 200"
+            else:
+                file1=list(map(lambda z:z.strip().split(),open(input.ppqt1,'r').readlines()))
+                extend1 = file1[0][2].split(",")[0]
+                cmd1=cmd1+" -e "+extend1
+                file4=list(map(lambda z:z.strip().split(),open(input.ppqt4,'r').readlines()))
+                extend4 = file4[0][2].split(",")[0]
+                cmd4=cmd4+" -e "+extend4
+        shell(commoncmd+cmd1)
+        shell(commoncmd+cmd4)                                    
 
 rule deeptools_prep:
     input:
         bw=expand(join(workpath,bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
         bam=expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
     output:
-        temp(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions)),
-        temp(expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2)),
-        temp(expand(join(workpath,bw_dir,"{group}.{ext}.deeptools_prep"),group=groups,ext=extensions)),
-        temp(expand(join(workpath,bw_dir,"{group}.{ext}.inputnorm.deeptools_prep"),group=groups,ext=extensions)),
+        dynamic(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions)),
+        dynamic(expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2)),
+        dynamic(expand(join(workpath,bw_dir,"{group}.{ext}{norm}.deeptools_prep"),group=groups,ext=extensions,norm=inputnorm)),
     params:
         rname="pl:deeptools_prep",
         batch="--mem=10g --time=1:00:00",
@@ -531,11 +543,12 @@ rule deeptools_prep:
                 iter2 = [ i for i in range(len(labels2)) if labels2[i] in groupdatawinput[group] ]
                 bws4 = [ bws2[i] for i in iter2 ]
                 labels4 = [ labels2[i] for i in iter2 ]
-                o4=open(join(workpath,bw_dir,group+"."+x+".normalized.inputnorm.deeptools_prep"),'w')
-                o4.write("%s\n"%(x+".normalized.inputnorm"))
-                o4.write("%s\n"%(" ".join(bws4)))
-                o4.write("%s\n"%(" ".join(labels4)))
-                o4.close()
+                if len(bws4) > 1:
+                    o4=open(join(workpath,bw_dir,group+"."+x+".normalized.inputnorm.deeptools_prep"),'w')
+                    o4.write("%s\n"%(x+".normalized.inputnorm"))
+                    o4.write("%s\n"%(" ".join(bws4)))
+                    o4.write("%s\n"%(" ".join(labels4)))
+                    o4.close()
 
 rule deeptools_QC:
     input:
@@ -589,7 +602,7 @@ rule deeptools_fingerprint:
 
 rule deeptools_genes:
     input:
-        join(workpath,bw_dir,"{group}.{ext}{norm}.deeptools_prep")
+        dynamic(join(workpath,bw_dir,"{group}.{ext}{norm}.deeptools_prep"))
     output:
         metaheat=join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"),
         TSSheat=join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}{norm}.pdf"),
