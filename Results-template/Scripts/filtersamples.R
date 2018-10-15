@@ -8,22 +8,21 @@ CPM_CUTOFF <- args[4]
 MINSAMPLES <- args[5]
 SAMPLETABLE <- args[6]
 RAWCOUNTSTABLE <- args[7]
-OUTSAMPLETABLE <- args[8]
-FILTEREDRAWCOUNTSTABLE <- args[9]
+FILTEREDRAWCOUNTSTABLE <- args[8]
 
 x=read.table(SAMPLETABLE,header = T,sep="\t")
 samples=(x$condition==G1 | x$condition==G2)
 
 x1=x[samples,]
-write.table(x1,file=OUTSAMPLETABLE,sep="\t",col.names=T,quote=F,row.names = F)
+#write.table(x1,file=OUTSAMPLETABLE,sep="\t",col.names=T,quote=F,row.names = F)
 
 
 y=read.table(RAWCOUNTSTABLE,header = T,sep = "\t")
 row.names(y)=y$symbol
 y=y[,-which(names(y) %in% ("symbol"))]
-y=y[,samples]
+#y=y[,samples]
 y=ceiling(y)
-colnames(y)=x1$label
+#colnames(y)=x1$label
 k=rowSums(cpm(y)>CPM_CUTOFF)>MINSAMPLES
 # table(k)
 y=y[k,]

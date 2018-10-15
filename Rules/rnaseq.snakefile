@@ -77,6 +77,7 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
     input:
       #Initialize DEG (Filter raw counts matrix by cpm and min sample thresholds)
       expand(join(workpath,"DEG_{deg_dir}", "RawCountFile_RSEM_genes_filtered.txt"), deg_dir=contrasts_w_cpm_cutoff_list),
+      expand(join(workpath,"DEG_{deg_dir}", "RawCountFile_RSEM_genes.txt"), deg_dir=contrasts_w_cpm_cutoff_list),
       
       #EBSeq
       expand(join(workpath,"DEG_{deg_dir}", "EBSeq_isoform_completed.txt"), deg_dir=contrasts_w_cpm_cutoff_list),
@@ -104,17 +105,25 @@ rule init_deg:
     rawcountstab=join(workpath,"DEG_ALL","RawCountFile_RSEM_genes.txt"),
   output:
     sampletable=join(workpath,"DEG_{group1}-{group2}_{mincpm}_{minsample}","sampletable.txt"),
+    rawcounts=join(workpath,"DEG_{group1}-{group2}_{mincpm}_{minsample}","RawCountFile_RSEM_genes.txt"),
     filteredcountstabs=join(workpath,"DEG_{group1}-{group2}_{mincpm}_{minsample}","RawCountFile_RSEM_genes_filtered.txt"),
   params:
     rname="pl:init_deg_dir",
     rscript=join(workpath,"Scripts","filtersamples.R"),
     rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    filterscript=join(workpath,"Scripts","filterSampleTable.py"),
+    pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
+    groups=",".join(config['project']['groups']['rgroups']),
+    labels=",".join(config['project']['groups']['rlabels']),
+    allsamples=",".join(config['project']['groups']['rsamps']),
     outdir=join(workpath,"DEG_{group1}-{group2}_{mincpm}_{minsample}"),
   shell:"""
 if [ ! -d {params.outdir} ]; then mkdir {params.outdir} ;fi
 cd {params.outdir}
 module load {params.rver}
-Rscript {params.rscript} {params.outdir} {wildcards.group1} {wildcards.group2} {wildcards.mincpm} {wildcards.minsample} {input.sampletable} {input.rawcountstab} {output.sampletable} {output.filteredcountstabs}
+module load {params.pythonver}
+python {params.filterscript} -c '{wildcards.group1} {wildcards.group2}' -s '{params.allsamples}' -g '{params.groups}' -l '{params.labels}' -r '{input.rawcountstab}' -outsample '{output.sampletable}' -outraw '{output.rawcounts}'
+Rscript {params.rscript} {params.outdir} {wildcards.group1} {wildcards.group2} {wildcards.mincpm} {wildcards.minsample} {output.sampletable} {output.rawcounts} {output.filteredcountstabs}
 """
 
 rule EBSeq_isoform:
@@ -261,7 +270,7 @@ rule pca:
     file1=join(workpath,star_dir,"sampletable.txt"),
     file2=join(workpath,"DEG_{dtype}","RawCountFile_RSEM_genes_filtered.txt"),
   output: 
-    join(workpath,"DEG_{dtype}","PcaReport.html")
+    outhtml=join(workpath,"DEG_{dtype}","PcaReport.html")
   params: 
     rname='pl:pca',
     batch='--mem=24g --time=10:00:00',
@@ -278,7 +287,7 @@ cp {params.rscript1} {params.outdir}
 cp {params.rscript2} {params.outdir}
 cd {params.outdir}
 module load {params.rver}
-Rscript pcacall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}'
+Rscript pcacall.R '{params.outdir}' '{output.outhtml}'  '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}'
 """
 
 rule vennDiagram:
@@ -303,3 +312,4 @@ cd {params.outdir}
 module load {params.rver}
 Rscript {params.rscript} --limma '{input.limmafile}' --edgeR '{input.edgeRfile}' --DESeq2 '{input.deseqfile}'
 """
+

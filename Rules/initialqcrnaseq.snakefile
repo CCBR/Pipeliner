@@ -1,8 +1,9 @@
 from snakemake.utils import R
 from os.path import join
-configfile: "run.json"
-
 from os import listdir
+
+configfile: "run.json"
+samples=config['project']['groups']['rsamps']
 
 def check_existence(filename):
   if not os.path.exists(filename):
@@ -653,18 +654,20 @@ rule samplecondition:
    params: 
     rname='pl:samplecondition',
     batch='--mem=4g --time=10:00:00', 
+    pathprefix=join(workpath,star_dir),
     groups=config['project']['groups']['rgroups'],
     labels=config['project']['groups']['rlabels'],
+    allsamples=config['project']['groups']['rsamps'],
     gtffile=config['references'][pfamily]['GTFFILE']
    run:
         with open(output.out1, "w") as out:
             out.write("sampleName\tfileName\tcondition\tlabel\n")
             i=0
             for f in input.files:
-                out.write("%s\t"  % f)
-                out.write("%s\t"  % f)
-                out.write("%s\t" % params.groups[i])
-                out.write("%s\n" % params.labels[i])                
+                out.write("{}/{}.star.count.txt\t".format(params.pathprefix, params.allsamples[i]))
+                out.write("{}/{}.star.count.txt\t".format(params.pathprefix, params.allsamples[i]))
+                out.write("{}\t".format(params.groups[i]))
+                out.write("{}\n".format(params.labels[i])) 
                 i=i+1
             out.close()
 
