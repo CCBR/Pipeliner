@@ -946,6 +946,11 @@
     {
         "threads":'32'
     },
+    "inputnorm":
+    {
+        "threads":'32',
+        "mem":'64g',
+    },
     "GEM":
     {
         "threads":'32',
