@@ -88,7 +88,9 @@ if se == 'yes' :
             # Align using BWA and dedup with Picard
             expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
             # BWA --> BigWig
-            expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions), 
+            expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions),
+            # Input Normalization
+            expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw",),name=sampleswinput), 
             # PhantomPeakQualTools
             expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
             expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
@@ -249,7 +251,9 @@ if pe == 'yes':
             # Align using BWA and dedup with Picard
             expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
             # BWA --> BigWig
-            expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions), 
+            expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions),
+            # Input Normalization
+            expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw",),name=sampleswinput),
             # PhantomPeakQualTools
              expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
              expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
@@ -639,16 +643,16 @@ rule deeptools_genes:
 
 rule inputnorm:
     input:
-        join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.bw")
+        chip = join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.bw"),
+        ctrl = lambda w : join(workpath,bw_dir,chip2input[w.name] + ".sorted.Q5DD.normalized.bw")
     output:
         join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw")
     params:
-        ctrl = lambda w : join(workpath,bw_dir,chip2input[w.name] + ".sorted.Q5DD.normalized.bw"),
-	rname="pl:inputnorm",
+        rname="pl:inputnorm",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
     shell: """
 module load {params.deeptoolsver};
-bigwigCompare --binSize 25 --outFileName {output} --outFileFormat 'bigwig' --bigwig1 {input} --bigwig2 {params.ctrl} --operation 'subtract' --skipNonCoveredRegions -p $SLURM_CPUS_PER_TASK;
+bigwigCompare --binSize 25 --outFileName {output} --outFileFormat 'bigwig' --bigwig1 {input.chip} --bigwig2 {input.ctrl} --operation 'subtract' --skipNonCoveredRegions -p 32;
 	"""
 
 rule preseq:
