@@ -267,7 +267,7 @@ Rscript limmacall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.c
 
 rule pca:
   input: 
-    file1=join(workpath,star_dir,"sampletable.txt"),
+    file1=join(workpath,"DEG_{dtype}","sampletable.txt"),
     file2=join(workpath,"DEG_{dtype}","RawCountFile_RSEM_genes_filtered.txt"),
   output: 
     outhtml=join(workpath,"DEG_{dtype}","PcaReport.html")
