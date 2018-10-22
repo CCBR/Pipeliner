@@ -3,7 +3,7 @@
 args <- commandArgs(trailingOnly = TRUE)
 DIR <- args[1]
 outHtml <- args[2]
-# Sys.setenv(RSTUDIO_PANDOC="/Applications/RStudio.app/Contents/MacOS/pandoc")
+Sys.setenv(RSTUDIO_PANDOC="/usr/local/apps/rstudio/rstudio-1.1.447/bin/pandoc/")
 setwd(DIR) # new 
 rmarkdown::render("PcaReport.Rmd",output_file=outHtml, params = list(
     folder = args[1],

@@ -4,8 +4,8 @@ args <- commandArgs(trailingOnly = TRUE)
 DIR <- args[1]
 G1 <- args[2]
 G2 <- args[3]
-CPM_CUTOFF <- args[4]
-MINSAMPLES <- args[5]
+CPM_CUTOFF <- as.numeric(args[4])
+MINSAMPLES <- as.numeric(args[5])
 SAMPLETABLE <- args[6]
 RAWCOUNTSTABLE <- args[7]
 FILTEREDRAWCOUNTSTABLE <- args[8]
@@ -23,7 +23,7 @@ y=y[,-which(names(y) %in% ("symbol"))]
 #y=y[,samples]
 y=ceiling(y)
 #colnames(y)=x1$label
-k=rowSums(cpm(y)>CPM_CUTOFF)>MINSAMPLES
+k=rowSums(cpm(y)>CPM_CUTOFF)>=MINSAMPLES
 # table(k)
 y=y[k,]
 
