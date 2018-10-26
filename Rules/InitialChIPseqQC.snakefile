@@ -435,6 +435,7 @@ java -Xmx{params.javaram} \
 samtools index {output.out5}
 samtools flagstat {output.out5} > {output.out5f}
             """
+
 rule ppqt:
     input:
         bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
@@ -508,10 +509,12 @@ rule deeptools_prep:
     input:
         bw=expand(join(workpath,bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
         bam=expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
+	bw2=expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw"),name=sampleswinput)
     output:
-        dynamic(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions)),
-        dynamic(expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2)),
-        dynamic(expand(join(workpath,bw_dir,"{group}.{ext}{norm}.deeptools_prep"),group=groups,ext=extensions,norm=inputnorm)),
+        dynamic(temp(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions))),
+        dynamic(temp(expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2))),
+        dynamic(temp(expand(join(workpath,bw_dir,"{group}.{ext}.deeptools_prep"),group=groups,ext=extensions))),
+        dynamic(temp(expand(join(workpath,bw_dir,"{group}.{ext}.inputnorm.deeptools_prep"),group=groups,ext=extensions))),
     params:
         rname="pl:deeptools_prep",
         batch="--mem=10g --time=1:00:00",
@@ -522,7 +525,7 @@ rule deeptools_prep:
             bams=list(filter(lambda z:z.endswith(x+".bam"),input.bam))
             labels=list(map(lambda z:re.sub("."+x+".normalized.bw","",z),
                 list(map(lambda z:os.path.basename(z),bws))))
-            bws2=list(filter(lambda z:z.endswith(x+".normalized.inputnorm.bw"),input.bw))
+            bws2=list(filter(lambda z:z.endswith(x+".normalized.inputnorm.bw"),input.bw2))
             labels2=list(map(lambda z:re.sub("."+x+".normalized.inputnorm.bw","",z),
                 list(map(lambda z:os.path.basename(z),bws2))))
             o=open(join(workpath,bw_dir,x+".normalized.deeptools_prep"),'w')
@@ -547,7 +550,7 @@ rule deeptools_prep:
                 iter2 = [ i for i in range(len(labels2)) if labels2[i] in groupdatawinput[group] ]
                 bws4 = [ bws2[i] for i in iter2 ]
                 labels4 = [ labels2[i] for i in iter2 ]
-                if len(bws4) > 1:
+                if len(bws4) > 0:
                     o4=open(join(workpath,bw_dir,group+"."+x+".normalized.inputnorm.deeptools_prep"),'w')
                     o4.write("%s\n"%(x+".normalized.inputnorm"))
                     o4.write("%s\n"%(" ".join(bws4)))
