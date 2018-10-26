@@ -30,7 +30,7 @@ touch $R/Reports/makeasnake.log
 touch $R/Reports/snakemake.log
 
 #sbatch $Slrm_J --partition=centos7 --gres=lscratch:200 --time=24:00:00 --mail-type=BEGIN,END,FAIL $R/pipeline_ctrl.sh
-sbatch $Slrm_J --partition=ccr,norm --gres=lscratch:200 --time=120:00:00 --mail-type=BEGIN,END,FAIL $R/pipeline_ctrl.sh
+sbatch $Slrm_J --partition=ccr,norm --gres=lscratch:200 --time=10-00:00:00 --mail-type=BEGIN,END,FAIL $R/pipeline_ctrl.sh
 # sbatch --partition=ccr,norm --gres=lscratch:200 --time=120:00:00  $R/pipeline_ctrl.sh
 
 
