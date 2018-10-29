@@ -11,8 +11,50 @@ workpath = config['project']['workpath']
 filetype = config['project']['filetype']
 readtype = config['project']['readtype']
 
+
+def outputfiles(groupslist):
+    '''
+    Produces correct output filenames based on group information.
+    If a group has input it produces:
+    {groupName}.sorted.Q5DD.RPGC.inputnorm.metagene_heatmap.pdf
+    {groupName}.sorted.Q5DD.RPGC.metagene_heatmap.pdf
+    {groupName}.sorted.RPGC.metagene_heatmap.pdf
+    Else, it produces:
+    {groupName}.sorted.Q5DD.RPGC.metagene_heatmap.pdf
+    {groupName}.sorted.RPGC.metagene_heatmap.pdf
+    '''
+    def _findinputs():
+        '''Returns a dictonary where the key = group and value = boolean
+        representing whether a group has input, or does not have input'''
+        sample2input = config['project']['peaks']['inputs']
+        allgroups = config['project']['groups']
+        group2input = {}
+        for group, sampleslist in allgroups.items():
+            sample = sampleslist[0] # only need to check one sample
+            if sample2input[sample] != 'NA' and sample2input[sample] != '':
+                group2input[group] = True
+            else:
+                group2input[group] = False
+        return group2input
+
+    groups2input = _findinputs()
+    dtoolgroups, dtoolext, dtoolinorm = [], [], []
+    inputnorm = ["", ".inputnorm"]
+    extensions = ["sorted.normalized", "sorted.Q5DD.normalized"] # Change from normalized to RPGC
+    for group in groupslist:
+        if groups2input[group]:
+            dtoolgroups.extend([group]*3)
+            dtoolext.extend([extensions[1], extensions[1], extensions[0]])
+            dtoolinorm.extend([inputnorm[1], inputnorm[0],inputnorm[0]])
+        else:
+            dtoolgroups.extend([group] * 2)
+            dtoolext.extend([extensions[1], extensions[0]])
+            dtoolinorm.extend([inputnorm[0], inputnorm[0]])
+    return dtoolgroups, dtoolext, dtoolinorm
+
 se=""
 pe=""
+
 workpath = config['project']['workpath']
 
 if config['project']['nends'] == 2 :
@@ -20,14 +62,13 @@ if config['project']['nends'] == 2 :
 elif config['project']['nends'] == 1 :
     se="yes"
 
-# extensions = [ "sorted.normalized", "sorted.Q5.normalized", "sorted.DD.normalized", "sorted.Q5DD.normalized"]
 extensions = [ "sorted.normalized", "sorted.Q5DD.normalized"]
 extensions2 = list(map(lambda x:re.sub(".normalized","",x),extensions))
 
 chip2input = config['project']['peaks']['inputs']
 sampleswinput = []
 for input in chip2input:
-	if chip2input[input] != 'NA':
+	if chip2input[input] != 'NA' and chip2input[input] != '':
 		sampleswinput.append(input)
 
 if len(sampleswinput) == 0:
@@ -44,12 +85,13 @@ for group, chips in groupdata.items() :
         if chip in samples:
             tmp.append(chip)
             input = chip2input[chip]
-            if input != 'NA':
+            if input != 'NA' and input != '':
                 tmp.append(input)
     if len(tmp) != 0:
         groupdatawinput[group]=set(tmp)
 
 groups = list(groupdatawinput.keys())
+deepgroups, deepexts, deepnorm = outputfiles(groups)
 
 trim_dir='trim'
 kraken_dir='kraken'
@@ -62,7 +104,8 @@ for d in [trim_dir,kraken_dir,bam_dir,bw_dir,deeptools_dir,preseq_dir]:
 	if not os.path.exists(join(workpath,d)):
 		os.mkdir(join(workpath,d))
 
-
+# Checking to see if output filenames are files are being generated correctly
+print("DEEPTOOLS OUTPUT FILESNAMES\n",[file.split('/')[-1] for file in expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"), zip, group=deepgroups,ext=deepexts,norm=deepnorm)])
 #print(samples)
 
 if se == 'yes' :
@@ -98,12 +141,12 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
-	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
-	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
-            expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
-            expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
-            expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
-            expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
+            expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
+            expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
+            expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"), zip, group=deepgroups,ext=deepexts,norm=deepnorm),
+            expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}{norm}.pdf"), zip, group=deepgroups,ext=deepexts,norm=deepnorm),
+            expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}{norm}.pdf"), zip, group=deepgroups,ext=deepexts,norm=deepnorm),
+            expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}{norm}.pdf"), zip, group=deepgroups,ext=deepexts,norm=deepnorm),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -262,20 +305,18 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
        	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
-	    expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
-            expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
-            expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
-            expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
-            expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}{norm}.pdf"),group=groups,ext=extensions,norm=inputnorm),
-	    # preseq
+            expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
+            expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"), zip, group=groups,ext=extensions,norm=inputnorm),
+            expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}{norm}.pdf"), zip, group=groups,ext=extensions,norm=inputnorm),
+            expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}{norm}.pdf"), zip, group=groups,ext=extensions,norm=inputnorm),
+            expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}{norm}.pdf"), zip, group=groups,ext=extensions,norm=inputnorm),
+            # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
             expand(join(workpath,"QC","{name}.nrf"), name=samples),
             expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
             join(workpath,"QCTable.txt"),
-#         shell: """
-# rm -rf {workpath}/*.bam.cnt
-# """
+
     
     rule trim_pe: # trim, remove PolyX and remove BL reads
         input:
@@ -509,12 +550,13 @@ rule deeptools_prep:
     input:
         bw=expand(join(workpath,bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
         bam=expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
-	bw2=expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw"),name=sampleswinput)
+        bw2=expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw"),name=sampleswinput)
     output:
-        dynamic(temp(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions))),
-        dynamic(temp(expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2))),
-        dynamic(temp(expand(join(workpath,bw_dir,"{group}.{ext}.deeptools_prep"),group=groups,ext=extensions))),
-        dynamic(temp(expand(join(workpath,bw_dir,"{group}.{ext}.inputnorm.deeptools_prep"),group=groups,ext=extensions))),
+        temp(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions)),
+        temp(expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2)),
+        #temp(expand(join(workpath,bw_dir,"{group}.{ext}.deeptools_prep"),group=groups,ext=extensions)),
+        #temp(expand(join(workpath,bw_dir,"{group}.{ext}.inputnorm.deeptools_prep"),group=groups,ext=extensions)),
+        expand(join(workpath,bw_dir,"{group2}.{ext2}{norm2}.deeptools_prep"), zip, group2=deepgroups,ext2=deepexts,norm2=deepnorm),
     params:
         rname="pl:deeptools_prep",
         batch="--mem=10g --time=1:00:00",
@@ -609,15 +651,15 @@ rule deeptools_fingerprint:
 
 rule deeptools_genes:
     input:
-        dynamic(join(workpath,bw_dir,"{group}.{ext}{norm}.deeptools_prep"))
+        join(workpath,bw_dir,"{group}.{ext}.deeptools_prep")
     output:
-        metaheat=join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"),
-        TSSheat=join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}{norm}.pdf"),
-        metaline=join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}{norm}.pdf"),
-        TSSline=join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}{norm}.pdf"),
-        metamat=temp(join(workpath,deeptools_dir,"{group}.metagene.{ext}{norm}.mat.gz")),
-        TSSmat=temp(join(workpath,deeptools_dir,"{group}.TSS.{ext}{norm}.mat.gz")),
-        bed=temp(join(workpath,deeptools_dir,"{group}.geneinfo.{ext}{norm}.bed")),
+        metaheat=join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}.pdf"),
+        TSSheat=join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}.pdf"),
+        metaline=join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"),
+        TSSline=join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"),
+        metamat=temp(join(workpath,deeptools_dir,"{group}.metagene.{ext}.mat.gz")),
+        TSSmat=temp(join(workpath,deeptools_dir,"{group}.TSS.{ext}.mat.gz")),
+        bed=temp(join(workpath,deeptools_dir,"{group}.geneinfo.{ext}.bed")),
     params:
         rname="pl:deeptools_genes",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
@@ -629,7 +671,7 @@ rule deeptools_genes:
         ext=listfile[0][0]
         bws=listfile[1]
         labels=listfile[2]
-	cmd1="awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' "+params.prebed+" > "+output.bed
+        cmd1="awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' "+params.prebed+" > "+output.bed
         cmd2="computeMatrix scale-regions -S "+" ".join(bws)+" -R "+output.bed+" -p 4 --upstream 1000 --regionBodyLength 2000 --downstream 1000 --skipZeros -o "+output.metamat+" --samplesLabel "+" ".join(labels)
         cmd3="computeMatrix reference-point -S "+" ".join(bws)+" -R "+output.bed+" -p 4 --referencePoint TSS --upstream 3000 --downstream 3000 --skipZeros -o "+output.TSSmat+" --samplesLabel "+" ".join(labels)
         cmd4="plotHeatmap -m "+output.metamat+" -out "+output.metaheat+" --colorMap 'PuOr_r' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
@@ -833,4 +875,5 @@ rule multiqc:
 module load {params.multiqc}
 cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt -d ../
 """
+
 
