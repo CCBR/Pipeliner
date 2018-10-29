@@ -40,7 +40,7 @@ def outputfiles(groupslist):
     groups2input = _findinputs()
     dtoolgroups, dtoolext, dtoolinorm = [], [], []
     inputnorm = ["", ".inputnorm"]
-    extensions = ["sorted.normalized", "sorted.Q5DD.normalized"] # Change from normalized to RPGC
+    extensions = ["sorted.RPGC", "sorted.Q5DD.RPGC"] # Change from normalized to RPGC
     for group in groupslist:
         if groups2input[group]:
             dtoolgroups.extend([group]*3)
@@ -62,8 +62,8 @@ if config['project']['nends'] == 2 :
 elif config['project']['nends'] == 1 :
     se="yes"
 
-extensions = [ "sorted.normalized", "sorted.Q5DD.normalized"]
-extensions2 = list(map(lambda x:re.sub(".normalized","",x),extensions))
+extensions = [ "sorted.RPGC", "sorted.Q5DD.RPGC"]
+extensions2 = list(map(lambda x:re.sub(".RPGC","",x),extensions))
 
 chip2input = config['project']['peaks']['inputs']
 sampleswinput = []
@@ -505,8 +505,8 @@ rule bam2bw:
         ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
         ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
     output:
-        outbw1=join(workpath,bw_dir,"{name}.sorted.normalized.bw"),
-        outbw4=join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.bw"),
+        outbw1=join(workpath,bw_dir,"{name}.sorted.RPGC.bw"),
+        outbw4=join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.bw"),
     params:
         rname="pl:bam2bw",
         batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
@@ -548,12 +548,10 @@ rule deeptools_prep:
     input:
         bw=expand(join(workpath,bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
         bam=expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
-        bw2=expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw"),name=sampleswinput)
+        bw2=expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.inputnorm.bw"),name=sampleswinput)
     output:
-        temp(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions)),
-        temp(expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2)),
-        #temp(expand(join(workpath,bw_dir,"{group}.{ext}.deeptools_prep"),group=groups,ext=extensions)),
-        #temp(expand(join(workpath,bw_dir,"{group}.{ext}.inputnorm.deeptools_prep"),group=groups,ext=extensions)),
+        expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions),
+        expand(join(workpath,bam_dir,"{ext}.deeptools_prep"),ext=extensions2),
         expand(join(workpath,bw_dir,"{group2}.{ext2}{norm2}.deeptools_prep"), zip, group2=deepgroups,ext2=deepexts,norm2=deepnorm),
     params:
         rname="pl:deeptools_prep",
@@ -561,15 +559,15 @@ rule deeptools_prep:
     threads: 1
     run:
         for x in extensions2:
-            bws=list(filter(lambda z:z.endswith(x+".normalized.bw"),input.bw))
+            bws=list(filter(lambda z:z.endswith(x+".RPGC.bw"),input.bw))
             bams=list(filter(lambda z:z.endswith(x+".bam"),input.bam))
-            labels=list(map(lambda z:re.sub("."+x+".normalized.bw","",z),
+            labels=list(map(lambda z:re.sub("."+x+".RPGC.bw","",z),
                 list(map(lambda z:os.path.basename(z),bws))))
-            bws2=list(filter(lambda z:z.endswith(x+".normalized.inputnorm.bw"),input.bw2))
-            labels2=list(map(lambda z:re.sub("."+x+".normalized.inputnorm.bw","",z),
+            bws2=list(filter(lambda z:z.endswith(x+".RPGC.inputnorm.bw"),input.bw2))
+            labels2=list(map(lambda z:re.sub("."+x+".RPGC.inputnorm.bw","",z),
                 list(map(lambda z:os.path.basename(z),bws2))))
-            o=open(join(workpath,bw_dir,x+".normalized.deeptools_prep"),'w')
-            o.write("%s\n"%(x+".normalized"))
+            o=open(join(workpath,bw_dir,x+".RPGC.deeptools_prep"),'w')
+            o.write("%s\n"%(x+".RPGC"))
             o.write("%s\n"%(" ".join(bws)))
             o.write("%s\n"%(" ".join(labels)))
             o.close()
@@ -582,8 +580,8 @@ rule deeptools_prep:
                 iter = [ i for i in range(len(labels)) if labels[i] in groupdatawinput[group] ]
                 bws3 = [ bws[i] for i in iter ]
                 labels3 = [ labels[i] for i in iter ]
-                o3=open(join(workpath,bw_dir,group+"."+x+".normalized.deeptools_prep"),'w')
-                o3.write("%s\n"%(x+".normalized"))
+                o3=open(join(workpath,bw_dir,group+"."+x+".RPGC.deeptools_prep"),'w')
+                o3.write("%s\n"%(x+".RPGC"))
                 o3.write("%s\n"%(" ".join(bws3)))
                 o3.write("%s\n"%(" ".join(labels3)))
                 o3.close()
@@ -591,8 +589,8 @@ rule deeptools_prep:
                 bws4 = [ bws2[i] for i in iter2 ]
                 labels4 = [ labels2[i] for i in iter2 ]
                 if len(bws4) > 0:
-                    o4=open(join(workpath,bw_dir,group+"."+x+".normalized.inputnorm.deeptools_prep"),'w')
-                    o4.write("%s\n"%(x+".normalized.inputnorm"))
+                    o4=open(join(workpath,bw_dir,group+"."+x+".RPGC.inputnorm.deeptools_prep"),'w')
+                    o4.write("%s\n"%(x+".RPGC.inputnorm"))
                     o4.write("%s\n"%(" ".join(bws4)))
                     o4.write("%s\n"%(" ".join(labels4)))
                     o4.close()
@@ -686,10 +684,10 @@ rule deeptools_genes:
 
 rule inputnorm:
     input:
-        chip = join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.bw"),
-        ctrl = lambda w : join(workpath,bw_dir,chip2input[w.name] + ".sorted.Q5DD.normalized.bw")
+        chip = join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.bw"),
+        ctrl = lambda w : join(workpath,bw_dir,chip2input[w.name] + ".sorted.Q5DD.RPGC.bw")
     output:
-        join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw")
+        join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.inputnorm.bw")
     params:
         rname="pl:inputnorm",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
