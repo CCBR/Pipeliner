@@ -133,7 +133,7 @@ if se == 'yes' :
             # BWA --> BigWig
             expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions),
             # Input Normalization
-            expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw",),name=sampleswinput), 
+            expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.inputnorm.bw",),name=sampleswinput), 
             # PhantomPeakQualTools
             expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
             expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
@@ -294,7 +294,7 @@ if pe == 'yes':
             # BWA --> BigWig
             expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions),
             # Input Normalization
-            expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.normalized.inputnorm.bw",),name=sampleswinput),
+            expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.inputnorm.bw",),name=sampleswinput),
             # PhantomPeakQualTools
              expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
              expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
