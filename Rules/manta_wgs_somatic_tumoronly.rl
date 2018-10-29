@@ -1,5 +1,6 @@
 rule manta_wgs_somatic_tumoronly:
      input:  tumor=lambda wildcards: config['project']['units'][wildcards.x]+".recal.bam",
+             bai=lambda wildcards: config['project']['units'][wildcards.x]+".recal.bam.bai",
      output: vcf="manta_out/{x}/results/variants/candidateSV.vcf.gz",
      params: tumorsample=lambda wildcards: config['project']['units'][wildcards.x],genome=config['references'][pfamily]['GENOME'],rname="pl:manta"
      threads: 8

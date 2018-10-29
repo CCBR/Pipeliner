@@ -1,5 +1,5 @@
 rule manta_wgs:
-     input: expand("{x}.recal.bam", x=samples)
+     input: expand("{x}.recal.bam", x=samples),expand("{x}.recal.bam.bai", x=samples)
      output: vcf="manta_out/results/variants/diploidSV.vcf.gz",
              dir="manta_out"
      params: gres="lscratch:100",gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:manta"
