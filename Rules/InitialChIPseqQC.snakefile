@@ -153,9 +153,7 @@ if se == 'yes' :
             expand(join(workpath,"QC","{name}.nrf"), name=samples),
             expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
             join(workpath,"QCTable.txt"),
-#         shell: """
-# rm -rf {workpath}/*bam.cnt
-#             """
+
     
     rule trim_se: # actually trim, filter polyX and remove black listed reads
         input:
@@ -306,10 +304,10 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
        	    expand(join(workpath,deeptools_dir,"fingerprint.{ext}.pdf"),ext=extensions2),
             expand(join(workpath,deeptools_dir,"fingerprint.metrics.{ext}.tsv"),ext=extensions2),
-            expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"), zip, group=groups,ext=extensions,norm=inputnorm),
-            expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}{norm}.pdf"), zip, group=groups,ext=extensions,norm=inputnorm),
-            expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}{norm}.pdf"), zip, group=groups,ext=extensions,norm=inputnorm),
-            expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}{norm}.pdf"), zip, group=groups,ext=extensions,norm=inputnorm),
+            expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}{norm}.pdf"), zip, group=deepgroups,ext=deepexts,norm=deepnorm),
+            expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}{norm}.pdf"), zip, group=deepgroups,ext=deepexts,norm=deepnorm),
+            expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}{norm}.pdf"), zip, group=deepgroups,ext=deepexts,norm=deepnorm),
+            expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}{norm}.pdf"), zip, group=deepgroups,ext=deepexts,norm=deepnorm),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
