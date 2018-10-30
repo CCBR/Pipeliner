@@ -3,7 +3,7 @@
     {
         "mem" : "48g",
         "time" : "96:00:00",
-        "partition" : "ccr,norm",
+        "partition" : "norm",
         "threads": "4",
         "gres":"lscratch:256"
     },
