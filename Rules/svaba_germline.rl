@@ -1,5 +1,5 @@
 rule svaba_germline:
-     input: expand("{x}.recal.bam", x=samples)
+     input: expand("{x}.recal.bam", x=samples),expand("{x}.recal.bam.bai", x=samples)
      output: config['project']['workpath']+"/svaba_out/svaba.log"
      params: genome=config['references'][pfamily]['CNVKITGENOME'],rname="svaba"
      threads: 32

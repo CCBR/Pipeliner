@@ -1,7 +1,9 @@
 rule strelka:
     input: normal=lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam",
            tumor=lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam",
-           targets=ancient("exome_targets.bed")
+           targets=ancient("exome_targets.bed"),
+           lambda wildcards: config['project']['pairs'][wildcards.x][0]+".recal.bam.bai",
+           lambda wildcards: config['project']['pairs'][wildcards.x][1]+".recal.bam.bai"
     output: vcf=temp(config['project']['workpath']+"/strelka_out/{x}.vcf"),
             vcffiltered=temp(config['project']['workpath']+"/strelka_out/{x}_filtered.vcf"),
             final=config['project']['workpath']+"/strelka_out/{x}_FINAL.vcf",
