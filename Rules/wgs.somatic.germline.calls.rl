@@ -1,5 +1,6 @@
 rule somatic_wgs_germline_calls:
-     input:  bams=lambda wildcards: config['project']['units'][wildcards.x]+".recal.bam"
+     input:  bams=lambda wildcards: config['project']['units'][wildcards.x]+".recal.bam",
+             bai=lambda wildcards: config['project']['units'][wildcards.x]+".recal.bam.bai"
      output: "{x}.g.vcf"
      params: genome=config['references'][pfamily]['GENOME'],regions="exome_targets.bed",knowns=config['references'][pfamily]['KNOWNVCF2'],snpsites=config['references'][pfamily]['SNPSITES'],gatk=config['bin'][pfamily]['GATK'],rname="pl:germcalls"
      threads: 4
