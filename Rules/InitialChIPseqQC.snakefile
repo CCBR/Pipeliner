@@ -66,6 +66,8 @@ extensions = [ "sorted.RPGC", "sorted.Q5DD.RPGC"]
 extensions2 = list(map(lambda x:re.sub(".RPGC","",x),extensions))
 
 chip2input = config['project']['peaks']['inputs']
+uniq_inputs = list(sorted(set([v for v in chip2input.values() if v])))
+
 sampleswinput = []
 for input in chip2input:
 	if chip2input[input] != 'NA' and chip2input[input] != '':
