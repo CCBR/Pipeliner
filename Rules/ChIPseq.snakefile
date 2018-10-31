@@ -63,7 +63,7 @@ pipehome = config['project']['pipehome']
 
 print(pipehome)
 
-include: join(pipehome, "Rules", "InitialChIPseqQC.snakefile")
+#include: join(pipehome, "Rules", "InitialChIPseqQC.snakefile")
 
 bam_suffix = '.sorted.bam'
 #####################
