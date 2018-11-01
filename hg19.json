@@ -204,7 +204,6 @@
     "SNPEFF_GENOME": "GRCh37.75",
 #    "SELECTDB": "SIFT_score,SIFT_pred,Polyphen2_HVAR_score,Polyphen2_HVAR_pred,LRT_score,LRT_pred,GERP++_RS,MutationAssessor_score,MutationAssessor_pred,1000Gp1_AF,1000Gp1_EUR_AF,ESP6500_EA_AF,ESP6500_AA_AF",
 #    "REGULOMEDB": "/data/CCBR_Pipeliner/db/PipeDB/lib/snpEff_db/RegulomeDB.bed",
-#>>>>>>> FETCH_HEAD
     },
     "rnaseqvargerm": {
     "GENOMEFILE": "/fdb/GENCODE/Gencode_human/release_19/GRCh37.p13.genome.fa",
@@ -333,11 +332,8 @@
             "FASTAWITHADAPTERSETD": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",
             "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
             "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/ref.fa",
-<<<<<<< HEAD
 	    "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/geneinfo.bed",
-=======
             "GENOMECHR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/Chromsomes/",
->>>>>>> FETCH_HEAD
             "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
             "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/indexes/hg19.fa.sizes",
         },
