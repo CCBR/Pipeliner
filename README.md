@@ -1,7 +1,7 @@
-# Test
-##PLEASE CLICK [HERE](https://github.com/CCBR/Pipeliner/wiki) TO VIEW MORE INFORMATION ABOUT EACH OF OUR PIPELINES 
+# Pipeliner
+## Please check out our [WIKI](https://github.com/CCBR/Pipeliner/wiki) for more detailed information about each of our pipelines 
 
-#Pipeliner
+## Welcome to Pipeliner's GitHub Page
 
 ## Introduction
 
