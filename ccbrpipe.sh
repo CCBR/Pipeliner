@@ -3,6 +3,7 @@
 #. /usr/local/Modules/default/init/bash
 
 module load python/3.5
+module load snakemake/5.1.3
 module load graphviz
 
 export pipehome=$(dirname $0)
