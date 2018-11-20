@@ -160,11 +160,13 @@ class PipelineFrame( Frame ) :
         label_found=0
         label_error=0
         realfilenames=[]
+        self.renamedfiles = []
         labels=[]
         try:
             labelfile=join(self.datapath.get(),"labels.txt")
             if Path(labelfile).is_file():
                 label_found=1
+                self.labelsfile = 1
                 l=open(labelfile)
                 llines=list(map(lambda x:x.strip().split("\t"),l.readlines()))
                 llineslen=list(set(list(map(lambda x:len(x),llines))))
@@ -179,6 +181,7 @@ class PipelineFrame( Frame ) :
                 for realfilename,labelname in llines:
                     realfilenames.append(realfilename)
                     labels.append(labelname)
+                    self.renamedfiles.append(labelname)
                     namecheckstr=namecheck(labelname)
                     if namecheckstr != "":
                         showerror("Label ERROR",namecheckstr)

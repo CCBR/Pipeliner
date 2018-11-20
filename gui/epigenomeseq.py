@@ -216,11 +216,11 @@ class ChIPSeqFrame( PipelineFrame ) :
         
             
     def popup_window_peakinfo( self, text, filename ) :
-        
+        #print("DEBUGGING", self.datafiles)
         NA = 'N/A'
-        selections = [fn.split('.R1.fastq.gz')[0] 
-                     for fn in self.datafiles if fn.endswith( ".R1.fastq.gz" )]
-        
+        if self.labelsfile:
+            self.datafiles = self.renamedfiles
+        selections = [fn.split('.R1.fastq.gz')[0] for fn in self.datafiles if fn.endswith( ".R1.fastq.gz" )]
         ################################
         #check availablity of the files before moving on!
         if not selections :
