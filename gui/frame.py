@@ -629,6 +629,12 @@ class PipelineFrame( Frame ) :
                         cmd="for f in `ls {0}/*[._]vcf`;do ln -s $f {1};done".format(gvcfspath,self.workpath.get())
                         #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
                         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                elif pl == 'ChIPseq':
+                    if os.path.isfile(os.path.join(data, "peakcall.tab")):
+                        print("Found 'peakcall.tab': Symlinking file!")
+                        cmd="cp {0}peakcall.tab {1}".format(data, self.workpath.get())
+                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+
             else:
                 cmd="for f in `ls {0}*[._]{1}`;do ln -s $f {2};done".format(data,FT, self.workpath.get())
                 p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
