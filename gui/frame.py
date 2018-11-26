@@ -162,11 +162,12 @@ class PipelineFrame( Frame ) :
         realfilenames=[]
         self.renamedfiles = []
         labels=[]
+        self.labelsfile = False
         try:
             labelfile=join(self.datapath.get(),"labels.txt")
             if Path(labelfile).is_file():
                 label_found=1
-                self.labelsfile = 1
+                self.labelsfile = True
                 l=open(labelfile)
                 llines=list(map(lambda x:x.strip().split("\t"),l.readlines()))
                 llineslen=list(set(list(map(lambda x:len(x),llines))))
