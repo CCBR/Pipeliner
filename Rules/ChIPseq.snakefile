@@ -3,19 +3,15 @@ from os.path import join, abspath, basename
 from os import environ as env
 from io import StringIO
 from tempfile import TemporaryFile
-
-from pysam import Samfile, FastaFile
 from collections import Counter
 
 # pipehome = os.getenv('pipehome', '/data/CCBR/projects/TechDev/Pipeliner')
 #pipehome = '/home/kopardevn/Pipeliner/'
 bam_dir='bam'
 
-def normalize_bam_file_chromosomes(
-    bamfns,
-    obamfns=[],
-    suffix='.common_chrom.bam' ) :
-    
+def normalize_bam_file_chromosomes(bamfns, obamfns=[], suffix='.common_chrom.bam'):
+    from pysam import Samfile, FastaFile
+
     counts = []
     for bamfn1 in bamfns :
         bam1 = Samfile(bamfn1)
