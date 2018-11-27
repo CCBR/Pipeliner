@@ -13,10 +13,10 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/mutect_out/mutect_maf_summary.pdf",
             config['project']['workpath']+"/strelka_out/strelka_maf_summary.pdf",
 #            config['project']['workpath']+"/mutect_variants_alview.input",
-            config['project']['workpath']+"/strelka_out",
-            config['project']['workpath']+"/mutect2_out",
-            config['project']['workpath']+"/cnvkit_out",
-            config['project']['workpath']+"/mutect_out",
+#            config['project']['workpath']+"/strelka_out",
+#            config['project']['workpath']+"/mutect2_out",
+#            config['project']['workpath']+"/cnvkit_out",
+#            config['project']['workpath']+"/mutect_out",
             expand(config['project']['workpath']+"/cnvkit_out/{p}_calls.cns", p=pairs),
             expand(config['project']['workpath']+"/cnvkit_out/{p}_gainloss.tsv", p=pairs),                        
             dynamic(expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs)),
@@ -34,7 +34,8 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/mutect_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/exome_targets.bed",
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
-            "admixture_out/admixture_table.tsv"
+            "admixture_out/admixture_table.tsv",
+            "QC/decoy"
     output:
     params: rname="final"
     shell:  """
@@ -56,10 +57,10 @@ elif config['project']['annotation'] == "hg38":
             config['project']['workpath']+"/mutect_out/mutect_maf_summary.pdf",
             config['project']['workpath']+"/strelka_out/strelka_maf_summary.pdf",
 #            config['project']['workpath']+"/mutect_variants_alview.input",
-            config['project']['workpath']+"/strelka_out",
-            config['project']['workpath']+"/mutect2_out",
-            config['project']['workpath']+"/cnvkit_out",
-            config['project']['workpath']+"/mutect_out",
+#            config['project']['workpath']+"/strelka_out",
+#            config['project']['workpath']+"/mutect2_out",
+#            config['project']['workpath']+"/cnvkit_out",
+#            config['project']['workpath']+"/mutect_out",
             expand(config['project']['workpath']+"/cnvkit_out/{p}_calls.cns", p=pairs),
             expand(config['project']['workpath']+"/cnvkit_out/{p}_gainloss.tsv", p=pairs),                        
             dynamic(expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs)),
@@ -77,7 +78,8 @@ elif config['project']['annotation'] == "hg38":
             config['project']['workpath']+"/mutect_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/exome_targets.bed",
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
-            "admixture_out/admixture_table.tsv"
+            "admixture_out/admixture_table.tsv",
+            "QC/decoy"
     output:
     params: rname="final"
     shell:  """
@@ -96,10 +98,10 @@ elif config['project']['annotation'] == "mm10":
             expand(config['project']['workpath']+"/strelka_out/oncotator_out/{p}"+".maf",p=pairs),
             expand(config['project']['workpath']+"/mutect_out/oncotator_out/{p}"+".maf",p=pairs),
 #            config['project']['workpath']+"/mutect_variants_alview.input",
-            config['project']['workpath']+"/strelka_out",
-            config['project']['workpath']+"/mutect2_out",
-            config['project']['workpath']+"/cnvkit_out",
-            config['project']['workpath']+"/mutect_out",
+#            config['project']['workpath']+"/strelka_out",
+#            config['project']['workpath']+"/mutect2_out",
+#            config['project']['workpath']+"/cnvkit_out",
+#            config['project']['workpath']+"/mutect_out",
             expand(config['project']['workpath']+"/cnvkit_out/{p}_calls.cns", p=pairs),
             expand(config['project']['workpath']+"/cnvkit_out/{p}_gainloss.tsv", p=pairs),                        
             dynamic(expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs)),
@@ -117,7 +119,8 @@ elif config['project']['annotation'] == "mm10":
             config['project']['workpath']+"/mutect_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/exome_targets.bed",
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
-            "admixture_out/admixture_table.tsv"
+            "admixture_out/admixture_table.tsv",
+            "QC/decoy"
     output:
     params: rname="final"
     shell:  """
