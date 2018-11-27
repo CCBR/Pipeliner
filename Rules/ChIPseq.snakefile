@@ -3,13 +3,12 @@ from os.path import join, abspath, basename
 from os import environ as env
 from io import StringIO
 from tempfile import TemporaryFile
-
-from pysam import Samfile, FastaFile
 from collections import Counter
 
 bam_dir='bam'
 
 def normalize_bam_file_chromosomes(bamfns, obamfns=[], suffix='.common_chrom.bam'):
+    from pysam import Samfile, FastaFile
     counts = []
     for bamfn1 in bamfns :
         bam1 = Samfile(bamfn1)
@@ -55,7 +54,7 @@ def normalize_bam_file_chromosomes(bamfns, obamfns=[], suffix='.common_chrom.bam
 
 configfile: "run.json"
 
-    
+
 workpath = config['project']['workpath']    
 filetype = config['project']['filetype']
 readtype = config['project']['readtype']
