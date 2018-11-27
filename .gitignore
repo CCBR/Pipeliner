@@ -1,0 +1,5 @@
+**/.*
+!.gitignore
+**/*~
+**/*.bak
+**/*.DS_Store
