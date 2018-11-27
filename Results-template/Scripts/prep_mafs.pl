@@ -4,7 +4,10 @@ use List::Util 'shuffle';
 
 #INPUT
 
-my $finalmaf = $ARGV[1] . '_out/oncotator_out/' . $ARGV[1] . '_merged.maf'; #to fix...
+#my $mergedmaf = $ARGV[1] . '_out/oncotator_out/' . $ARGV[1] . '_merged.maf'; #to fix...
+#open C, ">$mergedmaf";
+
+my $finalmaf = $ARGV[1] . '_out/oncotator_out/final_filtered.maf'; #to fix...
 open C, ">$finalmaf";
 
 my $maffile = $ARGV[0]; #to fix...
@@ -36,15 +39,59 @@ while (<G>){
 		}
 	}
 	elsif ($line[0] !~ m'#') {
-		print C "$_\t";
-		if ($line[39] != 0){
-		$calc=($line[41]/$line[39]);
-		print C "$calc\n";
+		if ($line[44] ne '-') {
+		if ($line[44] < 2) {
+		if (($line[41] > 2) && ($line[39] > 9)) {
+			if ($line[123] ne '-') {
+				if ($line[123] < 0.001) {
+					print C "$_\t";
+					if ($line[39] != 0){
+						$calc=($line[41]/$line[39]);
+						print C "$calc\n";
+					}
+					else {
+						print "0\n";		
+					}
+				}
+			}
+			else {
+				print C "$_\t";
+				if ($line[39] != 0){
+					$calc=($line[41]/$line[39]);
+					print C "$calc\n";
+				}
+				else {
+					print "0\n";		
+				}
+			}
+		}
+		}
 		}
 		else {
-		print "0\n";		
-	}
+			if (($line[41] > 2) && ($line[39] > 9)) {
+			if ($line[123] ne '-') {
+				if ($line[123] < 0.001) {
+					print C "$_\t";
+					if ($line[39] != 0){
+						$calc=($line[41]/$line[39]);
+						print C "$calc\n";
+					}
+					else {
+						print "0\n";		
+					}
+				}
+			}
+			else {
+				print C "$_\t";
+				if ($line[39] != 0){
+					$calc=($line[41]/$line[39]);
+					print C "$calc\n";
+				}
+				else {
+					print "0\n";		
+				}
+			}
+		}
 	}
 }
-
-close C;
+}
