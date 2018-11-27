@@ -1,5 +1,0 @@
-.ll 6.4i
-.TH RNASeq Trim
-.SH Trim
-.TP
-.PP If set, the inut reads are trimmed.  Adapter sequences and low-quality seuences are removed from the ends.

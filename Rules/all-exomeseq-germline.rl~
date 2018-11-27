@@ -1,8 +1,0 @@
-rule all_exomeseq_germline:
-    input:  "combined.gvcf",
-#            expand("all.{m}.recal",m=["snp","indel"]),
-#            expand("QC/{s}.qualimapReport.pdf",s=samples),
-#            expand("QC/{s}.flags",s=samples),
-#            expand("QC/{s}.dedup.flags",s=samples),
-            expand("all.{type}.dbnsfp.vcf", type=["snp","indel"])
-    output: 
