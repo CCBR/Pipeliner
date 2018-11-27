@@ -1,5 +1,0 @@
-rule all_exomeseq_somatic:
-    input:  expand("{s}"+".recal.bam",s=samples),
-            expand("{s}.vcf",s=pairs),
-            expand("{s}.stats.out",s=pairs)
-    output:

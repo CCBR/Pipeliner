@@ -1,9 +1,0 @@
-rule avia:
-    input: "combined.gvcf"
-    output:"full_annot.txt.zip"
-    params: batch ="-l nodes=1:gpfs -q ccr"
-    shell: """
-         perl avia.pl {combined.gvcf}
-
-           """
-

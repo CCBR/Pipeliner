@@ -174,25 +174,14 @@ module load {params.parallelver};
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
 cd /lscratch/$SLURM_JOBID
 sample=`echo {input.infq}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
-zcat {input.infq} |split -l 4000000 -d -a 4 - ${{sample}}.R1.
-ls ${{sample}}.R1.0???|sort > ${{sample}}.tmp1
-while read a;do
-mv $a ${{a}}.fastq
-done < ${{sample}}.tmp1
-while read f1;do
-echo "cutadapt --nextseq-trim=2 --trim-n -m {params.minlen} -b file:{params.adaptersfa} -o ${{f1}}.cutadapt ${{f1}}.fastq";done < ${{sample}}.tmp1 > do_cutadapt_${{sample}}
-parallel -j {threads} < do_cutadapt_${{sample}}
-rm -f ${{sample}}.outr1.fastq
-while read f1;do
-cat ${{f1}}.cutadapt >> ${{sample}}.outr1.fastq;
-done < ${{sample}}.tmp1
+cutadapt --nextseq-trim=2 --trim-n -n 5 -O 5 -q 10,10 -m {params.minlen} -b file:{params.adaptersfa} -j {threads} -o ${{sample}}.cutadapt.fastq {input.infq}
 module load {params.bwaver};
 module load {params.samtoolsver};
 module load {params.picardver};
-bwa mem -t {threads} {params.blacklistbwaindex} ${{sample}}.outr1.fastq | samtools view -@{threads} -f4 -b -o ${{sample}}.bam
-java -Xmx{params.javaram} -jar $PICARDJARPATH/picard.jar SamToFastq VALIDATION_STRINGENCY=SILENT INPUT=${{sample}}.bam FASTQ=${{sample}}.outr1.noBL.fastq
-pigz -p 16 ${{sample}}.outr1.noBL.fastq;
-mv ${{sample}}.outr1.noBL.fastq.gz {output.outfq};
+bwa mem -t {threads} {params.blacklistbwaindex} ${{sample}}.cutadapt.fastq | samtools view -@{threads} -f4 -b -o ${{sample}}.bam
+java -Xmx{params.javaram} -jar $PICARDJARPATH/picard.jar SamToFastq VALIDATION_STRINGENCY=SILENT INPUT=${{sample}}.bam FASTQ=${{sample}}.cutadapt.noBL.fastq
+pigz -p 16 ${{sample}}.cutadapt.noBL.fastq;
+mv ${{sample}}.cutadapt.noBL.fastq.gz {output.outfq};
             """
 
                
@@ -283,31 +272,6 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
                 
 
-    rule ppqt:
-        input:
-            bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
-            bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-        output:
-            ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
-            pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
-            ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
-            pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
-        params:
-            rname="pl:ppqt",
-            batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
-            samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-            rver=config['bin'][pfamily]['tool_versions']['RVER'],
-        shell:
-            """
-            module load {params.samtoolsver};
-            module load {params.rver};
-            Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
-            Rscript Scripts/phantompeakqualtools/run_spp.R \
-            -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
-            """
-
-
     rule shiftstats:
         input: 
             if1 = "{name}.sorted.bam",
@@ -342,6 +306,31 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
             #samtools view -f 0x2 {input.file1} | wc -l >>{output.outstar2}; 
             #samtools view {input.file1} | grep -w -c NH:i:1  >>{output.outstar2}
             """
+
+    rule ppqt:
+	    input:
+		    bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
+		    bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+	    output:
+		    ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
+		    pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
+		    ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+		    pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
+	    params:
+		    rname="pl:ppqt",
+		    batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
+		    samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
+		    rver=config['bin'][pfamily]['tool_versions']['RVER'],
+	    shell:
+		    """
+module load {params.samtoolsver};
+module load {params.rver};
+Rscript Scripts/phantompeakqualtools/run_spp.R \
+-c={input.bam1} -savp={output.pdf1} -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
+Rscript Scripts/phantompeakqualtools/run_spp.R \
+-c={input.bam4} -savp={output.pdf4} -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
+		"""
+
             
 if pe == 'yes':
     rule InitialChIPseqQC:
@@ -368,8 +357,8 @@ if pe == 'yes':
             # BWA --> BigWig
             expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions), 
             # PhantomPeakQualTools
-            # expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
-            # expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
+            expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
+            expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
             # ngs.plot
             # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tss.max.heatmap.pdf"),name=samples,ext=extensions2),
             # expand(join(workpath,ngsplot_dir,"{name}.{ext}.tss.km.heatmap.pdf"),name=samples,ext=extensions2),
@@ -436,39 +425,21 @@ module load {params.parallelver};
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
 cd /lscratch/$SLURM_JOBID
 sample=`echo {input.file1}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
-zcat {input.file1} |split -l 4000000 -d -a 4 - ${{sample}}.R1.
-zcat {input.file2} |split -l 4000000 -d -a 4 - ${{sample}}.R2.
-ls ${{sample}}.R1.0???|sort > ${{sample}}.tmp1
-ls ${{sample}}.R2.0???|sort > ${{sample}}.tmp2
-while read a;do 
-mv $a ${{a}}.fastq
-done < ${{sample}}.tmp1
-while read a;do 
-mv $a ${{a}}.fastq
-done < ${{sample}}.tmp2
-paste ${{sample}}.tmp1 ${{sample}}.tmp2 > ${{sample}}.pairs
-while read f1 f2;do
-echo "cutadapt --nextseq-trim=2 --trim-n -m {params.minlen} -b file:{params.fastawithadaptersetd} -B file:{params.fastawithadaptersetd} -o ${{f1}}.cutadapt -p ${{f2}}.cutadapt ${{f1}}.fastq ${{f2}}.fastq";done < ${{sample}}.pairs > do_cutadapt_${{sample}}
-parallel -j {threads} < do_cutadapt_${{sample}}
-rm -f {output.outfq1} {output.outfq2} ${{sample}}.outr1.fastq ${{sample}}.outr2.fastq
-while read f1 f2;do
-cat ${{f1}}.cutadapt >> ${{sample}}.outr1.fastq;
-cat ${{f2}}.cutadapt >> ${{sample}}.outr2.fastq;
-done < ${{sample}}.pairs
+cutadapt --pair-filter=both --nextseq-trim=2 --trim-n -n 5 -O 5 -q 10,10 -m {params.minlen}:{params.minlen} -b file:{params.fastawithadaptersetd} -B file:{params.fastawithadaptersetd} -j {threads} -o ${{sample}}.R1.cutadapt.fastq -p ${{sample}}.R2.cutadapt.fastq {input.file1} {input.file2}
 module load {params.bwaver};
 module load {params.samtoolsver};
 module load {params.picardver};
-bwa mem -t {threads} {params.blacklistbwaindex} ${{sample}}.outr1.fastq ${{sample}}.outr2.fastq | samtools view -@{threads} -f4 -b -o ${{sample}}.bam
+bwa mem -t {threads} {params.blacklistbwaindex} ${{sample}}.R1.cutadapt.fastq ${{sample}}.R2.cutadapt.fastq | samtools view -@{threads} -f4 -b -o ${{sample}}.bam
 java -Xmx{params.javaram} -jar $PICARDJARPATH/picard.jar SamToFastq \
 VALIDATION_STRINGENCY=SILENT \
 INPUT=${{sample}}.bam \
-FASTQ=${{sample}}.outr1.noBL.fastq \
-SECOND_END_FASTQ=${{sample}}.outr2.noBL.fastq \
+FASTQ=${{sample}}.R1.cutadapt.noBL.fastq \
+SECOND_END_FASTQ=${{sample}}.R2.cutadapt.noBL.fastq \
 UNPAIRED_FASTQ=${{sample}}.unpaired.noBL.fastq
-pigz -p 16 ${{sample}}.outr1.noBL.fastq;
-pigz -p 16 ${{sample}}.outr2.noBL.fastq;
-mv /lscratch/$SLURM_JOBID/${{sample}}.outr1.noBL.fastq.gz {output.outfq1};
-mv /lscratch/$SLURM_JOBID/${{sample}}.outr2.noBL.fastq.gz {output.outfq2};
+pigz -p 16 ${{sample}}.R1.cutadapt.noBL.fastq;
+pigz -p 16 ${{sample}}.R2.cutadapt.noBL.fastq;
+mv /lscratch/$SLURM_JOBID/${{sample}}.R1.cutadapt.noBL.fastq.gz {output.outfq1};
+mv /lscratch/$SLURM_JOBID/${{sample}}.R2.cutadapt.noBL.fastq.gz {output.outfq2};
 """
 
     rule fastqc:
@@ -586,6 +557,34 @@ samtools view -b -q 6 {output.outbam1} -o {output.outbam2}
 samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
+
+    rule ppqt:
+	    input:
+		    bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
+		    bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+	    output:
+		    ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
+		    pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
+		    ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+		    pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
+	    params:
+		    rname="pl:ppqt",
+		    batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
+		    samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
+		    rver=config['bin'][pfamily]['tool_versions']['RVER'],
+	    shell:
+		    """
+module load {params.samtoolsver};
+module load {params.rver};
+samtools view -b -f 66 -o /lscratch/$SLURM_JOBID/bam1.f66.bam {input.bam1}
+samtools index /lscratch/$SLURM_JOBID/bam1.f66.bam
+Rscript Scripts/phantompeakqualtools/run_spp.R \
+-c=/lscratch/$SLURM_JOBID/bam1.f66.bam -savp={output.pdf1} -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
+samtools view -b -f 66 -o /lscratch/$SLURM_JOBID/bam4.f66.bam {input.bam4}
+samtools index /lscratch/$SLURM_JOBID/bam4.f66.bam
+Rscript Scripts/phantompeakqualtools/run_spp.R \
+-c=/lscratch/$SLURM_JOBID/bam4.f66.bam -savp={output.pdf4} -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
+		"""
 
 
 rule picard_dedup:
