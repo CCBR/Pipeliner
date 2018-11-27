@@ -54,7 +54,7 @@ def normalize_bam_file_chromosomes(bamfns, obamfns=[], suffix='.common_chrom.bam
 
 configfile: "run.json"
 
-    
+
 workpath = config['project']['workpath']    
 filetype = config['project']['filetype']
 readtype = config['project']['readtype']
