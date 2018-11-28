@@ -78,7 +78,7 @@
         "tool_versions": {
         "BOWTIE2VER" : "bowtie/2-2.3.4",
         "BWAVER": "bwa/0.7.17",
-        "CUTADAPTVER": "cutadapt/1.16",
+        "CUTADAPTVER": "cutadapt/1.18",
         "FASTQ_SCREEN": "/data/CCBR_Pipeliner/db/PipeDB/bin/fastq_screen_v0.9.3/fastq_screen",
         "FASTQCVER" : "fastqc/0.11.5",
         "KRAKENVER": "kraken/1.1",
@@ -348,7 +348,7 @@
         "BEDTOOLSVER": "bedtools/2.27.1",
         "BOWTIE2VER": "bowtie/2-2.3.4",
         "BWAVER": "bwa/0.7.17",
-        "CUTADAPTVER": "cutadapt/1.16",
+        "CUTADAPTVER": "cutadapt/1.18",
         "CONFMULTIQC": "/data/CCBR_Pipeliner/db/PipeDB/ChIPseq/multiqc_config.yaml",
         "DEEPTOOLSVER": "deeptools/3.0.1",
         "FASTQ_SCREEN": "/data/CCBR_Pipeliner/db/PipeDB/bin/fastq_screen_v0.9.3/fastq_screen",
