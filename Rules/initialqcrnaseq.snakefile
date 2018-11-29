@@ -19,8 +19,6 @@ def check_writeaccess(filename):
   if not os.access(filename,os.W_OK):
     exit("File: %s exists, but cannot be read!"%(filename))
 
-# trim_method=1 #trimmomatic
-trim_method=2 #cutadapt
 se=""
 pe=""
 workpath = config['project']['workpath']
@@ -59,14 +57,14 @@ if pe=="yes":
         # config['project']['id']+"_"+config['project']['flowcellid']+".xlsx",
         join(workpath,"Reports/multiqc_report.html"),
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
-        expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),name=samples),
-        expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),name=samples),
-        expand(join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.txt"),name=samples),
-        expand(join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.png"),name=samples),
-        expand(join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.txt"),name=samples),
-        expand(join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.png"),name=samples),
-        expand(join(workpath,"FQscreen2","{name}_R2_001_trim_paired_screen.txt"),name=samples),
-        expand(join(workpath,"FQscreen2","{name}_R2_001_trim_paired_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
+        expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen","{name}.R2.trim_screen.txt"),name=samples),
+        expand(join(workpath,"FQscreen","{name}.R2.trim_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}.R2.trim_screen.txt"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}.R2.trim_screen.png"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
         expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
@@ -112,74 +110,27 @@ fastqc {input} -t {threads} -o {output};
         file1=join(workpath,"{name}.R1."+config['project']['filetype']),
         file2=join(workpath,"{name}.R2."+config['project']['filetype']),        
       output: 
-        out11=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
-        out12=join(workpath,trim_dir,"{name}_R1_001_trim_unpaired.fastq.gz"),
-        out21=join(workpath,trim_dir,"{name}_R2_001_trim_paired.fastq.gz"),
-        out22=join(workpath,trim_dir,"{name}_R2_001_trim_unpaired.fastq.gz"),
-        err=join(workpath,"QC","{name}_run_trimmomatic.err"),
+        out1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
+        out2=join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
       params: 
         rname='pl:trim_pe',
         batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
-        trimmomaticver=config['bin'][pfamily]['tool_versions']['TRIMMOMATICVER'],
         cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
-        parallelver=config['bin'][pfamily]['tool_versions']['PARALLELVER'],
-        fastawithadaptersetc=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETC'],
         fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
-        seedmismatches=config['bin'][pfamily]['tool_parameters']['SEEDMISMATCHES'],
-        palindromeclipthreshold=config['bin'][pfamily]['tool_parameters']['PALINDROMECLIPTHRESHOLD'],
-        simpleclipthreshold=config['bin'][pfamily]['tool_parameters']['SIMPLECLIPTHRESHOLD'],
         leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
         trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
-        windowsize=config['bin'][pfamily]['tool_parameters']['WINDOWSIZE'],
-        windowquality=config['bin'][pfamily]['tool_parameters']['WINDOWQUALITY'],
-        targetlength=config['bin'][pfamily]['tool_parameters']['TARGETLENGTH'],
-        strictness=config['bin'][pfamily]['tool_parameters']['STRICTNESS'],
         minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
       threads:32
       shell: """
-if [ {trim_method} -eq 1 ];then
-module load {params.trimmomaticver};
-java -classpath $TRIMMOJAR   org.usadellab.trimmomatic.TrimmomaticPE -threads {threads} {input.file1} {input.file2} {output.out11} {output.out12} {output.out21} {output.out22} ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold} LEADING:{params.leadingquality} TRAILING:{params.trailingquality} MINLEN:{params.minlen} 2> {output.err}
-elif [ {trim_method} -eq 2 ];then
 module load {params.cutadaptver};
-module load {params.parallelver};
-if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
-cd /lscratch/$SLURM_JOBID
 sample=`echo {input.file1}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
-zcat {input.file1} |split -l 4000000 -d -a 4 - ${{sample}}.R1.
-zcat {input.file2} |split -l 4000000 -d -a 4 - ${{sample}}.R2.
-ls ${{sample}}.R1.0???|sort > ${{sample}}.tmp1
-ls ${{sample}}.R2.0???|sort > ${{sample}}.tmp2
-while read a;do 
-mv $a ${{a}}.fastq
-done < ${{sample}}.tmp1
-while read a;do 
-mv $a ${{a}}.fastq
-done < ${{sample}}.tmp2
-paste ${{sample}}.tmp1 ${{sample}}.tmp2 > ${{sample}}.pairs
-while read f1 f2;do
-echo "cutadapt --nextseq-trim=2 --trim-n -m {params.minlen} -b file:{params.fastawithadaptersetd} -B file:{params.fastawithadaptersetd} -o ${{f1}}.cutadapt -p ${{f2}}.cutadapt ${{f1}}.fastq ${{f2}}.fastq";done < ${{sample}}.pairs > do_cutadapt_${{sample}}
-parallel -j {threads} < do_cutadapt_${{sample}}
-rm -f {output.out21} {output.out22} ${{sample}}.outr1 ${{sample}}.outr2
-while read f1 f2;do
-cat ${{f1}}.cutadapt >> ${{sample}}.outr1;
-cat ${{f2}}.cutadapt >> ${{sample}}.outr2;
-done < ${{sample}}.pairs
-pigz -p 16 ${{sample}}.outr1;
-pigz -p 16 ${{sample}}.outr2;
-cd {workpath}
-mv /lscratch/$SLURM_JOBID/${{sample}}.outr1.gz {output.out11};
-mv /lscratch/$SLURM_JOBID/${{sample}}.outr2.gz {output.out21};
-touch {output.out12};
-touch {output.out22};
-touch {output.err};
-fi
+cutadapt --pair-filter=any --nextseq-trim=2 --trim-n -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} -m {params.minlen}:{params.minlen} -b file:{params.fastawithadaptersetd} -B file:{params.fastawithadaptersetd} -j {threads} -o {output.out1} -p {output.out2} {input.file1} {input.file2}
         """
 
    rule fastqc:
       input: 
-        expand(join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"), name=samples), 
-        expand(join(workpath,trim_dir,"{name}_R2_001_trim_paired.fastq.gz"), name=samples)
+        expand(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"), name=samples), 
+        expand(join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"), name=samples)
       output: 
         join(workpath,"QC")
       priority: 2
@@ -198,17 +149,17 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
 
    rule fastq_screen:
       input: 
-        file1=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"), 
-        file2=join(workpath,trim_dir,"{name}_R2_001_trim_paired.fastq.gz"),
+        file1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"), 
+        file2=join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
       output: 
-        out1=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"), 
-        out2=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"), 
-        out3=join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.txt"), 
-        out4=join(workpath,"FQscreen","{name}_R2_001_trim_paired_screen.png"),
-        out5=join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.txt"), 
-        out6=join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.png"), 
-        out7=join(workpath,"FQscreen2","{name}_R2_001_trim_paired_screen.txt"), 
-        out8=join(workpath,"FQscreen2","{name}_R2_001_trim_paired_screen.png")
+        out1=join(workpath,"FQscreen","{name}.R1.trim_screen.txt"), 
+        out2=join(workpath,"FQscreen","{name}.R1.trim_screen.png"), 
+        out3=join(workpath,"FQscreen","{name}.R2.trim_screen.txt"), 
+        out4=join(workpath,"FQscreen","{name}.R2.trim_screen.png"),
+        out5=join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"), 
+        out6=join(workpath,"FQscreen2","{name}.R1.trim_screen.png"), 
+        out7=join(workpath,"FQscreen2","{name}.R2.trim_screen.txt"), 
+        out8=join(workpath,"FQscreen2","{name}.R2.trim_screen.png")
       params: 
         rname='pl:fqscreen',
         batch='--cpus-per-task=24 --mem=64g --time=10:00:00',
@@ -229,8 +180,8 @@ module load {params.perlver};
 
    rule kraken_pe:
       input: 
-        fq1=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
-        fq2=join(workpath,trim_dir,"{name}_R2_001_trim_paired.fastq.gz"),
+        fq1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
+        fq2=join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
       output: 
         krakentaxa = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),
         kronahtml = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),
@@ -258,8 +209,8 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
 
    rule star1p:
       input: 
-        file1=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
-        file2=join(workpath,trim_dir,"{name}_R2_001_trim_paired.fastq.gz"),
+        file1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
+        file2=join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
         qcdir=join(workpath,"QC"),
         # file3="fastqc_status_checked.txt"
       output: 
@@ -316,8 +267,8 @@ cat {input.files} |sort|uniq|awk -F \"\\t\" '{{if ($5>0 && $6==1) {{print}}}}'|c
 
    rule star2p:
       input: 
-        file1=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
-        file2=join(workpath,trim_dir,"{name}_R2_001_trim_paired.fastq.gz"),
+        file1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
+        file2=join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
         tab=join(workpath,star_dir,"uniq.filtered.SJ.out.tab"),
         qcdir=join(workpath,"QC"),
         # dir="STARINDEX"
@@ -374,10 +325,10 @@ if se=="yes":
         # config['project']['id']+"_"+config['project']['flowcellid']+".xlsx",
         join(workpath,"Reports/multiqc_report.html"),
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
-        expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),name=samples),
-        expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),name=samples),
-        expand(join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.txt"),name=samples),
-        expand(join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
+        expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
         join(workpath,log_dir,"strandness.txt"),
@@ -417,61 +368,26 @@ fastqc {input} -t {threads} -o {output};
 
    rule trim_se:
       input: 
-        file1=join(workpath,"{name}.R1."+config['project']['filetype']),
+        infq=join(workpath,"{name}.R1."+config['project']['filetype']),
       output: 
-        out11=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
-        err=join(workpath,"QC","{name}_run_trimmomatic.err"),
+        outfq=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
       params: 
         rname='pl:trim_se',
         batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
-        trimmomaticver=config['bin'][pfamily]['tool_versions']['TRIMMOMATICVER'],
         cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
-        parallelver=config['bin'][pfamily]['tool_versions']['PARALLELVER'],
-        fastawithadaptersetc=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETC'],
         fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
-        seedmismatches=config['bin'][pfamily]['tool_parameters']['SEEDMISMATCHES'],
-        palindromeclipthreshold=config['bin'][pfamily]['tool_parameters']['PALINDROMECLIPTHRESHOLD'],
-        simpleclipthreshold=config['bin'][pfamily]['tool_parameters']['SIMPLECLIPTHRESHOLD'],
         leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
         trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
-        windowsize=config['bin'][pfamily]['tool_parameters']['WINDOWSIZE'],
-        windowquality=config['bin'][pfamily]['tool_parameters']['WINDOWQUALITY'],
-        targetlength=config['bin'][pfamily]['tool_parameters']['TARGETLENGTH'],
-        strictness=config['bin'][pfamily]['tool_parameters']['STRICTNESS'],
         minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
       threads:32
       shell: """
-if [ {trim_method} -eq 1 ];then
-module load {params.trimmomaticver}; 
-java -classpath $TRIMMOJAR   org.usadellab.trimmomatic.TrimmomaticSE -threads {threads} {input.file1} {output.out11} ILLUMINACLIP:{params.fastawithadaptersetc}:{params.seedmismatches}:{params.palindromeclipthreshold}:{params.simpleclipthreshold} LEADING:{params.leadingquality} TRAILING:{params.trailingquality} MAXINFO:50:0.97 MINLEN:{params.minlen} 2> {output.err}
-elif [ {trim_method} -eq 2 ];then
 module load {params.cutadaptver};
-module load {params.parallelver};
-if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
-cd /lscratch/$SLURM_JOBID
-sample=`echo {input.file1}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
-zcat {input.file1} |split -l 4000000 -d -a 4 - ${{sample}}.R1.
-ls ${{sample}}.R1.0???|sort > ${{sample}}.tmp1
-while read a;do
-mv $a ${{a}}.fastq
-done < ${{sample}}.tmp1
-while read f1;do
-echo "cutadapt --nextseq-trim=2 --trim-n -m {params.minlen} -b file:{params.fastawithadaptersetd} -o ${{f1}}.cutadapt ${{f1}}.fastq";done < ${{sample}}.tmp1 > do_cutadapt_${{sample}}
-parallel -j {threads} < do_cutadapt_${{sample}}
-rm -f ${{sample}}.outr1.fastq
-while read f1;do
-cat ${{f1}}.cutadapt >> ${{sample}}.outr1.fastq;
-done < ${{sample}}.tmp1
-pigz -p 16 ${{sample}}.outr1.fastq
-cd {workpath}
-mv /lscratch/$SLURM_JOBID/${{sample}}.outr1.fastq.gz {output.out11};
-touch {output.err};
-fi
+cutadapt --nextseq-trim=2 --trim-n -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} -m {params.minlen} -b file:{params.fastawithadaptersetd} -j {threads} -o {output.outfq} {input.infq}
 """
 
    rule fastqc:
       input: 
-        expand(join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"), name=samples)
+        expand(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"), name=samples)
       output: 
         join(workpath,"QC")
       priority: 2
@@ -490,12 +406,12 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
 
    rule fastq_screen:
       input: 
-        file1=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
+        file1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
       output: 
-        out1=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),
-        out2=join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),
-        out3=join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.txt"),
-        out4=join(workpath,"FQscreen2","{name}_R1_001_trim_paired_screen.png")
+        out1=join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),
+        out2=join(workpath,"FQscreen","{name}.R1.trim_screen.png"),
+        out3=join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),
+        out4=join(workpath,"FQscreen2","{name}.R1.trim_screen.png")
       params: 
         rname='pl:fqscreen',
         batch='--cpus-per-task=24 --mem=64g --time=10:00:00',
@@ -516,7 +432,7 @@ module load {params.perlver};
 
    rule kraken_se:
       input: 
-        fq=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
+        fq=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
       output: 
         krakentaxa = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),
         kronahtml = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),
@@ -542,7 +458,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
 
    rule star1p:
       input: 
-        file1=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
+        file1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
         qcdir=join(workpath,"QC")
         #,file3="fastqc_status_checked.txt"
       output: 
@@ -600,7 +516,7 @@ cat {input.files} |sort|uniq|awk -F \"\\t\" '{{if ($5>0 && $6==1) {{print}}}}'|c
 
    rule star2p:
       input: 
-        file1=join(workpath,trim_dir,"{name}_R1_001_trim_paired.fastq.gz"),
+        file1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
         tab=join(workpath,star_dir,"uniq.filtered.SJ.out.tab"),
         qcdir=join(workpath,"QC"),
         #dir="STARINDEX"
@@ -805,8 +721,7 @@ fi
 rule rnaseq_multiqc:
    input: 
     expand(join(workpath,rseqc_dir,"{name}.Rdist.info"),name=samples),
-    expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.png"),name=samples),
-    #expand(join(workpath,"FQscreen","{name}_R1_001_trim_paired_screen.txt"),name=samples),
+    expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
     expand(join(workpath,log_dir,"{name}.flagstat.concord.txt"),name=samples),
     expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
     expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),

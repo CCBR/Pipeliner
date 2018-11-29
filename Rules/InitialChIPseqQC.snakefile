@@ -277,30 +277,6 @@ samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
 
-    rule ppqt_se:
-        input:
-            bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
-            bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-        output:
-            ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
-            pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
-            ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
-            pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
-        params:
-            rname="pl:ppqt",
-            batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
-            samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-            rver=config['bin'][pfamily]['tool_versions']['RVER'],
-        shell: """
-module load {params.samtoolsver};
-module load {params.rver};
-Rscript Scripts/phantompeakqualtools/run_spp.R \
-    -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
-Rscript Scripts/phantompeakqualtools/run_spp.R \
-    -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
-            """
-
-            
 if pe == 'yes':
     rule InitialChIPseqQC:
         params: 
@@ -447,33 +423,39 @@ samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
 
-    rule ppqt_pe:
-	    input:
-		    bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
-		    bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-	    output:
-		    ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
-		    pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
-		    ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
-		    pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
-	    params:
-		    rname="pl:ppqt",
-		    batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
-		    samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-		    rver=config['bin'][pfamily]['tool_versions']['RVER'],
-	    shell:
-		    """
-module load {params.samtoolsver};
-module load {params.rver};
-samtools view -b -f 66 -o /lscratch/$SLURM_JOBID/bam1.f66.bam {input.bam1}
-samtools index /lscratch/$SLURM_JOBID/bam1.f66.bam
-Rscript Scripts/phantompeakqualtools/run_spp.R \
--c=/lscratch/$SLURM_JOBID/bam1.f66.bam -savp={output.pdf1} -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf
-samtools view -b -f 66 -o /lscratch/$SLURM_JOBID/bam4.f66.bam {input.bam4}
-samtools index /lscratch/$SLURM_JOBID/bam4.f66.bam
-Rscript Scripts/phantompeakqualtools/run_spp.R \
--c=/lscratch/$SLURM_JOBID/bam4.f66.bam -savp={output.pdf4} -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf
-		"""
+rule ppqt:
+    input:
+        bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
+        bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+    output:
+        ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
+        pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
+        ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+        pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
+    params:
+        rname="pl:ppqt",
+        batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
+        samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
+        rver=config['bin'][pfamily]['tool_versions']['RVER'],
+    run:
+        commoncmd="module load {params.samtoolsver};module load {params.rver};"
+        if se=="yes":
+            cmd1="Rscript Scripts/phantompeakqualtools/run_spp.R \
+                -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf;"
+            cmd4="Rscript Scripts/phantompeakqualtools/run_spp.R \
+                -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf"
+        elif pe=="yes":
+            cmd1="samtools view -b -f 66 -o /lscratch/$SLURM_JOBID/bam1.f66.bam {input.bam1}; \
+                samtools index /lscratch/$SLURM_JOBID/bam1.f66.bam; \
+                Rscript Scripts/phantompeakqualtools/run_spp.R \
+                -c=/lscratch/$SLURM_JOBID/bam1.f66.bam -savp={output.pdf1} -out={output.ppqt1} \
+                -tmpdir=/lscratch/$SLURM_JOBID -rf;"
+            cmd4="samtools view -b -f 66 -o /lscratch/$SLURM_JOBID/bam4.f66.bam {input.bam4}; \
+                samtools index /lscratch/$SLURM_JOBID/bam4.f66.bam; \
+                Rscript Scripts/phantompeakqualtools/run_spp.R \
+                -c=/lscratch/$SLURM_JOBID/bam4.f66.bam -savp={output.pdf4} -out={output.ppqt4} \
+                -tmpdir=/lscratch/$SLURM_JOBID -rf"
+        shell(commoncmd+cmd1+cmd4)
 
 rule picard_dedup:
     input: 
