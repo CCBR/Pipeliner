@@ -160,11 +160,14 @@ class PipelineFrame( Frame ) :
         label_found=0
         label_error=0
         realfilenames=[]
+        self.renamedfiles = []
         labels=[]
+        self.labelsfile = False
         try:
             labelfile=join(self.datapath.get(),"labels.txt")
             if Path(labelfile).is_file():
                 label_found=1
+                self.labelsfile = True
                 l=open(labelfile)
                 llines=list(map(lambda x:x.strip().split("\t"),l.readlines()))
                 llineslen=list(set(list(map(lambda x:len(x),llines))))
@@ -179,6 +182,7 @@ class PipelineFrame( Frame ) :
                 for realfilename,labelname in llines:
                     realfilenames.append(realfilename)
                     labels.append(labelname)
+                    self.renamedfiles.append(labelname)
                     namecheckstr=namecheck(labelname)
                     if namecheckstr != "":
                         showerror("Label ERROR",namecheckstr)
@@ -629,10 +633,17 @@ class PipelineFrame( Frame ) :
                         cmd="for f in `ls {0}/*[._]vcf`;do ln -s $f {1};done".format(gvcfspath,self.workpath.get())
                         #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
                         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                elif pl == 'ChIPseq':
+                    if os.path.isfile(os.path.join(data, "peakcall.tab")):
+                        print("Found 'peakcall.tab': Symlinking file!")
+                        cmd="cp {0}peakcall.tab {1}".format(data, self.workpath.get())
+                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+
             else:
                 cmd="for f in `ls {0}*[._]{1}`;do ln -s $f {2};done".format(data,FT, self.workpath.get())
                 p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
                 Out = p.stdout.read()
+                print(pl)
                 if pl == 'ExomeSeq' or pl == 'GenomeSeq':
                     print("\n\nChecking for 'bams/' or 'gvcfs/' directories...")
                     if os.path.isdir(os.path.join(data,"bams")):
@@ -647,6 +658,11 @@ class PipelineFrame( Frame ) :
                         gvcfspath = os.path.join(data,"gvcfs")
                         cmd="for f in `ls {0}/*[._]vcf`;do ln -s $f {1};done".format(gvcfspath,self.workpath.get())
                         #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
+                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                elif pl == 'ChIPseq':
+                    if os.path.isfile(os.path.join(data, "peakcall.tab")):
+                        print("Found 'peakcall.tab': Symlinking file!")
+                        cmd="cp {0}peakcall.tab {1}".format(data, self.workpath.get())
                         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
 
         except Exception as e: 

@@ -604,7 +604,7 @@ rule MACS2_narrow:
         rname='pl:MACS2_narrow:{group}:{name}',
         gsize=config['project']['gsize'],
         #Must use lambda function here (snakemake does not recogize wildcards.variablename in params section)
-        ctrl =  lambda wildcards :join(bam_dir, config['project']['peaks']['inputs'][wildcards.name], '.sorted.Q5DD.bam'),
+        ctrl =  lambda wildcards :join(bam_dir, str(config['project']['peaks']['inputs'][wildcards.name]) + '.sorted.Q5DD.bam'),
         genome=config['project']['annotation'],
         
     shell:
@@ -628,7 +628,7 @@ rule MACS2_broad:
         rname='pl:MACS2_broad:{group}:{name}',
         gsize=config['project']['gsize'],
         #Must use lambda function here (snakemake does not recogize wildcards.variablename in params section)
-        ctrl =  lambda wildcards :join(bam_dir, config['project']['peaks']['inputs'][wildcards.name], '.sorted.Q5DD.bam'),
+        ctrl =  lambda wildcards :join(bam_dir, str(config['project']['peaks']['inputs'][wildcards.name]) +  '.sorted.Q5DD.bam'),
         genome=config['project']['annotation'],
     shell:
         """
@@ -651,7 +651,7 @@ rule SICER :
         rname = "pl:SICER:{group}:{name}",
         #Must use lambda function here (snakemake does not recogize snakewildcards.variablename in params section)
         inputname = lambda wildcards : config['project']['peaks']['inputs'][wildcards.name],
-        ctrl =  lambda wildcards :join(bam_dir, config['project']['peaks']['inputs'][wildcards.name], '.sorted.Q5DD.bam'),
+        ctrl =  lambda wildcards :join(bam_dir, str(config['project']['peaks']['inputs'][wildcards.name]) + '.sorted.Q5DD.bam'),
         SICERDIR = "/usr/local/apps/sicer/1.1",
         genome = config['project']['annotation'],
     run:
@@ -705,7 +705,7 @@ rule GEM:
         readDist='/usr/local/apps/gem/3.0/Read_Distribution_default.txt',
         genome=config['references']['ChIPseq']['GENOMECHR'],
         #Must use lambda function here (snakemake does not recogize wildcards.variablename in params section)
-        ctrl =  lambda wildcards :join(bam_dir, config['project']['peaks']['inputs'][wildcards.name], '.sorted.Q5DD.bam'),
+        ctrl =  lambda wildcards :join(bam_dir, str(config['project']['peaks']['inputs'][wildcards.name]) + '.sorted.Q5DD.bam'),
     threads: 32
     shell:
         """
@@ -718,5 +718,6 @@ rule GEM:
             java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.chromsizes} --genome {params.genome} --expt {input} --f SAM --out gem/{wildcards.group}/{wildcards.name} --k_min 6 --k_max 13 --outNP --outBED
         fi
         """
+
 
 

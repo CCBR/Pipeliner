@@ -325,6 +325,7 @@
             "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
             "FASTAWITHADAPTERSETD": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",
             "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
+            "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/geneinfo.bed",
             "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/ref.fa",
             "GENOMECHR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/Chromsomes/",
             "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
