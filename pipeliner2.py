@@ -255,13 +255,14 @@ class PipelinerGUI(Tk):
         set1=['Select the genome','hg19','mm10','mm9','hg38','hs37d5','hs38d1']
         set2=['Select the genome','hg19','mm10','mm9','hg38']
         set3=['Select the genome','GRCh38']
+        set4=['Select the genome','hg19','mm10','hg38']
 
         if self.pipelineframe :
             self.notebook.forget( self.pipelineframe )
-            
+
         if self.pfamily.get() == 'exomeseq' :
             print( 'exomeseq' )
-            if not annotation in set2:
+            if not annotation in set4:
             	outtxt_short="%s is not supported in this pipeline!"%(annotation)
             	showinfo("WARNING",outtxt_short)
             self.pipelineframe = ExomeSeqFrame( self.notebook, 
@@ -270,7 +271,7 @@ class PipelinerGUI(Tk):
 
         elif self.pfamily.get() == 'genomeseq' :
             print( 'genomeseq' )
-            if not annotation in set2:
+            if not annotation in set4:
             	outtxt_short="%s is not supported in this pipeline!"%(annotation)
             	showinfo("WARNING",outtxt_short)
             self.pipelineframe = GenomeSeqFrame( self.notebook, 
