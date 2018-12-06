@@ -16,7 +16,5 @@ rule all_initialqc:
             config['project']['workpath']+"/exome_targets.bed"
     output:
     params: rname="final"
-    shell:  """
-             mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
 
-            """
+
