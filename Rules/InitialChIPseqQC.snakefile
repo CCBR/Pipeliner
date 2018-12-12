@@ -119,8 +119,9 @@ bam_dir='bam'
 bw_dir='bigwig'
 deeptools_dir='deeptools'
 preseq_dir='preseq'
+extra_fingerprint_dir='deeptools/sorted_fingerprint'
 
-for d in [trim_dir,kraken_dir,bam_dir,bw_dir,deeptools_dir,preseq_dir]:
+for d in [trim_dir,kraken_dir,bam_dir,bw_dir,deeptools_dir,preseq_dir,extra_fingerprint_dir]:
 	if not os.path.exists(join(workpath,d)):
 		os.mkdir(join(workpath,d))
 
@@ -162,7 +163,6 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"{group}.fingerprint.{ext}.pdf"),ext=extensions2,group=groups),
-            expand(join(workpath,deeptools_dir,"{group}.fingerprint.metrics.{ext}.tsv"),ext=extensions2,group=groups),
             expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
@@ -311,7 +311,6 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"pca.{ext}.pdf"),ext=extensions),
        	    expand(join(workpath,deeptools_dir,"{group}.fingerprint.{ext}.pdf"),group=groups,ext=extensions2),
-            expand(join(workpath,deeptools_dir,"{group}.fingerprint.metrics.{ext}.tsv"),group=groups,ext=extensions2),
             expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
@@ -621,11 +620,33 @@ rule deeptools_QC:
 
 rule deeptools_fingerprint:
     input:
-        join(workpath,bam_dir,"{group}.{ext}.deeptools_prep")
+        join(workpath,bam_dir,"{group}.sorted.deeptools_prep")
     output:
-        image=join(workpath,deeptools_dir,"{group}.fingerprint.{ext}.pdf"),
-        raw=temp(join(workpath,deeptools_dir,"{group}.fingerprint.raw.{ext}.tab")),
-        metrics=join(workpath,deeptools_dir,"{group}.fingerprint.metrics.{ext}.tsv"),
+        image=join(workpath,deeptools_dir,"{group}.fingerprint.sorted.pdf"),
+        metrics=join(workpath,extra_fingerprint_dir,"{group}.fingerprint.metrics.sorted.tsv"),
+    params:
+        rname="pl:deeptools_fingerprint",
+        deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
+	batch="--cpus-per-task=8"
+    run:
+        import re
+        commoncmd="module load {params.deeptoolsver}; module load python;"
+        listfile=list(map(lambda z:z.strip().split(),open(input[0],'r').readlines()))
+        ext=listfile[0][0]
+        bams=listfile[1]
+        labels=listfile[2]
+        cmd="plotFingerprint -b "+" ".join(bams)+" --labels "+" ".join(labels)+" -p 4 --skipZeros --outQualityMetrics "+output.metrics+" --plotFile "+output.image 
+        if se == "yes":
+            cmd+=" -e 200"
+        shell(commoncmd+cmd)
+
+rule deeptools_fingerprint_dedup:
+    input:
+        join(workpath,bam_dir,"{group}.sorted.Q5DD.deeptools_prep")
+    output:
+        image=join(workpath,deeptools_dir,"{group}.fingerprint.sorted.Q5DD.pdf"),
+        raw=temp(join(workpath,deeptools_dir,"{group}.fingerprint.raw.sorted.Q5DD.tab")),
+        metrics=join(workpath,deeptools_dir,"{group}.fingerprint.metrics.sorted.Q5DD.tsv"),
     params:
         rname="pl:deeptools_fingerprint",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
@@ -856,17 +877,18 @@ rule multiqc:
         join(workpath,"QCTable.txt"),
         join(workpath,"rawQC"),
         join(workpath,"QC"),
-	expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.{ext}.tab"),group=groups,ext=extensions2),
+	expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.sorted.Q5DD.tab"),group=groups),
     output:
         join(workpath,"Reports","multiqc_report.html")
     params:
         rname="pl:multiqc",
         multiqc=config['bin'][pfamily]['tool_versions']['MULTIQCVER'],
 	qcconfig=config['bin'][pfamily]['CONFMULTIQC'],
+	dir=join("..",extra_fingerprint_dir)
     threads: 1
     shell: """
 module load {params.multiqc}
-cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt -d ../
+cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt --ignore {params.dir} -d ../
 """
 
 
