@@ -7,5 +7,5 @@ rule gatk_combine_somatic_gvcfs:
        fl=F.read().split()
        F.close()
        var=" --variant "+" --variant ".join(fl)
-       cmd="{params.gatk} -R {params.genome} -T CombineGVCFs -o "+output[0]+ var
+       cmd="module load GATK/3.8-0; java -Xmx64g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $GATK_JAR -T CombineGVCFs -R {params.genome} -o "+output[0]+ var
        shell(cmd)
