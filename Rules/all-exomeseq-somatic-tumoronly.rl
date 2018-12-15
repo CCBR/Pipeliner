@@ -2,7 +2,6 @@ if config['project']['annotation'] == "hg19":
 
   rule all_exomeseq_somatic_tumoronly:
     input:  expand("{s}"+".recal.bam",s=samples),
-            expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/{s}"+".FINALmutect2.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{s}"+".maf",s=samples),
             config['project']['workpath']+"/mutect2_out/mutect2_maf_summary.pdf",
@@ -11,7 +10,7 @@ if config['project']['annotation'] == "hg19":
             expand(config['project']['workpath']+"/cnvkit_out/{s}_calls.cns", s=samples),
             expand(config['project']['workpath']+"/cnvkit_out/{s}_gainloss.tsv", s=samples),                        
             config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
-            config['project']['workpath']+"/sample_network.bmp",
+            "sample_network.bmp",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             config['project']['workpath']+"/mutect2_out/oncotator_out/final_filtered.maf",
             config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
@@ -29,7 +28,6 @@ elif config['project']['annotation'] == "hg38":
 
   rule all_exomeseq_somatic_tumoronly:
     input:  expand("{s}"+".recal.bam",s=samples),
-            expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/{s}"+".FINALmutect2.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{s}"+".maf",s=samples),
             config['project']['workpath']+"/mutect2_out/mutect2_maf_summary.pdf",
@@ -38,7 +36,7 @@ elif config['project']['annotation'] == "hg38":
             expand(config['project']['workpath']+"/cnvkit_out/{s}_calls.cns", s=samples),
             expand(config['project']['workpath']+"/cnvkit_out/{s}_gainloss.tsv", s=samples),                        
             config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
-            config['project']['workpath']+"/sample_network.bmp",
+            "sample_network.bmp",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             config['project']['workpath']+"/mutect2_out/oncotator_out/final_filtered.maf",
             config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
@@ -65,8 +63,8 @@ elif config['project']['annotation'] == "mm10":
             config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
             config['project']['workpath']+"/mutect2_out/mutect2_oncoplot.pdf",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
-            config['project']['workpath']+"/sample_network.bmp",
-#            config['project']['workpath']+"/mutect2_out/oncotator_out/final_filtered.maf",
+            "sample_network.bmp",
+            config['project']['workpath']+"/mutect2_out/oncotator_out/final_filtered.maf",
             config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/exome_targets.bed",
             expand("manta_out/{s}/results/variants/candidateSV.vcf.gz", s=samples),
