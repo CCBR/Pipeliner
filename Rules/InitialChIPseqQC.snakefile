@@ -55,7 +55,7 @@ def outputfiles(groupslist):
 def outputfiles2(groupslist):
     '''
     Produces correct output filenames based on group information.
-    Names witll be:
+    Names will be:
     Inputnorm.sorted.Q5DD.RPGC.metagene_heatmap.pdf
     {groupName}.sorted.Q5DD.RPGC.metagene_heatmap.pdf
     {groupName}.sorted.RPGC.metagene_heatmap.pdf
@@ -69,6 +69,22 @@ def outputfiles2(groupslist):
             dtoolext.extend([extensions[1], extensions[0]])
     return dtoolgroups, dtoolext
 
+def outputfiles3(groupslist):
+    '''
+    Produces correct output filenames based on group information.
+    Names will be:
+    Inputnorm.sorted.Q5DD.RPGC.metagene_heatmap.pdf
+    {groupName}.sorted.Q5DD.RPGC.metagene_heatmap.pdf
+    {groupName}.sorted.RPGC.metagene_heatmap.pdf
+    '''
+    dtoolgroups, dtoolext = [], []
+    extensions = ["sorted.RPGC", "sorted.Q5DD.RPGC"]
+    dtoolgroups.extend(["InputNorm"])
+    dtoolext.extend([extensions[1]])
+    for group in groupslist:
+            dtoolgroups.extend([group] * 2)
+            dtoolext.extend([extensions[1], extensions[0]])
+    return dtoolgroups, dtoolext
 
 se=""
 pe=""
@@ -80,8 +96,19 @@ if config['project']['nends'] == 2 :
 elif config['project']['nends'] == 1 :
     se="yes"
 
-extensions = [ "sorted.RPGC", "sorted.Q5DD.RPGC"]
-extensions2 = list(map(lambda x:re.sub(".RPGC","",x),extensions))
+if pe == "yes":
+    extensions = [ "sorted.RPGC", "sorted.Q5DD.RPGC" ]
+    extensions2 = list(map(lambda x:re.sub(".RPGC","",x),extensions))
+    extensions3 = { extensions2[i] + "." : "bam" for i in range(len(extensions2)) }
+    extensions4 = [ extensions2[i] + ".bam" for i in range(len(extensions2)) ]
+else:
+    extensions = [ "sorted.RPGC", "sorted.Q5DD.RPGC", "sorted.Q5MDD.RPGC" ]
+    extensions2 = list(map(lambda x:re.sub(".RPGC","",x),extensions))
+    types = [ "bam", "bam", "tagAlign.gz" ]
+    extensions3 = { extensions2[i] + "." : types[i] for i in range(len(extensions2)) }
+    extensions4 = [ extensions2[i] + "." + types[i] for i in range(len(extensions2)) ]
+
+d = {i: True for i in [1,2,3]}
 
 chip2input = config['project']['peaks']['inputs']
 uniq_inputs = list(sorted(set([v for v in chip2input.values() if v])))
@@ -149,15 +176,14 @@ if se == 'yes' :
             expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
             expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
             join(workpath,kraken_dir,"kraken_bacteria.taxa.summary.txt"),
-            # Align using BWA and dedup with Picard
-            expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
+            # Align using BWA and dedup with Picard or MACS2
+            expand(join(workpath,bam_dir,"{name}.{ext}"),name=samples,ext=extensions4),
             # BWA --> BigWig
             expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions),
             # Input Normalization
             expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.inputnorm.bw",),name=sampleswinput), 
             # PhantomPeakQualTools
             expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
-            expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
             # deeptools
             expand(join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
@@ -277,6 +303,38 @@ samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
 
+    rule macs2_dedup:
+        input:
+            join(workpath,bam_dir,"{name}.sorted.Q5.bam")
+        output:
+            outtagalign=join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz"),
+            outbam=join(workpath,bam_dir,"{name}.sorted.Q5MDD.bam"),
+            outflagstat=join(workpath,bam_dir,"{name}.sorted.Q5MDD.bam.flagstat")
+        params:
+            rname='pl:macs2_dedup',
+            macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
+            samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
+            bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
+            gsize=config['project']['gsize'],
+            folder=join(workpath,bam_dir),
+	    genomefile=config['references'][pfamily]['REFLEN']
+        shell: """
+if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
+cd /lscratch/$SLURM_JOBID;
+module load {params.macsver};
+module load {params.samtoolsver};
+module load {params.bedtoolsver};
+macs2 filterdup -i {input} -g {params.gsize} --keep-dup="auto" -o TmpTagAlign;
+awk -F"\\t" -v OFS="\\t" '{{if ($2>0 && $3>0) {{print}}}}' TmpTagAlign > TmpTagAlign2;
+awk -F"\\t" -v OFS="\\t" '{{print $1,1,$2}}' {params.genomefile} | sort -k1,1 -k2,2n > GenomeFileBed;
+bedtools intersect -wa -f 1.0 -a TmpTagAlign2 -b GenomeFileBed > TmpTagAlign3;
+bedtools bedtobam -i TmpTagAlign3 -g {params.genomefile} | samtools sort -@4 -o {output.outbam};
+gzip TmpTagAlign3;
+mv TmpTagAlign3.gz {output.outtagalign};
+samtools index {output.outbam};
+samtools flagstat {output.outbam} > {output.outflagstat}
+"""
+
 if pe == 'yes':
     rule InitialChIPseqQC:
         params: 
@@ -298,7 +356,7 @@ if pe == 'yes':
             expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
             # join(workpath,kraken_dir,"kraken_bacteria.taxa.summary.txt"),
             # Align using BWA and dedup with Picard
-            expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
+            expand(join(workpath,bam_dir,"{name}.{ext}"),name=samples,ext=extensions4),
             # BWA --> BigWig
             expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions),
             # Input Normalization
@@ -424,13 +482,10 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
 
 rule ppqt:
     input:
-        bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
-        bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+        bam = lambda w : join(workpath,bam_dir,w.name + ".sorted" + w.ext + extensions3["sorted" + w.ext])
     output:
-        ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
-        pdf1= join(workpath,bam_dir,"{name}.sorted.pdf"),
-        ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
-        pdf4= join(workpath,bam_dir,"{name}.sorted.Q5DD.pdf"),
+        ppqt= join(workpath,bam_dir,"{name}.sorted{ext}ppqt"),
+        pdf= join(workpath,bam_dir,"{name}.sorted{ext}pdf"),
     params:
         rname="pl:ppqt",
         batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
@@ -439,22 +494,15 @@ rule ppqt:
     run:
         commoncmd="module load {params.samtoolsver};module load {params.rver};"
         if se=="yes":
-            cmd1="Rscript Scripts/phantompeakqualtools/run_spp.R \
-                -c={input.bam1} -savp -out={output.ppqt1} -tmpdir=/lscratch/$SLURM_JOBID -rf;"
-            cmd4="Rscript Scripts/phantompeakqualtools/run_spp.R \
-                -c={input.bam4} -savp -out={output.ppqt4} -tmpdir=/lscratch/$SLURM_JOBID -rf"
+            cmd="Rscript Scripts/phantompeakqualtools/run_spp.R \
+                -c={input.bam} -savp={output.pdf} -out={output.ppqt} -tmpdir=/lscratch/$SLURM_JOBID -rf;"
         elif pe=="yes":
-            cmd1="samtools view -b -f 66 -o /lscratch/$SLURM_JOBID/bam1.f66.bam {input.bam1}; \
+            cmd="samtools view -b -f 66 -o /lscratch/$SLURM_JOBID/bam1.f66.bam {input.bam}; \
                 samtools index /lscratch/$SLURM_JOBID/bam1.f66.bam; \
                 Rscript Scripts/phantompeakqualtools/run_spp.R \
-                -c=/lscratch/$SLURM_JOBID/bam1.f66.bam -savp={output.pdf1} -out={output.ppqt1} \
+                -c=/lscratch/$SLURM_JOBID/bam1.f66.bam -savp={output.pdf} -out={output.ppqt} \
                 -tmpdir=/lscratch/$SLURM_JOBID -rf;"
-            cmd4="samtools view -b -f 66 -o /lscratch/$SLURM_JOBID/bam4.f66.bam {input.bam4}; \
-                samtools index /lscratch/$SLURM_JOBID/bam4.f66.bam; \
-                Rscript Scripts/phantompeakqualtools/run_spp.R \
-                -c=/lscratch/$SLURM_JOBID/bam4.f66.bam -savp={output.pdf4} -out={output.ppqt4} \
-                -tmpdir=/lscratch/$SLURM_JOBID -rf"
-        shell(commoncmd+cmd1+cmd4)
+        shell(commoncmd+cmd)
 
 rule picard_dedup:
     input: 
@@ -470,8 +518,7 @@ rule picard_dedup:
         picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
         samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         javaram='16g',
-    shell: 
-            """
+    shell: """
 module load {params.samtoolsver};
 module load {params.picardver}; 
 java -Xmx{params.javaram} \
@@ -498,13 +545,10 @@ samtools flagstat {output.out5} > {output.out5f}
 
 rule bam2bw:
     input:
-        bam1= join(workpath,bam_dir,"{name}.sorted.bam"),
-        bam4= join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-        ppqt1= join(workpath,bam_dir,"{name}.sorted.ppqt"),
-        ppqt4= join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+        bam=join(workpath,bam_dir,"{name}.{ext}.bam"),
+        ppqt=join(workpath,bam_dir,"{name}.{ext}.ppqt"),
     output:
-        outbw1=join(workpath,bw_dir,"{name}.sorted.RPGC.bw"),
-        outbw4=join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.bw"),
+        outbw=join(workpath,bw_dir,"{name}.{ext}.RPGC.bw"),
     params:
         rname="pl:bam2bw",
         batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
@@ -523,24 +567,17 @@ rule bam2bw:
                 genomelen+=int(l)
         excludedchrs=list(set(chrs)-set(includedchrs))
         commoncmd="module load {params.deeptoolsver};"
-        cmd1="bamCoverage --bam "+input.bam1+" -o "+output.outbw1+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
-        cmd4="bamCoverage --bam "+input.bam4+" -o "+output.outbw4+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
+        cmd="bamCoverage --bam "+input.bam+" -o "+output.outbw+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
         if pe=="yes":
-            cmd1+=" --centerReads"
-            cmd4+=" --centerReads"
+            cmd+=" --centerReads"
         else:
-            if len([i for i in uniq_inputs if i in input.bam1]) != 0:
-                cmd1+=" -e 200"
-                cmd4+=" -e 200"
+            if len([i for i in uniq_inputs if i in input.bam]) != 0:
+                cmd+=" -e 200"
             else:
-                file1=list(map(lambda z:z.strip().split(),open(input.ppqt1,'r').readlines()))
-                extend1 = file1[0][2].split(",")[0]
-                cmd1=cmd1+" -e "+extend1
-                file4=list(map(lambda z:z.strip().split(),open(input.ppqt4,'r').readlines()))
-                extend4 = file4[0][2].split(",")[0]
-                cmd4=cmd4+" -e "+extend4
-        shell(commoncmd+cmd1)
-        shell(commoncmd+cmd4)                                    
+                file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
+                extend = file[0][2].split(",")[0]
+                cmd=cmd+" -e "+extend
+        shell(commoncmd+cmd)
 
 rule deeptools_prep:
     input:
@@ -620,7 +657,7 @@ rule deeptools_QC:
 
 rule deeptools_fingerprint:
     input:
-        join(workpath,bam_dir,"{group}.sorted.deeptools_prep")
+        prep=join(workpath,bam_dir,"{group}.sorted.deeptools_prep"),
     output:
         image=join(workpath,deeptools_dir,"{group}.fingerprint.sorted.pdf"),
         metrics=join(workpath,extra_fingerprint_dir,"{group}.fingerprint.metrics.sorted.tsv"),
@@ -631,7 +668,7 @@ rule deeptools_fingerprint:
     run:
         import re
         commoncmd="module load {params.deeptoolsver}; module load python;"
-        listfile=list(map(lambda z:z.strip().split(),open(input[0],'r').readlines()))
+        listfile=list(map(lambda z:z.strip().split(),open(input.prep,'r').readlines()))
         ext=listfile[0][0]
         bams=listfile[1]
         labels=listfile[2]
@@ -640,7 +677,29 @@ rule deeptools_fingerprint:
             cmd+=" -e 200"
         shell(commoncmd+cmd)
 
-rule deeptools_fingerprint_dedup:
+rule deeptools_fingerprint_Q5MDD:
+    input:
+        prep=join(workpath,bam_dir,"{group}.sorted.Q5MDD.deeptools_prep"),
+    output:
+        image=join(workpath,deeptools_dir,"{group}.fingerprint.sorted.Q5MDD.pdf"),
+        metrics=join(workpath,extra_fingerprint_dir,"{group}.fingerprint.metrics.sorted.Q5MDD.tsv"),
+    params:
+        rname="pl:deeptools_fingerprint_Q5MDD",
+        deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
+	batch="--cpus-per-task=8"
+    run:
+        import re
+        commoncmd="module load {params.deeptoolsver}; module load python;"
+        listfile=list(map(lambda z:z.strip().split(),open(input.prep,'r').readlines()))
+        ext=listfile[0][0]
+        bams=listfile[1]
+        labels=listfile[2]
+        cmd="plotFingerprint -b "+" ".join(bams)+" --labels "+" ".join(labels)+" -p 4 --skipZeros --outQualityMetrics "+output.metrics+" --plotFile "+output.image 
+        if se == "yes":
+            cmd+=" -e 200"
+        shell(commoncmd+cmd)
+
+rule deeptools_fingerprint_Q5DD:
     input:
         join(workpath,bam_dir,"{group}.sorted.Q5DD.deeptools_prep")
     output:
@@ -648,7 +707,7 @@ rule deeptools_fingerprint_dedup:
         raw=temp(join(workpath,deeptools_dir,"{group}.fingerprint.raw.sorted.Q5DD.tab")),
         metrics=join(workpath,deeptools_dir,"{group}.fingerprint.metrics.sorted.Q5DD.tsv"),
     params:
-        rname="pl:deeptools_fingerprint",
+        rname="pl:deeptools_fingerprint_Q5DD",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
 	batch="--cpus-per-task=8"
     run:
