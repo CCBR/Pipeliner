@@ -924,10 +924,7 @@ rule ngsqc_plot:
             cmd2 = cmd2 + "python " + params.script + " -d '" + group + "' -e 'sorted.Q5MDD' -g '" + group + "'; "
             cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.sorted.Q5MDD.pdf " + workpath + "/QC/" + group + ".NGSQC.sorted.Q5MDD.pdf" + "; "
         shell(commoncmd1)
-        shell(commoncmd2)
-        shell(cmd1)
-        shell(cmd2)
-        shell(cmd3)
+        shell(commoncmd2 + cmd1 + cmd2 + cmd3)
 
 rule QCstats:
     input:
