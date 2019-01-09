@@ -193,6 +193,8 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
+            # ngsqc
+            expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5MDD.pdf"),group=groups),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -319,7 +321,7 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
             folder=join(workpath,bam_dir),
 	    genomefile=config['references'][pfamily]['REFLEN']
         shell: """
-if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
+if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
 cd /lscratch/$SLURM_JOBID;
 module load {params.macsver};
 module load {params.samtoolsver};
@@ -796,7 +798,6 @@ rule NRF:
         rver=config['bin'][pfamily]['tool_versions']['RVER'],
         preseqver=config['bin'][pfamily]['tool_versions']['PRESEQVER'],
         nrfscript=join(workpath,"Scripts","atac_nrf.py "),            
-
     output:
         preseq=join(workpath,"QC","{name}.preseq.dat"),
         preseqlog=join(workpath,"QC","{name}.preseq.log"),
@@ -804,7 +805,6 @@ rule NRF:
     threads: 16
     shell: """
 module load {params.preseqver};
-
 preseq lc_extrap -P -B -o {output.preseq} {input.bam} -seed 12345 -v -l 100000000000 2> {output.preseqlog}
 python {params.nrfscript} {output.preseqlog} > {output.nrf}
         """
@@ -882,6 +882,52 @@ module load {params.perlver};
     --aligner bowtie2 --force {input}
             """
 
+rule ngsqc:
+    input:
+        tagAlign=join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz")
+    output:
+        file=join(workpath,"QC","{name}.sorted.Q5MDD.NGSQC_report.txt"),
+    params:
+        rname="pl:ngsqc",
+        bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
+        ngsqc=config['bin'][pfamily]['NGSQC'],
+        genomefile=config['references'][pfamily]['REFLEN']
+    shell: """
+module load {params.bedtoolsver};
+if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
+cd /lscratch/$SLURM_JOBID;
+cp {input.tagAlign} tmptagAlign.gz;
+gzip -d tmptagAlign.gz;
+{params.ngsqc} -v -o tmpOut tmptagAlign {params.genomefile};
+mv tmpOut/NGSQC_report.txt {output.file}
+"""
+
+rule ngsqc_plot:
+    input:
+        ngsqc=expand(join(workpath,"QC","{name}.sorted.Q5MDD.NGSQC_report.txt"),name=samples),
+    output:
+        out=expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5MDD.pdf"),group=groups),
+    params:
+        rname="pl:ngsqc_plot",
+        script=join(workpath,"Scripts","ngsqc_plot.py"),
+    run:
+        commoncmd1 = "if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi"
+        commoncmd2 = "cd /lscratch/$SLURM_JOBID;"
+        cmd1 = ""
+        cmd2 = ""
+        cmd3 = ""
+        for group in groups:
+            labels = [ sample for sample in samples if sample in groupdatawinput[group] ]
+            cmd1 = cmd1 + "mkdir " + group + "; "
+            for label in labels:
+                cmd1 = cmd1 + "cp " + workpath + "/QC/" + label + ".sorted.Q5MDD.NGSQC_report.txt " + group + "; " 
+            cmd2 = cmd2 + "python " + params.script + " -d '" + group + "' -e 'sorted.Q5MDD' -g '" + group + "'; "
+            cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.sorted.Q5MDD.pdf " + workpath + "/QC/" + group + ".NGSQC.sorted.Q5MDD.pdf" + "; "
+        shell(commoncmd1)
+        shell(commoncmd2)
+        shell(cmd1)
+        shell(cmd2)
+        shell(cmd3)
 
 rule QCstats:
     input:
@@ -893,7 +939,6 @@ rule QCstats:
     params:
         rname='pl:QCstats',
         filterCollate=join(workpath,"Scripts","filterMetrics"),   
-
     output:
         sampleQCfile=join(workpath,"QC","{name}.qcmetrics"),
     threads: 16
@@ -918,7 +963,6 @@ rule QCTable:
         rname='pl:QCTable',
         inputstring=" ".join(expand(join(workpath,"QC","{name}.qcmetrics"), name=samples)),
         filterCollate=join(workpath,"Scripts","createtable"),
-
     output:
         qctable=join(workpath,"QCTable.txt"),
     threads: 16
