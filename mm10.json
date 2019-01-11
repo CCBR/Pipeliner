@@ -55,6 +55,8 @@
     "CANVASGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/WholeGenomeFasta",
     "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_kmer.fa",
     "CANVASFILTER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_WindowMasker.bed",
+    "CANVASPLOIDY": "/data/CCBR_Pipeliner/db/PipeDB/lib/ploidy.vcf",
+    "CANVASBALLELES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_knownSNPs_sites.vcf.gz",
     "CNVKITANNO": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_refFlat.txt",
 },
     "genomeseq": {
@@ -115,7 +117,8 @@
     "CANVASGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/WholeGenomeFasta",
     "CANVASKMER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_kmer.fa",
     "CANVASFILTER": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_refs/mm10/mm10_WindowMasker.bed",
-    "CANVASPLOIDY": "/data/CCBR_Pipeliner/db/PipeDB/lib/canvas_knownPloidy_hg19.vcf",
+    "CANVASPLOIDY": "/data/CCBR_Pipeliner/db/PipeDB/lib/ploidy.vcf",
+    "CANVASBALLELES": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_knownSNPs_sites.vcf.gz",
     "VEPBUILD": "GRCm38",
     "VEPSPECIES": "mus_musculus",
     "VEPFILTERVCF": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_allstrains_dbSNP142.vcf.gz",
