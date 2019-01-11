@@ -66,6 +66,11 @@
     "CANVASPLOIDY": "/data/CCBR_Pipeliner/db/PipeDB/lib/ploidy.vcf",
     "CANVASBALLELES": "/fdb/Canvas/GRCh38/dbsnp.vcf",
     "CNVKITANNO": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg38_refFlat.txt",
+    "FREECLENGTHS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg38.filtered.fa.fai",
+    "FREECCHROMS": "/fdb/igenomes/Homo_sapiens/UCSC/hg38/Sequence/Chromosomes",
+    "FREECFASTA": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
+    "FREECPILEUP": "/data/CCBR_Pipeliner/db/PipeDB/lib/dbsnp_146.hg38.SingleDiNucl.IDs.vcf",
+    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/dbsnp_146.hg38.SingleDiNucl.IDs.vcf"
     },
     "genomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
@@ -137,6 +142,11 @@
     "CANVASPLOIDY": "/data/CCBR_Pipeliner/db/PipeDB/lib/ploidy.vcf",
     "CANVASBALLELES": "/fdb/Canvas/GRCh38/dbsnp.vcf",
     "CNVKITANNO": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg38_refFlat.txt",
+    "FREECLENGTHS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg38.filtered.fa.fai",
+    "FREECCHROMS": "/fdb/igenomes/Homo_sapiens/UCSC/hg38/Sequence/Chromosomes",
+    "FREECFASTA": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
+    "FREECPILEUP": "/data/CCBR_Pipeliner/db/PipeDB/lib/dbsnp_146.hg38.SingleDiNucl.IDs.vcf",
+    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/dbsnp_146.hg38.SingleDiNucl.IDs.vcf"
     },
     "rnaseq": {
      "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/ref.fa",

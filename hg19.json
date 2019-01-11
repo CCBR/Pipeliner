@@ -66,6 +66,11 @@
     "CANVASPLOIDY": "/data/CCBR_Pipeliner/db/PipeDB/lib/ploidy.vcf",
     "CANVASBALLELES": "/fdb/Canvas/GRCh37/dbsnp.vcf",
     "CNVKITANNO": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_refFlat.txt",
+    "FREECLENGTHS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.filtered.fa.fai",
+    "FREECCHROMS": "/fdb/igenomes/Homo_sapiens/UCSC/hg19/Sequence/Chromosomes",
+    "FREECFASTA": "/fdb/igenomes/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa",
+    "FREECPILEUP": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_snp142.SingleDiNucl.1based.bed",
+    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_snp142.SingleDiNucl.1based.txt"
     },
     "genomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
@@ -144,6 +149,11 @@
     "CANVASFILTER": "/fdb/Canvas/GRCh37/filter13.bed",
     "CANVASPLOIDY": "/data/CCBR_Pipeliner/db/PipeDB/lib/ploidy.vcf",
     "CANVASBALLELES": "/fdb/Canvas/GRCh37/dbsnp.vcf",
+    "FREECLENGTHS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.filtered.fa.fai",
+    "FREECCHROMS": "/fdb/igenomes/Homo_sapiens/UCSC/hg19/Sequence/Chromosomes",
+    "FREECFASTA": "/fdb/igenomes/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa",
+    "FREECPILEUP": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_snp142.SingleDiNucl.1based.bed",
+    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_snp142.SingleDiNucl.1based.txt"
     },
     "rnaseq": {
     "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/ref.fa",

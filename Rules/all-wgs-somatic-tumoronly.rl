@@ -2,15 +2,12 @@ if config['project']['annotation'] == "hg19":
 
   rule all_wgs_somatic_tumoronly:
     input:  expand("{s}"+".recal.bam",s=samples),
+            expand("freec_out/{s}/{s}.recal.bam_CNVs",s=samples),
 #            expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/{s}"+".FINALmutect2.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{s}"+".maf",s=samples),
             config['project']['workpath']+"/mutect2_out/mutect2_maf_summary.pdf",
             config['project']['workpath']+"/mutect2_out",
-#            config['project']['workpath']+"/cnvkit_out",
-#            expand(config['project']['workpath']+"/cnvkit_out/{s}_calls.cns", s=samples),
-#            expand(config['project']['workpath']+"/cnvkit_out/{s}_gainloss.tsv", s=samples),                        
-#            config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
             "sample_network.bmp",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf",
@@ -21,22 +18,19 @@ if config['project']['annotation'] == "hg19":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 elif config['project']['annotation'] == "hg38":
 
   rule all_wgs_somatic_tumoronly:
     input:  expand("{s}"+".recal.bam",s=samples),
+            expand("freec_out/{s}/{s}.recal.bam_CNVs",s=samples),
 #            expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/{s}"+".FINALmutect2.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{s}"+".maf",s=samples),
             config['project']['workpath']+"/mutect2_out/mutect2_maf_summary.pdf",
             config['project']['workpath']+"/mutect2_out",
-#            config['project']['workpath']+"/cnvkit_out",
-#            expand(config['project']['workpath']+"/cnvkit_out/{s}_calls.cns", s=samples),
-#            expand(config['project']['workpath']+"/cnvkit_out/{s}_gainloss.tsv", s=samples),                        
-#            config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
             "sample_network.bmp",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf",
@@ -47,7 +41,7 @@ elif config['project']['annotation'] == "hg38":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 
@@ -58,10 +52,6 @@ elif config['project']['annotation'] == "mm10":
             expand(config['project']['workpath']+"/mutect2_out/{s}"+".FINALmutect2.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{s}"+".maf",s=samples),
             config['project']['workpath']+"/mutect2_out",
-#            config['project']['workpath']+"/cnvkit_out",
-#            expand(config['project']['workpath']+"/cnvkit_out/{s}_calls.cns", s=samples),
-#            expand(config['project']['workpath']+"/cnvkit_out/{s}_gainloss.tsv", s=samples),                        
-#            config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             "sample_network.bmp",
             config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf",
@@ -72,6 +62,6 @@ elif config['project']['annotation'] == "mm10":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """

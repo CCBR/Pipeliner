@@ -12,16 +12,11 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/mutect2_out/mutect2_maf_summary.pdf",
             config['project']['workpath']+"/mutect_out/mutect_maf_summary.pdf",
             config['project']['workpath']+"/strelka_out/strelka_maf_summary.pdf",
-#            config['project']['workpath']+"/mutect_variants_alview.input",
             config['project']['workpath']+"/strelka_out",
             config['project']['workpath']+"/mutect2_out",
-            config['project']['workpath']+"/cnvkit_out",
             config['project']['workpath']+"/mutect_out",
-            expand(config['project']['workpath']+"/cnvkit_out/{p}_calls.cns", p=pairs),
-            expand(config['project']['workpath']+"/cnvkit_out/{p}_gainloss.tsv", p=pairs),                        
             expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs),
             expand(config['project']['workpath']+"/conpair_out/{p}.conpair", p=pairs),
-            config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
             config['project']['workpath']+"/sample_network.bmp",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             config['project']['workpath']+"/mutect_out/mutect_variants.database",
@@ -36,10 +31,11 @@ if config['project']['annotation'] == "hg19":
             "admixture_out/admixture_table.tsv",
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
+            expand("sequenza_out/{p}/{p}"+"_segments.txt",p=pairs),
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 elif config['project']['annotation'] == "hg38":
@@ -59,13 +55,9 @@ elif config['project']['annotation'] == "hg38":
 #            config['project']['workpath']+"/mutect_variants_alview.input",
             config['project']['workpath']+"/strelka_out",
             config['project']['workpath']+"/mutect2_out",
-            config['project']['workpath']+"/cnvkit_out",
             config['project']['workpath']+"/mutect_out",
-            expand(config['project']['workpath']+"/cnvkit_out/{p}_calls.cns", p=pairs),
-            expand(config['project']['workpath']+"/cnvkit_out/{p}_gainloss.tsv", p=pairs),                        
             expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs),
             expand(config['project']['workpath']+"/conpair_out/{p}.conpair", p=pairs),
-            config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
             config['project']['workpath']+"/sample_network.bmp",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             config['project']['workpath']+"/mutect_out/mutect_variants.database",
@@ -80,10 +72,11 @@ elif config['project']['annotation'] == "hg38":
             "admixture_out/admixture_table.tsv",
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
+            expand("sequenza_out/{p}/{p}"+"_segments.txt",p=pairs),
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 
@@ -100,13 +93,9 @@ elif config['project']['annotation'] == "mm10":
 #            config['project']['workpath']+"/mutect_variants_alview.input",
             config['project']['workpath']+"/strelka_out",
             config['project']['workpath']+"/mutect2_out",
-            config['project']['workpath']+"/cnvkit_out",
             config['project']['workpath']+"/mutect_out",
-            expand(config['project']['workpath']+"/cnvkit_out/{p}_calls.cns", p=pairs),
-            expand(config['project']['workpath']+"/cnvkit_out/{p}_gainloss.tsv", p=pairs),                        
             expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs),
             expand(config['project']['workpath']+"/conpair_out/{p}.conpair", p=pairs),
-            config['project']['workpath']+"/cnvkit_out/CNVkit_summary_heatmap.pdf",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             config['project']['workpath']+"/mutect_out/mutect_variants.database",
             config['project']['workpath']+"/strelka_out/strelka_variants.database",
@@ -121,9 +110,10 @@ elif config['project']['annotation'] == "mm10":
             "admixture_out/admixture_table.tsv",
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
+            expand("sequenza_out/{p}/{p}"+"_segments.txt",p=pairs),
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
