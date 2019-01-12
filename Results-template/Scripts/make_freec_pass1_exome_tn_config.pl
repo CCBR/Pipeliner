@@ -7,7 +7,7 @@ use List::Util 'shuffle';
 #my $mergedmaf = $ARGV[1] . '_out/oncotator_out/' . $ARGV[1] . '_merged.maf'; #to fix...
 #open C, ">$mergedmaf";
 
-my $outfile = $ARGV[0] . '/freec_wgs_config.txt';
+my $outfile = $ARGV[0] . '/freec_exome_config.txt';
 my $chrLenFile = $ARGV[1];
 my $chrFiles = $ARGV[2];
 my $tumormateFile = $ARGV[3];

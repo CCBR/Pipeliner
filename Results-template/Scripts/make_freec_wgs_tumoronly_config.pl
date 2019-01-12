@@ -53,8 +53,7 @@ print C "mateFile = $tumormateFile\n";
 print C "inputFormat = BAM\nmateOrientation = FR\n\n";
   
 print C '[target]' . "\n\n";
- 
- 
+
 print C '[BAF]' . "\n\n";
 
 print C "makePileup = $makePileup\n";

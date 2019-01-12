@@ -7,6 +7,7 @@ library(parallel)
 seqz_file = args[1]
 out_dir = args[2]
 n_cores = as.numeric(args[3])
+sampleid = args[4]
 
 if (! file.exists(seqz_file)) {
     stop(paste0("Can't find this SEQZ output file: ", seqz_file))
@@ -34,7 +35,7 @@ print("Fitting model...")
 CP.example <- sequenza.fit(seqzdata, mc.cores = n_cores))
 
 print("Printing results...")
-sequenza.results(sequenza.extract = seqzdata,cp.table = CP.example, sample.id = out_dir, out.dir=out_dir)
+sequenza.results(sequenza.extract = seqzdata,cp.table = CP.example, sample.id = sampleid, out.dir=out_dir)
 
 date()
 print("Done")
