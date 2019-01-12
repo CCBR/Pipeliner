@@ -316,6 +316,7 @@
         "FASTQCVER": "fastqc/0.11.5",
         "KRAKENVER": "kraken/1.1",
         "KRONATOOLSVER": "kronatools/2.7",
+        "MACSVER": "macs/2.1.1.20160309",
         "MULTIQCVER":"multiqc/1.4", 
         "NGSPLOTVER": "ngsplot/2.63",
         "PARALLELVER" : "parallel/20171222",
