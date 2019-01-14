@@ -2,7 +2,6 @@ if config['project']['annotation'] == "hg19":
 
   rule all_wgs_somatic:
     input:  expand("{s}"+".recal.bam",s=samples),
-            expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect_out/{p}"+".FINAL.vcf",p=pairs),
             expand(config['project']['workpath']+"/mutect2_out/{p}"+".FINALmutect2.vcf",p=pairs),
             expand(config['project']['workpath']+"/strelka_out/{p}"+"_FINAL.vcf",p=pairs),
@@ -15,9 +14,8 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/strelka_out",
             config['project']['workpath']+"/mutect2_out",
             config['project']['workpath']+"/mutect_out",
-            expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs),
             expand(config['project']['workpath']+"/conpair_out/{p}.conpair", p=pairs),
-            config['project']['workpath']+"/sample_network.bmp",
+            "sample_network.bmp",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             config['project']['workpath']+"/mutect_out/mutect_variants.database",
             config['project']['workpath']+"/strelka_out/strelka_variants.database",
@@ -32,6 +30,7 @@ if config['project']['annotation'] == "hg19":
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
             expand("sequenza_out/{p}/{p}"+"_segments.txt",p=pairs),
+            expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
     output:
     params: rname="final"
     shell:  """
@@ -42,7 +41,6 @@ elif config['project']['annotation'] == "hg38":
 
   rule all_wgs_somatic:
     input:  expand("{s}"+".recal.bam",s=samples),
-            expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect_out/{p}"+".FINAL.vcf",p=pairs),
             expand(config['project']['workpath']+"/mutect2_out/{p}"+".FINALmutect2.vcf",p=pairs),
             expand(config['project']['workpath']+"/strelka_out/{p}"+"_FINAL.vcf",p=pairs),
@@ -56,9 +54,8 @@ elif config['project']['annotation'] == "hg38":
             config['project']['workpath']+"/strelka_out",
             config['project']['workpath']+"/mutect2_out",
             config['project']['workpath']+"/mutect_out",
-            expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs),
             expand(config['project']['workpath']+"/conpair_out/{p}.conpair", p=pairs),
-            config['project']['workpath']+"/sample_network.bmp",
+            "sample_network.bmp",
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             config['project']['workpath']+"/mutect_out/mutect_variants.database",
             config['project']['workpath']+"/strelka_out/strelka_variants.database",
@@ -73,6 +70,7 @@ elif config['project']['annotation'] == "hg38":
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
             expand("sequenza_out/{p}/{p}"+"_segments.txt",p=pairs),
+            expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
     output:
     params: rname="final"
     shell:  """
@@ -94,12 +92,11 @@ elif config['project']['annotation'] == "mm10":
             config['project']['workpath']+"/strelka_out",
             config['project']['workpath']+"/mutect2_out",
             config['project']['workpath']+"/mutect_out",
-            expand(config['project']['workpath']+"/theta_out/{p}/{p}_thetaIN", p=pairs),
             expand(config['project']['workpath']+"/conpair_out/{p}.conpair", p=pairs),
             config['project']['workpath']+"/mutect2_out/mutect2_variants.database",
             config['project']['workpath']+"/mutect_out/mutect_variants.database",
             config['project']['workpath']+"/strelka_out/strelka_variants.database",
-            config['project']['workpath']+"/sample_network.bmp",
+            "sample_network.bmp",
             config['project']['workpath']+"/mutect2_out/oncotator_out/mutect2_variants.maf",
             config['project']['workpath']+"/mutect2_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/strelka_out/oncotator_out/strelka_variants.maf",
@@ -111,6 +108,7 @@ elif config['project']['annotation'] == "mm10":
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
             expand("sequenza_out/{p}/{p}"+"_segments.txt",p=pairs),
+            expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
     output:
     params: rname="final"
     shell:  """

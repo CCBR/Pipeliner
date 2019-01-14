@@ -61,10 +61,10 @@
         "fusioninsp_fuscatch": ["rnaseqfusion"],
         "oncofuse_fuscatch": ["rnaseqfusion"],
         "oncofuse_starfus": ["rnaseqfusion"],
-        "cnvkit_somatic": ["exomeseq-somatic"],
+        "cnvkit_somatic": ["none"],
         "cnvkit_germ": ["none"],
-        "cnvkit_wgs_somatic": ["wgs-somatic"],
-        "cnvkit_summary": ["exomeseq-somatic","wgs-somatic"],
+        "cnvkit_wgs_somatic": ["none"],
+        "cnvkit_summary": ["none"],
         "cnvkit_somatic_tumoronly": ["none"],
         "cnvkit_summary_tumoronly": ["none"],
         "delly_somatic": ["exomeseq-somatic","wgs-somatic"],
@@ -144,7 +144,7 @@
         "picard.rnaseqvar.markdups": ["rnaseqvargerm"],
         "germline_filter_rnaseqvar": ["rnaseqvargerm"],
         "conpair": ["exomeseq-somatic","wgs-somatic"],
-        "theta": ["exomeseq-somatic","wgs-somatic"]
+        "theta": ["none"]
         },
     "final": {
         "exomeseq-pairs": "all-exomeseq-pairs.rl",

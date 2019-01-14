@@ -70,7 +70,8 @@
     "FREECCHROMS": "/fdb/igenomes/Homo_sapiens/UCSC/hg38/Sequence/Chromosomes",
     "FREECFASTA": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
     "FREECPILEUP": "/data/CCBR_Pipeliner/db/PipeDB/lib/dbsnp_146.hg38.SingleDiNucl.IDs.vcf",
-    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/dbsnp_146.hg38.SingleDiNucl.IDs.vcf"
+    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/dbsnp_146.hg38.SingleDiNucl.IDs.vcf",
+    "SEQUENZAGC": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg38_gc50Base.txt.gz",
     },
     "genomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
@@ -146,7 +147,8 @@
     "FREECCHROMS": "/fdb/igenomes/Homo_sapiens/UCSC/hg38/Sequence/Chromosomes",
     "FREECFASTA": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38.d1.vd1.fa",
     "FREECPILEUP": "/data/CCBR_Pipeliner/db/PipeDB/lib/dbsnp_146.hg38.SingleDiNucl.IDs.vcf",
-    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/dbsnp_146.hg38.SingleDiNucl.IDs.vcf"
+    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/dbsnp_146.hg38.SingleDiNucl.IDs.vcf",
+    "SEQUENZAGC": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg38_gc50Base.txt.gz",
     },
     "rnaseq": {
      "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/ref.fa",

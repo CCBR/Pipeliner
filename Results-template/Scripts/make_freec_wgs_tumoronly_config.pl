@@ -41,11 +41,11 @@ open C, ">$outfile";
 
 print C '[general]' . "\n\n";
  
-print C "chrLenFile = $chrLenFile\n"
+print C "chrLenFile = $chrLenFile\n";
 print C "ploidy = $ploidy\ncontamination = $contamination\nbreakPointThreshold = 0.8\nwindow = 1000\n";
 print C "chrFiles = $chrFiles\n";
 print C "minimalSubclonePresence = 20\ncontaminationAdjustment = TRUE\nmaxThreads = 24\nnumberOfProcesses = 24\n";
-print C "outputDir = $ARGV[0]\n";
+print C "outputDir = $ARGV[0]\n\n";
  
 print C '[sample]' . "\n\n";
  

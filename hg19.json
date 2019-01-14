@@ -70,7 +70,8 @@
     "FREECCHROMS": "/fdb/igenomes/Homo_sapiens/UCSC/hg19/Sequence/Chromosomes",
     "FREECFASTA": "/fdb/igenomes/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa",
     "FREECPILEUP": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_snp142.SingleDiNucl.1based.bed",
-    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_snp142.SingleDiNucl.1based.txt"
+    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_snp142.SingleDiNucl.1based.txt",
+    "SEQUENZAGC": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_gc50Base.txt.gz",
     },
     "genomeseq": {
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
@@ -153,7 +154,8 @@
     "FREECCHROMS": "/fdb/igenomes/Homo_sapiens/UCSC/hg19/Sequence/Chromosomes",
     "FREECFASTA": "/fdb/igenomes/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa",
     "FREECPILEUP": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_snp142.SingleDiNucl.1based.bed",
-    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_snp142.SingleDiNucl.1based.txt"
+    "FREECSNPS": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_snp142.SingleDiNucl.1based.txt",
+    "SEQUENZAGC": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_gc50Base.txt.gz",
     },
     "rnaseq": {
     "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/ref.fa",
