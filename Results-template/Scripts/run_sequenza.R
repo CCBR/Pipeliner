@@ -32,7 +32,7 @@ seqzdata <- sequenza.extract(seqz_file, min.reads = 30, min.reads.normal= 10)
 
 date()
 print("Fitting model...")
-CP.example <- sequenza.fit(seqzdata, mc.cores = n_cores))
+CP.example <- sequenza.fit(seqzdata, mc.cores = n_cores)
 
 print("Printing results...")
 sequenza.results(sequenza.extract = seqzdata,cp.table = CP.example, sample.id = sampleid, out.dir=out_dir)

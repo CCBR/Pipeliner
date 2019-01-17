@@ -27,7 +27,7 @@ if config['project']['annotation'] == "hg19":
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
             "admixture_out/admixture_table.tsv",
             "QC/decoy",
-            expand("sequenza_out/{p}/{p}"+"_segments.txt",p=pairs),
+            expand("sequenza_out/{p}"+"_alternative_solutions.txt",p=pairs),
             expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
     output:
     params: rname="final"
@@ -64,7 +64,7 @@ elif config['project']['annotation'] == "hg38":
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
             "admixture_out/admixture_table.tsv",
             "QC/decoy",
-            expand("sequenza_out/{p}/{p}"+"_segments.txt",p=pairs),
+            expand("sequenza_out/{p}"+"_alternative_solutions.txt",p=pairs),
             expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
     output:
     params: rname="final"
