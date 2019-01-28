@@ -358,6 +358,7 @@
         "KRONATOOLSVER": "kronatools/2.7",
         "MULTIQC":"multiqc/1.4", 
         "NGSPLOTVER": "ngsplot/2.63",
+        "NGSQC": "/data/CCBR_Pipeliner/db/PipeDB/ChIPseq/NGSQC_linux_x86_64",
         "PERLVER": "perl/5.24.3",
         "PICARDVER": "picard/2.17.11",
         "PRESEQVER": "preseq/2.0.3",
