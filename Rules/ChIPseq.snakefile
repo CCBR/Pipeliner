@@ -1,723 +1,473 @@
 from snakemake.utils import R
-from os.path import join, abspath, basename
-from os import environ as env
-from io import StringIO
-from tempfile import TemporaryFile
-from collections import Counter
+from os.path import join
+import re,os
 
-bam_dir='bam'
-
-def normalize_bam_file_chromosomes(bamfns, obamfns=[], suffix='.common_chrom.bam'):
-    from pysam import Samfile, FastaFile
-    counts = []
-    for bamfn1 in bamfns :
-        bam1 = Samfile(bamfn1)
-
-        cnt1 = Counter()
-        for aread1 in bam1 :
-            if aread1.is_unmapped :
-                continue
-            cnt1[aread1.reference_name] += 1 
-        bam1.close()
-        counts.append(cnt1)
-    
-    common = None
-    for cnt in counts :
-        if common != None :
-            common = common.intersection(cnt)
-        else :
-            common = set(cnt)
-    
-    #################
-    # check if common chromosomes exists!
-    assert common
-    
-    for i, bamfn1 in enumerate(bamfns) :
-        bam1 = Samfile(bamfn1)
-        
-        if obamfns :
-            obamfn1 = obamfns[i] #list of output BAM filenames
-        else :
-            obamfn1 = bamfn1.replace('.bam', '.common_chrom.bam')
-        obam1 = Samfile(obamfn1, 'wb', template=bam1)
-        
-        for aread1 in bam1:
-            if aread1.is_unmapped :
-                continue
-                
-            if aread1.reference_name in common and len(aread1.reference_name) < 6 :
-                obam1.write(aread1)
-                
-        obam1.close()
-        bam1.close()
-    
+from os import listdir
 
 configfile: "run.json"
-
-
+    
 workpath = config['project']['workpath']    
 filetype = config['project']['filetype']
 readtype = config['project']['readtype']
-pipehome = config['project']['pipehome']
 
-print(pipehome)
+se=""
+pe=""
 
-#include: join(pipehome, "Rules", "InitialChIPseqQC.snakefile")
+if config['project']['nends'] == 2 :
+    pe="yes"
+elif config['project']['nends'] == 1 :
+    se="yes"
 
-bam_suffix = '.sorted.bam'
-#####################
-#samples to process
-#####################
-samples = config['project']['peaks']['chips']
+##########
+# DEFINING SAMPLES
+
+chips = config['project']['peaks']['chips']
 chip2input = config['project']['peaks']['inputs']
-
-inputs = [v for v in chip2input.values() if v] #need to be removed!
 uniq_inputs = list(sorted(set([v for v in chip2input.values() if v])))
 
-groups = config['project']['groups'] #group2chips
-chip2group = {}
-for group, chips in groups.items() :
+sampleswinput = []
+for input in chip2input:
+        if chip2input[input] != 'NA' and chip2input[input] != '':
+                sampleswinput.append(input)
+
+groupdata = config['project']['groups']
+
+groupdatawinput = {}
+groupswreps = []
+
+for group, chips in groupdata.items() :
+    tmp = [ ]
+    if len(chips) > 1:
+        groupswreps.append(group)
     for chip in chips :
-        chip2group[chip]=group
+        if chip in samples:
+            tmp.append(chip)
+            input = chip2input[chip]
+            if input != 'NA' and input != '':
+                tmp.append(input)
+    if len(tmp) != 0:
+        groupdatawinput[group]=set(tmp)
 
-#ordered group!!
-ogroups = [g for g in [chip2group[c] for c in samples]]
+groups = list(groupdatawinput.keys())
 
-contrast = config['project']['contrast']
-clabel_sep = '_vs_'
-clabels = [g1 + clabel_sep + g2 for g1,g2 in contrast]
-
-#debugging
-print( 'groups:',groups, file=sys.stderr)
-print( 'samples:', samples, file=sys.stderr)
-print( 'ogroups:', ogroups, file=sys.stderr)
-
-#####################
-#Peak caller Output info
-#####################
-macsn_dir = 'macs_narrow'
-macsb_dir = 'macs_broad'
-sicer_dir = 'sicer'
-gem_dir = 'gem'
-peak_dirs = [macsn_dir, macsb_dir, sicer_dir]
-
-macsn_suffix = '_peaks.narrowPeak'
-macsb_suffix = '_peaks.broadPeak'
-sicer_suffix = '_broadpeaks.bed'
-peak_suffixes = [macsn_suffix, macsb_suffix, sicer_suffix]
-
-callers = ['macsn', 'macsb', 'sicer']
-caller2dir = {k:v for k,v in zip(callers, peak_dirs)}
-dir2caller = {v:k for k,v in zip(callers, peak_dirs)}
-suffix2caller = {v:k for k,v in zip(callers, peak_suffixes)}
-caller2suffix = {k:v for k,v in zip(callers, peak_suffixes)}
-
-genome = config['project']['annotation']
-if genome == 'hg19' :
-    ngsplot_regions = ["tss", "tes", "genebody", 'cgi', "dhs", "enhancer", "exon"]
-else :
-    ngsplot_regions = ["tss", "tes", "genebody", 'cgi', "exon"]
+reps=""
+if len(groupswreps) > 0:
+    reps="yes"
 
 
-#####################
-# directories
-#####################
-#sicer_rmdup_dir = "sicer_rmdup"
-memechip_dir = "MEMEChIP"
+#########
+# PREPARING TO DEAL WITH A VARIED SET OF PEAKCALL TOOLS
+
+PeakTools_narrow = [ "macs_narrow", "gem" ]
+PeakTools_broad = [ "macs_broad", "sicer" ]
+
+PeakTools = PeakTools_narrow + PeakTools_broad
+
+PeakExtensions = { 'macs_narrow': '_peaks.narrowPeak', 'macs_broad': '_peaks.broadPeak',
+                   'sicer': '_broadpeaks.bed', 'gem': '.GEM_events.narrowPeak' }
+
+FileTypesChIPQC = { 'macs_narrow': 'narrowPeak', 'macs_broad': 'narrowPeak',
+              'sicer': 'bed', 'gem': 'narrowPeak' }
+
+PeakExtensionsIDR = { 'macs_narrow': '_peaks.narrowPeak', 'macs_broad': '_peaks.broadPeak',
+                   'sicer': '_sicer.broadPeak', 'gem': '.GEM_events.narrowPeak' }
+
+FileTypesIDR = { 'macs_narrow': 'narrowPeak', 'macs_broad': 'broadPeak',
+              'sicer': 'broadPeak', 'gem': 'narrowPeak' }
+
+
+#########
+# CREATING DIRECTORIES
+
+bam_dir='bam'
+qc_dir='QC'
+
+chipQC_dir = "ChIPQC"
 idr_dir = 'IDR'
-pepr_dir = 'PePr'
-ngsplot_dir = "Reports"
-ceas_dir = 'CEAS'
-chipseeker_dir = 'ChIPseeker'
+memechip_dir = "MEME"
+homer_dir = "HOMER_motifs"
+uropa_dir = "UROPA_annotations"
 
-#now it is deprecated
-#because I put the chr from BWA process
-#in InitialChIPseqQC pipeline.
-def fix_chrom(fn) :
-    changed = 0
-    fp = TemporaryFile('w+')
-    for l in open( fn ) :
-        line =[e.strip() for e in l.split('\t')]
-        if not line[0].startswith( 'chr' ) :
-            changed = 1
-            if line[0] == 'MT' :
-                line[0] = 'chrM'
-            else :
-                line[0] = 'chr'+line[0]
-        print('\t'.join(line), file=fp, sep='\t')
-        
-    fp.seek(0)
-    if changed :
-        ofp = open(fn, 'w')
-        for l in fp :
-            ofp.write(l)
-        ofp.close()
-            
+otherDirs = [chipQC_dir, homer_dir, uropa_dir]
+if reps == "yes":
+    otherDirs.append(idr_dir)
 
-#####################
-# Local programs
-#####################
-chipseeker_rmd = join('Scripts' , 'ChIPseeker.rmd')
-chipseeker_r = join('Scripts' , 'runChIPseeker.R')
-    
-if genome == 'hg19' :
+for d in PeakTools + otherDirs:
+        if not os.path.exists(join(workpath,d)):
+                os.mkdir(join(workpath,d))
+
+##########
+# RULE ALL
+
+if reps == "yes":
     rule ChIPseq:
-        params: 
+        params:
             batch='--time=168:00:00'
         input:
-            ## ChIPQC 
-            expand(join('ChIPQC','{caller}','ChIPQCreport.html'), caller=callers),
-            
-            ## Peak Calling [macs (narrow and broad), gem (narrow), sicer(broad)]
-            [join(macsn_dir, "{g}", "{n}" + macsn_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
-            [join(macsb_dir, "{g}", "{n}" + macsb_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
-            [join(sicer_dir, "{g}", "{n}" + sicer_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
-            [join(gem_dir, "{g}", "{n}", "{n}" + ".GEM_events.txt").format(n=n, g=g) for n,g in zip(samples, ogroups)],
-
-            ## MEME
-            [join(memechip_dir,'{g}','{n}_memechip').format(n=n,g=g) for n,g in zip(samples, ogroups) ],
-            
-            ## PePr
-            expand(join(pepr_dir,'{clabel}__PePr_chip1_peaks.bed'), clabel=clabels ),
-            expand(join(pepr_dir,'{clabel}__PePr_chip2_peaks.bed'), clabel=clabels ),
-
-            ## NGS plot
-            expand(join(ngsplot_dir, "{region}.heatmap.pdf"), region=ngsplot_regions ),
-            
-            ## IDR
-            expand(join(idr_dir,'{caller}','{group}.idrValue.txt'), caller=callers, group=groups ),
-            
-            ## CEAS
-            expand(expand( join(ceas_dir, '{caller}', '{{group}}', '{{name}}.pdf'), caller=callers), zip, group=ogroups, name=samples ),
-            
-            ## ChIPSeeker
-            expand(expand(join(chipseeker_dir, '{caller}', '{{group}}', '{{name}}.html'), caller=callers), zip, group=ogroups, name=samples),
-            
-else :
+            expand(join(workpath,"macs_narrow","{name}","{name}_peaks.narrowPeak"),name=chips),
+            expand(join(workpath,"macs_broad","{name}","{name}_peaks.broadPeak"),name=chips),
+            expand(join(workpath,"sicer","{name}","{name}_sicer.broadPeak"),name=chips),
+            expand(join(workpath,"gem","{name}","{name}.GEM_events.narrowPeak"),name=chips),
+            expand(join(workpath,chipQC_dir,"{PeakTool}","ChIPQCreport.html"),PeakTool=PeakTools),
+            expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
+            expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}"),PeakTool=PeakTools,name=chips),
+#            expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_allhits.txt'),PeakTool=PeakTools,name=chips),
+	    expand(join(workpath,idr_dir,'{PeakTool}','{group}.idrValue.txt'),PeakTool=PeakTools, group=groupswreps),
+else:
     rule ChIPseq:
-        params: 
+        params:
             batch='--time=168:00:00'
         input:
-            ## ChIPQC
-            expand(join('ChIPQC','{caller}','ChIPQCreport.html'), caller=callers),
-            
-            ## Peak Calling [macs (narrow and broad), gem (narrow), sicer(broad)]
-            [join(macsn_dir, "{g}", "{n}" + macsn_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
-            [join(macsb_dir, "{g}", "{n}" + macsb_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
-            [join(sicer_dir, "{g}", "{n}" + sicer_suffix).format(n=n, g=g) for n,g in zip(samples, ogroups)],
-            [join(gem_dir, "{g}", "{n}", "{n}" + ".GEM_events.txt").format(n=n, g=g) for n,g in zip(samples, ogroups)],
-            
-            ## MEME
-            [join(memechip_dir,'{g}','{n}_memechip').format(n=n,g=g) for n,g in zip(samples, ogroups) ],
-            
-            ##PePr
-            expand(join(pepr_dir,'{clabel}__PePr_chip1_peaks.bed'), clabel=clabels ),
-            expand(join(pepr_dir,'{clabel}__PePr_chip2_peaks.bed'), clabel=clabels ),
+            expand(join(workpath,"macs_narrow","{name}","{name}_peaks.narrowPeak"),name=chips),
+            expand(join(workpath,"macs_broad","{name}","{name}_peaks.broadPeak"),name=chips),
+            expand(join(workpath,"sicer","{name}","{name}_sicer.broadPeak"),name=chips),
+            expand(join(workpath,"gem","{name}","{name}.GEM_events.narrowPeak"),name=chips),
+            expand(join(workpath,chipQC_dir,"{PeakTool}","ChIPQCreport.html"),PeakTool=PeakTools),
+            expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
 
-            ## NGS plot
-            expand(join(ngsplot_dir, "{region}.heatmap.pdf"), region=ngsplot_regions ),
-            
-            ## IDR
-            expand(join(idr_dir,'{caller}','{group}.idrValue.txt'), caller=callers, group=groups ),
-            
-            ## CEAS
-            #expand( expand( join(ceas_dir, '{caller}', '{{group}}', '{{name}}.pdf'), caller=callers), zip, group=ogroups, name=samples ),
-            
-            ## ChIPSeeker
-            expand(expand(join(chipseeker_dir, '{caller}', '{{group}}', '{{name}}.html'), caller=callers), zip, group=ogroups, name=samples),
+##########
+# INDIVIDUAL RULES
 
-rule ChIPseeker :
-    params:
-        rname="pl:ChIPseeker:{group}:{name}",
-        genome = config['project']['annotation']
+rule MACS2_narrow:
     input:
-        join(macsn_dir, '{group}', '{name}'+macsn_suffix),
-        join(macsb_dir, '{group}', '{name}'+macsb_suffix),
-        join(sicer_dir, '{group}', '{name}'+sicer_suffix),
-        
+         chip = join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz") if \
+            se == "yes" else \
+            join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+         ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5MDD.tagAlign.gz") if \
+            se == "yes" else \
+            lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+         ppqt = join(workpath,bam_dir,"{name}.sorted.Q5MDD.ppqt") if \
+            se == "yes" else join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
     output:
-        expand(join(chipseeker_dir, '{caller}', '{{group}}', '{{name}}.html'), caller=callers)
-    shadow: 'shallow'
-        
-    run:
-        for in_fn, out_fn in zip(input, output) :  
-            in_fn = abspath(in_fn)
-            out_fn = abspath(out_fn)
-            
-            #fix_chrom(in_fn)
-            
-            shell( '''
-            module load R/3.5;
-            chipseeker=`basename {chipseeker_rmd}`
-            rm -rf $chipseeker
-            ln -s {chipseeker_rmd} $chipseeker #linking is necessary to make things separate 
-            Rscript {chipseeker_r} $chipseeker {in_fn} {params.genome} {out_fn}
-            ''' )
-            
-rule CEAS :
+         join(workpath,"macs_narrow","{name}","{name}_peaks.narrowPeak"),
     params:
-        rname="pl:CEAS:{group}:{name}",
-        outdirs = lambda w: [join(ceas_dir, caller, w.group) for caller in callers],
-        outnames = lambda w: [join(ceas_dir, caller, w.group, w.name) for caller in callers],
-        genome = config['project']['annotation'],
-    input:
-        join(macsn_dir, '{group}', '{name}'+macsn_suffix),
-        join(macsb_dir, '{group}', '{name}'+macsb_suffix),
-        join(sicer_dir, '{group}', '{name}'+sicer_suffix),
-    output:
-        expand(join(ceas_dir, '{caller}', '{{group}}', '{{name}}.pdf'), caller=callers)
-        
-    run:
+         rname='pl:MACS2_narrow',
+         gsize=config['project']['gsize'],
+         macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
+         macsn_dir="macs_narrow"
+    shell: """
+module load {params.macsver};
+ppqt=`cut -f 3 {input.ppqt} | cut -f 1 -d ","`;
+# if se == "yes"
+if [ {se} == "yes" ]; then 
+    if [ "{input.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5MDD.tagAlign.gz" ]; then
+        macs2 callpeak -t {input.chip} -c {input.ctrl} -g {params.gsize} -n {wildcards.name} \
+              --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" \
+              --extsize $ppqt --nomodel;
+    else
+        macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
+              --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" \
+              --extsize $ppqt --nomodel;
+    fi
+else
+    if [ {input.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
+        macs2 callpeak -t {input.chip} -c {input.ctrl} -g {params.gsize} -n {wildcards.name} \
+              --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" -f "BAMPE";
+    else
+        macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
+              --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" -f "BAMPE";
+    fi
+fi
+"""
 
-        for in_fn, odir, oname in zip(input, params.outdirs, params.outnames):    
-            shell( '''
-            mkdir -p {odir};
-            ''')
-            
-            #take the first 5 column and make 
-            #cleaned up file in the ceas directory
-            in_fn2 = join(odir,basename(in_fn)) #cleaned input
-            in_fp = open(in_fn2, 'w')
-            for l in open(in_fn):
-                line = l.split()
-                if len(line[0]) < 6:
-                    print( "\t".join(line[:5]), file=in_fp )
-            in_fp.close()
-            
-            shell('''
-            module load ceas/1.0.2;
-            module load R/3.5;
-            ceas -g /fdb/CEAS/{params.genome}.refGene \
-                 -b {in_fn2} --name {oname};
-            ''' )
-        
-rule IDR:
-    params:
-        rname="pl:IDR:{caller}:{group}",
-        outdir=join(idr_dir,'{caller}'),
-    
+rule MACS2_broad:
     input:
-        lambda w: [join(caller2dir[w.caller], w.group, c + caller2suffix[w.caller]) for c in groups[w.group]]
-        
+         chip = join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz") if \
+            se == "yes" else \
+            join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+         ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5MDD.tagAlign.gz") if \
+            se == "yes" else \
+            lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+         ppqt = join(workpath,bam_dir,"{name}.sorted.Q5MDD.ppqt") if \
+            se == "yes" else join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
     output:
-        join( idr_dir, '{caller}', '{group}.idrValue.txt' )
-    run:
-        if wildcards.caller == 'macsn':
-            shell(
-            '''
-            module load idr/2.0.3
-            mkdir -p {params.outdir}
-            idr -s {input} -o {output} --input-file-type narrowPeak --plot 
-            ''')
-        elif wildcards.caller == 'macsb':
-            shell(
-            '''
-            module load idr/2.0.3
-            mkdir -p {params.outdir}
-            idr -s {input} -o {output} --input-file-type broadPeak --plot 
-            ''')
-        elif wildcards.caller == 'sicer':
-            input2 = [fn+'.2' for fn in input]
-            shell(
-            '''
-            module load idr/2.0.3
-            
-            mkdir -p {params.outdir}
-            
-            for fn in {input}
-            do
-                cat $fn | awk 'BEGIN{{OFS="\\t"}} {{print $0, -log($NF)}}' >  $fn.2 ;
-            done
-            
-            touch {output}
-            #idr -s {input2} -o {output} --input-file-type bed --rank 7 --plot 
-            ''')
-        
-rule ngsplot :
+         join(workpath,"macs_broad","{name}","{name}_peaks.broadPeak"),
     params:
-        rname="pl:NGSplot:{region}",
-        genome = config['project']['annotation'],
-        outbase = join('{ngsplot_dir}', '{region}'),
-        config = '{region}.config',
-        batch= '--cpus-per-task=16 --mem=32g --time=24:00:00',
-        name = [*samples, *inputs],
+         rname='pl:MACS2_broad',
+         gsize=config['project']['gsize'],
+         macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
+         macsb_dir="macs_broad"
+    shell: """
+module load {params.macsver};
+# if se == "yes"
+if [ {se} == "yes" ]; then 
+    ppqt=`cut -f 3 {input.ppqt} | cut -f 1 -d ","`;
+    if [ "{input.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5MDD.tagAlign.gz" ]; then
+        macs2 callpeak -t {input.chip} -c {input.ctrl} -g {params.gsize} -n {wildcards.name} \
+              --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
+              --keep-dup="all" --extsize $ppqt --nomodel;
+    else
+        macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
+              --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
+              --keep-dup="all" --extsize $ppqt --nomodel;
+    fi
+else
+    if [ {input.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
+        macs2 callpeak -t {input.chip} -c {input.ctrl} -g {params.gsize} -n {wildcards.name} \
+              --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
+              --keep-dup="all" -f "BAMPE";
+    else
+        macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
+              --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
+              --keep-dup="all" -f "BAMPE";
+    fi
+fi
+"""
+
+rule SICER:
     input:
-        expand(join(bam_dir,"{name}.sorted.Q5DD.bam"), name=[*samples,*inputs])
+         chip = join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz") if \
+            se == "yes" else \
+            join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+         ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5MDD.tagAlign.gz") if \
+            se == "yes" else \
+            lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+         ppqt = join(workpath,bam_dir,"{name}.sorted.Q5MDD.ppqt") if \
+            se == "yes" else join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
     output:
-        join("{ngsplot_dir}", "{region}.heatmap.pdf")
-    run:
-        sfp = StringIO()
-        for n, fn in zip( params.name, input ) :
-            print( fn, -1, n, file=sfp, sep='\t' )
-            
-        ofp = open(params.config, 'w' )
-        ofp.write(sfp.getvalue())
-        ofp.close()
-        
-        shell( 
-        """
-        module load ngsplot/2.63 ;
-        ngs.plot.r -G {params.genome} -R {wildcards.region} -C {params.config} -O {params.outbase}
-        """)
-        
-rule PePr :
+         bed = join(workpath,"sicer","{name}","{name}_broadpeaks.bed"),
+# output columns: chrom, start, end, ChIP tag count, control tag count, p-value, fold-enrichment, q-value
     params:
-        rname="pl:PePr:{clabel}",
+         rname='pl:SICER',
+         sicerver=config['bin'][pfamily]['tool_versions']['SICERVER'],
+         bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
+         genomever = config['project']['annotation'],
+    shell: """
+if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
+cd /lscratch/$SLURM_JOBID;
+module load {params.sicerver};
+module load {params.bedtoolsver};
+ppqt=`cut -f 3 {input.ppqt} | cut -f 1 -d ","`;
+# if se == "yes"
+if [ {se} == "yes" ]; then
+    cp {input.chip} chip.bed.gz
+    gzip -d chip.bed.gz
+    if [ "{input.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5MDD.tagAlign.gz" ]; then
+        cp {input.ctrl} input.bed.gz
+        gzip -d input.bed.gz
+        sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genome} 100 300 $ppqt 0.75 600 1E-2
+	mv chip-W300-G600-islands-summary-FDR1E-2 {output.bed}
+    else
+        sh $SICERDIR/SICER.sh . chip.tagAlign . {params.genome} 100 300 $ppqt 0.75 600 100
+        mv chip-W300-G600-E100.scoreisland {output.bed}
+    fi
+else
+    bamToBed -i {input.chip} > chip.bed
+    if [ {input.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
+        bamToBed -i {input.ctrl} > input.bed
+        sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 $ppqt 0.75 600 1E-2
+        mv chip-W300-G600-islands-summary-FDR1E-2 {output.bed}
+    else
+        sh $SICERDIR/SICER.sh . chip.bed . {params.genomever} 100 300 $ppqt 0.75 600 100
+        mv chip-W300-G600-E100.scoreisland {output.bed}
+    fi
+fi
+"""
+
+rule convertSICER:
     input:
-        chips1 = lambda w: [join(bam_dir,chip+".sorted.bam")
-                   for chip in
-                   groups[w.clabel.split(clabel_sep)[0]] ],
-        
-        inputs1 = lambda w: [join(bam_dir,ctrl+".sorted.bam")
-                   for ctrl in
-                   [ chip2input[c] for c in groups[w.clabel.split(clabel_sep)[0]] ]  
-                   if ctrl ],
-        
-        chips2 = lambda w: [join(bam_dir,chip+".sorted.bam")
-                   for chip in
-                   groups[w.clabel.split(clabel_sep)[1]] ],
-        
-        inputs2 = lambda w: [join(bam_dir,ctrl+".sorted.bam")
-                   for ctrl in
-                   [ chip2input[c] for c in groups[w.clabel.split(clabel_sep)[1]] ]
-                   if ctrl ],
+         bed = join(workpath,"sicer","{name}","{name}_broadpeaks.bed"),
+# input columns: chrom, start, end, ChIP tag count, control tag count, p-value, fold-enrichment, q-value
     output:
-        join(pepr_dir,'{clabel}__PePr_chip1_peaks.bed'),
-        join(pepr_dir,'{clabel}__PePr_chip2_peaks.bed'),
-        
+         broadPeak = join(workpath,"sicer","{name}","{name}_sicer.broadPeak"),
+# output columns: chrom, start, end, name, fold-enrichment, strand, ChIP tag count, -log10 p-value, -log10 q-value
+    params:
+         rname='pl:convertSICER',
     run:
-        group1, group2 = wildcards.clabel.split( clabel_sep )
-        
-        chips1 = groups[group1]
-        chips2 = groups[group2]
-        
-        inputs1 = list(set([ chip2input[c] for c in chips1 ]))
-        inputs2 = list(set([ chip2input[c] for c in chips2 ]))
-        
-        c1 = ','.join([join(bam_dir,c+'.sorted.bam') for c in chips1 ])
-        i1 = ','.join([join(bam_dir,c+'.sorted.bam') for c in inputs1])
-        c2 = ','.join([join(bam_dir,c+'.sorted.bam') for c in chips2 ])
-        i2 = ','.join([join(bam_dir,c+'.sorted.bam') for c in inputs2])
-        
-        '''
-        bams = [ *chips1, *chips2, *inputs1, *inputs2 ]
-        bams2com_chroms = { b:b+'.sorted.common_chrom.bam' for b in bams }
-        
-        ibamfns = [k+'.sorted.bam' for k,v in bams2com_chroms.items()]
-        obamfns = [v for k,v in bams2com_chroms.items()]
-        
-        normalize_bam_file_chromosomes( ibamfns, obamfns )
-        
-        #replace the filenames
-        chips1 = [ bams2com_chroms[b] for b in chips1 ]
-        chips2 = [ bams2com_chroms[b] for b in chips2 ]
-        inputs1 = [ bams2com_chroms[b] for b in inputs1 ]
-        inputs2 = [ bams2com_chroms[b] for b in inputs2 ]
-        
-        c1 = ','.join(chips1)
-        i1 = ','.join(inputs1)
-        c2 = ','.join(chips2)
-        i2 = ','.join(inputs2)
-        '''
-            
-        if all(inputs1) and all(inputs2) :
-            shell( """
-            module load PePr/1.1.24;
-            PePr --diff -f bam -c {c1} --chip2 {c2} -i {i1} --input2 {i2} -n {wildcards.clabel} --output-directory {pepr_dir}
-            """ )
-        else :
-            shell( """
-            module load PePr/1.1.24;
-            PePr --diff -f bam -c {c1} --chip2 {c2} -n {wildcards.clabel} --output-directory {pepr_dir}
-            """ )
-        
+        import math
+        f = open(input.bed,'r')
+        inbed = f.readlines()
+        f.close()
+        outPeak = [None] * len(inbed)
+        for i in range(len(inbed)):
+            tmp = inbed[i].strip().split('\t')
+# assuming that a p-value/q-value of 0 is super significant, -log10(1e-500)
+            if tmp[5] == "0.0":
+                pval="500"
+            else:
+                pval = str(-(math.log10(float(tmp[5]))))
+            if tmp[7] == "0.0":
+                qval="500"
+            else:
+                qval = str(-(math.log10(float(tmp[7]))))
+            outPeak[i] = "\t".join(tmp[0:3]+["Peak"+str(i+1),tmp[6],".", tmp[3], pval, qval])
+        g = open(output.broadPeak,'w')
+        g.write( "\n".join(outPeak) )
+        g.close()
+
+rule GEM:
+    input:
+         chip = join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz") if \
+            se == "yes" else \
+            join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+         ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5MDD.tagAlign.gz") if \
+            se == "yes" else \
+            lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+         ppqt = join(workpath,bam_dir,"{name}.sorted.Q5MDD.ppqt") if \
+            se == "yes" else join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+    output:
+         join(workpath,"gem","{name}","{name}.GEM_events.narrowPeak"),         
+         join(workpath,"gem","{name}","{name}.GEM_events.bed"),         
+    params:
+         rname='pl:GEM',
+         gemver=config['bin'][pfamily]['tool_versions']['GEMVER'],
+         readDist=config['bin'][pfamily]['GEMREADDIST'],
+         genome = config['references']['ChIPseq']['REFLEN'],
+         fastas = config['references']['ChIPseq']['GENOMECHR'],
+         gem_dir = "gem"
+    threads: 32
+    shell: """
+if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
+cd /lscratch/$SLURM_JOBID;
+module load {params.gemver};
+ppqt=`cut -f 3 {input.ppqt} | cut -f 1 -d ","`;
+# if se == "yes"
+if [ {se} == "yes" ]; then
+    cp {input.chip} chip.tagAlign.gz
+    gzip -d chip.tagAlign.gz
+    if [ "{input.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5MDD.tagAlign.gz" ]; then
+        cp {input.ctrl} input.tagAlign.gz
+        gzip -d input.tagAlign.gz
+        java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
+             --genome {params.fastas}  --expt chip.tagAlign --ctrl input.tagAlign \
+             --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
+    else
+        java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
+             --genome {params.fastas}  --expt chip.tagAlign \
+             --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf        
+    fi
+else
+    if [ {input.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
+        java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
+             --genome {params.fastas}  --expt {input.chip} --ctrl {input.ctrl} --f SAM \
+             --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
+    else
+        java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
+             --genome {params.fastas}  --expt {input.chip} --f SAM \
+             --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
+    fi
+fi
+"""
+
 rule ChIPQC:
-    params:
-        rname='pl:ChIPQC:{caller}',
-        genome = config['project']['annotation'],
-        
     input:
-        peakinfo_fn = 'peakcall.tab',
-        peak_files = lambda w: [ join(caller2dir[w.caller], 
-                         g, 
-                         c+caller2suffix[w.caller]
-                        ) for g,c in zip(ogroups, samples) ]
-        
+        lambda w: [ join(workpath, w.PeakTool, chip, chip + PeakExtensions[w.PeakTool]) for chip in chips ]
     output:
-        join('ChIPQC','{caller}','ChIPQCreport.html')
-        
+        join(workpath,chipQC_dir,'{PeakTool}','ChIPQCreport.html'),
+    params:
+        rname="pl:ChIPQC",
+        genomever = config['project']['annotation'],
+        Rver = config['bin'][pfamily]['tool_versions']['RVER'],
     run:
-        shell( 'mkdir -p ChIPQC/{caller}'.format(caller=wildcards.caller) )
-        chipqcin_fn = 'chipqctab_{caller}.in'.format( caller=wildcards.caller )
-        
-        #to avoid problems we need to correct names
-        cnames = {} #this is set of corrected names
-        for s in config['project']['groups'] : #group2chips
-            if s[0].isalpha :
-                cnames[s] = s
-            else :
-                cnames[s] = 'v'+s
-        for s in samples :
-            if s[0].isalpha :
-                cnames[s] = s
-            else :
-                cnames[s] = 'v'+s
-        for s in inputs :
-            if s[0].isalpha :
-                cnames[s] = s
-            else :
-                cnames[s] = 'v'+s
-               
-        suffix = caller2suffix[wildcards.caller]
-        peak_dir = caller2dir[wildcards.caller]
-        #chipqcin = 'ChIPQC{c}.in'.format( c=wildcards.caller )
+        samplesheet = ["\t".join(["SampleID","Condition", "Replicate", "bamReads", "ControlID", "bamControl", "Peaks", "PeakCaller"])]
+        for chip in chips:
+            condition = [ key for key,value in groupdata.items() if chip in value ][0]
+            replicate = str([ i + 1 for i in range(len(groupdata[condition])) if groupdata[condition][i]== chip ][0])
+            if se == "yes":
+                bamReads = join(workpath, bam_dir, chip + ".sorted.Q5MDD.bam")
+            else:
+                bamReads = join(workpath, bam_dir, chip + ".sorted.Q5DD.bam")
+            controlID = chip2input[chip]
+            if controlID != "":
+                if se == "yes":
+                    bamControl = join(workpath, bam_dir, controlID + ".sorted.Q5MDD.bam")
+                else:
+                    bamControl = join(workpath, bam_dir, controlID + ".sorted.Q5DD.bam")
+            else:
+                bamControl = ""
+            peaks = join(workpath, wildcards.PeakTool, chip, chip + PeakExtensions[wildcards.PeakTool])
+            peakcaller = FileTypesChIPQC[wildcards.PeakTool]
+            samplesheet.append("\t".join([chip, condition, replicate, bamReads, controlID, bamControl, peaks, peakcaller]))
 
-        sfp = StringIO()
-        groups = {}
-        for l in open(input.peakinfo_fn) :
-            c, i, g = l.split('\t')
-            g=g.strip()
-            if g in groups :
-                groups[g].append([c,i])
-            else :
-                groups[g]=[[c,i]]
+        csvfile = join(workpath,chipQC_dir,wildcards.PeakTool + "_ChIPQC_prep.csv") 
+        f = open(csvfile, 'w')
+        f.write ("\n".join(samplesheet))
+        f.close()
 
-        print(
-            'SampleID', #group id 
-            'Condition', #sample id
-            'Replicate',
-            'bamReads',
-            'ControlID',
-            'bamControl',
-            'Peaks',
-            file=sfp, sep='\t' 
-        )
-
-        for g, v in groups.items() :
-            for i,(chp,inp) in enumerate(v) :
-                #if inp :
-                #    print(
-                #        cnames[chp], 
-                #        cnames[g],
-                #        i+1, 
-                #        join(bam_dir,chp+'.sorted.bam'),
-                #        cnames[inp],
-                #        join(bam_dir,inp+'.sorted.bam'),
-                #        join(peak_dir, g, chp+suffix),
-                #        file=sfp, sep="\t"
-                #    )
-                #else :
-                print(
-                    cnames[chp], 
-                    cnames[g],
-                    i+1, 
-                    join(bam_dir,chp+'.sorted.bam'),
-                    '',
-                    '',
-                    join(peak_dir, g, chp+suffix),
-                    file=sfp, sep="\t"
-                )
-
-        ofp = open( chipqcin_fn, 'w' )
-        ofp.write( sfp.getvalue() )
-        ofp.close()
-            
         R_string = """
         library(ChIPQC)
-        samples <- read.table('{tab}', header=1, sep="\t")
-        result <- ChIPQC(samples, annotation='{genome}')
+        samples <- read.table('{tab}', header=1, sep="\\t")
+        samples
+        result <- ChIPQC(samples, annotation='{genome}', chromosomes='{chr}')
+        result
         ChIPQCreport( result, reportName="ChIPQCreport", reportFolder="ChIPQC/{caller}" )
-        """.format( tab=chipqcin_fn, caller=wildcards.caller, genome=params.genome )
+        """.format( tab=csvfile, caller=wildcards.PeakTool, genome=params.genomever , chr="chr1")
         
-        rscript_fn = "chipqc_run_{c}.R".format( c=wildcards.caller )
+        rscript_fn = join(workpath, chipQC_dir, "chipqc_run_" + wildcards.PeakTool + ".R")
         of=open(rscript_fn,'w')
         of.write(R_string)
         of.close()
         
-        shell( '''
-            module load R/3.4.3
-            Rscript {r}
-            '''.format(r=rscript_fn)
-        )
-        
+        shell("module load {params.Rver}; Rscript {rscript_fn}")
 
-rule MEMEChIP:
+rule IDR:
     input:
-        join(macsn_dir,'{group}',"{name}"+macsn_suffix)
-        #join(macsb_dir,"{name}_peaks.xls"),
-        #join(sicer_dir,"{name}_broadpeaks.bed"),
-        #join(sicer_rmdup_dir,"{name}_broadpeaks.bed"),
+        lambda w: [join(workpath, w.PeakTool, sample, sample + PeakExtensionsIDR[w.PeakTool]) for sample in groupdata[w.group]]
+    output:
+        join(workpath,idr_dir,'{PeakTool}','{group}.idrValue.txt')
     params:
-        rname='pl:MEMEChIP:{group}:{name}',
-        sorted_peak = "{name}.sorted",
-        sorted_fa = "{name}.sorted.fa",
-        genome_fasta= config['references']['ChIPseq']['GENOME'],
-    threads: 16
-    output:
-        join(memechip_dir,'{group}',"{name}_memechip")
-        
-    run :
-        #shell("""
-        #sort -k9,9gr {i} | head -n 500 > {sorted_peak} ;
-        #""".format(i=input, sorted_peak=params.sorted_peak )
-        #)
-        
-        content = []
-        for l in open(input[0]):
-            line = l.split()
-            if line :
-                content.append( (float(line[8]), l) )
-        
-        fp = open( params.sorted_peak, 'w' )
-        for i, (_,l) in enumerate(sorted(content)) :
-            if i < 500 :
-                print( *(l.split()[:4]), sep="\t", file=fp )
-            else :
-                break
-        fp.close()
-        
-        shell("""
-        module load bedtools/2.25.0 ;
-        bedtools getfasta -fi {genome_fa} -bed {sorted_peak} -fo {sorted_fa} ;
-        """.format(genome_fa = params.genome_fasta,
-                   sorted_peak = params.sorted_peak,
-                   sorted_fa = params.sorted_fa,
-            )
-        )
-        
-        shell("""
-        module load meme/4.12.0 ;
-        meme-chip --oc {o} -dna {sorted_fa} ;
-        """.format(o = output, 
-                   sorted_fa = params.sorted_fa,
-              )
-        )
-        
-rule MACS2_narrow:
-    input: 
-        join(bam_dir,'{name}.sorted.Q5DD.bam')    
+        rname="pl:IDR",
+        idrver=config['bin'][pfamily]['tool_versions']['IDRVER'],
+        intype= lambda w: FileTypesIDR[w.PeakTool],
+        fldr= join(workpath,idr_dir, '{PeakTool}')
+    shell: """
+module load {params.idrver}
+test -d  {params.fldr} || mkdir {params.fldr}
+idr -s {input} -o {output} --input-file-type {params.intype} --plot
+"""
 
-    output:
-        join(macsn_dir, '{group}', '{name}_peaks.narrowPeak')
-        
-    params: 
-        rname='pl:MACS2_narrow:{group}:{name}',
-        gsize=config['project']['gsize'],
-        #Must use lambda function here (snakemake does not recogize wildcards.variablename in params section)
-        ctrl =  lambda wildcards :join(bam_dir, str(config['project']['peaks']['inputs'][wildcards.name]) + '.sorted.Q5DD.bam'),
-        genome=config['project']['annotation'],
-        
-    shell:
-        """
-        module load macs/2.1.1.20160309
-
-        if [ "{params.ctrl}" != "bam/.sorted.Q5DD.bam" ] 
-        then
-            macs2 callpeak -t {input} -c {params.ctrl} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsn_dir}/{wildcards.group} -B -q 0.01 ;
-        else                
-            macs2 callpeak -t {input} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsn_dir}/{wildcards.group} -B -q 0.01;
-        fi
-        """
-
-rule MACS2_broad:
-    input: 
-        join(bam_dir, '{name}.sorted.Q5DD.bam')
-    output:
-        join(macsb_dir, '{group}', '{name}_peaks.broadPeak')
-    params: 
-        rname='pl:MACS2_broad:{group}:{name}',
-        gsize=config['project']['gsize'],
-        #Must use lambda function here (snakemake does not recogize wildcards.variablename in params section)
-        ctrl =  lambda wildcards :join(bam_dir, str(config['project']['peaks']['inputs'][wildcards.name]) +  '.sorted.Q5DD.bam'),
-        genome=config['project']['annotation'],
-    shell:
-        """
-        module load macs/2.1.1.20160309
-
-        if [ "{params.ctrl}" != "bam/.sorted.Q5DD.bam" ] 
-        then
-            macs2 callpeak -t {input} -c {params.ctrl} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsb_dir}/{wildcards.group} --broad --broad-cutoff 0.1 ;
-        else 
-            macs2 callpeak -t {input} -f BAM -g {params.gsize} -n {wildcards.name} --outdir {macsb_dir}/{wildcards.group} --broad --broad-cutoff 0.1;
-        fi
-        """
-
-rule SICER :       
+rule jaccard:
     input:
-        join(bam_dir,"{name}.sorted.Q5DD.bam")
+        lambda w: [ join(workpath, w.PeakTool, chip, chip + PeakExtensions[w.PeakTool]) for chip in chips ],
     output:
-        join(sicer_dir, '{group}', '{name}_broadpeaks.bed')
+        join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),
     params:
-        rname = "pl:SICER:{group}:{name}",
-        #Must use lambda function here (snakemake does not recogize snakewildcards.variablename in params section)
-        inputname = lambda wildcards : config['project']['peaks']['inputs'][wildcards.name],
-        ctrl =  lambda wildcards :join(bam_dir, str(config['project']['peaks']['inputs'][wildcards.name]) + '.sorted.Q5DD.bam'),
-        SICERDIR = "/usr/local/apps/sicer/1.1",
-        genome = config['project']['annotation'],
+        rname="pl:jaccard",
+        script=join(workpath,"Scripts","jaccard_score.py"),
+        genome = config['references']['ChIPseq']['REFLEN']
+    shell: """
+python {params.script} -i "{input}" -o {output} -g {params.genome}
+"""
+
+rule HOMER_motif:
+    input:
+        lambda w: [ join(workpath, w.PeakTool, w.name, w.name + PeakExtensions[w.PeakTool]) ]
+    output:
+        join(workpath, homer_dir,'{PeakTool}',"{name}_{PeakTool}")
+    params:
+        rname="pl:HOMER_motif",
+        homerver = config['bin'][pfamily]['tool_versions']['HOMERVER'],
+        genomever = config['project']['annotation'],
+    threads: 4
     run:
-        if params.ctrl != "bam/.sorted.Q5DD.bam": 
-            shell( 
-            """
-            module load bedtools/2.25.0
+        commoncmd1="if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi "
+        commoncmd2="cd /lscratch/$SLURM_JOBID; "
+        commoncmd3="module load {params.homerver}; "
+        if wildcards.PeakTool in PeakTools_broad:
+            cmd="findMotifsGenome.pl {input} {params.genomever} {output} -size given -p {threads} -preparsedDir '.'"
+        else:
+            cmd="findMotifsGenome.pl {input} {params.genomever} {output} -p {threads} -preparsedDir '.'"
+        shell( commoncmd1 + commoncmd2 + commoncmd3 + cmd )
 
-            mkdir -p {sicer_dir}/{wildcards.group}/{wildcards.name}
-            cd {sicer_dir}/{wildcards.group}/{wildcards.name}
-
-            bamToBed -i ../../../{input} > {wildcards.name}.bed
-            bamToBed -i ../../../{params.ctrl} > {params.inputname}.bed
-            """)
-            
-            shell("""
-            cd {sicer_dir}/{wildcards.group}/{wildcards.name}
-            module load sicer/1.1
-            bash {params.SICERDIR}/SICER.sh ./ {wildcards.name}.bed {params.inputname}.bed ./ {params.genome} 1 300 300 0.75 600 1E-2
-            ln {wildcards.name}-W300-G600-islands-summary-FDR1E-2 ../{wildcards.name}_broadpeaks.bed
-            """)
-
-        else : 
-            shell( """
-            module load sicer/1.1
-            module load bedtools/2.25.0
-
-            mkdir -p {sicer_dir}/{wildcards.group}/{wildcards.name}
-            cd {sicer_dir}/{wildcards.group}/{wildcards.name}
-
-            bamToBed -i ../../../{input} > {wildcards.name}.bed
-            """)
-            
-            shell ("""
-            module load sicer/1.1
-            cd {sicer_dir}/{wildcards.group}/{wildcards.name}
-            bash {params.SICERDIR}/SICER-rb.sh . {wildcards.name}.bed . {params.genome} 1 300 300 0.75 600 100
-            ln {wildcards.name}-W300-G600-E100.scoreisland ../{wildcards.name}_broadpeaks.bed
-            """)
-            
-            
-rule GEM:
-    input: 
-        join(bam_dir, '{name}.sorted.Q5DD.bam')
+rule UROPA:
+    input:
+        lambda w: [ join(workpath, w.PeakTool, w.name, w.name + PeakExtensions[w.PeakTool]) ]
     output:
-        join(gem_dir, '{group}', '{name}', '{name}.GEM_events.txt')
-    params: 
-        rname='pl:GEM:{name}',
-        chromsizes=config['references']['ChIPseq']['REFLEN'],
-        # Add to json
-        readDist='/usr/local/apps/gem/3.0/Read_Distribution_default.txt',
-        genome=config['references']['ChIPseq']['GENOMECHR'],
-        #Must use lambda function here (snakemake does not recogize wildcards.variablename in params section)
-        ctrl =  lambda wildcards :join(bam_dir, str(config['project']['peaks']['inputs'][wildcards.name]) + '.sorted.Q5DD.bam'),
-    threads: 32
-    shell:
-        """
-        module load gem/3.0
-
-        if [ "{params.ctrl}" != "bam/.sorted.Q5DD.bam" ] 
-        then
-            java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.chromsizes} --genome {params.genome} --expt {input} --ctrl {params.ctrl} --f SAM --out gem/{wildcards.group}/{wildcards.name} --k_min 6 --k_max 13 --outNP --outBED
-        else 
-            java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.chromsizes} --genome {params.genome} --expt {input} --f SAM --out gem/{wildcards.group}/{wildcards.name} --k_min 6 --k_max 13 --outNP --outBED
-        fi
-        """
-
-
-
+        join(workpath, uropa_dir, '{PeakTool}', '{name}_{PeakTool}_uropa_allhits.txt')
+    params:
+        rname="pl:uropa",
+        Rver = config['bin'][pfamily]['tool_versions']['RVER'],
+        fldr = join(workpath, uropa_dir),
+        outroot = join(workpath, uropa_dir, '{PeakTool}', '{name}_{PeakTool}_uropa'),
+        gtf = config['references']['ChIPseq']['GTFFILE']
+    threads: 4
+    shell: """
+module load {params.Rver};
+echo '{{"queries":[
+          {{ "feature":"gene","distance":5000,"show.attributes":["gene_id", "gene_name","gene_type"] }},
+          {{ "feature":"gene","show.attributes":["gene_id", "gene_name","gene_type"] }}],
+       "priority":"Yes",
+       "gtf":{params.gtf},
+       "bed":{input} }}' > {params.fldr}/{wildcards.name}.json
+uropa -i {params.fldr}/{wildcards.name}.json -p  {params.outroot} -s -t {threads}
+"""
