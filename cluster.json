@@ -24,6 +24,11 @@
 		"gres": "lscratch:256",
 		"threads": "2"
 	},
+	"samtools_sort": {
+		"mem": "48g",
+		"gres": "lscratch:256",
+		"threads": "8"
+	},
 	"picard_dedup": {
 		"mem": "96g",
 		"gres": "lscratch:256",
