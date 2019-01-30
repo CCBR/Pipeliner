@@ -40,6 +40,7 @@ suppressMessages(library('gplots'))
 suppressMessages(library('reshape')) 
 suppressMessages(library('ggplot2'))
 suppressMessages(library('ggfortify'))
+suppressMessages(library(ggdendro))
 suppressMessages(library(amap))
 suppressMessages(library(DT))
 suppressMessages(library(plotly))
@@ -107,7 +108,12 @@ y <- estimateTagwiseDisp(y) #default trend: moveingave
 
 ylog2=cpm(y,log=TRUE,normalized.lib.sizes=TRUE,prior.count=0.5) # prior count like avelogcpm
 rawlog2= cpm(y,log=TRUE,normalized.lib.sizes=FALSE,prior.count=0.5)
-ddslog2= cpm(dds.ndata,log=TRUE,normalized.lib.sizes=FALSE,prior.count=0.5) 
+#ddslog2= cpm(dds.ndata,log=TRUE,normalized.lib.sizes=FALSE,prior.count=0.5) 
+
+rld <- rlogTransformation(dds, blind=TRUE)
+rldm=assay(rld)
+colnames(rldm)=colnames(x)
+
 ## save it
 ```
 
@@ -130,7 +136,7 @@ tmmhist
 ### DESeq2
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-deshist <- ggplotly(ggplot(melt(as.data.frame(ddslog2))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+deshist <- ggplotly(ggplot(melt(as.data.frame(rldm))) + geom_density(aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
 deshist
 ```
 
@@ -242,8 +248,8 @@ p
 #rld <- rlogTransformation(dds, blind=TRUE)
 #rldm=assay(rld)
 #colnames(rldm)=colnames(x)
-#deseq2.edf=as.matrix(rldm)
-deseq2.edf=ddslog2
+deseq2.edf=as.matrix(rldm)
+#deseq2.edf=ddslog2
 deseq2.tedf= t(deseq2.edf)
 deseq2.tedf=deseq2.tedf[,apply(deseq2.tedf,2,var)!= 0]
 deseq2.pca=prcomp(deseq2.tedf,scale.=T)
@@ -327,7 +333,7 @@ p
 ```{r, echo=FALSE,message=FALSE,warning=FALSE}
 before.dfm <- melt(as.data.frame(rawlog2))
 edgeR.dfm <- melt(as.data.frame(ylog2))
-deseq2.dfm <- melt(as.data.frame(ddslog2))
+deseq2.dfm <- melt(as.data.frame(rldm))
 limma.dfm <- melt(as.data.frame(v1$E))
 ```
 
@@ -368,6 +374,54 @@ hmapheight = length(sampleinfo$label)
 if(hmapheight<8){
 hmapheight = 8
 }
+
+create_heatmap <- function(data){  
+    dd_col <- as.dendrogram(hclust(dist(data)))
+    dd_row <- as.dendrogram(hclust(dist(t(data))))
+    dendro_1 <- dendro_data(dd_col)
+    dendro_2 <- dendro_data(dd_row)
+    
+    hmcol <- colorRampPalette(c("black","red","yellow","white"),space="rgb")(100)
+    
+    ggdend <- function(df) {
+      ggplot() +
+        geom_segment(data = df, aes(x=x, y=y, xend=xend, yend=yend)) +
+        labs(x = "", y = "") + theme_minimal() +
+        theme(axis.text = element_blank(), axis.ticks = element_blank(),
+              panel.grid = element_blank())
+    }
+    
+    dendro_columns <- ggdend(dendro_1$segments)
+    dendro_rows <- ggdend(dendro_2$segments) + coord_flip()
+    
+    melt_mat <- melt(data)
+    hmap <- ggplot(data = melt_mat, aes(x=X1, y=X2, fill=value)) + 
+           geom_tile() +
+           scale_fill_gradientn(colours = rev(hmcol), limit = c(0,max(data)), space = "Lab", name="Correlation") +
+           theme_minimal()+ 
+           theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
+                 legend.justification = c(1, 0),
+                 legend.position = c(0.6, 0.7),
+                 legend.direction = "horizontal",
+                 axis.title.x = element_blank(),
+                 axis.title.y = element_blank()) +
+           coord_fixed()
+    
+    eaxis <- list(showticklabels = FALSE, showgrid = FALSE, zeroline = FALSE)
+    p_empty <- plot_ly() %>% layout(margin = list(l = 200), xaxis = eaxis,yaxis = eaxis)
+    
+    sply <- subplot(dendro_columns, p_empty, hmap, dendro_rows, nrows = 2)
+    
+    sply <- layout(sply,
+                   yaxis = list(domain=c(0.47, 1)),
+                   xaxis = list(domain=c(0, 0.5)),
+                   xaxis3 = list(domain=c(0, 0.5)),
+                   xaxis4 = list(domain=c(0.5, 1)),
+                   margin = list(l = 150, r = 0, b = 50,t = 0))
+    
+    return(sply)
+}
+
 ```
 
 ### Before Normalization
@@ -377,6 +431,7 @@ hmapheight = 8
 hmcol <- colorRampPalette(c("black","red","yellow","white"),space="rgb")(100)
 before.distrawlog2=amap::Dist(t(rawlog2),method="pearson")
 before.mat = as.matrix(before.distrawlog2)
+
 heatmap.2(before.mat, trace="none", col = rev(hmcol), labCol=FALSE, colRow=as.numeric(as.factor(sampleinfo$condition)), margin=c(16, 16), main="Before normalization")
 ```
 
@@ -393,7 +448,7 @@ heatmap.2(edgeR.mat, trace="none", col = rev(hmcol), labCol=FALSE, colRow=as.num
 
 ```{r, echo=FALSE,message=FALSE,fig.show='hold',fig.align='center', warning=FALSE, fig.height=hmapheight}
 
-deseq2.dists <- amap::Dist(t(ddslog2),method="pearson")
+deseq2.dists <- amap::Dist(t(rldm),method="pearson")
 deseq2.mat <- as.matrix(deseq2.dists)
 heatmap.2(deseq2.mat, trace="none", col = rev(hmcol), labCol=FALSE, colRow=as.numeric(as.factor(sampleinfo$condition)), margin=c(16, 16), main="DESeq2")
 ```
@@ -421,7 +476,7 @@ for(i in 1:length(sampleinfo$label)){
   abline(h=0, col="red", lty=2, lwd=2)
 }
 for(i in 1:length(sampleinfo$label)){
-  plotMD(ddslog2,column=i, main=paste0("DESeq2 ",sampleinfo$label[i]), xlim=c(-5,15), ylim=c(-15,15))
+  plotMD(rldm,column=i, main=paste0("DESeq2 ",sampleinfo$label[i]), xlim=c(-5,15), ylim=c(-15,15))
   abline(h=0, col="red", lty=2, lwd=2)
 }
 for(i in 1:length(sampleinfo$label)){
