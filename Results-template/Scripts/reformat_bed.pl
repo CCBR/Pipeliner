@@ -9,13 +9,14 @@ my $trimSAM= '';
 
 my $outfile = 'exome_targets.bed';
 my $freecout = 'freec_targets.bed';
-open C, ">$outfile";
-open D, ">$freecout";
 
 my $infile = $ARGV[0];
 my @line = ();
 
-open U, "<$infile";
+open U, "<$infile" or die;
+open C, ">$outfile";
+open D, ">$freecout";
+
 while (<U>){
 	chomp;
   	last if m/^$/;
