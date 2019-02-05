@@ -35,11 +35,11 @@ groupdata = config['project']['groups']
 groupdatawinput = {}
 groupswreps = []
 
-for group, chips in groupdata.items() :
+for group, chipsamples in groupdata.items() :
     tmp = [ ]
-    if len(chips) > 1:
+    if len(chipsamples) > 1:
         groupswreps.append(group)
-    for chip in chips :
+    for chip in chipsamples :
         if chip in samples:
             tmp.append(chip)
             input = chip2input[chip]
@@ -124,143 +124,176 @@ else:
             expand(join(workpath,"gem","{name}","{name}.GEM_events.narrowPeak"),name=chips),
             expand(join(workpath,chipQC_dir,"{PeakTool}","ChIPQCreport.html"),PeakTool=PeakTools),
             expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
+            expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}"),PeakTool=PeakTools,name=chips),
+#            expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_allhits.txt'),PeakTool=PeakTools,name=chips),
+
 
 ##########
 # INDIVIDUAL RULES
 
-rule MACS2_narrow:
-    input:
-         chip = join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz") if \
-            se == "yes" else \
-            join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-         ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5MDD.tagAlign.gz") if \
-            se == "yes" else \
-            lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
-         ppqt = join(workpath,bam_dir,"{name}.sorted.Q5MDD.ppqt") if \
-            se == "yes" else join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
-    output:
-         join(workpath,"macs_narrow","{name}","{name}_peaks.narrowPeak"),
-    params:
-         rname='pl:MACS2_narrow',
-         gsize=config['project']['gsize'],
-         macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
-         macsn_dir="macs_narrow"
+if se == "yes":
+    rule MACS2_narrow:
+        input:
+            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz"),
+            ppqt = join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt")
+        output:
+            join(workpath,"macs_narrow","{name}","{name}_peaks.narrowPeak"),
+        params:
+            rname='pl:MACS2_narrow',
+            gsize=config['project']['gsize'],
+            macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
+            macsn_dir="macs_narrow",
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.tagAlign.gz"),
+        shell: """
+module load {params.macsver};
+ppqt=`cut -f 3 {input.ppqt} | cut -f 1 -d ","`;
+if [ "{params.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5DD.tagAlign.gz" ]; then
+    macs2 callpeak -t {input.chip} -c {params.ctrl} -g {params.gsize} -n {wildcards.name} \
+          --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" \
+          --extsize $ppqt --nomodel;
+else
+    macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
+          --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" \
+          --extsize $ppqt --nomodel;
+fi
+"""
+
+if pe == "yes":
+    rule MACS2_narrow:
+        input:
+            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+        output:
+            join(workpath,"macs_narrow","{name}","{name}_peaks.narrowPeak"),
+        params:
+            rname='pl:MACS2_narrow',
+            gsize=config['project']['gsize'],
+            macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
+            macsn_dir="macs_narrow",
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+        shell: """
+module load {params.macsver};
+if [ {params.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
+    macs2 callpeak -t {input.chip} -c {params.ctrl} -g {params.gsize} -n {wildcards.name} \
+          --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" -f "BAMPE";
+else
+    macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
+          --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" -f "BAMPE";
+fi
+"""
+
+if se == "yes":
+    rule MACS2_broad:
+        input:
+            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz"),
+            ppqt = join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+        output:
+            join(workpath,"macs_broad","{name}","{name}_peaks.broadPeak"),
+        params:
+            rname='pl:MACS2_broad',
+            gsize=config['project']['gsize'],
+            macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
+            macsb_dir="macs_broad",
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.tagAlign.gz"),
     shell: """
 module load {params.macsver};
 ppqt=`cut -f 3 {input.ppqt} | cut -f 1 -d ","`;
-# if se == "yes"
-if [ {se} == "yes" ]; then 
-    if [ "{input.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5MDD.tagAlign.gz" ]; then
-        macs2 callpeak -t {input.chip} -c {input.ctrl} -g {params.gsize} -n {wildcards.name} \
-              --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" \
-              --extsize $ppqt --nomodel;
-    else
-        macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
-              --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" \
-              --extsize $ppqt --nomodel;
-    fi
+if [ "{params.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5DD.tagAlign.gz" ]; then
+    macs2 callpeak -t {input.chip} -c {params.ctrl} -g {params.gsize} -n {wildcards.name} \
+          --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
+          --keep-dup="all" --extsize $ppqt --nomodel;
 else
-    if [ {input.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
-        macs2 callpeak -t {input.chip} -c {input.ctrl} -g {params.gsize} -n {wildcards.name} \
-              --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" -f "BAMPE";
-    else
-        macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
-              --outdir {workpath}/{params.macsn_dir}/{wildcards.name} -q 0.01 --keep-dup="all" -f "BAMPE";
-    fi
+    macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
+          --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
+          --keep-dup="all" --extsize $ppqt --nomodel;
 fi
 """
 
-rule MACS2_broad:
-    input:
-         chip = join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz") if \
-            se == "yes" else \
-            join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-         ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5MDD.tagAlign.gz") if \
-            se == "yes" else \
-            lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
-         ppqt = join(workpath,bam_dir,"{name}.sorted.Q5MDD.ppqt") if \
-            se == "yes" else join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
-    output:
-         join(workpath,"macs_broad","{name}","{name}_peaks.broadPeak"),
-    params:
-         rname='pl:MACS2_broad',
-         gsize=config['project']['gsize'],
-         macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
-         macsb_dir="macs_broad"
-    shell: """
+if pe == "yes":
+    rule MACS2_broad:
+        input:
+            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+        output:
+            join(workpath,"macs_broad","{name}","{name}_peaks.broadPeak"),
+        params:
+            rname='pl:MACS2_broad',
+            gsize=config['project']['gsize'],
+            macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
+            macsb_dir="macs_broad",
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+        shell: """
 module load {params.macsver};
-# if se == "yes"
-if [ {se} == "yes" ]; then 
-    ppqt=`cut -f 3 {input.ppqt} | cut -f 1 -d ","`;
-    if [ "{input.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5MDD.tagAlign.gz" ]; then
-        macs2 callpeak -t {input.chip} -c {input.ctrl} -g {params.gsize} -n {wildcards.name} \
-              --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
-              --keep-dup="all" --extsize $ppqt --nomodel;
-    else
-        macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
-              --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
-              --keep-dup="all" --extsize $ppqt --nomodel;
-    fi
+if [ {params.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
+    macs2 callpeak -t {input.chip} -c {params.ctrl} -g {params.gsize} -n {wildcards.name} \
+          --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
+          --keep-dup="all" -f "BAMPE";
 else
-    if [ {input.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
-        macs2 callpeak -t {input.chip} -c {input.ctrl} -g {params.gsize} -n {wildcards.name} \
-              --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
-              --keep-dup="all" -f "BAMPE";
-    else
-        macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
-              --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
-              --keep-dup="all" -f "BAMPE";
-    fi
+    macs2 callpeak -t {input.chip} -g {params.gsize} -n {wildcards.name} \
+          --outdir {workpath}/{params.macsb_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
+          --keep-dup="all" -f "BAMPE";
 fi
 """
 
-rule SICER:
-    input:
-         chip = join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz") if \
-            se == "yes" else \
-            join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-         ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5MDD.tagAlign.gz") if \
-            se == "yes" else \
-            lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
-         ppqt = join(workpath,bam_dir,"{name}.sorted.Q5MDD.ppqt") if \
-            se == "yes" else join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
-    output:
-         bed = join(workpath,"sicer","{name}","{name}_broadpeaks.bed"),
+if se == "yes":
+    rule SICER:
+        input:
+            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz"),
+            ppqt = join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+        output:
+            bed = join(workpath,"sicer","{name}","{name}_broadpeaks.bed"),
 # output columns: chrom, start, end, ChIP tag count, control tag count, p-value, fold-enrichment, q-value
-    params:
-         rname='pl:SICER',
-         sicerver=config['bin'][pfamily]['tool_versions']['SICERVER'],
-         bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
-         genomever = config['project']['annotation'],
-    shell: """
+        params:
+            rname='pl:SICER',
+            sicerver=config['bin'][pfamily]['tool_versions']['SICERVER'],
+            bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
+            genomever = config['project']['annotation'],
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.tagAlign.gz"),
+        shell: """
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
 cd /lscratch/$SLURM_JOBID;
 module load {params.sicerver};
 module load {params.bedtoolsver};
 ppqt=`cut -f 3 {input.ppqt} | cut -f 1 -d ","`;
-# if se == "yes"
-if [ {se} == "yes" ]; then
-    cp {input.chip} chip.bed.gz
-    gzip -d chip.bed.gz
-    if [ "{input.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5MDD.tagAlign.gz" ]; then
-        cp {input.ctrl} input.bed.gz
-        gzip -d input.bed.gz
-        sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genome} 100 300 $ppqt 0.75 600 1E-2
-	mv chip-W300-G600-islands-summary-FDR1E-2 {output.bed}
-    else
-        sh $SICERDIR/SICER.sh . chip.tagAlign . {params.genome} 100 300 $ppqt 0.75 600 100
-        mv chip-W300-G600-E100.scoreisland {output.bed}
-    fi
+cp {input.chip} chip.bed.gz
+gzip -d chip.bed.gz
+if [ "{params.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5DD.tagAlign.gz" ]; then
+    cp {params.ctrl} input.bed.gz
+    gzip -d input.bed.gz
+    sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 $ppqt 0.75 600 1E-2
+    mv chip-W300-G600-islands-summary-FDR1E-2 {output.bed}
 else
-    bamToBed -i {input.chip} > chip.bed
-    if [ {input.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
-        bamToBed -i {input.ctrl} > input.bed
-        sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 $ppqt 0.75 600 1E-2
-        mv chip-W300-G600-islands-summary-FDR1E-2 {output.bed}
-    else
-        sh $SICERDIR/SICER.sh . chip.bed . {params.genomever} 100 300 $ppqt 0.75 600 100
-        mv chip-W300-G600-E100.scoreisland {output.bed}
-    fi
+    sh $SICERDIR/SICER-rb.sh . chip.tagAlign . {params.genomever} 100 300 $ppqt 0.75 600 100
+    mv chip-W300-G600-E100.scoreisland {output.bed}
+fi
+"""
+
+if pe =="yes":
+    rule SICER:
+        input:
+            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+            ppqt = join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+        output:
+            bed = join(workpath,"sicer","{name}","{name}_broadpeaks.bed"),
+# output columns: chrom, start, end, ChIP tag count, control tag count, p-value, fold-enrichment, q-value
+        params:
+            rname='pl:SICER',
+            sicerver=config['bin'][pfamily]['tool_versions']['SICERVER'],
+            bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
+            genomever = config['project']['annotation'],
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+        shell: """
+if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
+cd /lscratch/$SLURM_JOBID;
+module load {params.sicerver};
+module load {params.bedtoolsver};
+ppqt=`cut -f 3 {input.ppqt} | cut -f 1 -d ","`;
+bamToBed -i {input.chip} > chip.bed
+if [ {params.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
+    bamToBed -i {params.ctrl} > input.bed
+    sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 $ppqt 0.75 600 1E-2
+    mv chip-W300-G600-islands-summary-FDR1E-2 {output.bed}
+else
+    sh $SICERDIR/SICER-rb.sh . chip.bed . {params.genomever} 100 300 $ppqt 0.75 600 100
+    mv chip-W300-G600-E100.scoreisland {output.bed}
 fi
 """
 
@@ -295,57 +328,67 @@ rule convertSICER:
         g.write( "\n".join(outPeak) )
         g.close()
 
-rule GEM:
-    input:
-         chip = join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz") if \
-            se == "yes" else \
-            join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-         ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5MDD.tagAlign.gz") if \
-            se == "yes" else \
-            lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
-         ppqt = join(workpath,bam_dir,"{name}.sorted.Q5MDD.ppqt") if \
-            se == "yes" else join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
-    output:
-         join(workpath,"gem","{name}","{name}.GEM_events.narrowPeak"),         
-         join(workpath,"gem","{name}","{name}.GEM_events.bed"),         
-    params:
-         rname='pl:GEM',
-         gemver=config['bin'][pfamily]['tool_versions']['GEMVER'],
-         readDist=config['bin'][pfamily]['GEMREADDIST'],
-         genome = config['references']['ChIPseq']['REFLEN'],
-         fastas = config['references']['ChIPseq']['GENOMECHR'],
-         gem_dir = "gem"
-    threads: 32
-    shell: """
+if se =="yes":
+    rule GEM:
+        input:
+            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz"),
+        output:
+            join(workpath,"gem","{name}","{name}.GEM_events.narrowPeak"),         
+        params:
+            rname='pl:GEM',
+            gemver=config['bin'][pfamily]['tool_versions']['GEMVER'],
+            readDist=config['bin'][pfamily]['GEMREADDIST'],
+            genome = config['references']['ChIPseq']['REFLEN'],
+            fastas = config['references']['ChIPseq']['GENOMECHR'],
+            gem_dir = "gem",
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.tagAlign.gz"),
+        threads: 32
+        shell: """
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
 cd /lscratch/$SLURM_JOBID;
 module load {params.gemver};
-ppqt=`cut -f 3 {input.ppqt} | cut -f 1 -d ","`;
-# if se == "yes"
-if [ {se} == "yes" ]; then
-    cp {input.chip} chip.tagAlign.gz
-    gzip -d chip.tagAlign.gz
-    if [ "{input.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5MDD.tagAlign.gz" ]; then
-        cp {input.ctrl} input.tagAlign.gz
-        gzip -d input.tagAlign.gz
-        java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
-             --genome {params.fastas}  --expt chip.tagAlign --ctrl input.tagAlign \
-             --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
-    else
-        java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
-             --genome {params.fastas}  --expt chip.tagAlign \
-             --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf        
-    fi
+cp {input.chip} chip.tagAlign.gz
+gzip -d chip.tagAlign.gz
+if [ "{params.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5DD.tagAlign.gz" ]; then
+    cp {params.ctrl} input.tagAlign.gz
+    gzip -d input.tagAlign.gz
+    java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
+         --genome {params.fastas}  --expt chip.tagAlign --ctrl input.tagAlign \
+         --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
 else
-    if [ {input.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
-        java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
-             --genome {params.fastas}  --expt {input.chip} --ctrl {input.ctrl} --f SAM \
-             --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
-    else
-        java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
-             --genome {params.fastas}  --expt {input.chip} --f SAM \
-             --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
-    fi
+    java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
+         --genome {params.fastas}  --expt chip.tagAlign \
+         --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
+fi
+"""
+
+if pe == "yes":
+    rule GEM:
+        input:
+            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+        output:
+            join(workpath,"gem","{name}","{name}.GEM_events.narrowPeak"),         
+        params:
+            rname='pl:GEM',
+            gemver=config['bin'][pfamily]['tool_versions']['GEMVER'],
+            readDist=config['bin'][pfamily]['GEMREADDIST'],
+            genome = config['references']['ChIPseq']['REFLEN'],
+            fastas = config['references']['ChIPseq']['GENOMECHR'],
+            gem_dir = "gem",
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+        threads: 32
+        shell: """
+if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
+cd /lscratch/$SLURM_JOBID;
+module load {params.gemver};
+if [ {params.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
+    java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
+         --genome {params.fastas}  --expt {input.chip} --ctrl {params.ctrl} --f SAM \
+         --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
+else
+    java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
+         --genome {params.fastas}  --expt {input.chip} --f SAM \
+         --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
 fi
 """
 
@@ -363,16 +406,10 @@ rule ChIPQC:
         for chip in chips:
             condition = [ key for key,value in groupdata.items() if chip in value ][0]
             replicate = str([ i + 1 for i in range(len(groupdata[condition])) if groupdata[condition][i]== chip ][0])
-            if se == "yes":
-                bamReads = join(workpath, bam_dir, chip + ".sorted.Q5MDD.bam")
-            else:
-                bamReads = join(workpath, bam_dir, chip + ".sorted.Q5DD.bam")
+            bamReads = join(workpath, bam_dir, chip + ".sorted.Q5DD.bam")
             controlID = chip2input[chip]
             if controlID != "":
-                if se == "yes":
-                    bamControl = join(workpath, bam_dir, controlID + ".sorted.Q5MDD.bam")
-                else:
-                    bamControl = join(workpath, bam_dir, controlID + ".sorted.Q5DD.bam")
+                bamControl = join(workpath, bam_dir, controlID + ".sorted.Q5DD.bam")
             else:
                 bamControl = ""
             peaks = join(workpath, wildcards.PeakTool, chip, chip + PeakExtensions[wildcards.PeakTool])
@@ -440,14 +477,12 @@ rule HOMER_motif:
         genomever = config['project']['annotation'],
     threads: 4
     run:
-        commoncmd1="if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi "
-        commoncmd2="cd /lscratch/$SLURM_JOBID; "
         commoncmd3="module load {params.homerver}; "
         if wildcards.PeakTool in PeakTools_broad:
-            cmd="findMotifsGenome.pl {input} {params.genomever} {output} -size given -p {threads} -preparsedDir '.'"
+            cmd="findMotifsGenome.pl {input} {params.genomever} {output} -size given -p {threads} -preparsedDir /lscratch/$SLURM_JOBID"
         else:
-            cmd="findMotifsGenome.pl {input} {params.genomever} {output} -p {threads} -preparsedDir '.'"
-        shell( commoncmd1 + commoncmd2 + commoncmd3 + cmd )
+            cmd="findMotifsGenome.pl {input} {params.genomever} {output} -p {threads} -preparsedDir /lscratch/$SLURM_JOBID"
+        shell(commoncmd3 + cmd)
 
 rule UROPA:
     input:

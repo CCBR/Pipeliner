@@ -38,7 +38,7 @@ def loop_jaccard(infileList, genomefile):
             fileB = infileList[y]
             b = BedTool(fileB)
             b = b.sort(g=genomefile)
-            j = a.jaccard(b)
+            j = a.jaccard(b,g=genomefile)
             j["fileA"] = fileA.split("/")[-1]
             j["fileB"] = fileB.split("/")[-1]
             if len(out) == 0:
