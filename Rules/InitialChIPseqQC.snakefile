@@ -6,8 +6,8 @@ from os import listdir
 
 
 configfile: "run.json"
-    
-workpath = config['project']['workpath']    
+
+workpath = config['project']['workpath']
 filetype = config['project']['filetype']
 readtype = config['project']['readtype']
 
@@ -577,8 +577,14 @@ rule bam2bw:
                 cmd+=" -e 200"
             else:
                 file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
-                extend = file[0][2].split(",")[0]
-                cmd=cmd+" -e "+extend
+                extenders = []
+                for ppqt_value in file[0][2].split(","):
+                    if int(ppqt_value) > 1:
+                        extenders.append(ppqt_value)
+                try:
+                    cmd+=" -e "+extenders[0]
+                except IndexError:
+                    cmd+=" -e " + "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")
         shell(commoncmd+cmd)
 
 rule deeptools_prep:
