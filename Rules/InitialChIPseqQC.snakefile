@@ -6,7 +6,7 @@ from os import listdir
 
 
 configfile: "run.json"
-    
+
 workpath = config['project']['workpath']
 filetype = config['project']['filetype']
 readtype = config['project']['readtype']
