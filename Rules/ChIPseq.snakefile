@@ -248,9 +248,9 @@ if se == "yes":
             except IndexError:
                 extsize = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")               
             if params.ctrl != join(workpath,bam_dir,".sorted.Q5DD.tagAlign.gz"):
-                cmd = "macs2 callpeak -t " + input.chip + " -c " + params.ctrl + " -g " + params.gsize + " -n " + wildcards.name + " --outdir " + join(workpath,params.macsn_dir,wildcards.name) + " --broad --broad-cutoff 0.01 --keep-dup='all' --nomodel --extsize " + extsize
+                cmd = "macs2 callpeak -t " + input.chip + " -c " + params.ctrl + " -g " + params.gsize + " -n " + wildcards.name + " --outdir " + join(workpath,params.macsb_dir,wildcards.name) + " --broad --broad-cutoff 0.01 --keep-dup='all' --nomodel --extsize " + extsize
             else:
-                cmd = "macs2 callpeak -t " + input.chip + " -g " + params.gsize + " -n " + wildcards.name + " --outdir " + join(workpath,params.macsn_dir,wildcards.name) + " --broad --broad-cutoff 0.01 --keep-dup='all' --nomodel --extsize " + extsize
+                cmd = "macs2 callpeak -t " + input.chip + " -g " + params.gsize + " -n " + wildcards.name + " --outdir " + join(workpath,params.macsb_dir,wildcards.name) + " --broad --broad-cutoff 0.01 --keep-dup='all' --nomodel --extsize " + extsize
             shell(commoncmd+cmd)
 
 if pe == "yes":
@@ -308,11 +308,13 @@ if se == "yes":
                 extsize = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")               
             if params.ctrl != join(workpath,bam_dir,".sorted.Q5DD.tagAlign.gz"):
                 cmd2 = "cp {params.ctrl} input.bed.gz; gzip -d input.bed.gz; "
-                cmd3 =  "sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 $ppqt 0.75 600 1E-2 ; mv chip-W300-G600-islands-summary-FDR1E-2 {output.txt}"
-                shell(commoncmd1 + commoncmd2 + commoncmd3 + cmd1 + cmd2 + cmd3)
+                cmd3 =  "sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 " + extsize + " 0.75 600 1E-2 ; mv chip-W300-G600-islands-summary-FDR1E-2 {output.txt}"
+                shell(commoncmd1)
+                shell(commoncmd2 + commoncmd3 + cmd1 + cmd2 + cmd3)
             else:
-                cmd2 = "sh $SICERDIR/SICER-rb.sh . chip.bed . {params.genomever} 100 300 $ppqt 0.75 600 100 ; mv chip-W300-G600-E100.scoreisland {output.txt}"
-                shell(commoncmd1 + commoncmd2 +	 commoncmd3 + cmd1 + cmd2)
+                cmd2 = "sh $SICERDIR/SICER-rb.sh . chip.bed . {params.genomever} 100 300 " + extsize + " 0.75 600 100 ; mv chip-W300-G600-E100.scoreisland {output.txt}"
+                shell(commoncmd1)
+                shell(commoncmd2 + commoncmd3 + cmd1 + cmd2)
 
 if pe =="yes":
     rule SICER:
@@ -332,7 +334,7 @@ if pe =="yes":
             commoncmd1 = "if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi "
             commoncmd2 = "cd /lscratch/$SLURM_JOBID; "
             commoncmd3 = "module load {params.sicerver}; module load {params.bedtoolsver}; "
-            cmd1 = "cp {input.chip} chip.bed.gz; gzip -d chip.bed.gz; "
+            cmd1 = "bamToBed -i {input.chip} > chip.bed; "
             file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
             extenders = []
             for ppqt_value in file[0][2].split(","):
@@ -343,12 +345,14 @@ if pe =="yes":
             except IndexError:
                 extsize = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")               
             if params.ctrl != join(workpath,bam_dir,".sorted.Q5DD.bam"):
-                cmd2 = "cp {params.ctrl} input.bed.gz; gzip -d input.bed.gz; "
-                cmd3 =  "sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 $ppqt 0.75 600 1E-2 ; mv chip-W300-G600-islands-summary-FDR1E-2 {output.txt}"
-                shell(commoncmd1 + commoncmd2 + commoncmd3 + cmd1 + cmd2 + cmd3)
+                cmd2 = "bamToBed -i {params.ctrl} > input.bed; "
+                cmd3 =  "sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 " + extsize + " 0.75 600 1E-2 ; mv chip-W300-G600-islands-summary-FDR1E-2 {output.txt}"
+                shell(commoncmd1)
+                shell(commoncmd2 + commoncmd3 + cmd1 + cmd2 + cmd3)
             else:
-                cmd2 = "sh $SICERDIR/SICER-rb.sh . chip.bed . {params.genomever} 100 300 $ppqt 0.75 600 100 ; mv chip-W300-G600-E100.scoreisland {output.txt}"
-                shell(commoncmd1 + commoncmd2 +	 commoncmd3 + cmd1 + cmd2)
+                cmd2 = "sh $SICERDIR/SICER-rb.sh . chip.bed . {params.genomever} 100 300 " + extsize + " 0.75 600 100 ; mv chip-W300-G600-E100.scoreisland {output.txt}"
+                shell(commoncmd1)
+                shell(commoncmd2 + commoncmd3 + cmd1 + cmd2)
 
 rule convertSICER:
     input:
@@ -567,17 +571,23 @@ rule UROPA:
     params:
         rname="pl:uropa",
         uropaver = config['bin'][pfamily]['tool_versions']['UROPAVER'],
-        fldr = join(workpath, uropa_dir),
-        outroot = join(workpath, uropa_dir, '{PeakTool}', '{name}_{PeakTool}_uropa'),
+        fldr = join(workpath, uropa_dir, '{PeakTool}'),
+        inExt = lambda w: PeakExtensions[w.PeakTool],
+        outroot = '{name}_{PeakTool}_uropa',
         gtf = config['references']['ChIPseq']['GTFFILE']
-    threads: 4
     shell: """
 module load {params.uropaver};
-echo '{{"queries":[
-          {{ "feature":"gene","distance":5000,"show.attributes":["gene_id", "gene_name","gene_type"] }},
-          {{ "feature":"gene","show.attributes":["gene_id", "gene_name","gene_type"] }}],
-       "priority":"Yes",
-       "gtf":{params.gtf},
-       "bed":{input} }}' > {params.fldr}/{wildcards.name}.json
-uropa -i {params.fldr}/{wildcards.name}.json -p  {params.outroot} -s -t {threads}
+if [ ! -e {params.fldr} ]; then mkdir {params.fldr}; fi
+if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
+cd /lscratch/$SLURM_JOBID
+cp {params.gtf} genes.gtf
+cp {input} file{params.inExt}
+echo '{{"queries":[ ' > {wildcards.name}.json
+echo '      {{ "feature":"gene","distance":5000,"show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {wildcards.name}.json
+echo '      {{ "feature":"gene","show.attributes":["gene_id", "gene_name","gene_type"] }}],' >> {wildcards.name}.json
+echo '"priority":"Yes",' >> {wildcards.name}.json
+echo '"gtf":"genes.gtf",' >> {wildcards.name}.json
+echo '"bed":"file{params.inExt}" }}' >> {wildcards.name}.json
+uropa -i {wildcards.name}.json -p {params.outroot} -s
+cp {params.outroot}* {params.fldr}
 """
