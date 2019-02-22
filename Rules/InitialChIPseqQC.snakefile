@@ -744,7 +744,7 @@ rule NRF:
     threads: 16
     shell: """
 module load {params.preseqver};
-preseq lc_extrap -P -B -o {output.preseq} {input.bam} -seed 12345 -v -l 100000000000 2> {output.preseqlog}
+preseq lc_extrap -P -B -D -o {output.preseq} {input.bam} -seed 12345 -v -l 100000000000 2> {output.preseqlog}
 python {params.nrfscript} {output.preseqlog} > {output.nrf}
         """
 
