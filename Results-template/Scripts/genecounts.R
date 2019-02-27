@@ -78,4 +78,4 @@ design=model.matrix(~0+Group)
 v1 <- voom(tmm_y,design,plot=FALSE,normalize="quantile")
 ndata <- apply(v1$E, 2, function(z) ((2^z/v1$genes$Length)*1000))
 
-write.table(data.frame(tmm_y$genes[,-c(3)], ndata),file="RPKM_limma_voom_normalized_counts.txt",sep="\t",row.names=F)
+write.table(data.frame(tmm_y$genes[,-c(3)], ndata),file="Subread_genes_RPKM_limma_voom_normalized_counts.txt",sep="\t",row.names=F)
