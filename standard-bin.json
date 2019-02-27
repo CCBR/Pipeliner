@@ -332,7 +332,7 @@
         "SICERVER": "sicer/1.1",
         "TRIMGALOREVER": "trimgalore/0.4.5",
         "UCSCVER": "ucsc/365",
-        "UROPAVER": "uropa",
+        "UROPAVER": "uropa/2.0.3",
         "TRIMMOMATICVER": "trimmomatic/0.33",
 },
 "tool_parameters":{

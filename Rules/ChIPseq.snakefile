@@ -572,22 +572,17 @@ rule UROPA:
         rname="pl:uropa",
         uropaver = config['bin'][pfamily]['tool_versions']['UROPAVER'],
         fldr = join(workpath, uropa_dir, '{PeakTool}'),
-        inExt = lambda w: PeakExtensions[w.PeakTool],
-        outroot = '{name}_{PeakTool}_uropa',
+        json = join(workpath, uropa_dir, '{PeakTool}','{name}.json'),
+        outroot = join(workpath, uropa_dir, '{PeakTool}','{name}_{PeakTool}_uropa'),
         gtf = config['references']['ChIPseq']['GTFFILE']
     shell: """
 module load {params.uropaver};
 if [ ! -e {params.fldr} ]; then mkdir {params.fldr}; fi
-if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
-cd /lscratch/$SLURM_JOBID
-cp {params.gtf} genes.gtf
-cp {input} file{params.inExt}
-echo '{{"queries":[ ' > {wildcards.name}.json
-echo '      {{ "feature":"gene","distance":5000,"show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {wildcards.name}.json
-echo '      {{ "feature":"gene","show.attributes":["gene_id", "gene_name","gene_type"] }}],' >> {wildcards.name}.json
-echo '"priority":"Yes",' >> {wildcards.name}.json
-echo '"gtf":"genes.gtf",' >> {wildcards.name}.json
-echo '"bed":"file{params.inExt}" }}' >> {wildcards.name}.json
-uropa -i {wildcards.name}.json -p {params.outroot} -s
-cp {params.outroot}* {params.fldr}
+echo '{{"queries":[ ' > {params.json}
+echo '      {{ "feature":"gene","distance":5000,"show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
+echo '      {{ "feature":"gene","show.attributes":["gene_id", "gene_name","gene_type"] }}],' >> {params.json}
+echo '"priority":"Yes",' >> {params.json}
+echo '"gtf":"{params.gtf}",' >> {params.json}
+echo '"bed":"{input}" }}' >> {params.json}
+uropa -i {params.json} -p {params.outroot} -s
 """
