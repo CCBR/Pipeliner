@@ -164,21 +164,22 @@ if se == 'yes' :
             rname="pl:trim",
             cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
             workpath=config['project']['workpath'],
-            adaptersfa=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
+            adaptersfa=config['bin'][pfamily]['FASTAWITHADAPTERSETD'],
             blacklistbwaindex=config['references'][pfamily]['BLACKLISTBWAINDEX'],
             picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
-            parallelver=config['bin'][pfamily]['tool_versions']['PARALLELVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-            minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
+            minlen=35,
+            leadingquality=10,
+            trailingquality=10,
             javaram="64g",
-        threads: 32
+        threads: 16
         shell: """
 module load {params.cutadaptver};
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
 cd /lscratch/$SLURM_JOBID
 sample=`echo {input.infq}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
-cutadapt --nextseq-trim=2 --trim-n -n 5 -O 5 -q 10,10 -m {params.minlen} -b file:{params.adaptersfa} -j {threads} -o ${{sample}}.cutadapt.fastq {input.infq}
+cutadapt --nextseq-trim=2 --trim-n -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} -m {params.minlen} -b file:{params.adaptersfa} -j {threads} -o ${{sample}}.cutadapt.fastq {input.infq}
 module load {params.bwaver};
 module load {params.samtoolsver};
 module load {params.picardver};
@@ -196,10 +197,9 @@ mv ${{sample}}.cutadapt.noBL.fastq.gz {output.outfq};
             kronahtml = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),
         params: 
             rname='pl:kraken',
-            # batch='--cpus-per-task=32 --mem=200g --time=48:00:00', # does not work ... just add required resources in cluster.json ... make a new block for this rule there
             prefix="{name}",
             outdir=join(workpath,kraken_dir),
-            bacdb=config['bin'][pfamily]['tool_parameters']['KRAKENBACDB'],
+            bacdb=config['bin'][pfamily]['KRAKENBACDB'],
             krakenver=config['bin'][pfamily]['tool_versions']['KRAKENVER'],
             kronatoolsver=config['bin'][pfamily]['tool_versions']['KRONATOOLSVER'],
         threads: 16
@@ -236,7 +236,6 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             d=join(workpath,bam_dir),
             rname='pl:bwa',
             reference=config['references'][pfamily]['BWA'],
-            reflen=config['references'][pfamily]['REFLEN'],
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         output:
@@ -348,12 +347,14 @@ if pe == 'yes':
             rname="pl:trim",
             cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
             workpath=config['project']['workpath'],
-            fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
+            fastawithadaptersetd=config['bin'][pfamily]['FASTAWITHADAPTERSETD'],
             blacklistbwaindex=config['references'][pfamily]['BLACKLISTBWAINDEX'],
             picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-            minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
+            minlen=35,
+            leadingquality=10,
+            trailingquality=10,
             javaram="64g",
         threads: 16
         shell: """
@@ -361,7 +362,7 @@ module load {params.cutadaptver};
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
 cd /lscratch/$SLURM_JOBID
 sample=`echo {input.file1}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
-cutadapt --pair-filter=any --nextseq-trim=2 --trim-n -n 5 -O 5 -q 10,10 -m {params.minlen}:{params.minlen} -b file:{params.fastawithadaptersetd} -B file:{params.fastawithadaptersetd} -j {threads} -o ${{sample}}.R1.cutadapt.fastq -p ${{sample}}.R2.cutadapt.fastq {input.file1} {input.file2}
+cutadapt --pair-filter=any --nextseq-trim=2 --trim-n -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} -m {params.minlen}:{params.minlen} -b file:{params.fastawithadaptersetd} -B file:{params.fastawithadaptersetd} -j {threads} -o ${{sample}}.R1.cutadapt.fastq -p ${{sample}}.R2.cutadapt.fastq {input.file1} {input.file2}
 module load {params.bwaver};
 module load {params.samtoolsver};
 module load {params.picardver};
@@ -387,10 +388,9 @@ mv /lscratch/$SLURM_JOBID/${{sample}}.R2.cutadapt.noBL.fastq.gz {output.outfq2};
             kronahtml = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),
         params: 
             rname='pl:kraken',
-            # batch='--cpus-per-task=32 --mem=200g --time=48:00:00', # does not work ... just add required resources in cluster.json ... make a new block for this rule there
             prefix="{name}",
             outdir=join(workpath,kraken_dir),
-            bacdb=config['bin'][pfamily]['tool_parameters']['KRAKENBACDB'],
+            bacdb=config['bin'][pfamily]['KRAKENBACDB'],
             krakenver=config['bin'][pfamily]['tool_versions']['KRAKENVER'],
             kronatoolsver=config['bin'][pfamily]['tool_versions']['KRONATOOLSVER'],
         threads: 32
@@ -415,7 +415,6 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             d=join(workpath,bam_dir),
             rname='pl:bwa',
             reference=config['references'][pfamily]['BWA'],
-            reflen=config['references'][pfamily]['REFLEN'],
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         output:
@@ -804,9 +803,9 @@ rule fastq_screen:
         rname='pl:fqscreen',
         bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
         perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
-        fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
-        fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
-        fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
+        fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
+        fastq_screen_config=config['bin'][pfamily]['FASTQ_SCREEN_CONFIG'],
+        fastq_screen_config2=config['bin'][pfamily]['FASTQ_SCREEN_CONFIG2'],
         outdir = "FQscreen",
         outdir2 = "FQscreen2",
     threads: 24
@@ -915,11 +914,11 @@ cat {params.inputstring} | {params.filterCollate} > {output.qctable}
 
 rule multiqc:
     input: 
-#        expand(join(workpath,bam_dir,"{name}.bwa.Q5.duplic"), name=samples),
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
         expand(join(workpath,preseq_dir,"{name}.ccurve"), name=samples),
         expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
         expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
+	expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
         join(workpath,"QCTable.txt"),
         join(workpath,"rawQC"),
         join(workpath,"QC"),

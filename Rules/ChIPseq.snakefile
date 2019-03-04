@@ -512,6 +512,7 @@ rule ChIPQC:
         shell("module load {params.Rver}; Rscript {rscript_fn}")
 
 # double list of sample1 and sample2 with different names are designed as a work around to deal with snakemake flow rules
+
 rule IDR:
     input:
         sample1 = lambda w: [join(workpath, w.PeakTool, w.sample1, w.sample1 + PeakExtensions[w.PeakTool])],
