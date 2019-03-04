@@ -537,7 +537,8 @@
         "mem": "48g"
     },
     "ngsqc": {
-        "threads": "1"
+        "threads": "1",
+        "mem":"120g"
     },
     "novo_sort": {
         "mem": "120g",
