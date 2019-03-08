@@ -580,7 +580,7 @@ rule samplecondition:
             out.write("sampleName\tfileName\tcondition\tlabel\n")
             i=0
             for f in input.files:
-                out.write("{}/{}.star.count.txt\t".format(params.pathprefix, params.allsamples[i]))
+                out.write("{}\t".format(params.allsamples[i]))
                 out.write("{}/{}.star.count.txt\t".format(params.pathprefix, params.allsamples[i]))
                 out.write("{}\t".format(params.groups[i]))
                 out.write("{}\n".format(params.labels[i])) 
@@ -817,21 +817,20 @@ python {params.pythonscript} {params.annotate} {degall_dir} {degall_dir}
 rule rsemcounts:
    input:
     files=expand(join(workpath,degall_dir,"{name}.RSEM.genes.results"), name=samples),
+    sampletable=join(workpath,star_dir,"sampletable.txt")
    output: 
     join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
    params: 
     rname='pl:rsemcounts',
     batch='--mem=8g --time=10:00:00',
     outdir=join(workpath,degall_dir),
-    mincount=config['project']['MINCOUNTGENES'],
-    minsamples=config['project']['MINSAMPLES'],
     annotate=config['references'][pfamily]['ANNOTATE'],
     rver=config['bin'][pfamily]['tool_versions']['RVER'],
     rscript=join(workpath,"Scripts","rsemcounts.R")
    shell: """
 cd {params.outdir}
 module load {params.rver}
-Rscript {params.rscript} '{params.outdir}' '{input.files}' '{params.mincount}' '{params.minsamples}' '{params.annotate}'
+Rscript {params.rscript} '{params.outdir}' '{input.files}' '{params.annotate}' '{input.sampletable}' 
 """
 
 
