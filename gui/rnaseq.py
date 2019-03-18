@@ -255,6 +255,11 @@ class RNASeqFrame( PipelineFrame ) :
             cont_cpm_cutoff=[]
             cont_mincount=[]
     ##        lbl=[]
+## contrasts.tab can have 2,3 or 4 columns
+# col 1 and 2 are group1 and group2 respectively
+# col 3 is CPM cutoff value ... if not provided 0.5 will be used
+# col 4 is either min number of sample per group that need to satisfy the cpm cutoff criteria or fraction of samples that need
+#       to satisfy the criteria... can be integer >=1 ... or fraction >=0.5 and <1    
             for x in f:
                   xsplit=x.split()
                   if len(xsplit) == 4:
@@ -262,7 +267,17 @@ class RNASeqFrame( PipelineFrame ) :
                      cont.append(xsplit[1])
                      cont_cpm_cutoff.append(xsplit[2])
                      cont_mincount.append(xsplit[3])
-                     
+                  elif len(xsplit) == 3:
+                     cont.append(xsplit[0])
+                     cont.append(xsplit[1])
+                     cont_cpm_cutoff.append(xsplit[2])
+                     cont_mincount.append("0.5")
+                  elif len(xsplit) == 2:
+                     cont.append(xsplit[0])
+                     cont.append(xsplit[1])
+                     cont_cpm_cutoff.append("0.5")
+                     cont_mincount.append("0.5")             
+                             
             D["rcontrasts"]=cont
             D["rcontrasts_cpm_cutoff"]=cont_cpm_cutoff
             D["rcontrasts_min_counts"]=cont_mincount
