@@ -2,7 +2,7 @@ if config['project']['annotation'] == "hg19":
 
   rule all_wgs_somatic_tumoronly:
     input:  expand("{s}"+".recal.bam",s=samples),
-            expand("freec_out/{s}.recal.bam_CNVs",s=samples),
+            expand("freec_out/{s}.recal.bam_CNVs.p.value.txt",s=samples),
 #            expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/{s}"+".FINALmutect2.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{s}"+".maf",s=samples),
@@ -25,7 +25,7 @@ elif config['project']['annotation'] == "hg38":
 
   rule all_wgs_somatic_tumoronly:
     input:  expand("{s}"+".recal.bam",s=samples),
-            expand("freec_out/{s}.recal.bam_CNVs",s=samples),
+            expand("freec_out/{s}.recal.bam_CNVs.p.value.txt",s=samples),
 #            expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/{s}"+".FINALmutect2.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{s}"+".maf",s=samples),

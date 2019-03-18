@@ -30,7 +30,7 @@ if config['project']['annotation'] == "hg19":
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
             expand("sequenza_out/{p}"+"_alternative_solutions.txt",p=pairs),
-            expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
+            expand("freec_out/pass2/{p}"+".recal.bam_CNVs.p.value.txt",p=pairs),
     output:
     params: rname="final"
     shell:  """
@@ -70,7 +70,7 @@ elif config['project']['annotation'] == "hg38":
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
             expand("sequenza_out/{p}"+"_alternative_solutions.txt",p=pairs),
-            expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
+            expand("freec_out/pass2/{p}"+".recal.bam_CNVs.p.value.txt",p=pairs),
     output:
     params: rname="final"
     shell:  """

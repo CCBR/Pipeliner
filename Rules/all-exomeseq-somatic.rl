@@ -28,11 +28,11 @@ if config['project']['annotation'] == "hg19":
             "admixture_out/admixture_table.tsv",
             "QC/decoy",
             expand("sequenza_out/{p}"+"_alternative_solutions.txt",p=pairs),
-            expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
+            expand("freec_out/pass2/{p}"+".recal.bam_CNVs.p.value.txt",p=pairs),
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.4; multiqc -f -e featureCounts .; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 elif config['project']['annotation'] == "hg38":
@@ -65,11 +65,11 @@ elif config['project']['annotation'] == "hg38":
             "admixture_out/admixture_table.tsv",
             "QC/decoy",
             expand("sequenza_out/{p}"+"_alternative_solutions.txt",p=pairs),
-            expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
+            expand("freec_out/pass2/{p}"+".recal.bam_CNVs.p.value.txt",p=pairs),
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.4; multiqc -f -e featureCounts .; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 
@@ -101,6 +101,6 @@ elif config['project']['annotation'] == "mm10":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.4; multiqc -f -e featureCounts .; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
