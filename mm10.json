@@ -1,5 +1,6 @@
  {"references": {
     "exomeseq": {
+    "VARDICTBED": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10.chroms.bed",
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
     "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_dbSNP_allStrains_compSet.vcf.gz",
     "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
@@ -60,6 +61,7 @@
     "CNVKITANNO": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_refFlat.txt",
 },
     "genomeseq": {
+    "VARDICTBED": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10.chroms.bed",
     "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_dbSNP_allStrains_compSet.vcf.gz",
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
     "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
