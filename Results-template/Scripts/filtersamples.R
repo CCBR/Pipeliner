@@ -14,11 +14,24 @@ x=read.table(SAMPLETABLE,header = T,sep="\t")
 
 samples=(x$condition==G1 | x$condition==G2)
 x1=x[samples,]
-
 g1_samples=(x1$condition==G1)
-ng1=min(length(g1_samples[g1_samples==TRUE]),MINSAMPLES)
 g2_samples=(x1$condition==G2)
-ng2=min(length(g2_samples[g2_samples==TRUE]),MINSAMPLES)
+
+
+if (MINSAMPLES<0.5) {
+  MINSAMPLES=0.5
+}
+if (MINSAMPLES<1) {
+  ng1=max(1,floor(length(g1_samples[g1_samples==TRUE])*MINSAMPLES))
+  ng2=max(1,floor(length(g2_samples[g2_samples==TRUE])*MINSAMPLES))
+}
+if (MINSAMPLES>=1){
+  ng1=min(length(g1_samples[g1_samples==TRUE]),MINSAMPLES)
+  ng2=min(length(g2_samples[g2_samples==TRUE]),MINSAMPLES)
+}
+
+ng1
+ng2
 
 y=read.table(RAWCOUNTSTABLE,header = T,sep = "\t")
 y=y[,samples]

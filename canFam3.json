@@ -1,0 +1,29 @@
+{
+ 	"references": {
+ 		"exomeseq": {},
+ 		"genomeseq": {},
+ 		"rnaseq": {
+ 			"GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/canFam3.fa",
+ 			"GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/genes.gtf",
+ 			"STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/STAR/2.5.2b/genes-",
+ 			"ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/annotate.genes.txt",
+ 			"ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/annotate.isoforms.txt",
+ 			"REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/refFlat.txt",
+ 			"BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/genes.ref.bed",
+ 			"GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/geneinfo.bed",
+ 			"KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/dev/karyobeds/camFam/",
+ 			"RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/rsemref/canFam3",
+ 			"RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/canFam3.rRNA_interval_list",
+ 			"FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
+ 			"STARREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/STAR/2.5.2b/genes-",
+ 			"FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
+ 			"GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/canFam3.fa",
+ 			"adapter.file": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat",
+ 			"fastqc.adapters": "/data/CCBR_Pipeliner/db/PipeDB/dev/fastqc.adapters",
+ 			"trimmomatic.adapters": "/data/CCBR_Pipeliner/db/PipeDB/dev/adapters2.fa",
+ 			"ORGANISM": "Canis_lupus_familiaris",
+ 		},
+ 		"rnaseqvargerm": {},
+ 		"ChIPseq": {}
+	}
+}
