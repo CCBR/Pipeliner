@@ -1,0 +1,6 @@
+admixture <- read.table("admixture_out/admixture_table.tsv",header = TRUE,row.names = 1)
+admix2 <- as.matrix(admixture)
+admix2<-t(admix2)
+png('admixture_mqc.png')
+barplot(admix2,legend.text=TRUE)
+dev.off()
