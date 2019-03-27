@@ -2,7 +2,7 @@ if config['project']['annotation'] == "hg19":
   rule all_wgslow:
     input: "combined.vcf",
            config['project']['workpath']+"/full_annot.txt.zip",
-           "sample_network.bmp",
+           "sample_network_mqc.png",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),           
            "combined.snpeff.vcf",
            "combined.strictFilter.vcf",
@@ -33,7 +33,7 @@ elif config['project']['annotation'] == "hg38":
   rule all_wgslow:
     input: "combined.vcf",
            config['project']['workpath']+"/full_annot.txt.zip",
-           "sample_network.bmp",
+           "sample_network_mqc.png",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),           
            "combined.snpeff.vcf",
            "combined.strictFilter.vcf",
@@ -64,7 +64,7 @@ elif config['project']['annotation'] == "mm10":
   rule all_wgslow:
     input: "combined.vcf",
            config['project']['workpath']+"/full_annot.txt.zip",
-           "sample_network.bmp",
+           "sample_network_mqc.png",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),           
            "combined.snpeff.vcf",
            "combined.strictFilter.vcf",
