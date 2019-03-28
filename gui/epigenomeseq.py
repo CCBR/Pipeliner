@@ -34,6 +34,8 @@ class ChIPSeqFrame( PipelineFrame ) :
     def __init__(self, pipepanel, pipeline_name, *args, **kwargs) :
         PipelineFrame.__init__(self, pipepanel, pipeline_name, *args, **kwargs)
         self.info = None
+        self.peakinfo_fn = 'peakcall.tab'
+        self.contrast_fn = 'contrast.tab'
         
         eframe = self.eframe = LabelFrame(self,text="Options") 
         #,fg=textLightColor,bg=baseColor)
@@ -61,16 +63,19 @@ class ChIPSeqFrame( PipelineFrame ) :
 
         self.add_info(eframe)
         self.option_controller()
-        self.peakinfo_fn = 'peakcall.tab'
-        self.contrast_fn = 'contrast.tab'
+
 
     def option_controller( self, *args, **kwargs ) :
         PipelineFrame.option_controller( self )
         if self.Pipeline.get() == 'InitialChIPseqQC' :
        	    self.info.grid(row=7,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
-        else :
+        elif self.Pipeline.get() == 'ChIPseq' :
        	    self.info.grid(row=7,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
-    
+       	    contrast_file=join(self.workpath.get(),self.contrast_fn)
+       	    print(contrast_file)
+       	    if not os.path.exists(contrast_file):
+       	        open(contrast_file,'a').close()
+       	            
     def add_info( self, parent ) :
         if not self.info :
             self.info = LabelFrame(parent, text='Peak Call Info')
@@ -449,6 +454,15 @@ class ChIPSeqFrame( PipelineFrame ) :
         contrast = []
         groups = {}
         if self.Pipeline.get() == 'ChIPseq' or self.Pipeline.get() == 'InitialChIPseqQC':
+            pc=list(map(lambda x:x.strip().split("\t"),open(join(self.workpath.get(),self.peakinfo_fn)).readlines()))
+            illformed=0
+            if len(pc)==0:
+                illformed=1
+            for g in pc:
+                if g[0]==g[1]:
+                    illformed=1
+            if illformed==1:
+                showinfo("WARNING WARNING WARNING","Please double check peakcall.tab file!")
             ################################
             #peak calling info!
             ################################

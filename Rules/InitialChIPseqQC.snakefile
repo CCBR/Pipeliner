@@ -12,75 +12,20 @@ filetype = config['project']['filetype']
 readtype = config['project']['readtype']
 
 
-def outputfiles(groupslist):
-    '''
-    Produces correct output filenames based on group information.
-    If a group has input it produces:
-    {groupName}.sorted.Q5DD.RPGC.inputnorm.metagene_heatmap.pdf
-    {groupName}.sorted.Q5DD.RPGC.metagene_heatmap.pdf
-    {groupName}.sorted.RPGC.metagene_heatmap.pdf
-    Else, it produces:
-    {groupName}.sorted.Q5DD.RPGC.metagene_heatmap.pdf
-    {groupName}.sorted.RPGC.metagene_heatmap.pdf
-    '''
-    def _findinputs():
-        '''Returns a dictonary where the key = group and value = boolean
-        representing whether a group has input, or does not have input'''
-        sample2input = config['project']['peaks']['inputs']
-        allgroups = config['project']['groups']
-        group2input = {}
-        for group, sampleslist in allgroups.items():
-            sample = sampleslist[0] # only need to check one sample
-            if sample2input[sample] != 'NA' and sample2input[sample] != '':
-                group2input[group] = True
-            else:
-                group2input[group] = False
-        return group2input
-
-    groups2input = _findinputs()
-    dtoolgroups, dtoolext, dtoolinorm = [], [], []
-    inputnorm = ["", ".inputnorm"]
-    extensions = ["sorted.RPGC", "sorted.Q5DD.RPGC"]
-    for group in groupslist:
-        if groups2input[group]:
-            dtoolgroups.extend([group]*3)
-            dtoolext.extend([extensions[1], extensions[1], extensions[0]])
-            dtoolinorm.extend([inputnorm[1], inputnorm[0],inputnorm[0]])
-        else:
-            dtoolgroups.extend([group] * 2)
-            dtoolext.extend([extensions[1], extensions[0]])
-            dtoolinorm.extend([inputnorm[0], inputnorm[0]])
-    return dtoolgroups, dtoolext, dtoolinorm
-
-def outputfiles2(groupslist):
+def outputfiles2(groupslist, inputnorm):
     '''
     Produces correct output filenames based on group information.
     Names will be:
     Inputnorm.sorted.Q5DD.RPGC.metagene_heatmap.pdf
     {groupName}.sorted.Q5DD.RPGC.metagene_heatmap.pdf
     {groupName}.sorted.RPGC.metagene_heatmap.pdf
+    Note: Inputnorm will only be included when there are input samples.
     '''
     dtoolgroups, dtoolext = [], []
     extensions = ["sorted.RPGC", "sorted.Q5DD.RPGC"]
-    dtoolgroups.extend(["InputNorm"])
-    dtoolext.extend([extensions[1]])
-    for group in groupslist:
-            dtoolgroups.extend([group] * 2)
-            dtoolext.extend([extensions[1], extensions[0]])
-    return dtoolgroups, dtoolext
-
-def outputfiles3(groupslist):
-    '''
-    Produces correct output filenames based on group information.
-    Names will be:
-    Inputnorm.sorted.Q5DD.RPGC.metagene_heatmap.pdf
-    {groupName}.sorted.Q5DD.RPGC.metagene_heatmap.pdf
-    {groupName}.sorted.RPGC.metagene_heatmap.pdf
-    '''
-    dtoolgroups, dtoolext = [], []
-    extensions = ["sorted.RPGC", "sorted.Q5DD.RPGC"]
-    dtoolgroups.extend(["InputNorm"])
-    dtoolext.extend([extensions[1]])
+    if len(inputnorm) == 2:
+            dtoolgroups.extend(["InputNorm"])
+            dtoolext.extend([extensions[1]])
     for group in groupslist:
             dtoolgroups.extend([group] * 2)
             dtoolext.extend([extensions[1], extensions[0]])
@@ -88,8 +33,6 @@ def outputfiles3(groupslist):
 
 se=""
 pe=""
-
-workpath = config['project']['workpath']
 
 if config['project']['nends'] == 2 :
     pe="yes"
@@ -102,13 +45,16 @@ if pe == "yes":
     extensions3 = { extensions2[i] + "." : "bam" for i in range(len(extensions2)) }
     extensions4 = [ extensions2[i] + ".bam" for i in range(len(extensions2)) ]
 else:
-    extensions = [ "sorted.RPGC", "sorted.Q5DD.RPGC", "sorted.Q5MDD.RPGC" ]
+    extensions = [ "sorted.RPGC", "sorted.Q5DD.RPGC" ]
     extensions2 = list(map(lambda x:re.sub(".RPGC","",x),extensions))
-    types = [ "bam", "bam", "tagAlign.gz" ]
+    types = [ "bam", "tagAlign.gz" ]
     extensions3 = { extensions2[i] + "." : types[i] for i in range(len(extensions2)) }
     extensions4 = [ extensions2[i] + "." + types[i] for i in range(len(extensions2)) ]
 
 d = {i: True for i in [1,2,3]}
+
+#########
+# DEFINING SAMPLES
 
 chip2input = config['project']['peaks']['inputs']
 uniq_inputs = list(sorted(set([v for v in chip2input.values() if v])))
@@ -138,7 +84,10 @@ for group, chips in groupdata.items() :
         groupdatawinput[group]=set(tmp)
 
 groups = list(groupdatawinput.keys())
-deepgroups, deepexts = outputfiles2(groups)
+deepgroups, deepexts = outputfiles2(groups,inputnorm)
+
+##########
+# CREATING DIRECTORIES
 
 trim_dir='trim'
 kraken_dir='kraken'
@@ -155,6 +104,9 @@ for d in [trim_dir,kraken_dir,bam_dir,bw_dir,deeptools_dir,preseq_dir,extra_fing
 # Checking to see if output filenames are files are being generated correctly
 #print("DEEPTOOLS OUTPUT FILESNAMES\n",[file.split('/')[-1] for file in expand(join(workpath,deeptools_dir,"{group}.metagene_heatmap.{ext}.pdf"), zip, group=deepgroups,ext=deepexts)])
 #print(samples)
+
+##########
+# RULES
 
 if se == 'yes' :
     rule InitialChIPseqQC:
@@ -194,7 +146,7 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             # ngsqc
-            expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5MDD.pdf"),group=groups),
+            expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.pdf"),group=groups),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -212,21 +164,22 @@ if se == 'yes' :
             rname="pl:trim",
             cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
             workpath=config['project']['workpath'],
-            adaptersfa=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
+            adaptersfa=config['bin'][pfamily]['FASTAWITHADAPTERSETD'],
             blacklistbwaindex=config['references'][pfamily]['BLACKLISTBWAINDEX'],
             picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
-            parallelver=config['bin'][pfamily]['tool_versions']['PARALLELVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-            minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
+            minlen=35,
+            leadingquality=10,
+            trailingquality=10,
             javaram="64g",
-        threads: 32
+        threads: 16
         shell: """
 module load {params.cutadaptver};
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
 cd /lscratch/$SLURM_JOBID
 sample=`echo {input.infq}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
-cutadapt --nextseq-trim=2 --trim-n -n 5 -O 5 -q 10,10 -m {params.minlen} -b file:{params.adaptersfa} -j {threads} -o ${{sample}}.cutadapt.fastq {input.infq}
+cutadapt --nextseq-trim=2 --trim-n -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} -m {params.minlen} -b file:{params.adaptersfa} -j {threads} -o ${{sample}}.cutadapt.fastq {input.infq}
 module load {params.bwaver};
 module load {params.samtoolsver};
 module load {params.picardver};
@@ -244,10 +197,9 @@ mv ${{sample}}.cutadapt.noBL.fastq.gz {output.outfq};
             kronahtml = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),
         params: 
             rname='pl:kraken',
-            # batch='--cpus-per-task=32 --mem=200g --time=48:00:00', # does not work ... just add required resources in cluster.json ... make a new block for this rule there
             prefix="{name}",
             outdir=join(workpath,kraken_dir),
-            bacdb=config['bin'][pfamily]['tool_parameters']['KRAKENBACDB'],
+            bacdb=config['bin'][pfamily]['KRAKENBACDB'],
             krakenver=config['bin'][pfamily]['tool_versions']['KRAKENVER'],
             kronatoolsver=config['bin'][pfamily]['tool_versions']['KRONATOOLSVER'],
         threads: 16
@@ -284,7 +236,6 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             d=join(workpath,bam_dir),
             rname='pl:bwa',
             reference=config['references'][pfamily]['BWA'],
-            reflen=config['references'][pfamily]['REFLEN'],
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         output:
@@ -309,9 +260,9 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
         input:
             join(workpath,bam_dir,"{name}.sorted.Q5.bam")
         output:
-            outtagalign=join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz"),
-            outbam=join(workpath,bam_dir,"{name}.sorted.Q5MDD.bam"),
-            outflagstat=join(workpath,bam_dir,"{name}.sorted.Q5MDD.bam.flagstat")
+            outtagalign=join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz"),
+            outbam=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+            outflagstat=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat")
         params:
             rname='pl:macs2_dedup',
             macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
@@ -375,6 +326,8 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
+            # ngsqc
+            expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.pdf"),group=groups),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -394,12 +347,14 @@ if pe == 'yes':
             rname="pl:trim",
             cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
             workpath=config['project']['workpath'],
-            fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
+            fastawithadaptersetd=config['bin'][pfamily]['FASTAWITHADAPTERSETD'],
             blacklistbwaindex=config['references'][pfamily]['BLACKLISTBWAINDEX'],
             picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-            minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
+            minlen=35,
+            leadingquality=10,
+            trailingquality=10,
             javaram="64g",
         threads: 16
         shell: """
@@ -407,7 +362,7 @@ module load {params.cutadaptver};
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID ;fi
 cd /lscratch/$SLURM_JOBID
 sample=`echo {input.file1}|awk -F "/" '{{print $NF}}'|awk -F ".R1.fastq" '{{print $1}}'`
-cutadapt --pair-filter=any --nextseq-trim=2 --trim-n -n 5 -O 5 -q 10,10 -m {params.minlen}:{params.minlen} -b file:{params.fastawithadaptersetd} -B file:{params.fastawithadaptersetd} -j {threads} -o ${{sample}}.R1.cutadapt.fastq -p ${{sample}}.R2.cutadapt.fastq {input.file1} {input.file2}
+cutadapt --pair-filter=any --nextseq-trim=2 --trim-n -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} -m {params.minlen}:{params.minlen} -b file:{params.fastawithadaptersetd} -B file:{params.fastawithadaptersetd} -j {threads} -o ${{sample}}.R1.cutadapt.fastq -p ${{sample}}.R2.cutadapt.fastq {input.file1} {input.file2}
 module load {params.bwaver};
 module load {params.samtoolsver};
 module load {params.picardver};
@@ -433,10 +388,9 @@ mv /lscratch/$SLURM_JOBID/${{sample}}.R2.cutadapt.noBL.fastq.gz {output.outfq2};
             kronahtml = join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),
         params: 
             rname='pl:kraken',
-            # batch='--cpus-per-task=32 --mem=200g --time=48:00:00', # does not work ... just add required resources in cluster.json ... make a new block for this rule there
             prefix="{name}",
             outdir=join(workpath,kraken_dir),
-            bacdb=config['bin'][pfamily]['tool_parameters']['KRAKENBACDB'],
+            bacdb=config['bin'][pfamily]['KRAKENBACDB'],
             krakenver=config['bin'][pfamily]['tool_versions']['KRAKENVER'],
             kronatoolsver=config['bin'][pfamily]['tool_versions']['KRONATOOLSVER'],
         threads: 32
@@ -461,7 +415,6 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             d=join(workpath,bam_dir),
             rname='pl:bwa',
             reference=config['references'][pfamily]['BWA'],
-            reflen=config['references'][pfamily]['REFLEN'],
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         output:
@@ -481,6 +434,45 @@ samtools view -b -q 6 {output.outbam1} -o {output.outbam2}
 samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
             """  
+
+    rule picard_dedup:
+        input: 
+            bam2=join(workpath,bam_dir,"{name}.sorted.Q5.bam")
+        output:
+            out4=temp(join(workpath,bam_dir,"{name}.bwa_rg_added.sorted.Q5.bam")), 
+            out5=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+            out5f=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
+            out6=join(workpath,bam_dir,"{name}.bwa.Q5.duplic"), 
+        params:
+            rname='pl:dedup',
+            batch='--mem=98g --time=10:00:00 --gres=lscratch:800',
+            picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
+            samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
+            javaram='16g',
+        shell: """
+module load {params.samtoolsver};
+module load {params.picardver}; 
+java -Xmx{params.javaram} \
+  -jar $PICARDJARPATH/picard.jar AddOrReplaceReadGroups \
+  INPUT={input.bam2} \
+  OUTPUT={output.out4} \
+  TMP_DIR=/lscratch/$SLURM_JOBID \
+  RGID=id \
+  RGLB=library \
+  RGPL=illumina \
+  RGPU=machine \
+  RGSM=sample; 
+java -Xmx{params.javaram} \
+  -jar $PICARDJARPATH/picard.jar MarkDuplicates \
+  INPUT={output.out4} \
+  OUTPUT={output.out5} \
+  TMP_DIR=/lscratch/$SLURM_JOBID \
+  VALIDATION_STRINGENCY=SILENT \
+  REMOVE_DUPLICATES=true \
+  METRICS_FILE={output.out6}
+samtools index {output.out5}
+samtools flagstat {output.out5} > {output.out5f}
+            """
 
 rule ppqt:
     input:
@@ -506,44 +498,6 @@ rule ppqt:
                 -tmpdir=/lscratch/$SLURM_JOBID -rf;"
         shell(commoncmd+cmd)
 
-rule picard_dedup:
-    input: 
-        bam2=join(workpath,bam_dir,"{name}.sorted.Q5.bam")
-    output:
-        out4=temp(join(workpath,bam_dir,"{name}.bwa_rg_added.sorted.Q5.bam")), 
-        out5=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-        out5f=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
-        out6=join(workpath,bam_dir,"{name}.bwa.Q5.duplic"), 
-    params:
-        rname='pl:dedup',
-        batch='--mem=98g --time=10:00:00 --gres=lscratch:800',
-        picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
-        samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
-        javaram='16g',
-    shell: """
-module load {params.samtoolsver};
-module load {params.picardver}; 
-java -Xmx{params.javaram} \
-  -jar $PICARDJARPATH/picard.jar AddOrReplaceReadGroups \
-  INPUT={input.bam2} \
-  OUTPUT={output.out4} \
-  TMP_DIR=/lscratch/$SLURM_JOBID \
-  RGID=id \
-  RGLB=library \
-  RGPL=illumina \
-  RGPU=machine \
-  RGSM=sample; 
-java -Xmx{params.javaram} \
-  -jar $PICARDJARPATH/picard.jar MarkDuplicates \
-  INPUT={output.out4} \
-  OUTPUT={output.out5} \
-  TMP_DIR=/lscratch/$SLURM_JOBID \
-  VALIDATION_STRINGENCY=SILENT \
-  REMOVE_DUPLICATES=true \
-  METRICS_FILE={output.out6}
-samtools index {output.out5}
-samtools flagstat {output.out5} > {output.out5f}
-            """
 
 rule bam2bw:
     input:
@@ -671,28 +625,6 @@ rule deeptools_fingerprint:
         metrics=join(workpath,extra_fingerprint_dir,"{group}.fingerprint.metrics.sorted.tsv"),
     params:
         rname="pl:deeptools_fingerprint",
-        deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
-	batch="--cpus-per-task=8"
-    run:
-        import re
-        commoncmd="module load {params.deeptoolsver}; module load python;"
-        listfile=list(map(lambda z:z.strip().split(),open(input.prep,'r').readlines()))
-        ext=listfile[0][0]
-        bams=listfile[1]
-        labels=listfile[2]
-        cmd="plotFingerprint -b "+" ".join(bams)+" --labels "+" ".join(labels)+" -p 4 --skipZeros --outQualityMetrics "+output.metrics+" --plotFile "+output.image 
-        if se == "yes":
-            cmd+=" -e 200"
-        shell(commoncmd+cmd)
-
-rule deeptools_fingerprint_Q5MDD:
-    input:
-        prep=join(workpath,bam_dir,"{group}.sorted.Q5MDD.deeptools_prep"),
-    output:
-        image=join(workpath,deeptools_dir,"{group}.fingerprint.sorted.Q5MDD.pdf"),
-        metrics=join(workpath,extra_fingerprint_dir,"{group}.fingerprint.metrics.sorted.Q5MDD.tsv"),
-    params:
-        rname="pl:deeptools_fingerprint_Q5MDD",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
 	batch="--cpus-per-task=8"
     run:
@@ -871,9 +803,9 @@ rule fastq_screen:
         rname='pl:fqscreen',
         bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
         perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
-        fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
-        fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
-        fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
+        fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
+        fastq_screen_config=config['bin'][pfamily]['FASTQ_SCREEN_CONFIG'],
+        fastq_screen_config2=config['bin'][pfamily]['FASTQ_SCREEN_CONFIG2'],
         outdir = "FQscreen",
         outdir2 = "FQscreen2",
     threads: 24
@@ -890,9 +822,11 @@ module load {params.perlver};
 
 rule ngsqc:
     input:
-        tagAlign=join(workpath,bam_dir,"{name}.sorted.Q5MDD.tagAlign.gz")
+        tagAlign=join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz") if \
+          se == "yes" else \
+          join(workpath,bam_dir,"{name}.sorted.Q5DD.bam")
     output:
-        file=join(workpath,"QC","{name}.sorted.Q5MDD.NGSQC_report.txt"),
+        file=join(workpath,"QC","{name}.sorted.Q5DD.NGSQC_report.txt"),
     params:
         rname="pl:ngsqc",
         bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
@@ -902,17 +836,22 @@ rule ngsqc:
 module load {params.bedtoolsver};
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
 cd /lscratch/$SLURM_JOBID;
-cp {input.tagAlign} tmptagAlign.gz;
-gzip -d tmptagAlign.gz;
-{params.ngsqc} -v -o tmpOut tmptagAlign {params.genomefile};
+# if se == "yes"
+if [ {se} == "yes" ]; then
+    cp {input.tagAlign} tmptagAlign.gz
+    gzip -d tmptagAlign.gz
+else
+    bamToBed -i {input.tagAlign} > tmptagAlign
+fi
+{params.ngsqc} -v -o tmpOut tmptagAlign {params.genomefile}
 mv tmpOut/NGSQC_report.txt {output.file}
 """
 
 rule ngsqc_plot:
     input:
-        ngsqc=expand(join(workpath,"QC","{name}.sorted.Q5MDD.NGSQC_report.txt"),name=samples),
+        ngsqc=expand(join(workpath,"QC","{name}.sorted.Q5DD.NGSQC_report.txt"),name=samples),
     output:
-        out=expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5MDD.pdf"),group=groups),
+        out=expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.pdf"),group=groups),
     params:
         rname="pl:ngsqc_plot",
         script=join(workpath,"Scripts","ngsqc_plot.py"),
@@ -926,9 +865,9 @@ rule ngsqc_plot:
             labels = [ sample for sample in samples if sample in groupdatawinput[group] ]
             cmd1 = cmd1 + "mkdir " + group + "; "
             for label in labels:
-                cmd1 = cmd1 + "cp " + workpath + "/QC/" + label + ".sorted.Q5MDD.NGSQC_report.txt " + group + "; " 
-            cmd2 = cmd2 + "python " + params.script + " -d '" + group + "' -e 'sorted.Q5MDD' -g '" + group + "'; "
-            cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.sorted.Q5MDD.pdf " + workpath + "/QC/" + group + ".NGSQC.sorted.Q5MDD.pdf" + "; "
+                cmd1 = cmd1 + "cp " + workpath + "/QC/" + label + ".sorted.Q5DD.NGSQC_report.txt " + group + "; " 
+            cmd2 = cmd2 + "python " + params.script + " -d '" + group + "' -e 'sorted.Q5DD' -g '" + group + "'; "
+            cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.sorted.Q5DD.pdf " + workpath + "/QC/" + group + ".NGSQC.sorted.Q5DD.pdf" + "; "
         shell(commoncmd1)
         shell(commoncmd2 + cmd1 + cmd2 + cmd3)
 
@@ -975,15 +914,15 @@ cat {params.inputstring} | {params.filterCollate} > {output.qctable}
 
 rule multiqc:
     input: 
-        expand(join(workpath,bam_dir,"{name}.bwa.Q5.duplic"), name=samples),
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
         expand(join(workpath,preseq_dir,"{name}.ccurve"), name=samples),
         expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
         expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
+	expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
         join(workpath,"QCTable.txt"),
         join(workpath,"rawQC"),
         join(workpath,"QC"),
-	expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.sorted.Q5DD.tab"),group=groups),
+        expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.sorted.Q5DD.tab"),group=groups),
     output:
         join(workpath,"Reports","multiqc_report.html")
     params:
