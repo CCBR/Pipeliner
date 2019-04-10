@@ -285,7 +285,12 @@
     "MUTECTGENOME": "/fdb/muTect/human_g1k_v37.fasta",
     "MUTECTVARIANTS": "--dbsnp /fdb/muTect/dbsnp_137.b37.vcf --cosmic /data/CCBR_Pipeliner/db/PipeDB/lib/COSMIC_82_hg38.vcf.gz"
     },
-"mirseq": {
+    "mirseq": {
+    "BOWTIE_REF": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/bowtie_indices/hg38",
+    "FASTA_REF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/hg38_basic.fa",
+    "MIRBASE_MATURE": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/miRBase_v22/hsa_mature.fa",
+    "MIRBASE_HAIRPIN": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/miRBase_v22/hsa_hairpin.fa",
+    "ORGANISM": "Human",
 "run_info":{    
     "TOOL": "miRNA",
     "VERSION": "1.1",

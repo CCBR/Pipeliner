@@ -253,6 +253,13 @@
     "MUTECTCOSMIC": "",
     "MUTECTSNP": ""
 },
+"mirseq":{
+  "BOWTIE_REF": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/bowtie_indices/mm10",
+  "FASTA_REF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/mm10_basic.fa",
+  "MIRBASE_MATURE": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/miRBase_v22/mmu_mature.fa",
+  "MIRBASE_HAIRPIN": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/miRBase_v22/mmu_hairpin.fa",
+  "ORGANISM": "Mouse"
+}
         "ChIPseq":{
             "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.blacklist.chrM",
             "BWA": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10",

@@ -473,10 +473,20 @@
         "threads": "1",
         "time": "2-00:00:00"
     },
+    "mirdeep2_1p": {
+        "mem": "16g",
+        "threads": "4",
+        "time": "24:00:00"
+    },
+    "mirdeep2_2p": {
+        "mem": "16g",
+        "threads": "4",
+        "time": "24:00:00"
+    },
     "mirdeep2_mapper": {
         "mem": "16g",
-        "threads": "1",
-        "time": "4-00:00:00"
+        "threads": "8",
+        "time": "24:00:00"
     },
     "mirseq_gencode_classification": {
         "mem": "16g",

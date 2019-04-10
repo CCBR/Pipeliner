@@ -171,6 +171,8 @@
     "scrnaseqinit": "scrnaseq.snakefile",
     "scrnaseqcluster": "scrnaseq.snakefile",
     "CAPmirseq-plus": "CAPmirseq-plus.snakefile",
+    "miRSeq_v2": "miRSeq.snakefile",
+
 
     "InitialChIPseqQC":"InitialChIPseqQC.snakefile", 
     "ChIPseq":"ChIPseq.snakefile", 
