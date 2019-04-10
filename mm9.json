@@ -178,6 +178,7 @@
             "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/geneinfo.bed",
             "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/ref.fa",
             "GENOMECHR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/Chromsomes/",
+            "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/genes.gtf",
             "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
             "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/indexes/mm9.fa.sizes",            
         }, 

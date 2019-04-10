@@ -10,7 +10,7 @@ cd $SLURM_SUBMIT_DIR
 D=/data/CCBR/dev/Pipeline/Pipeliner
 R=/scratch/dwheeler/test2
 
-snakemake  -s $R/Snakefile -d $R --printshellcmds --cluster-config $D/cluster.json --cluster "sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem}" -j 500 --rerun-incomplete --keep-going --restart-times 1 --stats $R/Reports/initialqc.stats -T 2>&1|tee -a $R/Reports/snakemake.log
+snakemake  -s $R/Snakefile -d $R --printshellcmds --cluster-config $R/cluster.json --cluster "sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem}" -j 500 --rerun-incomplete --keep-going --restart-times 1 --stats $R/Reports/initialqc.stats -T 2>&1|tee -a $R/Reports/snakemake.log
 
 mv slurm*out slurmfiles
 if [ -f $R/HPC_usage_table.txt ]; then

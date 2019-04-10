@@ -353,6 +353,7 @@
             "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/geneinfo.bed",
             "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/ref.fa",
             "GENOMECHR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/Chromsomes/",
+            "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/genes.gtf",
             "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
             "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/indexes/hg19.fa.sizes",
         },

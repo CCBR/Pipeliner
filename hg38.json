@@ -345,6 +345,7 @@
             "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/geneinfo.bed",
             "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/ref.fa",
             "GENOMECHR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/Chromsomes/",
+            "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/genes.gtf",
             "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
             "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/indexes/hg38.fa.sizes",
      },
