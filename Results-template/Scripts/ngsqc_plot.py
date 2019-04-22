@@ -73,9 +73,9 @@ def name_outimage(directory, ext, group):
 	"""this version uses ext to create the output file name
 	"""
 	if group == "":
-		outfileName =  directory + "/NGSQC." + ext + ".pdf"
+		outfileName =  directory + "/NGSQC." + ext + ".png"
 	else:
-		outfileName =  directory + "/" + group + ".NGSQC." + ext + ".pdf"
+		outfileName =  directory + "/" + group + ".NGSQC." + ext + ".png"
 	return outfileName
 	
 #############################################

@@ -146,13 +146,13 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             # ngsqc
-            expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.pdf"),group=groups),
+            expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
             expand(join(workpath,"QC","{name}.nrf"), name=samples),
             expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
-            join(workpath,"QCTable.txt"),
+            join(workpath,"QC","QCTable.txt"),
 
     
     rule trim_se: # actually trim, filter polyX and remove black listed reads
@@ -327,13 +327,13 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             # ngsqc
-            expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.pdf"),group=groups),
+            expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
             expand(join(workpath,"QC","{name}.nrf"), name=samples),
             expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
-            join(workpath,"QCTable.txt"),
+            join(workpath,"QC","QCTable.txt"),
 
     
     rule trim_pe: # trim, remove PolyX and remove BL reads
@@ -445,7 +445,6 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
             out6=join(workpath,bam_dir,"{name}.bwa.Q5.duplic"), 
         params:
             rname='pl:dedup',
-            batch='--mem=98g --time=10:00:00 --gres=lscratch:800',
             picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
             javaram='16g',
@@ -482,7 +481,6 @@ rule ppqt:
         pdf= join(workpath,bam_dir,"{name}.sorted{ext}pdf"),
     params:
         rname="pl:ppqt",
-        batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
         samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         rver=config['bin'][pfamily]['tool_versions']['RVER'],
     run:
@@ -507,7 +505,6 @@ rule bam2bw:
         outbw=join(workpath,bw_dir,"{name}.{ext}.RPGC.bw"),
     params:
         rname="pl:bam2bw",
-        batch='--mem=24g --time=10:00:00 --gres=lscratch:800',
         reflen=config['references'][pfamily]['REFLEN'],
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
     run:
@@ -547,9 +544,9 @@ rule deeptools_prep:
         bam=expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
         bw2=expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.inputnorm.bw"),name=sampleswinput)
     output:
-        expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions),
-        expand(join(workpath,bam_dir,"{group}.{ext}.deeptools_prep"),group=groups,ext=extensions2),
-        expand(join(workpath,bw_dir,"{group2}.{ext2}.deeptools_prep"), zip, group2=deepgroups,ext2=deepexts),
+        temp(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions)),
+        temp(expand(join(workpath,bam_dir,"{group}.{ext}.deeptools_prep"),group=groups,ext=extensions2)),
+        temp(expand(join(workpath,bw_dir,"{group2}.{ext2}.deeptools_prep"), zip, group2=deepgroups,ext2=deepexts)),
     params:
         rname="pl:deeptools_prep",
         batch="--mem=10g --time=1:00:00",
@@ -626,7 +623,7 @@ rule deeptools_fingerprint:
     params:
         rname="pl:deeptools_fingerprint",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
-	batch="--cpus-per-task=8"
+	nthreads="8"
     run:
         import re
         commoncmd="module load {params.deeptoolsver}; module load python;"
@@ -634,7 +631,7 @@ rule deeptools_fingerprint:
         ext=listfile[0][0]
         bams=listfile[1]
         labels=listfile[2]
-        cmd="plotFingerprint -b "+" ".join(bams)+" --labels "+" ".join(labels)+" -p 4 --skipZeros --outQualityMetrics "+output.metrics+" --plotFile "+output.image 
+        cmd="plotFingerprint -b "+" ".join(bams)+" --labels "+" ".join(labels)+" -p "+params.nthreads+" --skipZeros --outQualityMetrics "+output.metrics+" --plotFile "+output.image 
         if se == "yes":
             cmd+=" -e 200"
         shell(commoncmd+cmd)
@@ -649,7 +646,7 @@ rule deeptools_fingerprint_Q5DD:
     params:
         rname="pl:deeptools_fingerprint_Q5DD",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
-	batch="--cpus-per-task=8"
+	nthreads="8"
     run:
         import re
         commoncmd="module load {params.deeptoolsver}; module load python;"
@@ -657,7 +654,7 @@ rule deeptools_fingerprint_Q5DD:
         ext=listfile[0][0]
         bams=listfile[1]
         labels=listfile[2]
-        cmd="plotFingerprint -b "+" ".join(bams)+" --labels "+" ".join(labels)+" -p 4 --skipZeros --outQualityMetrics "+output.metrics+" --plotFile "+output.image+" --outRawCounts "+output.raw
+        cmd="plotFingerprint -b "+" ".join(bams)+" --labels "+" ".join(labels)+" -p "+params.nthreads+" --skipZeros --outQualityMetrics "+output.metrics+" --plotFile "+output.image+" --outRawCounts "+output.raw
         if se == "yes":
             cmd+=" -e 200"
         shell(commoncmd+cmd)
@@ -676,7 +673,8 @@ rule deeptools_genes:
     params:
         rname="pl:deeptools_genes",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
-        prebed=config['references'][pfamily]['GENEINFO']
+        prebed=config['references'][pfamily]['GENEINFO'],
+        nthreads="16"
     run:
         import re
         commoncmd="module load {params.deeptoolsver}; module load python;"
@@ -685,8 +683,8 @@ rule deeptools_genes:
         bws=listfile[1]
         labels=listfile[2]
         cmd1="awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' "+params.prebed+" > "+output.bed
-        cmd2="computeMatrix scale-regions -S "+" ".join(bws)+" -R "+output.bed+" -p 4 --upstream 1000 --regionBodyLength 2000 --downstream 1000 --skipZeros -o "+output.metamat+" --samplesLabel "+" ".join(labels)
-        cmd3="computeMatrix reference-point -S "+" ".join(bws)+" -R "+output.bed+" -p 4 --referencePoint TSS --upstream 3000 --downstream 3000 --skipZeros -o "+output.TSSmat+" --samplesLabel "+" ".join(labels)
+        cmd2="computeMatrix scale-regions -S "+" ".join(bws)+" -R "+output.bed+" -p "+params.nthreads+" --upstream 1000 --regionBodyLength 2000 --downstream 1000 --skipZeros -o "+output.metamat+" --samplesLabel "+" ".join(labels)
+        cmd3="computeMatrix reference-point -S "+" ".join(bws)+" -R "+output.bed+" -p "+params.nthreads+" --referencePoint TSS --upstream 3000 --downstream 3000 --skipZeros -o "+output.TSSmat+" --samplesLabel "+" ".join(labels)
         cmd4="plotHeatmap -m "+output.metamat+" -out "+output.metaheat+" --colorMap 'PuOr_r' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
         cmd5="plotHeatmap -m "+output.TSSmat+" -out "+output.TSSheat+" --colorMap 'RdBu_r' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
         cmd6="plotProfile -m "+output.metamat+" -out "+output.metaline+" --plotHeight 15 --plotWidth 15 --perGroup --yAxisLabel 'average RPGC' --plotType 'se' --legendLocation upper-right"
@@ -851,7 +849,8 @@ rule ngsqc_plot:
     input:
         ngsqc=expand(join(workpath,"QC","{name}.sorted.Q5DD.NGSQC_report.txt"),name=samples),
     output:
-        out=expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.pdf"),group=groups),
+        png=expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+	txt=join(workpath,"QC","NGSQC.sorted.Q5DD.txt")
     params:
         rname="pl:ngsqc_plot",
         script=join(workpath,"Scripts","ngsqc_plot.py"),
@@ -861,15 +860,18 @@ rule ngsqc_plot:
         cmd1 = ""
         cmd2 = ""
         cmd3 = ""
+	cmd4 = ""
         for group in groups:
             labels = [ sample for sample in samples if sample in groupdatawinput[group] ]
             cmd1 = cmd1 + "mkdir " + group + "; "
             for label in labels:
                 cmd1 = cmd1 + "cp " + workpath + "/QC/" + label + ".sorted.Q5DD.NGSQC_report.txt " + group + "; " 
             cmd2 = cmd2 + "python " + params.script + " -d '" + group + "' -e 'sorted.Q5DD' -g '" + group + "'; "
-            cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.sorted.Q5DD.pdf " + workpath + "/QC/" + group + ".NGSQC.sorted.Q5DD.pdf" + "; "
+	    cmd3 = cmd3 + "if [ -f NGSQC.sorted.Q5DD.txt ]; then tail -n +2 " + group + "/NGSQC.sorted.Q5DD.txt >> NGSQC.sorted.Q5DD.txt; else cp " + group + "/NGSQC.sorted.Q5DD.txt NGSQC.sorted.Q5DD.txt; fi; "
+            cmd4 = cmd4 + "mv " + group + "/" + group + ".NGSQC.sorted.Q5DD.png " + workpath + "/QC/" + group + ".NGSQC.sorted.Q5DD.png" + "; "
+        cmd5 = "mv NGSQC.sorted.Q5DD.txt " + workpath + "/QC/NGSQC.sorted.Q5DD.txt; "
         shell(commoncmd1)
-        shell(commoncmd2 + cmd1 + cmd2 + cmd3)
+        shell(commoncmd2 + cmd1 + cmd2 + cmd3 + cmd4 + cmd5)
 
 rule QCstats:
     input:
@@ -906,7 +908,7 @@ rule QCTable:
         inputstring=" ".join(expand(join(workpath,"QC","{name}.qcmetrics"), name=samples)),
         filterCollate=join(workpath,"Scripts","createtable"),
     output:
-        qctable=join(workpath,"QCTable.txt"),
+        qctable=join(workpath,"QC","QCTable.txt"),
     threads: 16
     shell: """
 cat {params.inputstring} | {params.filterCollate} > {output.qctable}
@@ -919,10 +921,11 @@ rule multiqc:
         expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
         expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
 	expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
-        join(workpath,"QCTable.txt"),
+        join(workpath,"QC","QCTable.txt"),
         join(workpath,"rawQC"),
         join(workpath,"QC"),
         expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.sorted.Q5DD.tab"),group=groups),
+        expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
     output:
         join(workpath,"Reports","multiqc_report.html")
     params:
@@ -933,7 +936,14 @@ rule multiqc:
     threads: 1
     shell: """
 module load {params.multiqc}
+RE="(QC/.*NGSQC.sorted.Q5DD).png"
+for ngsqc in `ls QC/*.NGSQC.sorted.Q5DD.png`;
+do
+if [[ $ngsqc =~ $RE ]]; then root=${{BASH_REMATCH[1]}}; fi
+cp $ngsqc ${{root}}_mqc.png
+done
 cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt --ignore {params.dir} -d ../
+rm ../QC/*_mqc.png
 """
 
 
