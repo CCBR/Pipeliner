@@ -35,7 +35,7 @@ def file2table():
     #print(df[['NSC', 'FRiP', 'PCB1', 'PCB2', 'RSC']])  #re-order columns
     #cols = df.columns.tolist() # view df columns names
     #orderedcols = ordercolumns(cols)
-#    print(df.to_string())
+    #print(df.to_string())
     print(df.to_string(index=False,justify="left"))
 
 

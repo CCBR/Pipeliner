@@ -154,7 +154,7 @@ if se == 'yes' :
             expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
             join(workpath,"QC","QCTable.txt"),
 
-    
+
     rule trim_se: # actually trim, filter polyX and remove black listed reads
         input:
             infq=join(workpath,"{name}.R1.fastq.gz"),
@@ -188,7 +188,7 @@ java -Xmx{params.javaram} -jar $PICARDJARPATH/picard.jar SamToFastq VALIDATION_S
 pigz -p 16 ${{sample}}.cutadapt.noBL.fastq;
 mv ${{sample}}.cutadapt.noBL.fastq.gz {output.outfq};
             """
-            
+
     rule kraken_se:
         input:
             fq = join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
@@ -335,7 +335,7 @@ if pe == 'yes':
             expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
             join(workpath,"QC","QCTable.txt"),
 
-    
+
     rule trim_pe: # trim, remove PolyX and remove BL reads
         input:
             file1=join(workpath,"{name}.R1.fastq.gz"),
@@ -898,6 +898,8 @@ grep 'mapped (' {input.ddflagstat} | awk '{{print $1,$3}}' | {params.filterColla
 cat {input.nrf} | {params.filterCollate} {wildcards.name} nrf >> {output.sampleQCfile}
 # NSC, RSC, Qtag
 awk '{{print $(NF-2),$(NF-1),$NF}}' {input.ppqt} | {params.filterCollate} {wildcards.name} ppqt >> {output.sampleQCfile}
+# Fragment Length
+awk -F '\\t' '{{print $3}}' {input.ppqt} | awk -F ',' '{{print $1}}' | {params.filterCollate} {wildcards.name} fragLen >> {output.sampleQCfile}
             """
 
 rule QCTable:
