@@ -288,19 +288,6 @@ if config['project']['annotation'] == "hg19":
         print(cmd)
         shell(cmd)
 
-  rule gatk_genotype_gvcfs_MT:
-      input: expand("{x}_MT.g.vcf",x=samples)
-      output: temp("combined_MT.vcf")
-      params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
-      threads: 4
-      run:
-        fl=os.popen("ls *.g.vcf").read().split()      
-        var=" --variant "+" --variant ".join(fl)
-        cmd="module load GATK/3.8-1; java -Xmx96g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $GATK_JAR -T GenotypeGVCFs -R {params.genome} --disable_auto_index_creation_and_locking_when_reading_rods --annotation InbreedingCoeff --annotation FisherStrand --annotation QualByDepth --annotation ChromosomeCounts  --dbsnp {params.snpsites} -o {output} -L MT -nt {threads}"+var
-        print(cmd)
-        shell(cmd)
-
-
 elif config['project']['annotation'] == "hg38":
 
   rule gatk_genotype_gvcfs_1:
@@ -591,18 +578,6 @@ elif config['project']['annotation'] == "hg38":
         print(cmd)
         shell(cmd)
 
-  rule gatk_genotype_gvcfs_MT:
-      input: expand("{x}_MT.g.vcf",x=samples)
-      output: temp("combined_MT.vcf")
-      params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
-      threads: 4
-      run:
-        fl=os.popen("ls *_MT.g.vcf").read().split()      
-        var=" --variant "+" --variant ".join(fl)
-        cmd="module load GATK/3.8-1; java -Xmx96g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $GATK_JAR -T GenotypeGVCFs -R {params.genome} --disable_auto_index_creation_and_locking_when_reading_rods --annotation InbreedingCoeff --annotation FisherStrand --annotation QualByDepth --annotation ChromosomeCounts  --dbsnp {params.snpsites} -o {output} -L chrM -nt {threads}"+var
-        print(cmd)
-        shell(cmd)
-
 
 elif config['project']['annotation'] == "mm10":
 
@@ -855,17 +830,5 @@ elif config['project']['annotation'] == "mm10":
         fl=os.popen("ls *_Y.g.vcf").read().split()      
         var=" --variant "+" --variant ".join(fl)
         cmd="module load GATK/3.8-1; java -Xmx96g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $GATK_JAR -T GenotypeGVCFs -R {params.genome} --disable_auto_index_creation_and_locking_when_reading_rods --annotation InbreedingCoeff --annotation FisherStrand --annotation QualByDepth --annotation ChromosomeCounts  --dbsnp {params.snpsites} -o {output} -L chrY -nt {threads}"+var
-        print(cmd)
-        shell(cmd)
-
-  rule gatk_genotype_gvcfs_MT:
-      input: expand("{x}_MT.g.vcf",x=samples)
-      output: temp("combined_MT.vcf")
-      params: gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],snpsites=config['references'][pfamily]['SNPSITES'],rname="pl:genGvcf"
-      threads: 4
-      run:
-        fl=os.popen("ls *_MT.g.vcf").read().split()      
-        var=" --variant "+" --variant ".join(fl)
-        cmd="module load GATK/3.8-1; java -Xmx96g -Djava.io.tmpdir=/lscratch/$SLURM_JOBID -jar $GATK_JAR -T GenotypeGVCFs -R {params.genome} --disable_auto_index_creation_and_locking_when_reading_rods --annotation InbreedingCoeff --annotation FisherStrand --annotation QualByDepth --annotation ChromosomeCounts  --dbsnp {params.snpsites} -o {output} -L chrM -nt {threads}"+var
         print(cmd)
         shell(cmd)
