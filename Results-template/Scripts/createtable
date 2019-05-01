@@ -2,7 +2,7 @@
 '''
 Author:		Skyler Kuhn
 Date created:	08/18/2018
-Last modified:	04/17/2019 by Tovah Markowitz: markowitzte@nih.gov
+Last modified:	04/26/2019 by Tovah Markowitz: markowitzte@nih.gov
 Email:		kuhnsa@nih.gov
 
 About: This program takes standard input from the concatenation of each *qc.metric file.The results 
@@ -36,7 +36,7 @@ def file2table():
     #cols = df.columns.tolist() # view df columns names
     #orderedcols = ordercolumns(cols)
     #print(df.to_string())
-    print(df.to_string(index=False,justify="left"))
+    print(df[['SampleName', 'NReads', 'NMappedReads', 'NUniqMappedReads', 'NRF', 'PBC1', 'PBC2', 'FragmentLength', 'NSC', 'RSC', 'Qtag']].to_string(index=False,justify="left"))
 
 
 if __name__ == '__main__':

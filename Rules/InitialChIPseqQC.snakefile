@@ -850,7 +850,6 @@ rule ngsqc_plot:
         ngsqc=expand(join(workpath,"QC","{name}.sorted.Q5DD.NGSQC_report.txt"),name=samples),
     output:
         png=expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
-	txt=join(workpath,"QC","NGSQC.sorted.Q5DD.txt")
     params:
         rname="pl:ngsqc_plot",
         script=join(workpath,"Scripts","ngsqc_plot.py"),
@@ -860,18 +859,16 @@ rule ngsqc_plot:
         cmd1 = ""
         cmd2 = ""
         cmd3 = ""
-	cmd4 = ""
         for group in groups:
             labels = [ sample for sample in samples if sample in groupdatawinput[group] ]
             cmd1 = cmd1 + "mkdir " + group + "; "
             for label in labels:
                 cmd1 = cmd1 + "cp " + workpath + "/QC/" + label + ".sorted.Q5DD.NGSQC_report.txt " + group + "; " 
             cmd2 = cmd2 + "python " + params.script + " -d '" + group + "' -e 'sorted.Q5DD' -g '" + group + "'; "
-	    cmd3 = cmd3 + "if [ -f NGSQC.sorted.Q5DD.txt ]; then tail -n +2 " + group + "/NGSQC.sorted.Q5DD.txt >> NGSQC.sorted.Q5DD.txt; else cp " + group + "/NGSQC.sorted.Q5DD.txt NGSQC.sorted.Q5DD.txt; fi; "
-            cmd4 = cmd4 + "mv " + group + "/" + group + ".NGSQC.sorted.Q5DD.png " + workpath + "/QC/" + group + ".NGSQC.sorted.Q5DD.png" + "; "
-        cmd5 = "mv NGSQC.sorted.Q5DD.txt " + workpath + "/QC/NGSQC.sorted.Q5DD.txt; "
+            cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.sorted.Q5DD.png " + workpath + "/QC/" + group + ".NGSQC.sorted.Q5DD.png" + "; "
+        cmd4 = "mv */*.sorted.Q5DD.NGSQC.txt " + workpath + "/QC; "
         shell(commoncmd1)
-        shell(commoncmd2 + cmd1 + cmd2 + cmd3 + cmd4 + cmd5)
+        shell(commoncmd2 + cmd1 + cmd2 + cmd3 + cmd4)
 
 rule QCstats:
     input:
@@ -938,14 +935,7 @@ rule multiqc:
     threads: 1
     shell: """
 module load {params.multiqc}
-RE="(QC/.*NGSQC.sorted.Q5DD).png"
-for ngsqc in `ls QC/*.NGSQC.sorted.Q5DD.png`;
-do
-if [[ $ngsqc =~ $RE ]]; then root=${{BASH_REMATCH[1]}}; fi
-cp $ngsqc ${{root}}_mqc.png
-done
 cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt --ignore {params.dir} -d ../
-rm ../QC/*_mqc.png
 """
 
 
