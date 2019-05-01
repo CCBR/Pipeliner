@@ -609,10 +609,13 @@ rule deeptools_QC:
         cmd2="plotCorrelation -in "+output.npz+" -o "+output.heatmap+" -c 'spearman' -p 'heatmap' --skipZeros --removeOutliers --plotNumbers"
 	cmd3="plotCorrelation -in "+output.npz+" -o "+output.scatter+" -c 'spearman' -p 'scatterplot' --skipZeros --removeOutliers"
         cmd4="plotPCA -in "+output.npz+" -o "+output.pca
+        cmd5="plotCorrelation -in "+output.npz+" -o "+join(workpath,deeptools_dir,"spearman_heatmap."+wildcards.ext+"_mqc.png")+" -c 'spearman' -p 'heatmap' --skipZeros --removeOutliers --plotNumbers"
 	shell(commoncmd+cmd1)
         shell(commoncmd+cmd2)
 	shell(commoncmd+cmd3)
 	shell(commoncmd+cmd4)
+        if "Q5DD" in wildcards.ext:
+            shell(commoncmd+cmd5)
 
 rule deeptools_fingerprint:
     input:
@@ -925,6 +928,7 @@ rule multiqc:
         join(workpath,"QC"),
         expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.sorted.Q5DD.tab"),group=groups),
         expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+        join(workpath,deeptools_dir,"spearman_heatmap.sorted.Q5DD.RPGC.pdf"),
     output:
         join(workpath,"Reports","multiqc_report.html")
     params:
