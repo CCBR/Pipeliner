@@ -33,6 +33,9 @@ About: This program takes in a parsed data from Samtools flagstat, atac_nrf.py, 
 	9.) Find NSC, RSC, Qtag
 	  # awk '{print $(NF-2),$(NF-1),$(NF)}' H3k4me3_gran_1.sorted.Q5DD.ppqt | ./filterMetrics H3k4me3_gran_1 ppqt
 
+	10.) Find the Fragment Length
+	  # awk -F '\t' '{print $3}' H3k4me3_gran_1.sorted.Q5DD.ppqt | awk -F ',' '{print $1}' | ../Scripts/filterMetrics H3k4me3_gran_1 fragLen
+
 Python version(s):	2.7 or 3.X
 
 '''
@@ -61,7 +64,9 @@ def getmetadata(type):
                 metadata = 'NMappedReads'
 	elif type == 'unreads':
                 metadata = 'NUniqMappedReads'
-	return metadata	
+	elif type == 'fragLen':
+		metadata = ['FragmentLength']
+	return metadata
 	
 
 def filteredData(sample, ftype):
@@ -75,7 +80,7 @@ def filteredData(sample, ftype):
 			else:
 				v1, v2 = linelist[0], linelist[1]
 				print("{}\t{}\t{}".format(sample, mtypes, add(v1,v2)))
-		elif ftype == 'ppqt' or ftype == 'ngsqc' or ftype == 'nrf':
+		elif ftype == 'ppqt' or ftype == 'ngsqc' or ftype == 'nrf' or ftype == 'fragLen':
 			mtypes = getmetadata(ftype)
 			for i in range(len(linelist)):
 				print("{}\t{}\t{}".format(sample, mtypes[i], linelist[i]))
