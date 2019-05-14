@@ -555,7 +555,7 @@ rule HOMER_motif:
         rname="pl:HOMER_motif",
         homerver = config['bin'][pfamily]['tool_versions']['HOMERVER'],
         genomever = config['project']['annotation'],
-    threads: 4
+    threads: 16
     run:
         commoncmd3="module load {params.homerver}; "
         if wildcards.PeakTool in PeakTools_broad:
@@ -576,6 +576,7 @@ rule UROPA:
         json = join(workpath, uropa_dir, '{PeakTool}','{name}.json'),
         outroot = join(workpath, uropa_dir, '{PeakTool}','{name}_{PeakTool}_uropa'),
         gtf = config['references']['ChIPseq']['GTFFILE']
+    threads: 4
     shell: """
 module load {params.uropaver};
 if [ ! -e {params.fldr} ]; then mkdir {params.fldr}; fi
@@ -585,5 +586,5 @@ echo '      {{ "feature":"gene","show.attributes":["gene_id", "gene_name","gene_
 echo '"priority":"Yes",' >> {params.json}
 echo '"gtf":"{params.gtf}",' >> {params.json}
 echo '"bed":"{input}" }}' >> {params.json}
-uropa -i {params.json} -p {params.outroot} -s
+uropa -i {params.json} -p {params.outroot} -t {threads} -s
 """
