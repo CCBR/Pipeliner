@@ -107,6 +107,15 @@
     "deeptools": {
         "mem": "24g"
     },
+    "deeptools_fingerprint": {
+        "threads":"8"
+    },
+    "deeptools_fingerprint_Q5DD": {
+        "threads":"8"
+    },
+    "deeptools_genes": {
+        "threads":"16"
+    },
     "deeptools_prep": {
         "mem": "4g",
         "threads": "2"

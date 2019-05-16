@@ -20,7 +20,9 @@ from pybedtools import BedTool
 
 def split_infiles(infiles):
     # breaks the infile string with space-delimited file names and creates a list
-    infileList = infiles.split(" ")
+    infileList = infiles.strip("\'").strip('\"').split(" ")
+    if len(infileList) == 1:
+        infileList = infileList[0].split(";")
     return(infileList)
 
 def loop_jaccard(infileList, genomefile):
@@ -32,6 +34,7 @@ def loop_jaccard(infileList, genomefile):
     out = []
     for z in range(nfiles):
         fileA = infileList[z]
+        print("fileA is: " + fileA) 
         a = BedTool(fileA)
         a = a.sort(g=genomefile)
         for y in range(z+1,nfiles):
@@ -68,7 +71,7 @@ def main():
 
     parser = optparse.OptionParser(description=desc)
 
-    parser.add_option('-i', dest='infiles', default='', help='A space-delimited list of \
+    parser.add_option('-i', dest='infiles', default='', help='A space- or semicolon-delimited list of \
 input files for analysis.')
     parser.add_option('-o', dest='outfile', default='', help='The name of the output file \
 where all the jaccard score information will be saved.')
