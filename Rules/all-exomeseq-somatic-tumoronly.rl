@@ -18,7 +18,7 @@ if config['project']['annotation'] == "hg19":
             config['project']['workpath']+"/vardict_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/merged_somatic_variants/mutsigCV_out/somatic.sig_genes.txt",
             expand(config['project']['workpath']+"/mutect_out/{s}"+".FINAL.vcf",s=samples),
-            expand(config['project']['workpath']+"/vardict_out/{s}"+".vcf",s=samples),
+            expand(config['project']['workpath']+"/vardict_out/{s}"+".FINAL.vcf",s=samples),
             expand(config['project']['workpath']+"/vardict_out/oncotator_out/{s}"+".maf",s=samples),
             expand(config['project']['workpath']+"/mutect_out/oncotator_out/{s}"+".maf",s=samples),
             expand(config['project']['workpath']+"/merged_somatic_variants/{s}"+".merged.vcf",s=samples),
@@ -30,7 +30,7 @@ if config['project']['annotation'] == "hg19":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.7; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 
@@ -55,7 +55,7 @@ elif config['project']['annotation'] == "hg38":
             config['project']['workpath']+"/vardict_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/merged_somatic_variants/mutsigCV_out/somatic.sig_genes.txt",
             expand(config['project']['workpath']+"/mutect_out/{s}"+".FINAL.vcf",s=samples),
-            expand(config['project']['workpath']+"/vardict_out/{s}"+".vcf",s=samples),
+            expand(config['project']['workpath']+"/vardict_out/{s}"+".FINAL.vcf",s=samples),
             expand(config['project']['workpath']+"/vardict_out/oncotator_out/{s}"+".maf",s=samples),
             expand(config['project']['workpath']+"/mutect_out/oncotator_out/{s}"+".maf",s=samples),
             expand(config['project']['workpath']+"/merged_somatic_variants/{s}"+".merged.vcf",s=samples),
@@ -65,7 +65,7 @@ elif config['project']['annotation'] == "hg38":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.7; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
             
@@ -90,7 +90,7 @@ elif config['project']['annotation'] == "mm10":
             config['project']['workpath']+"/vardict_out/mutsigCV_out/somatic.sig_genes.txt",
             config['project']['workpath']+"/merged_somatic_variants/mutsigCV_out/somatic.sig_genes.txt",
             expand(config['project']['workpath']+"/mutect_out/{s}"+".FINAL.vcf",s=samples),
-            expand(config['project']['workpath']+"/vardict_out/{s}"+".vcf",s=samples),
+            expand(config['project']['workpath']+"/vardict_out/{s}"+".FINAL.vcf",s=samples),
             expand(config['project']['workpath']+"/vardict_out/oncotator_out/{s}"+".maf",s=samples),
             expand(config['project']['workpath']+"/mutect_out/oncotator_out/{s}"+".maf",s=samples),
             expand(config['project']['workpath']+"/merged_somatic_variants/{s}"+".merged.vcf",s=samples),
@@ -100,6 +100,6 @@ elif config['project']['annotation'] == "mm10":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.7; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """

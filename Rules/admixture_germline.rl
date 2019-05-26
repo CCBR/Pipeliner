@@ -4,7 +4,7 @@ rule admixture_germline:
             mergedvcf=temp("admixture_out/samples_and_knowns.vcf"),
             ped=temp("admixture_out/samples_and_knowns_filtered.ped"),
             map=temp("admixture_out/samples_and_knowns_filtered.map"),
-            recodeped="admixture_out/samples_and_knowns_filtered_recode.ped",
+            recodeped=temp("admixture_out/samples_and_knowns_filtered_recode.ped"),
             admix="admixture_out/samples_and_knowns_filtered_recode.Q",
             table="admixture_out/admixture_table.tsv",
             plot="admixture_out/admixture_mqc.png"
