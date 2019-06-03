@@ -18,14 +18,14 @@ g1_samples=(x1$condition==G1)
 g2_samples=(x1$condition==G2)
 
 
-if (MINSAMPLES<0.5) {
+if (MINSAMPLES<0.5 && MINSAMPLES!=0) {
   MINSAMPLES=0.5
 }
 if (MINSAMPLES<1) {
   ng1=max(1,floor(length(g1_samples[g1_samples==TRUE])*MINSAMPLES))
   ng2=max(1,floor(length(g2_samples[g2_samples==TRUE])*MINSAMPLES))
 }
-if (MINSAMPLES>=1){
+if (MINSAMPLES>=1 || MINSAMPLES==0){
   ng1=min(length(g1_samples[g1_samples==TRUE]),MINSAMPLES)
   ng2=min(length(g2_samples[g2_samples==TRUE]),MINSAMPLES)
 }
