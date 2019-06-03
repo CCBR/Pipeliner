@@ -107,8 +107,6 @@ elif config['project']['annotation'] == "mm10":
             "admixture_out/admixture_table.tsv",
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
-            expand("sequenza_out/{p}"+"_alternative_solutions.txt",p=pairs),
-            expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
     output:
     params: rname="final"
     shell:  """
