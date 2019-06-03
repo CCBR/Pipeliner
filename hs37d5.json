@@ -146,6 +146,7 @@
     "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/genes.gtf",
     "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/STAR/2.5.2b/genes-",
     "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/annotate.genes.txt",
+    "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/qualimap_info.txt",
     "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/annotate.isoforms.txt",
     "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/refFlat.txt",
     "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/genes.ref.bed", 
@@ -154,7 +155,6 @@
     "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/rsemref/hs37d5",
     "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/hs37d5.rRNA_interval_list",
 
-    
     "ADMIXTUREKEY": "/data/CCBR_Pipeliner/db/PipeDB/lib/1k_genomes_superpop_key.txt",
     "ADMIXTUREREFS": "5",
     "ORGANISM": "HUMAN",

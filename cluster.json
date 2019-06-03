@@ -617,6 +617,11 @@
     "preseq": {
         "mem": "24g"
     },
+    "qualibam": {
+        "threads": "8",
+        "mem": "12g",
+        "time": "1-00:00:00"
+        },
     "qualimap": {
         "mem": "96g",
         "threads": "8",

@@ -138,6 +138,7 @@
      "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/ref.fa",
      "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/genes.gtf",
      "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/annotate.genes.txt",
+     "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/qualimap_info.txt",
      "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/annotate.isoforms.txt",
      "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/refFlat.txt",
      "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/genes.ref.bed",
