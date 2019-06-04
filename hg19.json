@@ -1,5 +1,6 @@
  {"references": {
     "exomeseq": {
+    "VARDICTBED": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.chroms.bed",
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
     "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh37.noCOSMIC_ClinVar.pon.vcf.gz",
     "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
@@ -74,6 +75,7 @@
     "SEQUENZAGC": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_gc50Base.txt.gz",
     },
     "genomeseq": {
+    "VARDICTBED": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.chroms.bed",
     "BWAGENOME": "/data/CCBR_Pipeliner/db/PipeDB/lib/hs37d5.fa",
     "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh37.noCOSMIC_ClinVar.pon.vcf.gz",
     "CHROMS": ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","X","Y","MT"],

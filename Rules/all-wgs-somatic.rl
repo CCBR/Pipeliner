@@ -30,11 +30,11 @@ if config['project']['annotation'] == "hg19":
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
             expand("sequenza_out/{p}"+"_alternative_solutions.txt",p=pairs),
-            expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
+            expand("freec_out/pass2/{p}"+".recal.bam_CNVs.p.value.txt",p=pairs),
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.7; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 elif config['project']['annotation'] == "hg38":
@@ -70,11 +70,11 @@ elif config['project']['annotation'] == "hg38":
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
             expand("sequenza_out/{p}"+"_alternative_solutions.txt",p=pairs),
-            expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
+            expand("freec_out/pass2/{p}"+".recal.bam_CNVs.p.value.txt",p=pairs),
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.7; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 
@@ -107,11 +107,9 @@ elif config['project']['annotation'] == "mm10":
             "admixture_out/admixture_table.tsv",
             expand("svaba_out/{p}.log", p=pairs),
             expand("canvas_out/{p}/tumor_CNV.vcf.gz", p=pairs),
-            expand("sequenza_out/{p}"+"_alternative_solutions.txt",p=pairs),
-            expand("freec_out/pass2/{p}"+".recal.bam_CNVs",p=pairs),
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.7; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
