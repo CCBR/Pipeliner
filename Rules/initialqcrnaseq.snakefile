@@ -351,7 +351,7 @@ cat {input.files} |sort|uniq|awk -F \"\\t\" '{{if ($5>0 && $6==1) {{print}}}}'|c
         gtfFile=config['references'][pfamily]['GTFFILE'],
       shell: """
 module load qualimap/2.2.1
-qualimap bamqc -bam {input.bamfile} --feature-file {params.gtfFile} -outdir {params.outdir} -nt $SLURM_CPUS_PER_TASK --java-mem-size=11G
+unset DISPLAY;qualimap bamqc -bam {input.bamfile} --feature-file {params.gtfFile} -outdir {params.outdir} -nt $SLURM_CPUS_PER_TASK --java-mem-size=11G
         """
 
 
@@ -912,7 +912,7 @@ rule qualicounts:
 module load qualimap/2.2.1
 # Remove gene symbols from count matrix
 sed 's/|[a-zA-Z0-9]\+//g' {input.countsmatrix} | tail -n +2 > {output.outcounts}
-awk -v OFS='\\t' '{{print $1, $2,"{output.outcounts}", NR+1}}' {input.groupsfile} > {params.sampletable}
+sed '/^$/d' {input.groupsfile} | awk -v OFS='\\t' '{{print $1, $2,"{output.outcounts}", NR+1}}' > {params.sampletable}
 qualimap counts -d {params.sampletable} -i {params.info} -outdir {params.outdir}
         """
 
