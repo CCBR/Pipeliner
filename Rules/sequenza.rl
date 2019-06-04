@@ -1,5 +1,5 @@
 rule sequenza:
-    input: freeccnvs="freec_out/pass1/{x}.recal.bam_CNVs",
+    input: freeccnvs="freec_out/pass1/{x}.recal.bam_CNVs.p.value.txt",
     output: fit="sequenza_out/{x}"+"_alternative_solutions.txt",
     params: dir=config['project']['workpath'],tumorsample=lambda wildcards: config['project']['pairs'][wildcards.x][1],normalsample=lambda wildcards: config['project']['pairs'][wildcards.x][0],gc=config['references'][pfamily]['SEQUENZAGC'],rname="pl:sequenza"
     threads: 8
