@@ -568,6 +568,10 @@
         "threads": "1",
         "time": "1-00:00:00"
     },
+    "pca": {
+        "mem": "88g",
+        "threads": "2",
+    },
     "picard": {
         "gres": "lscratch:256",
         "mem": "96g",
