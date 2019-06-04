@@ -25,6 +25,15 @@ rule maftools_strelka:
   params: dir=config['project']['workpath'],rname="pl:maftools"
   shell: "cat strelka_out/oncotator_out/*.maf > strelka_out/oncotator_out/strelka_variants.maf; perl Scripts/prep_mafs.pl strelka_out/oncotator_out/strelka_variants.maf strelka_out; module load R/3.5; Rscript Scripts/maftools.R {params.dir}/strelka_out/oncotator_out/ final_filtered.maf {params.dir}/strelka_out/strelka_maf_summary.pdf {output.oncoprint}"
 
+rule maftools_vardict:
+  input: expand(config['project']['workpath']+"/vardict_out/oncotator_out/{x}.maf",x=pairs),
+  output: pre=temp(config['project']['workpath']+"/vardict_out/oncotator_out/vardict_variants.maf"),
+          fin=config['project']['workpath']+"/vardict_out/oncotator_out/final_filtered.maf",
+          summary=config['project']['workpath']+"/vardict_out/vardict_maf_summary.pdf",
+          oncoprint=config['project']['workpath']+"/vardict_out/vardict_oncoplot.pdf",
+  params: dir=config['project']['workpath'],rname="pl:maftools"
+  shell: "cat vardict_out/oncotator_out/*.maf > vardict_out/oncotator_out/vardict_variants.maf; perl Scripts/prep_mafs.pl vardict_out/oncotator_out/vardict_variants.maf vardict_out; module load R/3.5; Rscript Scripts/maftools.R {params.dir}/vardict_out/oncotator_out/ final_filtered.maf {params.dir}/vardict_out/vardict_maf_summary.pdf {output.oncoprint}"
+
 rule maftools_merged:
   input: expand(config['project']['workpath']+"/merged_somatic_variants/oncotator_out/{x}.maf",x=pairs),
   output: pre=temp(config['project']['workpath']+"/merged_somatic_variants/oncotator_out/merged_variants.maf"),
