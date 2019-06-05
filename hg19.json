@@ -164,6 +164,7 @@
     "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/genes.gtf",
     "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/STAR/2.5.2b/genes-",
     "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/annotate.genes.txt",
+    "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/qualimap_info.txt",
     "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/annotate.isoforms.txt",
     "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/refFlat.txt",
     "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg19_basic/genes.ref.bed", 

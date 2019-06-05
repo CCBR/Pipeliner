@@ -5,6 +5,7 @@
  		"rnaseq": {
  			"GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/canFam3.fa",
  			"GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/genes.gtf",
+			"QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/qualimap_info.txt",
  			"STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/STAR/2.5.2b/genes-",
  			"ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/annotate.genes.txt",
  			"ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/canFam3_basic/annotate.isoforms.txt",
@@ -21,7 +22,7 @@
  			"adapter.file": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat",
  			"fastqc.adapters": "/data/CCBR_Pipeliner/db/PipeDB/dev/fastqc.adapters",
  			"trimmomatic.adapters": "/data/CCBR_Pipeliner/db/PipeDB/dev/adapters2.fa",
- 			"ORGANISM": "Canis_lupus_familiaris",
+ 			"ORGANISM": "Canis_lupus_familiaris"
  		},
  		"rnaseqvargerm": {},
  		"ChIPseq": {}

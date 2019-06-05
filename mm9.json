@@ -97,6 +97,7 @@
             "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/ref.fa", 
             "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/genes.gtf",
             "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/STAR/2.5.2b/genes-",
+            "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/qualimap_info.txt",
             "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/annotate.genes.txt",
             "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/annotate.isoforms.txt",
             "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/refFlat.txt",
