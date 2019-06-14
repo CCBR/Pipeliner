@@ -41,6 +41,7 @@ for i in range(0,len(contrasts),2):
     cmd.append(cmfile)
     cmd=" ".join(cmd)
     os.system(cmd)
+    print('Running CMD: {}'.format(cmd))
     cmd=list()
     cmd.append("rsem-run-ebseq")
     if itype=="isoform":
@@ -51,6 +52,7 @@ for i in range(0,len(contrasts),2):
     cmd.append(ebseqfile)
     cmd=" ".join(cmd)
     os.system(cmd)
+    print('Running CMD: {}'.format(cmd))
     x=pd.read_csv(ebseqfile,sep="\t",header=0)
     x.index.name="transcriptID"
     x.reset_index(inplace=True)
