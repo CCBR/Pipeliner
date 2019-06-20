@@ -158,6 +158,7 @@
      "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/annotate.genes.txt",
      "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/annotate.isoforms.txt",
      "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/qualimap_info.txt",
+     "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/karyoplot_gene_coordinates.txt",
      "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/refFlat.txt",
      "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/genes.ref.bed",
      "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/geneinfo.bed",
