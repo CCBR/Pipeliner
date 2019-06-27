@@ -468,7 +468,7 @@ for(i in 1:nb){
   }
 
   if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ) {
-    system(paste0("cd ",getwd(),";/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/r_env/bin/Rscript ../Scripts/karyoploter.R -d edgeR_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt -c ", params$karyotext, " -g ", SPECIES))
+    system(paste0("cd ",getwd(),";/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/r_env/bin/Rscript ../Scripts/karyoploter.R -o edgeR -d edgeR_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt -c ", params$karyotext, " -g ", SPECIES))
   }
 }
 
@@ -483,7 +483,7 @@ rownames(res)=rownames(res1)
 write.table(res,file="edgeR_res_all_contrasts.txt",sep="\t",col.names=NA)
 #DT::datatable(res, caption=htmltools::tags$caption("DEG for all contrasts",style="color:blue; font-size: 18px"))
 
-DT::datatable(edgerout, extensions = 'Buttons', options = list(dom = 'Bfrtip', buttons = c('colvis','excel', 'csv')))
+DT::datatable(edgerout, extensions = 'Buttons', options = list(dom = 'Bfrtip', buttons = c('colvis','excel', 'csv'), pageLength = 15))
 ```
 
 ## **Volcano Plots** {.tabset}
@@ -506,7 +506,7 @@ v_fdr
 
 ```{r de_karyo1, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
 if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
-  cat("![](karyoplot1.png)")
+  cat("![](edgeR_karyoplot1.png)")
 } else {
   cat("Genome Not Supported")
 }
@@ -517,7 +517,7 @@ if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECI
 
 ```{r de_karyo2, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
 if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
-  cat("![](karyoplot2.png)")
+  cat("![](edgeR_karyoplot2.png)")
 } else {
   cat("Genome Not Supported")
 }

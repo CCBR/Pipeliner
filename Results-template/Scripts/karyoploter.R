@@ -9,6 +9,9 @@ parser$add_argument("-g", "--genome", type="character", required=TRUE,
                     help="Genome .. either hg19/hg38/mm9/mm10/Mmul8.0.1/canFam3")
 parser$add_argument("-f", "--fdr", type="double", default=0.05,
                     help="FDR cutoff to use")
+parser$add_argument("-o", "--outfileprefix", type="character", required=TRUE,
+                    help="DEG type output file prefix: limma/edgeR/DESeq2")
+
 args <- parser$parse_args()
 
 
@@ -92,7 +95,7 @@ if (nrow(neg_strand_down_triangle)>0) {neg_strand_down_triangle$log2fc=neg_scale
 
 for (i in seq(1,length(chrs_subsets))) {
   chrs2=unlist(chrs_subsets[i])
-  png(paste("karyoplot",i,".png",sep=""), width = 10, height = 6, units = 'in', res = 1600)
+  png(paste(args$outfileprefix,"_karyoplot",i,".png",sep=""), width = 10, height = 6, units = 'in', res = 1600)
   kp <- plotKaryotype(genome=genome, plot.type=2, chromosomes = chrs2)
 
   kpDataBackground(kp, data.panel = 1, r0=0, r1=0.9)

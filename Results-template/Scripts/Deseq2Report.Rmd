@@ -72,7 +72,7 @@ sessionInfo()
 
 ## **Count Distribution** {.tabset}
 
-### Before Normalization
+### **Before Normalization**
 
 ```{r before_hist, echo=FALSE, warning=FALSE,message=FALSE,webgl=TRUE}
 
@@ -411,7 +411,7 @@ for(i in seq(1, length(contras), by = 2)) {
     }
 
     if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
-      system(paste0("cd ",getwd(),";/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/r_env/bin/Rscript ../Scripts/karyoploter.R -d DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt -c ", params$karyotext, " -g ", SPECIES))
+      system(paste0("cd ",getwd(),";/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/r_env/bin/Rscript ../Scripts/karyoploter.R -o deseq2 -d DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt -c ", params$karyotext, " -g ", SPECIES))
     }
 }
 
@@ -424,7 +424,7 @@ res=as.data.frame(cbind(mfc,mpval))
 rownames(res)=rownames(res1)
 write.table(res,file="DESeq2_res_all_contrasts.txt",sep="\t",col.names=NA)
 #DT::datatable(res, caption=htmltools::tags$caption("DEG for contrast",style="color:grey; font-size: 18px" ))
-DT::datatable(deseq2out, extensions = 'Buttons', options = list(dom = 'Bfrtip', buttons = c('colvis','excel', 'csv')))
+DT::datatable(deseq2out, extensions = 'Buttons', options = list(dom = 'Bfrtip', buttons = c('colvis','excel', 'csv'), pageLength = 15))
 ```
 
 
@@ -448,7 +448,7 @@ v_fdr
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
 if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
-  cat("![](karyoplot1.png)")
+  cat("![](deseq2_karyoplot1.png)")
 } else {
   cat("Genome Not Supported")
 }
@@ -459,7 +459,7 @@ if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECI
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
 if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
-  cat("![](karyoplot2.png)")
+  cat("![](deseq2_karyoplot2.png)")
 } else {
   cat("Genome Not Supported")
 }
