@@ -48,7 +48,7 @@ deseqout_filtered_w_coord=merge(deseqout_filtered,coordinates,by.x="gene",by.y="
 dim(deseqout_filtered_w_coord)
 
 if(nrow(deseqout_filtered_w_coord)==0){
-  stop("No DEGs found. Try increasing FDR cutoff")
+  print("Warning: No significant differentially expressed genes found! Please try increasing the FDR cutoff.")
 }
 
 genome=args$genome
