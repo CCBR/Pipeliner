@@ -268,7 +268,7 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
             macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
             bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
-            gsize=config['project']['gsize'],
+            gsize=config['references'][pfamily]['EFFECTIVEGENOMESIZE'],
             folder=join(workpath,bam_dir),
 	    genomefile=config['references'][pfamily]['REFLEN']
         shell: """
@@ -496,7 +496,6 @@ rule ppqt:
                 -tmpdir=/lscratch/$SLURM_JOBID -rf;"
         shell(commoncmd+cmd)
 
-
 rule bam2bw:
     input:
         bam=join(workpath,bam_dir,"{name}.{ext}.bam"),
@@ -507,6 +506,7 @@ rule bam2bw:
         rname="pl:bam2bw",
         reflen=config['references'][pfamily]['REFLEN'],
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
+        effectivegenomesize=config['references'][pfamily]['EFFECTIVEGENOMESIZE'],
     run:
         lines=list(map(lambda x:x.strip().split("\t"),open(params.reflen).readlines()))
         genomelen=0
@@ -520,7 +520,7 @@ rule bam2bw:
                 genomelen+=int(l)
         excludedchrs=list(set(chrs)-set(includedchrs))
         commoncmd="module load {params.deeptoolsver};"
-        cmd="bamCoverage --bam "+input.bam+" -o "+output.outbw+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
+        cmd="bamCoverage --bam "+input.bam+" -o "+output.outbw+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+params.effectivegenomesize
         if pe=="yes":
             cmd+=" --centerReads"
         else:
@@ -862,14 +862,18 @@ rule ngsqc_plot:
         cmd1 = ""
         cmd2 = ""
         cmd3 = ""
+        cmd4 = ""
+        sample = []
         for group in groups:
             labels = [ sample for sample in samples if sample in groupdatawinput[group] ]
             cmd1 = cmd1 + "mkdir " + group + "; "
             for label in labels:
                 cmd1 = cmd1 + "cp " + workpath + "/QC/" + label + ".sorted.Q5DD.NGSQC_report.txt " + group + "; " 
+                if label not in sample:
+                    cmd4 = cmd4 + "mv " + group + "/" + label + ".sorted.Q5DD.NGSQC.txt " + workpath + "/QC; "
+                    sample.append(label)
             cmd2 = cmd2 + "python " + params.script + " -d '" + group + "' -e 'sorted.Q5DD' -g '" + group + "'; "
             cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.sorted.Q5DD.png " + workpath + "/QC/" + group + ".NGSQC.sorted.Q5DD.png" + "; "
-        cmd4 = "mv */*.sorted.Q5DD.NGSQC.txt " + workpath + "/QC; "
         shell(commoncmd1)
         shell(commoncmd2 + cmd1 + cmd2 + cmd3 + cmd4)
 

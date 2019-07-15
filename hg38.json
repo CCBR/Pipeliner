@@ -337,6 +337,7 @@
             "CHROMS": ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10",
                        "chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19",
                        "chr20","chr21","chr22","chrX","chrY","chrM"],
+            "EFFECTIVEGENOMESIZE": "2700000000", ### based upon Deeptools khmer output for 75bp fragments and rounded
             "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
             "FASTAWITHADAPTERSETD": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",
             "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
