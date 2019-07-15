@@ -2,7 +2,7 @@ if config['project']['annotation'] == "hg19":
 
   rule all_wgs_somatic_tumoronly:
     input:  expand("{s}"+".recal.bam",s=samples),
-            expand("freec_out/{s}.recal.bam_CNVs",s=samples),
+            expand("freec_out/{s}.recal.bam_CNVs.p.value.txt",s=samples),
 #            expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/{s}"+".FINALmutect2.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{s}"+".maf",s=samples),
@@ -18,14 +18,14 @@ if config['project']['annotation'] == "hg19":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.7; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 elif config['project']['annotation'] == "hg38":
 
   rule all_wgs_somatic_tumoronly:
     input:  expand("{s}"+".recal.bam",s=samples),
-            expand("freec_out/{s}.recal.bam_CNVs",s=samples),
+            expand("freec_out/{s}.recal.bam_CNVs.p.value.txt",s=samples),
 #            expand("{s}"+".g.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/{s}"+".FINALmutect2.vcf",s=samples),
             expand(config['project']['workpath']+"/mutect2_out/oncotator_out/{s}"+".maf",s=samples),
@@ -41,7 +41,7 @@ elif config['project']['annotation'] == "hg38":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.7; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """
 
@@ -62,6 +62,6 @@ elif config['project']['annotation'] == "mm10":
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.6; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
+             module load multiqc/1.7; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped logfiles/
 
             """

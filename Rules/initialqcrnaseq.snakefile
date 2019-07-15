@@ -48,15 +48,15 @@ for d in [trim_dir,kraken_dir,bams_dir,star_dir,log_dir,rseqc_dir,preseq_dir,deg
 if pe=="yes":
 
    rule all:
-      params: 
+      params:
         batch='--time=168:00:00',
         # rname='pl:all',
-      input: 
+      input:
+        # FastQC (before and after trimming)
         join(workpath,"rawQC"),
         join(workpath,"QC"),
-        # config['project']['id']+"_"+config['project']['flowcellid']+".xlsx",
-        join(workpath,"Reports/multiqc_report.html"),
-        expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
+
+        # FastScreen (Using two sets of reference databases)
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
         expand(join(workpath,"FQscreen","{name}.R2.trim_screen.txt"),name=samples),
@@ -65,27 +65,54 @@ if pe=="yes":
         expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
         expand(join(workpath,"FQscreen2","{name}.R2.trim_screen.txt"),name=samples),
         expand(join(workpath,"FQscreen2","{name}.R2.trim_screen.png"),name=samples),
+
+        # Kraken + Krona
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
-        expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
+
+        # STAR
         expand(join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),name=samples),
+
+        # Picard
+        expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),
+
+        # Preseq
+        expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
+
+        # Infer Library Strandedness
         join(workpath,log_dir,"strandness.txt"),
+
+        # QualiMap (bamQC and counts)
+        expand(join(workpath,"QualiMap","{name}","qualimapReport.html"),name=samples),
+        # join(workpath,"QualiMap","GlobalReport.html"),
+
+        # RSEM merge and counts 
         join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
-    	join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
-    	join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
-    	expand(join(workpath,star_dir,"{name}.star.count.info.txt"),name=samples),
-    	expand(join(workpath,star_dir,"{name}.star.count.txt"),name=samples),
-    	join(workpath,star_dir,"sampletable.txt"),
-    	join(workpath,degall_dir,"RawCountFile_Subread_genes_filtered.txt"),
-    	join(workpath,degall_dir,"RawCountFile_Subread_junctions_filtered.txt"),
-    	join(workpath,degall_dir,"RawCountFile_Subread_genejunctions_filtered.txt"),
+        join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
+        join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
+
+        # Subread 
+        expand(join(workpath,star_dir,"{name}.star.count.info.txt"),name=samples),
+        expand(join(workpath,star_dir,"{name}.star.count.txt"),name=samples),
+
+        # Subread featureCounts
+        join(workpath,star_dir,"sampletable.txt"),
+        join(workpath,degall_dir,"RawCountFile_Subread_genes_filtered.txt"),
+        join(workpath,degall_dir,"RawCountFile_Subread_junctions_filtered.txt"),
+        join(workpath,degall_dir,"RawCountFile_Subread_genejunctions_filtered.txt"),
+
+        # Subread Overlap 
         join(workpath,star_dir,"RawCountFileOverlap.txt"),
         join(workpath,star_dir,"RawCountFileStar.txt"),    	
         expand(join(workpath,star_dir,"{name}.star.count.info.overlap.txt"),name=samples),
         expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"),name=samples),
-        expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
 
+        # PCA Reports 
+        expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
+        
+        # MultiQC
+        join(workpath,"Reports/multiqc_report.html"),
 
    rule rawfastqc:
       input: 
@@ -312,40 +339,76 @@ cat {input.files} |sort|uniq|awk -F \"\\t\" '{{if ($5>0 && $6==1) {{print}}}}'|c
         shell(cmd)
         cmd="sleep 120;cd {workpath};mv {workpath}/{star_dir}/{params.prefix}.Aligned.toTranscriptome.out.bam {workpath}/{bams_dir}; mv {workpath}/{star_dir}/{params.prefix}.Log.final.out {workpath}/{log_dir}"
         shell(cmd)
-        
+
+   rule qualibam:
+      input:
+        bamfile=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
+      output:
+        report=join(workpath,"QualiMap","{name}","qualimapReport.html"),
+      params:
+        rname='pl:qualibam',
+        outdir=join(workpath,"QualiMap","{name}"),
+        gtfFile=config['references'][pfamily]['GTFFILE'],
+      shell: """
+module load qualimap/2.2.1
+unset DISPLAY;qualimap bamqc -bam {input.bamfile} --feature-file {params.gtfFile} -outdir {params.outdir} -nt $SLURM_CPUS_PER_TASK --java-mem-size=11G
+        """
 
 
 if se=="yes":
 
    rule all:
       params: batch='--time=168:00:00'
-      input: 
+      input:
+        # FastQC (before and after trimming)
         join(workpath,"rawQC"),
         join(workpath,"QC"),
-        # config['project']['id']+"_"+config['project']['flowcellid']+".xlsx",
-        join(workpath,"Reports/multiqc_report.html"),
-        expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
+
+        # FastQ Screen
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
         expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),name=samples),
         expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
+
+        # Kraken + Krona
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
         expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
+
+        # Infer Library Strandedness
         join(workpath,log_dir,"strandness.txt"),
+
+        # Picard 
+        expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
+
+        # QualiMap
+        # join(workpath,"QualiMap","GlobalReport.html"),
+
+        # RSEM
         join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
-    	join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
-    	join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
-    	expand(join(workpath,star_dir,"{name}.star.count.info.txt"),name=samples),
-    	expand(join(workpath,star_dir,"{name}.star.count.txt"),name=samples),
-    	join(workpath,star_dir,"sampletable.txt"),
-    	join(workpath,degall_dir,"RawCountFile_Subread_genes_filtered.txt"),
-    	join(workpath,degall_dir,"RawCountFile_Subread_junctions_filtered.txt"),
-    	join(workpath,degall_dir,"RawCountFile_Subread_genejunctions_filtered.txt"),
+        join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
+        join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
+
+        # Subread
+        expand(join(workpath,star_dir,"{name}.star.count.info.txt"),name=samples),
+        expand(join(workpath,star_dir,"{name}.star.count.txt"),name=samples),
+
+        # Subread featureCounts
+        join(workpath,star_dir,"sampletable.txt"),
+        join(workpath,degall_dir,"RawCountFile_Subread_genes_filtered.txt"),
+        join(workpath,degall_dir,"RawCountFile_Subread_junctions_filtered.txt"),
+        join(workpath,degall_dir,"RawCountFile_Subread_genejunctions_filtered.txt"),
+
+        # Subread Overlaps
         join(workpath,star_dir,"RawCountFileOverlap.txt"),
         join(workpath,star_dir,"RawCountFileStar.txt"),
         expand(join(workpath,star_dir,"{name}.star.count.info.overlap.txt"),name=samples),
         expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"),name=samples),
+
+        # PCA Report
         expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
+
+        # MultiQC
+        join(workpath,"Reports/multiqc_report.html"),
 
    
         
@@ -833,6 +896,25 @@ module load {params.rver}
 Rscript {params.rscript} '{params.outdir}' '{input.files}' '{params.annotate}' '{input.sampletable}' 
 """
 
+rule qualicounts:
+   input:
+    countsmatrix=join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
+    groupsfile=join(workpath,"groups.tab"),
+   output:
+    outcounts=join(workpath,"QualiMap","RawCountFile_RSEM_genes_filtered_qualimap.txt"),
+    globalreport=join(workpath,"QualiMap","GlobalReport.html"),
+   params:
+    rname='pl:qualicounts',
+    sampletable=join(workpath,"QualiMap","qualimap_sample_table.txt"),
+    outdir=join(workpath,"QualiMap"),
+    info=config['references'][pfamily]['QUALIMAP_INFO'],
+   shell: """
+module load qualimap/2.2.1
+# Remove gene symbols from count matrix
+sed 's/|[a-zA-Z0-9]\+//g' {input.countsmatrix} | tail -n +2 > {output.outcounts}
+sed '/^$/d' {input.groupsfile} | awk -v OFS='\\t' '{{print $1, $2,"{output.outcounts}", NR+1}}' > {params.sampletable}
+qualimap counts -d {params.sampletable} -i {params.info} -outdir {params.outdir}
+        """
 
 rule rseqc:
    input: 
@@ -977,7 +1059,6 @@ rule pca:
     rname='pl:pca',
     batch='--mem=24g --time=10:00:00',
     outdir=join(workpath,degall_dir),
-#     contrasts=" ".join(config['project']['contrasts']['rcontrasts']),
     dtype="{dtype}",
     projectId=config['project']['id'],
     projDesc=config['project']['description'].rstrip('\n'),

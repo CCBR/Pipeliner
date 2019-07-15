@@ -1,0 +1,31 @@
+{
+ 	"references": {
+ 		"exomeseq": {},
+ 		"genomeseq": {},
+ 		"rnaseq": {
+ 			"GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/ref.fa",
+ 			"GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/genes.gtf",
+                        "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/qualimap_info.txt",
+ 			"STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/STAR/2.5.2b/genes-",
+ 			"ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/annotate.genes.txt",
+ 			"ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/annotate.isoforms.txt",
+ 			"REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/refFlat.txt",
+ 			"BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/genes.ref.bed",
+ 			"GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/geneinfo.bed",
+ 			"KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/dev/karyobeds/hg38_HPV16/",
+                        "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/karyoplot_gene_coordinates.txt",
+ 			"RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/rsemref/hg38_HPV16",
+ 			"RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/hg38_HPV16.rRNA_interval_list",
+ 			"FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
+ 			"STARREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/STAR/2.5.2b/genes-",
+ 			"FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
+ 			"GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/ref.fa",
+ 			"adapter.file": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat",
+ 			"fastqc.adapters": "/data/CCBR_Pipeliner/db/PipeDB/dev/fastqc.adapters",
+ 			"trimmomatic.adapters": "/data/CCBR_Pipeliner/db/PipeDB/dev/adapters2.fa",
+ 			"ORGANISM": "hg38_HPV16"
+ 		},
+ 		"rnaseqvargerm": {},
+ 		"ChIPseq": {}
+	}
+}

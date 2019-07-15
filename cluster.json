@@ -571,6 +571,10 @@
         "threads": "1",
         "time": "1-00:00:00"
     },
+    "pca": {
+        "mem": "88g",
+        "threads": "2",
+    },
     "picard": {
         "gres": "lscratch:256",
         "mem": "96g",
@@ -616,6 +620,11 @@
     "preseq": {
         "mem": "24g"
     },
+    "qualibam": {
+        "threads": "8",
+        "mem": "12g",
+        "time": "1-00:00:00"
+        },
     "qualimap": {
         "mem": "96g",
         "threads": "8",

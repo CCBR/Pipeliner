@@ -24,11 +24,10 @@ if config['project']['annotation'] == "hg19":
            vcf22="combined_22.vcf",
            vcfX="combined_X.vcf",
            vcfY="combined_Y.vcf",
-           vcfMT="combined_MT.vcf",
     output: vcf="combined.vcf",
     params: dir=config['project']['workpath'],gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],rname="pl:merge.chrom",
     threads: 4
-    shell: "module load GATK/3.8-1; GATK -m 64G CombineVariants -R {params.genome} --filteredrecordsmergetype KEEP_UNCONDITIONAL --assumeIdenticalSamples -o {output.vcf} --variant {input.vcf1} --variant {input.vcf2} --variant {input.vcf3} --variant {input.vcf4} --variant {input.vcf5} --variant {input.vcf6} --variant {input.vcf7} --variant {input.vcf8} --variant {input.vcf9} --variant {input.vcf10} --variant {input.vcf11} --variant {input.vcf12} --variant {input.vcf13} --variant {input.vcf14} --variant {input.vcf15} --variant {input.vcf16} --variant {input.vcf17} --variant {input.vcf18} --variant {input.vcf19} --variant {input.vcf20} --variant {input.vcf21} --variant {input.vcf22} --variant {input.vcfX} --variant {input.vcfY} --variant {input.vcfMT} -nt {threads}"
+    shell: "module load GATK/3.8-1; GATK -m 64G CombineVariants -R {params.genome} --filteredrecordsmergetype KEEP_UNCONDITIONAL --assumeIdenticalSamples -o {output.vcf} --variant {input.vcf1} --variant {input.vcf2} --variant {input.vcf3} --variant {input.vcf4} --variant {input.vcf5} --variant {input.vcf6} --variant {input.vcf7} --variant {input.vcf8} --variant {input.vcf9} --variant {input.vcf10} --variant {input.vcf11} --variant {input.vcf12} --variant {input.vcf13} --variant {input.vcf14} --variant {input.vcf15} --variant {input.vcf16} --variant {input.vcf17} --variant {input.vcf18} --variant {input.vcf19} --variant {input.vcf20} --variant {input.vcf21} --variant {input.vcf22} --variant {input.vcfX} --variant {input.vcfY} -nt {threads}"
 
 elif config['project']['annotation'] == "hg38":
   rule gatk_merge_chrom:
@@ -56,11 +55,10 @@ elif config['project']['annotation'] == "hg38":
            vcf22="combined_22.vcf",
            vcfX="combined_X.vcf",
            vcfY="combined_Y.vcf",
-           vcfMT="combined_MT.vcf",
     output: vcf="combined.vcf",
     params: dir=config['project']['workpath'],gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],rname="pl:merge.chrom",
     threads: 4
-    shell: "module load GATK/3.8-1; GATK -m 64G CombineVariants -R {params.genome} --filteredrecordsmergetype KEEP_UNCONDITIONAL --assumeIdenticalSamples -o {output.vcf} --variant {input.vcf1} --variant {input.vcf2} --variant {input.vcf3} --variant {input.vcf4} --variant {input.vcf5} --variant {input.vcf6} --variant {input.vcf7} --variant {input.vcf8} --variant {input.vcf9} --variant {input.vcf10} --variant {input.vcf11} --variant {input.vcf12} --variant {input.vcf13} --variant {input.vcf14} --variant {input.vcf15} --variant {input.vcf16} --variant {input.vcf17} --variant {input.vcf18} --variant {input.vcf19} --variant {input.vcf20} --variant {input.vcf21} --variant {input.vcf22} --variant {input.vcfX} --variant {input.vcfY} --variant {input.vcfMT} -nt {threads}"
+    shell: "module load GATK/3.8-1; GATK -m 64G CombineVariants -R {params.genome} --filteredrecordsmergetype KEEP_UNCONDITIONAL --assumeIdenticalSamples -o {output.vcf} --variant {input.vcf1} --variant {input.vcf2} --variant {input.vcf3} --variant {input.vcf4} --variant {input.vcf5} --variant {input.vcf6} --variant {input.vcf7} --variant {input.vcf8} --variant {input.vcf9} --variant {input.vcf10} --variant {input.vcf11} --variant {input.vcf12} --variant {input.vcf13} --variant {input.vcf14} --variant {input.vcf15} --variant {input.vcf16} --variant {input.vcf17} --variant {input.vcf18} --variant {input.vcf19} --variant {input.vcf20} --variant {input.vcf21} --variant {input.vcf22} --variant {input.vcfX} --variant {input.vcfY} -nt {threads}"
 
 
 elif config['project']['annotation'] == "mm10":
@@ -86,8 +84,7 @@ elif config['project']['annotation'] == "mm10":
             vcf19="combined_19.vcf",
             vcfX="combined_X.vcf",
             vcfY="combined_Y.vcf",
-            vcfMT="combined_MT.vcf",
     output: vcf="combined.vcf",
     params: dir=config['project']['workpath'],gatk=config['bin'][pfamily]['GATK'],genome=config['references'][pfamily]['GENOME'],rname="pl:merge.chrom",
     threads: 4
-    shell: "module load GATK/3.8-1; GATK -m 64G CombineVariants -R {params.genome} --filteredrecordsmergetype KEEP_UNCONDITIONAL --assumeIdenticalSamples -o {output.vcf} --variant {input.vcf1} --variant {input.vcf2} --variant {input.vcf3} --variant {input.vcf4} --variant {input.vcf5} --variant {input.vcf6} --variant {input.vcf7} --variant {input.vcf8} --variant {input.vcf9} --variant {input.vcf10} --variant {input.vcf11} --variant {input.vcf12} --variant {input.vcf13} --variant {input.vcf14} --variant {input.vcf15} --variant {input.vcf16} --variant {input.vcf17} --variant {input.vcf18} --variant {input.vcf19} --variant {input.vcfX} --variant {input.vcfY}  --variant {input.vcfMT} -nt {threads}"
+    shell: "module load GATK/3.8-1; GATK -m 64G CombineVariants -R {params.genome} --filteredrecordsmergetype KEEP_UNCONDITIONAL --assumeIdenticalSamples -o {output.vcf} --variant {input.vcf1} --variant {input.vcf2} --variant {input.vcf3} --variant {input.vcf4} --variant {input.vcf5} --variant {input.vcf6} --variant {input.vcf7} --variant {input.vcf8} --variant {input.vcf9} --variant {input.vcf10} --variant {input.vcf11} --variant {input.vcf12} --variant {input.vcf13} --variant {input.vcf14} --variant {input.vcf15} --variant {input.vcf16} --variant {input.vcf17} --variant {input.vcf18} --variant {input.vcf19} --variant {input.vcfX} --variant {input.vcfY} -nt {threads}"

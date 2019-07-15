@@ -1,7 +1,7 @@
 
 ---
-title: "DESeq2 results"
-author: "CCBR RNAseq pipeline"
+title: "DESeq2 Results"
+author: "CCBR RNA-seq Pipeline"
 output: html_document
 params:
   folder: result
@@ -14,9 +14,10 @@ params:
   gtffile: "gencode.v19.annotation.gtf"
   dtype: "<count type>"
   karyobeds: "path/to/karyobedfiles"
+  karyotext: "path/to/karyoplotertxt"
 ---
 
-```{r, include=FALSE, warning=FALSE, message=FALSE}
+```{r params, include=FALSE, warning=FALSE, message=FALSE}
 countMethod <- "subread"
 if(grepl("RSEM",params$data)){
   countMethod <- "rsem"
@@ -33,24 +34,23 @@ dateandtime<-format(Sys.time(), "%a %b %d %Y - %X")
 ####    *`r countMethod`* 
 ### **Report generated:** 
 ####    *`r dateandtime`* 
-
-## **Histogram after normalization**
-
+### **Session Info:** {.tabset .tabset-fade .tabset-pills}
+#### Hide
 ```{r setup, echo=FALSE, warning=FALSE,message=FALSE}
-
-library(rgl)
-library(knitr)
-library('DESeq2')
-library('statmod')
-library('RColorBrewer')
-library('gplots')
-library('reshape')
-library('ggplot2')
-library('ggfortify')
-library(amap)
-library(DT)
-library(plotly)
-library('geneplotter')
+suppressMessages(library(rgl))
+suppressMessages(library(knitr))
+suppressMessages(library('DESeq2'))
+suppressMessages(library('statmod'))
+suppressMessages(library('RColorBrewer'))
+suppressMessages(library('gplots'))
+suppressMessages(library('reshape'))
+suppressMessages(library('ggplot2'))
+suppressMessages(library('ggfortify'))
+suppressMessages(library(amap))
+suppressMessages(library(DT))
+suppressMessages(library(plotly))
+suppressMessages(library('geneplotter'))
+suppressMessages(library('edgeR'))
 
 knit_hooks$set(rgl = function(before, options, envir) {
   if (!before) {
@@ -65,7 +65,16 @@ knit_hooks$set(rgl = function(before, options, envir) {
 knit_hooks$set(webgl = hook_webgl)
 ```
 
-```{r, echo=FALSE, warning=FALSE,message=FALSE}
+#### Show
+```{r sessioninfo, echo=FALSE, warning=FALSE,message=FALSE}
+sessionInfo()
+```
+
+## **Count Distribution** {.tabset}
+
+### **Before Normalization**
+
+```{r before_hist, echo=FALSE, warning=FALSE,message=FALSE,webgl=TRUE}
 
 ## grab args & normalization
 
@@ -75,44 +84,57 @@ FILE2 <- params$data
 CONTRASTS <- params$contrasts
 SPECIES <-params$species
 KARYOBEDS <-params$karyobeds
-# ANNOTATE <- args[4]
+KARYOTEXT <-params$karyotext
 
-#
-## setwd(DIR)
-## Sys.setenv("DISPLAY"=":0.0")
 sampleinfo=read.delim(FILE1)
 sampleFiles=as.character(sampleinfo[,2])
 x = read.delim(FILE2,row.names=1)
 colnames(x)=as.character(sampleinfo[,4])
-## read annotation file
-## ann=read.delim(ANNOTATE)
-#
+
+myconditions = as.factor(sampleinfo$condition)
+dge_before = DGEList(counts=x,group=myconditions)
+dge_before <- calcNormFactors(dge_before,method="TMM")
+
 ddsHTSeq<-DESeqDataSetFromMatrix(countData=x,colData=sampleinfo, design=~condition)
 dds<-DESeq(ddsHTSeq)
 ndata=as.data.frame(counts(dds,normalized=TRUE))
 colnames(ndata)=colnames(x)
 
+dge_before <- estimateCommonDisp(dge_before)
+dge_before <- estimateTagwiseDisp(dge_before)
+rawlog2= cpm(dge_before,log=TRUE,normalized.lib.sizes=FALSE,prior.count=0.5)
+
+beforehist <- ggplotly(ggplot(melt(as.data.frame(rawlog2))) + geom_line(stat="density", aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10() + theme_bw())
+beforehist
+```
+
+### DESeq2
+
+```{r deseq2_hist, echo=FALSE, warning=FALSE,message=FALSE,webgl=TRUE}
 rn=rownames(ndata)
 ensID=apply(array(as.character(rn)),1,function(z) unlist(strsplit(z, "\\|"))[1])
 gene=apply(array(as.character(rn)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 mydata=cbind(ensID,gene,ndata)
 
 write.table(mydata,file="DESeq2_normalized_counts.txt",sep="\t",col.names=NA)
-#png("HistDesq2normFilter.png")
+
 df.m <- melt(as.data.frame(ndata))
-print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
-# dev.off() 
-#
+#print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10())
+
 ## transformation
 rld <- rlogTransformation(dds, blind=TRUE)
 rldm=assay(rld)
 colnames(rldm)=colnames(x)
 
+deshist <- ggplotly(ggplot(melt(as.data.frame(rldm))) + geom_line(stat="density", aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10() + theme_bw())
+deshist
+
 mydata=cbind(ensID,gene,rldm)
 write.table(mydata,file="DESeq2_normalized_rld.txt",sep="\t",col.names=NA)
 
 ```
-```{r, echo=FALSE, warning=FALSE,message=FALSE,include=FALSE}
+
+```{r static_pca, echo=FALSE, warning=FALSE,message=FALSE,include=FALSE}
 png("DESeq2_PCA.png")
 print(plotPCA(rld, intgroup=c("condition")))
 ## dev.copy(png,"DESeq2_PCA.png")
@@ -124,18 +146,65 @@ print(plotPCA(rld, intgroup=c("condition","label")))
 dev.off()
 
 ```
-## **Boxplot and PCA**
 
-```{r, echo=FALSE,webgl=TRUE,message=FALSE}
+## **Boxplots** {.tabset}
 
-## Boxplot and PCA
+### Before Normalization
+
+```{r before_box, echo=FALSE,message=FALSE, warning=FALSE}
+before.dfm <- melt(as.data.frame(rawlog2))
+sampfactor = as.factor(sampleinfo$condition)
+groupcolors <- brewer.pal(nlevels(sampfactor), "Paired")
+par(mar=c(par("mar")[1]+5,par("mar")[-1]))
+boxplot(value~variable,las=2,data=before.dfm,
+  ylab="Counts", col= c("#A6CEE3", "#B2DF8A")[as.numeric(as.factor(sampleinfo$condition))]) #col=as.numeric(as.factor(sampleinfo$condition)))
+```
+
+### DESeq2
+
+```{r deseq2_box, echo=FALSE,message=FALSE, warning=FALSE}
+
 df.m <- melt(as.data.frame(rldm))
 
-#dev.off()
-par(mar=c(10,7,1,1))
-boxplot(value~variable,las=2,data=df.m,main="Normalized Signal",
-        ylab="Counts",col=as.numeric(as.factor(sampleinfo$condition)))
+par(mar=c(par("mar")[1]+5,par("mar")[-1]))
+boxplot(value~variable,las=2,data=df.m,
+  ylab="Counts", col= c("#A6CEE3", "#B2DF8A")[as.numeric(as.factor(sampleinfo$condition))]) #col=as.numeric(as.factor(sampleinfo$condition)))
+```
 
+## **PCA plots** {.tabset}
+
+### Before Normalization
+
+```{r before_pca, echo=FALSE,webgl=TRUE,message=FALSE, warning=FALSE, fig.width=9, fig.height=6}
+
+# PCA for before norm
+before.edf=rawlog2
+before.tedf= t(before.edf)
+before.pca=prcomp(before.tedf,scale.=T)
+before.tedf1 = data.frame(before.tedf)
+Phenotype=sampleinfo$condition
+cell_rep=sampleinfo$label
+before.tedf1$group = as.factor(Phenotype)
+before.pc1 = round(before.pca$sdev[1]^2/sum(before.pca$sdev^2)*100,2)
+before.pc2 = round(before.pca$sdev[2]^2/sum(before.pca$sdev^2)*100,2)
+before.pc3 = round(before.pca$sdev[3]^2/sum(before.pca$sdev^2)*100,2)
+
+pcafactor = as.factor(sampleinfo$condition)
+col <- brewer.pal(nlevels(pcafactor), "Paired")
+
+p <- plot_ly(as.data.frame(before.pca$x[,1:3]), x = ~PC1, y = ~PC2, z = ~PC3, color = pcafactor, colors = col, hoverinfo="text",
+             hovertext = ~sampleinfo$label) %>%
+  add_markers() %>%
+  layout(title = "Before Normalization PCA plot", 
+         scene = list(xaxis = list(title = paste0("PC1 (",before.pc1,"%)")),
+                      yaxis = list(title = paste0("PC2 (",before.pc2,"%)")),
+                      zaxis = list(title = paste0("PC3 (",before.pc3,"%)"))))
+p
+```
+
+### DESeq2
+
+```{r deseq_pca, echo=FALSE,webgl=TRUE,message=FALSE, warning=FALSE, fig.width=9, fig.height=6}
 edf=rldm
 tedf= t(edf)
 pca=prcomp(tedf,scale.=T)
@@ -149,33 +218,21 @@ pc2 = round(pca$sdev[2]^2/sum(pca$sdev^2)*100,2)
 pc3 = round(pca$sdev[3]^2/sum(pca$sdev^2)*100,2)
 
 pcafactor = as.factor(sampleinfo$condition)
-
-library(RColorBrewer)
-
 col <- brewer.pal(nlevels(pcafactor), "Paired")
 
 p <- plot_ly(as.data.frame(pca$x[,1:3]), x = ~PC1, y = ~PC2, z = ~PC3, color = pcafactor, colors = col, hoverinfo="text",
              hovertext = ~sampleinfo$label) %>%
   add_markers() %>%
-  layout(title = "PCA plot", 
+  layout(title = "DESeq2", 
          scene = list(xaxis = list(title = paste0("PC1 (",pc1,"%)")),
                       yaxis = list(title = paste0("PC2 (",pc2,"%)")),
                       zaxis = list(title = paste0("PC3 (",pc3,"%)"))))
 
 p
 
-# plot(pca,type="lines")  #Decide how many PC's are relevant for plotting
-  #pca$x[,1:3]  #look at first 3 PC's
-
-#plot3d(pca$x[,1:3],col = as.integer(tedf1$group),type="s",size=2)
-#group.v<-as.vector(cell_rep)
-#text3d(pca$x, pca$y, pca$z, group.v, cex=1.0, adj = 1.2)
-# rgl.postscript("pca3d_DESeq2.pdf","pdf")
-
 ```
-## **Similarity Heatmap**
 
-```{r, echo=FALSE, warning=FALSE,message=FALSE,include=FALSE}
+```{r heatmaps, echo=FALSE, warning=FALSE,message=FALSE, include=FALSE}
 ## clustering / heatmap
 hmcol <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
 distsRL <- dist(t(assay(rld)))
@@ -186,187 +243,270 @@ png("DESeq2_heatmaps_samplebysample.png")
 heatmap.2(mat, trace="none", col = rev(hmcol), margin=c(16, 16))
 ## dev.copy(png,"DESeq2_heatmaps_samplebysample.png")
 dev.off()
+bothdendro = "both"
+hmapsize = floor(length(sampleinfo$label)/20) + 8
+
+if(hmapsize>20){
+  hmapsize = 15
+  bothdendro = "none"
+}
 ```
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE}
-d=Dist(tedf,method="pearson",diag=TRUE)
-m=as.matrix(d)
 
-new.palette=colorRampPalette(c("black","red","yellow","white"),space="rgb")
-#levelplot(m[1:ncol(m),ncol(m):1],col.regions=new.palette(20))
-heatmap(m,symm=TRUE,col=new.palette(20))
+## **Pearson Similarity Heatmap** {.tabset}
 
+### Before Normalization
+
+```{r, echo=FALSE,message=FALSE,fig.align='center', warning=FALSE, fig.width=hmapsize, fig.height=hmapsize}
+
+hmcol <- colorRampPalette(c("black","red","yellow","white"),space="rgb")(100)
+before.distrawlog2=amap::Dist(t(rawlog2),method="pearson")
+before.mat = as.matrix(before.distrawlog2)
+heatmap.2(before.mat, trace="none", col = rev(hmcol), labCol=FALSE, Rowv=TRUE, Colv= TRUE, dendrogram = bothdendro, colRow=as.numeric(as.factor(sampleinfo$condition)), margin=c(16, 16), main="Before normalization")
 ```
 
-## **Differentially expressed genes (DEG) for all contrasts: Volcano plots, Pathways and DEG tables**
+### DESeq2
 
-```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+```{r, echo=FALSE,message=FALSE,fig.align='center', warning=FALSE, fig.width=hmapsize, fig.height=hmapsize}
+deseq2.dists <- amap::Dist(t(rldm),method="pearson")
+deseq2.mat <- as.matrix(deseq2.dists)
+heatmap.2(deseq2.mat, trace="none", col = rev(hmcol), labCol=FALSE, Rowv=TRUE, Colv= TRUE, dendrogram = bothdendro, colRow=as.numeric(as.factor(sampleinfo$condition)), margin=c(16, 16), main="DESeq2")
+```
 
-## differentially expressed genes -----
+## **Differential Expression Analysis:** `r params$contrasts`
+*** 
+```{r after_heatmap, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+
+## differentially expressed genes
 contras=unlist(strsplit(CONTRASTS, split=" "))        
 cat(contras,"\t",length(contras),"\t",contras[1],"\t",contras[2],"\n",file="readcontra.txt")
 mfc=c()
 mpval=c()
 cons=c()
 l <- htmltools::tagList()
+v_fdr <- htmltools::tagList()
 pup = htmltools::tagList()
 pdw = htmltools::tagList()
 
-#if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype)))
-#{
-#system(paste0("cd ",getwd(),"; perl ../Scripts/gtf2bed.pl ",params$gtffile," |sort -k1,1 -k2,2n > karyobed.bed"))
-#system(paste0("cd ",getwd(),"; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {print}}\' > karyobed.${a}.bed;done < chrs.txt"))
-#}
 
-for(i in seq(1, length(contras), by = 2))
-{{
-res<-results(dds,contrast=c("condition",as.character(contras[i]),as.character(contras[i+1])))
-## res<-res[order(res$padj),] for now
-res1=as.data.frame(res)
-# mfc=cbind(mfc,res1$log2FoldChange)
-# mpval=cbind(mpval,res1$pvalue)
-cons=c(cons,paste(contras[i],"-",contras[i+1],sep=""))
+for(i in seq(1, length(contras), by = 2)) {
 
-restmp=res1
-restmp$FoldChange <- ifelse(restmp$log2FoldChange<0, -1/(2^restmp$log2FoldChange), 2^restmp$log2FoldChange)
-mfc=cbind(mfc,restmp$FoldChange)
-mpval=cbind(mpval,restmp$pvalue)
-final=restmp
-x=rownames(restmp)
-ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
-gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
-restmp=cbind(ensID,gene,restmp)
-write.table(restmp,file=paste("DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt",sep=""),sep="\t",col.names=NA) 
+    res<-results(dds,contrast=c("condition",as.character(contras[i]),as.character(contras[i+1])))
+    res1=as.data.frame(res)
+    cons=c(cons,paste(contras[i],"-",contras[i+1],sep=""))
+    
+    restmp=res1
+    restmp$FoldChange <- ifelse(restmp$log2FoldChange<0, -1/(2^restmp$log2FoldChange), 2^restmp$log2FoldChange)
+    mfc=cbind(mfc,restmp$FoldChange)
+    mpval=cbind(mpval,restmp$pvalue)
+    final=restmp
+    x=rownames(restmp)
+    ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
+    gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+    restmp=cbind(ensID,gene,restmp)
+    write.table(restmp,file=paste("DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt",sep=""),sep="\t",col.names=NA) 
+    
+    #Reformatted DEG File
+    deseq2out=read.table(paste("DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt",sep=""),header = TRUE)
+    deseq2out=deseq2out[,which(names(deseq2out) %in% c("X", "gene","log2FoldChange","pvalue"))]
+    deseq2out$fc=2^deseq2out$log2FoldChange
+    down_reg=deseq2out$log2FoldChange<0
+    deseq2out$fc[down_reg]=-1/deseq2out$fc[down_reg]
+    deseq2out=deseq2out[,c("X","gene","fc","log2FoldChange","pvalue")]
+    colnames(deseq2out)=c("ensid_gene","gene","fc","log2fc","pvalue")
+    deseq2out$fdr=p.adjust(deseq2out$pvalue,method='fdr',n=length(deseq2out$pvalue))
+    deseq2out$gsea_ranking_score=-log10(deseq2out$pvalue)*sign(deseq2out$log2fc)
+    write.table(deseq2out,file=paste("DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt",sep=""),row.names=FALSE,col.names=TRUE,quote=FALSE,sep="\t")
+    
+    ## Pathway enrichment analysis
+    if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38") {
+      iup=which(final$pvalue<0.05 & final$FoldChange >=0)
+      idw=which(final$pvalue<0.05 & final$FoldChange <0)
+      fin.up=final[iup,]
 
-#Reformatted DEG File
-deseq2out=read.table(paste("DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt",sep=""),header = TRUE)
-deseq2out=deseq2out[,which(names(deseq2out) %in% c("X", "gene","log2FoldChange","pvalue"))]
-deseq2out$fc=2^deseq2out$log2FoldChange
-down_reg=deseq2out$log2FoldChange<0
-deseq2out$fc[down_reg]=-1/deseq2out$fc[down_reg]
-deseq2out=deseq2out[,c("X","gene","fc","log2FoldChange","pvalue")]
-colnames(deseq2out)=c("ensid_gene","gene","fc","log2fc","pvalue")
-deseq2out$fdr=p.adjust(deseq2out$pvalue,method='fdr',n=length(deseq2out$pvalue))
-deseq2out$gsea_ranking_score=-log10(deseq2out$pvalue)*sign(deseq2out$log2fc)
-write.table(deseq2out,file=paste("DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt",sep=""),row.names=FALSE,col.names=TRUE,quote=FALSE,sep="\t")
+      if (length(iup) > 500) {
+         fin.up=fin.up[order(fin.up$pvalue),]
+         fin.up=fin.up[1:500,]
+      }
 
-## pathway enrichment --------------------------------------------
-if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38")
-{
-iup=which(final$pvalue<0.05 & final$FoldChange >=0)
-idw=which(final$pvalue<0.05 & final$FoldChange <0)
-fin.up=final[iup,]
-if (length(iup) > 500)
-  {
-   fin.up=fin.up[order(fin.up$pvalue),]
-   fin.up=fin.up[1:500,]
-  }
-x2=rownames(fin.up)
-gup=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+    x2=rownames(fin.up)
+    gup=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+    fin.dw=final[idw,]
 
-fin.dw=final[idw,]
-if (length(idw) > 500)
-  {
-   fin.dw=fin.dw[order(fin.dw$pvalue),]
-   fin.dw=fin.dw[1:500,]
-  }
-x2=rownames(fin.dw)
-gdw=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+      if (length(idw) > 500) {
+         fin.dw=fin.dw[order(fin.dw$pvalue),]
+         fin.dw=fin.dw[1:500,]
+      }
+    x2=rownames(fin.dw)
+    gdw=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+    extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
 
-extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
-if (SPECIES=="hg19" | SPECIES=="hg38")
-{
-write.table(gup,paste0("DESeq2_gene_up_path",extension),quote=F,row.names=F,col.names=F)
-write.table(gdw,paste0("DESeq2_gene_dw_path",extension),quote=F,row.names=F,col.names=F)
-}
-else
-{
-write.table(gup,"DESeq2_temp_up.txt",quote=F,row.names=F,col.names=F)
-write.table(gdw,"DESeq2_temp_dw.txt",quote=F,row.names=F,col.names=F)
-system(paste0("cat DESeq2_temp_up.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >DESeq2_gene_up_path",extension))
-system(paste0("cat DESeq2_temp_dw.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >DESeq2_gene_dw_path",extension))
-}
-# extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
-system(paste0("cat DESeq2_gene_up_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >DESeq2_res_path_up",extension))
-system(paste0("cat DESeq2_gene_dw_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >DESeq2_res_path_dw",extension))
-
-mup=read.delim(paste0("DESeq2_res_path_up",extension),header=F)
-mdw=read.delim(paste0("DESeq2_res_path_dw",extension),header=F)
-colnames(mup)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
-colnames(mdw)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
-
-#mup=mup[which(mup[,1]<0.05),]
-#mdw=mdw[which(mdw[,1]<0.05),]
-
-mup=mup[which(mup[,1]<0.05 & mup[,4]>=5),]
-mdw=mdw[which(mdw[,1]<0.05 & mdw[,4]>=5),]
-
-mup=mup[order(mup[,1]),]
-mdw=mdw[order(mdw[,1]),]
-mup=mup[,c(8,9,10,11,1:7,12)]
-mdw=mdw[,c(8,9,10,11,1:7,12)]
+      if (SPECIES=="hg19" | SPECIES=="hg38") {
+        write.table(gup,paste0("DESeq2_gene_up_path",extension),quote=F,row.names=F,col.names=F)
+        write.table(gdw,paste0("DESeq2_gene_dw_path",extension),quote=F,row.names=F,col.names=F)
+      } 
+      else {
+        write.table(gup,"DESeq2_temp_up.txt",quote=F,row.names=F,col.names=F)
+        write.table(gdw,"DESeq2_temp_dw.txt",quote=F,row.names=F,col.names=F)
+        system(paste0("cat DESeq2_temp_up.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >DESeq2_gene_up_path",extension))
+        system(paste0("cat DESeq2_temp_dw.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >DESeq2_gene_dw_path",extension))
+      }
+      # extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
+      system(paste0("cat DESeq2_gene_up_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >DESeq2_res_path_up",extension))
+      system(paste0("cat DESeq2_gene_dw_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >DESeq2_res_path_dw",extension))
+      
+      mup=read.delim(paste0("DESeq2_res_path_up",extension),header=F)
+      mdw=read.delim(paste0("DESeq2_res_path_dw",extension),header=F)
+      colnames(mup)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
+      colnames(mdw)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
+      
+      mup=mup[which(mup[,1]<0.05 & mup[,4]>=5),]
+      mdw=mdw[which(mdw[,1]<0.05 & mdw[,4]>=5),]
+      
+      mup=mup[order(mup[,1]),]
+      mdw=mdw[order(mdw[,1]),]
+      mup=mup[,c(8,9,10,11,1:7,12)]
+      mdw=mdw[,c(8,9,10,11,1:7,12)]
 
 
-pup[[i]] <- DT::datatable(mup, caption=htmltools::tags$caption(paste0("Pathways for top 500 up-regulated genes ",contras[i],"_vs_",contras[i+1]) ,style="color:red; font-size: 18px" ),rownames=F)
-pdw[[i]] <- DT::datatable(mdw, caption=htmltools::tags$caption(paste0("Pathways for top 500 down-regulated genes ",contras[i],"_vs_",contras[i+1]) ,style="color:green; font-size: 18px" ),rownames=F )
+      pup[[i]] <- DT::datatable(mup, extensions = 'Responsive', caption=htmltools::tags$caption(paste0("Pathways for top 500 up-regulated genes ",contras[i],"_vs_",contras[i+1]) ,style="color:gray; font-size: 18px" ),rownames=F)
+      pdw[[i]] <- DT::datatable(mdw, extensions = 'Responsive', caption=htmltools::tags$caption(paste0("Pathways for top 500 down-regulated genes ",contras[i],"_vs_",contras[i+1]) ,style="color:gray; font-size: 18px" ),rownames=F )
+      
+      }
 
-}
-## ------------------------------------------------------------------
+    x=res1$log2FoldChange[which(!is.na(res1$log2FoldChange))] 
+    png(paste("MAplot_",contras[i],"_vs_",contras[i+1],".png",sep=""))
+    plotMA(res,ylim=range(x),main=paste("MAplot_",contras[i],"_vs_",contras[i+1],sep=""))
+    ##dev.copy(png,paste("DESeq2_MAplot_",contras[i],"_vs_",contras[i+1],".png",sep=""))
+    dev.off()
 
+    # Volcano Plots
+    # logFC and pvalue
+    log_FC=res1$log2FoldChange
+    log_pval=-log10(res1$pvalue)
+    Significant=rep("NotSignificant",length(log_FC))
+    Significant[which(res1$pvalue<0.05 & abs(res1$log2FoldChange)>=1)]="Significant&LogFoldChange"
+    Significant[which(res1$pvalue<0.05 & abs(res1$log2FoldChange)<1)]="Significant"
+    Significant[which(res1$pvalue>=0.05 & abs(res1$log2FoldChange)>=1)]="LogFoldChange"
+    gene=rownames(res1)
+    volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
+    l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste(contras[i]," vs. ",contras[i+1],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 pvalue",range =c(0,15)))
+    
+    # logfc and FDR
+    log_FC=res1$log2FoldChange
+    log_pval=-log10(res1$padj)
+    Significant=rep("NotSignificant",length(log_FC))
+    Significant[which(res1$padj<0.05 & abs(res1$log2FoldChange)>=1)]="Significant&LogFoldChange"
+    Significant[which(res1$padj<0.05 & abs(res1$log2FoldChange)<1)]="Significant"
+    Significant[which(res1$padj>=0.05 & abs(res1$log2FoldChange)>=1)]="LogFoldChange"
+    gene=rownames(res1)
+    volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
+    v_fdr[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste(contras[i]," vs. ",contras[i+1],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 FDR",range =c(0,15)))
 
-x=res1$log2FoldChange[which(!is.na(res1$log2FoldChange))] 
-png(paste("MAplot_",contras[i],"_vs_",contras[i+1],".png",sep=""))
-plotMA(res,ylim=range(x),main=paste("MAplot_",contras[i],"_vs_",contras[i+1],sep=""))
-##dev.copy(png,paste("DESeq2_MAplot_",contras[i],"_vs_",contras[i+1],".png",sep=""))
-dev.off()
-# Volcano
+    if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
+      system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt 1 3 ",SPECIES," ",KARYOBEDS," > DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo"))
+      system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo ",SPECIES))
+      ki1=paste0("DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo1.png")
+      ki2=paste0("DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo2.png")
+    }
 
-log_FC=res1$log2FoldChange
-log_pval=-log10(res1$pvalue)
-Significant=rep("NotSignificant",length(log_FC))
-Significant[which(res1$pvalue<0.05 & abs(res1$log2FoldChange)>=1)]="Significant&LogFoldChange"
-Significant[which(res1$pvalue<0.05 & abs(res1$log2FoldChange)<1)]="Significant"
-Significant[which(res1$pvalue>=0.05 & abs(res1$log2FoldChange)>=1)]="LogFoldChange"
-gene=rownames(res1)
-volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
-l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 pvalue",range =c(0,10)))
-
-#l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Log2_FC",range =c(-10,10)),yaxis=list(title="-Log10_pvalue",range=c(0,10)))
-#  %>% layout(annotations = a)
-
-if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype)))
-{
-system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt 1 3 ",SPECIES," ",KARYOBEDS," > DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo"))
-system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo ",SPECIES))
-ki1=paste0("DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo1.png")
-ki2=paste0("DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo2.png")
-cat("\n###KARYO PLOT",contras[i],"_vs_",contras[i+1],"\n")
-cat("![](",ki1,")")
-cat("\n")
-cat("![](",ki2,")")
-cat("\n\n")
+    if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
+      system(paste0("cd ",getwd(),";/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/r_env/bin/Rscript ../Scripts/karyoploter.R -o deseq2 -d DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt -c ", params$karyotext, " -g ", SPECIES))
+    }
 }
 
-}}
+```
 
+```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis', fig.width=6, fig.height=7}
 colnames(mfc)=paste(cons,"FC",sep="_")
 colnames(mpval)=paste(cons,"pval",sep="_")
 res=as.data.frame(cbind(mfc,mpval))
 rownames(res)=rownames(res1)
 write.table(res,file="DESeq2_res_all_contrasts.txt",sep="\t",col.names=NA)
+#DT::datatable(res, caption=htmltools::tags$caption("DEG for contrast",style="color:grey; font-size: 18px" ))
+DT::datatable(deseq2out, extensions = 'Buttons', options = list(dom = 'Bfrtip', buttons = c('colvis','excel', 'csv'), pageLength = 15))
+```
 
+
+## **Volcano Plots** {.tabset}
+
+### p-value
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.width=6, fig.height=7}
 l
-
-pup
-
-pdw
-
-DT::datatable(res, caption=htmltools::tags$caption("DEG for all contrasts",style="color:blue; font-size: 18px" ))
 ```
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+### FDR
 
-sessionInfo()
+```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.width=6, fig.height=7}
+v_fdr
+```
+
+## **Karyoplots: Significant Genes** {.tabset .tabset-fade .tabset-pills}
+
+### Page1
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
+  cat("![](deseq2_karyoplot1.png)")
+} else {
+  cat("Genome Not Supported")
+}
 
 ```
 
+### Page2
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
+  cat("![](deseq2_karyoplot2.png)")
+} else {
+  cat("Genome Not Supported")
+}
+```
+
+
+## **Karyoplots: Binned Expression** {.tabset .tabset-fade .tabset-pills}
+
+### Page1
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
+  cat("![](",ki1,")")
+} else {
+  cat("Genome Not suporrted")
+}
+```
+
+### Page2
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
+  cat("![](",ki2,")")
+} else {
+  cat("Genome Not Supported")
+}
+```
+  
+
+## **Enriched Pathways** {.tabset}
+
+### Up-Regulated
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38"){
+  pup
+} else {
+  cat("Genome Not Supported")
+}
+```
+
+### Down-Regulated
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38"){
+  pdw
+} else {
+  cat("Genome Not Supported")
+}
+```
