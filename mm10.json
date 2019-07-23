@@ -258,7 +258,7 @@
     "MUTECTSNP": ""
 },
         "ChIPseq":{
-            "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.blacklist.chrM",
+            "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.blacklist.chrM.chr_rDNA",
             "BWA": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10",
             "BOWTIE2INDEX": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10",
             "CHROMS": ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10",
