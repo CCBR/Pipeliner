@@ -70,6 +70,8 @@
         "fusioncatcher": ["rnaseqfusion"],
         "fusioninsp_starfus": ["rnaseqfusion"],
         "fusioninsp_fuscatch": ["rnaseqfusion"],
+        "fusioninsp": ["rnaseqfusion"],
+        "oncofuse": ["rnaseqfusion"],
         "oncofuse_fuscatch": ["rnaseqfusion"],
         "oncofuse_starfus": ["rnaseqfusion"],
         "cnvkit_somatic": ["none"],

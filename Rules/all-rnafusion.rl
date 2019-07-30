@@ -32,10 +32,12 @@ if config['project']['annotation'] == "hg19":
            expand("{name}.rsem.genes.results",name=samples),
            "RawCountFile_RSEM_genes_filtered.txt",
            expand("QC/{x}_readlength.txt",x=samples),
+           expand("fusioninspector/{x}/{x}.fusion_predictions.final",x=samples),
+           expand("oncofuse/{x}/{x}.oncofuse.output",x=samples)
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.4; multiqc -f .; rm *featureCounts; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
+             Scripts/fusionSummary.sh; module load multiqc/1.7; multiqc -f .; rm *featureCounts; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
 
             """
 
@@ -73,10 +75,12 @@ elif config['project']['annotation'] == "hg38":
            expand("{name}.rsem.genes.results",name=samples),
            "RawCountFile_RSEM_genes_filtered.txt",
            expand("QC/{x}_readlength.txt",x=samples),
+           expand("fusioninspector/{x}/{x}.fusion_predictions.final",x=samples),
+           expand("oncofuse/{x}/{x}.oncofuse.output",x=samples)
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.4; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
+             Scripts/fusionSummary.sh; module load multiqc/1.7; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
 
             """
 
@@ -110,9 +114,11 @@ elif config['project']['annotation'] == "mm10":
            expand("{name}.rsem.genes.results",name=samples),
            "RawCountFile_RSEM_genes_filtered.txt",
            expand("QC/{x}_readlength.txt",x=samples),
+           expand("fusioninspector/{x}/{x}.fusion_predictions.final",x=samples),
+           expand("oncofuse/{x}/{x}.oncofuse.output",x=samples)
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.4; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
+             Scripts/fusionSummary.sh; module load multiqc/1.7; multiqc -f .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
 
             """

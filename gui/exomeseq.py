@@ -64,10 +64,10 @@ class ExomeSeqFrame( PipelineFrame ) :
 
         if self.genome=="hg19":
             self.targetspath.set( 
-                "/data/CCBR_Pipeliner/db/PipeDB/lib/SS_v5_UTRs_hg19.bed" )
+                "/data/CCBR_Pipeliner/db/PipeDB/lib/Agilent_SSv7_allExons_hg19.bed" )
         elif self.genome=="hg38":
             self.targetspath.set( 
-                "/data/CCBR_Pipeliner/db/PipeDB/lib/SS_v5_UTRs_hg38.bed" )
+                "/data/CCBR_Pipeliner/db/PipeDB/lib/Agilent_SSv7_allExons_hg38.bed" )
         else:
             self.targetspath.set(
                 "/data/CCBR_Pipeliner/db/PipeDB/lib/SureSelect_mm10.bed")

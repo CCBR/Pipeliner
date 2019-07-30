@@ -767,6 +767,11 @@
         "threads": "32",
         "time": "3-00:00:00"
     },
+    "fusioninspector": {
+        "mem": "48g",
+        "threads": "16",
+        "time": "3-00:00:00"
+    },
     "stats": {
         "gres": "lscratch:256",
         "mem": "110g",
