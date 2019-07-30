@@ -48,7 +48,7 @@ for d in [trim_dir,kraken_dir,bams_dir,star_dir,log_dir,rseqc_dir,preseq_dir,deg
 if pe=="yes":
 
    rule all:
-      params: 
+      params:
         batch='--time=168:00:00',
         # rname='pl:all',
       input:
@@ -85,7 +85,7 @@ if pe=="yes":
 
         # QualiMap (bamQC and counts)
         expand(join(workpath,"QualiMap","{name}","qualimapReport.html"),name=samples),
-        join(workpath,"QualiMap","GlobalReport.html"),
+        # join(workpath,"QualiMap","GlobalReport.html"),
 
         # RSEM merge and counts 
         join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
@@ -381,8 +381,8 @@ if se=="yes":
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
 
         # QualiMap
-        join(workpath,"QualiMap","GlobalReport.html"),
- 
+        # join(workpath,"QualiMap","GlobalReport.html"),
+
         # RSEM
         join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
         join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),

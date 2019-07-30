@@ -333,7 +333,6 @@ class PipelinerGUI(Tk):
 
 if __name__ == "__main__":
     gui = PipelinerGUI()
-    gui.title('CCBR Pipeliner')
+    gui.title('CCBR Pipeliner: 4.0')
     gui.mainloop()
 
-    

@@ -152,6 +152,7 @@
     "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/genes.ref.bed", 
     "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/geneinfo.bed",
     "KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/dev/karyobeds/hg.v19/", 
+    "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/karyoplot_gene_coordinates.txt",
     "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/rsemref/hs37d5",
     "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/hs37d5.rRNA_interval_list",
 

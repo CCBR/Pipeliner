@@ -131,6 +131,7 @@
 "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/genes.gtf",
 "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/STAR/2.5.2b/genes-",
 "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/qualimap_info.txt",
+"KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/karyoplot_gene_coordinates.txt",
 "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/annotate.genes.txt",
 "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/annotate.isoforms.txt",
 "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/refFlat.txt",
@@ -257,7 +258,7 @@
     "MUTECTSNP": ""
 },
         "ChIPseq":{
-            "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.blacklist.chrM",
+            "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.blacklist.chrM.chr_rDNA",
             "BWA": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10",
             "BOWTIE2INDEX": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10",
             "CHROMS": ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10",

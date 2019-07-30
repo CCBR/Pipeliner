@@ -13,6 +13,7 @@
  			"BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/genes.ref.bed",
  			"GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/geneinfo.bed",
  			"KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/dev/karyobeds/hg38_HPV16/",
+                        "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/karyoplot_gene_coordinates.txt",
  			"RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/rsemref/hg38_HPV16",
  			"RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_HPV16/hg38_HPV16.rRNA_interval_list",
  			"FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",

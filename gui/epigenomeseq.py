@@ -500,7 +500,7 @@ class ChIPSeqFrame( PipelineFrame ) :
                 'analyst': gi.eanalyst.get(), 
                 'poc': gi.epoc.get(), 
                 'pipeline': self.Pipeline.get(), 
-                'version':"1.0", 
+                'version':"4.0", 
                 'annotation': gi.annotation.get(), 
                 'datapath': self.datapath.get(), 
                 'targetspath': self.targetspath.get(), 

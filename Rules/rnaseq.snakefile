@@ -131,10 +131,10 @@ Rscript {params.rscript} {params.outdir} {wildcards.group1} {wildcards.group2} {
 """
 
 rule EBSeq_isoform:
-  input: 
+  input:
     sampletable=join(workpath,"DEG_{con}_{cpm}_{minsamples}","sampletable.txt"),
     isoformCounts=expand(join(workpath,"DEG_ALL","{name}.RSEM.isoforms.results"),name=samples),
-  output: 
+  output:
     join(workpath,"DEG_{con}_{cpm}_{minsamples}","EBSeq_isoform_completed.txt"),
   params:
     rname='pl:EBSeq_isoform',
@@ -156,10 +156,10 @@ python {params.script1} '{params.outdir}' '{input.isoformCounts}' '{input.sample
 """
 
 rule EBSeq_gene:
-  input: 
+  input:
     sampletable=join(workpath,"DEG_{con}_{cpm}_{minsamples}","sampletable.txt"),
     geneCounts=expand(join(workpath,"DEG_ALL","{name}.RSEM.genes.results"), name=samples),
-  output: 
+  output:
     join(workpath,"DEG_{con}_{cpm}_{minsamples}","EBSeq_gene_completed.txt"),
   params:
     rname='pl:EBSeq_gene',
@@ -198,6 +198,7 @@ rule deseq2:
 		projDesc=config['project']['description'].rstrip('\n'),
 		gtffile=config['references'][pfamily]['GTFFILE'],
 		karyobeds=config['references'][pfamily]['KARYOBEDS'],
+		karyotxt=config['references'][pfamily]['KARYOPLOTER'],
 		rver=config['bin'][pfamily]['tool_versions']['RVER'],
 		rscript1=join(workpath,"Scripts","deseq2call.R"),
 		rscript2=join(workpath,"Scripts","Deseq2Report.Rmd"),
@@ -206,7 +207,7 @@ cp {params.rscript1} {params.outdir}
 cp {params.rscript2} {params.outdir}
 cd {params.outdir}
 module load {params.rver}
-Rscript deseq2call.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}'
+Rscript deseq2call.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}' '{params.karyotxt}'
 """
 
 
@@ -217,7 +218,7 @@ rule edgeR:
   output:
     join(workpath,"DEG_{con}_{cpm}_{minsamples}","edgeR_prcomp.png"),
     join(workpath,"DEG_{con}_{cpm}_{minsamples}","edgeR_DEG_{con}_all_genes.txt"),
-  params: 
+  params:
     rname='pl:edgeR',
     batch='--mem=24g --time=10:00:00',
     outdir=join(workpath,"DEG_{con}_{cpm}_{minsamples}"),
@@ -228,6 +229,7 @@ rule edgeR:
     projDesc=config['project']['description'].rstrip('\n'),
     gtffile=config['references'][pfamily]['GTFFILE'],
     karyobeds=config['references'][pfamily]['KARYOBEDS'],
+    karyotxt=config['references'][pfamily]['KARYOPLOTER'],
     rver=config['bin'][pfamily]['tool_versions']['RVER'],
     rscript1=join(workpath,"Scripts","edgeRcall.R"),
     rscript2=join(workpath,"Scripts","EdgerReport.Rmd"),
@@ -236,14 +238,14 @@ cp {params.rscript1} {params.outdir}
 cp {params.rscript2} {params.outdir}
 cd {params.outdir}
 module load {params.rver}
-Rscript edgeRcall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}'
+Rscript edgeRcall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}' '{params.karyotxt}'
 """
 
 rule limmavoom:
-  input: 
+  input:
     file1=join(workpath,"DEG_{con}_{cpm}_{minsamples}","sampletable.txt"),
     file2=join(workpath,"DEG_{con}_{cpm}_{minsamples}","RawCountFile_RSEM_genes_filtered.txt"),
-  output: 
+  output:
     join(workpath,"DEG_{con}_{cpm}_{minsamples}","limma_MDS.png"),
     join(workpath,"DEG_{con}_{cpm}_{minsamples}","limma_DEG_{con}_all_genes.txt"),
   params:
@@ -257,6 +259,7 @@ rule limmavoom:
     projDesc=config['project']['description'].rstrip('\n'),
     gtffile=config['references'][pfamily]['GTFFILE'],
     karyobeds=config['references'][pfamily]['KARYOBEDS'],
+    karyotxt=config['references'][pfamily]['KARYOPLOTER'],
     rver=config['bin'][pfamily]['tool_versions']['RVER'],
     rscript1=join(workpath,"Scripts","limmacall.R"),
     rscript2=join(workpath,"Scripts","LimmaReport.Rmd"),
@@ -265,16 +268,16 @@ cp {params.rscript1} {params.outdir}
 cp {params.rscript2} {params.outdir}
 cd {params.outdir}
 module load {params.rver}
-Rscript limmacall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}'
+Rscript limmacall.R '{params.outdir}' '{input.file1}' '{input.file2}' '{params.contrasts}' '{params.refer}' '{params.projectId}' '{params.projDesc}' '{params.gtffile}' '{params.dtype}' '{params.karyobeds}' '{params.karyotxt}'
 """
 
 rule pca:
-  input: 
+  input:
     file1=join(workpath,"DEG_{dtype}","sampletable.txt"),
     file2=join(workpath,"DEG_{dtype}","RawCountFile_RSEM_genes_filtered.txt"),
-  output: 
+  output:
     outhtml=join(workpath,"DEG_{dtype}","PcaReport.html")
-  params: 
+  params:
     rname='pl:pca',
     batch='--mem=24g --time=10:00:00',
     outdir=join(workpath,"DEG_{dtype}"),
