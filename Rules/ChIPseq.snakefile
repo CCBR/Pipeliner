@@ -153,10 +153,12 @@ FileTypesIDR = { 'macs_narrow': 'narrowPeak', 'macs_broad': 'broadPeak',
 RankColIDR = { 'macs_narrow': 'q.value', 'macs_broad': 'q.value',
                'sicer': 'q.value' }
 
+UropaCats = ["allgenes","protcoding"]
+
 IDRgroup, IDRsample1, IDRsample2, IDRpeaktool =	outputIDR(groupswreps, groupdata, chip2input, PeakToolsNG)
 
 zipSample, zipTool, zipExt = zip_peak_files(chips, PeakTools, PeakExtensions)
-zipGroup1, zipGroup2, zipTool, contrasts = zip_contrasts(contrast, PeakTools)
+zipGroup1, zipGroup2, zipToolC, contrasts = zip_contrasts(contrast, PeakTools)
 
 #########
 # CREATING DIRECTORIES
@@ -193,9 +195,9 @@ if reps == "yes":
             expand(join(workpath,"gem","{name}","{name}.GEM_events.narrowPeak"),name=chips),
             join(workpath,"FRiP_barplot.png"),
             expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
-            expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}"),PeakTool=PeakToolsNG,name=chips),
+            expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_GW"),PeakTool=PeakToolsNG,name=chips),
             expand(join(workpath,homer2_dir,'{PeakTool}',"{name}_{PeakTool}_annotations.txt"),PeakTool=PeakTools_narrow,name=chips),
-            expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_allhits.txt'),PeakTool=PeakTools,name=chips),
+            expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_{type}_allhits.txt'),PeakTool=PeakTools,name=chips,type=UropaCats),
             expand(join(workpath,idr_dir,'{PeakTool}','{group}','{sample1}_vs_{sample2}.idrValue.txt'),zip,PeakTool=IDRpeaktool,group=IDRgroup,sample1=IDRsample1,sample2=IDRsample2),
 #            expand(join(workpath,diffbind_dir,"{PeakTool}_diffbind_prep.csv"),PeakTool=PeakTools),
 else:
@@ -206,11 +208,12 @@ else:
             expand(join(workpath,"sicer","{name}","{name}_broadpeaks.bed"),name=chips),
             expand(join(workpath,"gem","{name}","{name}.GEM_events.narrowPeak"),name=chips),
             expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
-            expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}"),PeakTool=PeakToolsNG,name=chips),
+            expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_GW"),PeakTool=PeakToolsNG,name=chips),
+            expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_GW"),PeakTool="MANorm",name=contrasts),
             expand(join(workpath,homer2_dir,'{PeakTool}',"{name}_{PeakTool}_annotations.txt"),PeakTool=PeakTools_narrow,name=chips),
-            expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_allhits.txt'),PeakTool=PeakTools,name=chips),
-            expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_allhits.txt'),PeakTool="MANorm",name=contrasts),
-            expand(join(workpath,manorm_dir,"{group1}_vs_{group2}-{tool}","{group1}_vs_{group2}-{tool}_all_MAvalues.xls"),zip,group1=zipGroup1,group2=zipGroup2,tool=zipTool),
+            expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_{type}_allhits.txt'),PeakTool=PeakTools,name=chips,type=UropaCats),
+            expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_{type}_allhits.txt'),PeakTool="MANorm",name=contrasts,type=UropaCats),
+            expand(join(workpath,manorm_dir,"{group1}_vs_{group2}-{tool}","{group1}_vs_{group2}-{tool}_all_MAvalues.xls"),zip,group1=zipGroup1,group2=zipGroup2,tool=zipToolC),
 
 
 ##########
@@ -509,56 +512,6 @@ else
 fi
 """
 
-if False:
-  rule ChIPQC:
-    input:
-        lambda w: [ join(workpath, w.PeakTool, chip, chip + PeakExtensions[w.PeakTool]) for chip in chips ]
-    output:
-        join(workpath,chipQC_dir,'{PeakTool}','ChIPQCreport.html'),
-    params:
-        rname="pl:ChIPQC",
-        genomever = config['project']['annotation'],
-        Rver = config['bin'][pfamily]['tool_versions']['RVER'],
-        chrom = "chr1"
-    run:
-        samplesheet = ["\t".join(["SampleID","Condition", "Replicate", "bamReads", "ControlID", "bamControl", "Peaks", "PeakCaller"])]
-        for chip in chips:
-            file = join(workpath, wildcards.PeakTool, chip, chip + PeakExtensions[wildcards.PeakTool])
-            peaksNum = peaks_per_chrom(file, params.chrom)
-            if peaksNum > 1:
-                condition = [ key for key,value in groupdata.items() if chip in value ][0]
-                replicate = str([ i + 1 for i in range(len(groupdata[condition])) if groupdata[condition][i]== chip ][0])
-                bamReads = join(workpath, bam_dir, chip + ".sorted.Q5DD.bam")
-                controlID = chip2input[chip]
-                if controlID != "":
-                    bamControl = join(workpath, bam_dir, controlID + ".sorted.Q5DD.bam")
-                else:
-                    bamControl = ""
-                peaks = join(workpath, wildcards.PeakTool, chip, chip + PeakExtensions[wildcards.PeakTool])
-                peakcaller = FileTypesChIPQC[wildcards.PeakTool]
-                samplesheet.append("\t".join([chip, condition, replicate, bamReads, controlID, bamControl, peaks, peakcaller]))
-
-        csvfile = join(workpath,chipQC_dir,wildcards.PeakTool + "_ChIPQC_prep.csv") 
-        f = open(csvfile, 'w')
-        f.write ("\n".join(samplesheet))
-        f.close()
-
-        R_string = """
-        library(ChIPQC)
-        samples <- read.table('{tab}', header=1, sep="\\t")
-        samples
-        result <- ChIPQC(samples, annotation='{genome}', chromosomes='{chr}')
-        result
-        ChIPQCreport( result, reportName="ChIPQCreport", reportFolder="ChIPQC/{caller}" )
-        """.format( tab=csvfile, caller=wildcards.PeakTool, genome=params.genomever , chr=params.chrom )
-        
-        rscript_fn = join(workpath, chipQC_dir, "chipqc_run_" + wildcards.PeakTool + ".R")
-        of=open(rscript_fn,'w')
-        of.write(R_string)
-        of.close()
-        
-        shell("module load {params.Rver}; Rscript {rscript_fn}")
-
 # double list of sample1 and sample2 with different names are designed as a work around to deal with snakemake flow rules
 
 rule IDR:
@@ -598,40 +551,47 @@ rule HOMER_motif:
     input:
         lambda w: [ join(workpath, w.PeakTool, w.name, w.name + PeakExtensions[w.PeakTool]) ]
     output:
-        join(workpath, homer_dir,'{PeakTool}',"{name}_{PeakTool}")
+        gw=join(workpath, homer_dir,'{PeakTool}',"{name}_{PeakTool}_GW"),
+        tss=join(workpath, homer_dir,'{PeakTool}',"{name}_{PeakTool}_TSS")
     params:
         rname="pl:HOMER_motif",
         homerver = config['bin'][pfamily]['tool_versions']['HOMERVER'],
         genomever = config['project']['annotation'],
-    threads: 16
+    threads: 48
     run:
         commoncmd3="module load {params.homerver}; "
         if wildcards.PeakTool in PeakTools_broad:
-            cmd="findMotifsGenome.pl {input} {params.genomever} {output} -size given -p {threads} -preparsedDir /lscratch/$SLURM_JOBID"
+            cmd="findMotifsGenome.pl {input} {params.genomever} {output.gw} -size given -p {threads} -preparsedDir /lscratch/$SLURM_JOBID; "
+            cmd1="findMotifs.pl {input} {params.genomever} {output.tss} -start -1000 -end 100 -p {threads} -preparsedDir /lscratch/$SLURM_JOBID"
         else:
-            cmd="findMotifsGenome.pl {input} {params.genomever} {output} -p {threads} -preparsedDir /lscratch/$SLURM_JOBID"
-        shell(commoncmd3 + cmd)
+            cmd="findMotifsGenome.pl {input} {params.genomever} {output.gw} -p {threads} -preparsedDir /lscratch/$SLURM_JOBID; "
+            cmd1="findMotifs.pl {input} {params.genomever} {output.tss} -start -1000 -end 100 -p {threads}"
+        shell(commoncmd3 + cmd + cmd1)
 
 rule UROPA:
     input:
         lambda w: [ join(workpath, w.PeakTool, w.name, w.name + PeakExtensions[w.PeakTool]) ]
     output:
-        join(workpath, uropa_dir, '{PeakTool}', '{name}_{PeakTool}_uropa_allhits.txt')
+        join(workpath, uropa_dir, '{PeakTool}', '{name}_{PeakTool}_uropa_{type}_allhits.txt')
     params:
         rname="pl:uropa",
         uropaver = config['bin'][pfamily]['tool_versions']['UROPAVER'],
         fldr = join(workpath, uropa_dir, '{PeakTool}'),
-        json = join(workpath, uropa_dir, '{PeakTool}','{name}.json'),
-        outroot = join(workpath, uropa_dir, '{PeakTool}','{name}_{PeakTool}_uropa'),
+        json = join(workpath, uropa_dir, '{PeakTool}','{name}.{type}.json'),
+        outroot = join(workpath, uropa_dir, '{PeakTool}','{name}_{PeakTool}_uropa_{type}'),
         gtf = config['references']['ChIPseq']['GTFFILE'],
-        attributefilter = '"filter.attribute":"gene_type","attribute.value":"protein_coding",'
     threads: 4
     shell: """
 module load {params.uropaver};
 if [ ! -e {params.fldr} ]; then mkdir {params.fldr}; fi
 echo '{{"queries":[ ' > {params.json}
-echo '      {{ "feature":"gene","distance":5000,{params.attributefilter}"show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
-echo '      {{ "feature":"gene",{params.attributefilter}"show.attributes":["gene_id", "gene_name","gene_type"] }}],' >> {params.json}
+if [ '{wildcards.type}' == '_protcoding_' ]; then
+     echo '      {{ "feature":"gene","distance":5000,"filter.attribute":"gene_type","attribute.value":"protein_coding","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
+     echo '      {{ "feature":"gene","filter.attribute":"gene_type","attribute.value":"protein_coding","show.attributes":["gene_id", "gene_name","gene_type"] }}],' >> {params.json}
+else
+     echo '      {{ "feature":"gene","distance":5000,"filter.attribute":"gene_type","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
+     echo '      {{ "feature":"gene","filter.attribute":"gene_type","show.attributes":["gene_id", "gene_name","gene_type"] }}],' >> {params.json}
+fi
 echo '"priority":"Yes",' >> {params.json}
 echo '"gtf":"{params.gtf}",' >> {params.json}
 echo '"bed": "{input}" }}' >> {params.json}
@@ -671,7 +631,8 @@ module load {params.homerver}
 annotatePeaks.pl {input} {params.genomever} > {output}
 """
 
-rule diffbind:
+if False:
+   rule diffbind:
     input:
         lambda w: [ join(workpath, w.PeakTool, chip, chip + PeakExtensions[w.PeakTool]) for chip in chips ]
     output:
@@ -709,6 +670,56 @@ rule diffbind:
         cmd2 = "Rscript runDiffBind.R '.' '{output.html}' '{params.contrast}' '{wildcards.PeakTool}' '{params.projectID}' '{params.projDesc}'"
         shell( cmd1 + cmd2 )
 
+if se == "yes":
+    rule manorm:
+        input:
+            tAlign1 = lambda w: join(workpath,bam_dir, groupdata[w.group1][0] + ".sorted.Q5DD.tagAlign.gz"),
+            ppqt1 = lambda w: join(workpath,bam_dir, groupdata[w.group1][0] + ".sorted.Q5DD.ppqt"),
+            tAlign2 = lambda w: join(workpath,bam_dir, groupdata[w.group2][0] + ".sorted.Q5DD.tagAlign.gz"),
+            ppqt2 = lambda w: join(workpath,bam_dir, groupdata[w.group2][0] + ".sorted.Q5DD.ppqt"),
+            peak1 = lambda w: join(workpath, w.tool, groupdata[w.group1][0], groupdata[w.group1][0] + PeakExtensions[w.tool]),
+            peak2 = lambda w: join(workpath, w.tool, groupdata[w.group2][0], groupdata[w.group2][0] + PeakExtensions[w.tool]),
+        output:
+            fldr = join(workpath,manorm_dir,"{group1}_vs_{group2}-{tool}"),
+            xls = join(workpath,manorm_dir,"{group1}_vs_{group2}-{tool}","{group1}_vs_{group2}-{tool}_all_MAvalues.xls"),
+            bed = join(workpath,manorm_dir,"{group1}_vs_{group2}-{tool}","{group1}_vs_{group2}-{tool}_all_MA.bed")
+        params:
+            rname='pl:manorm',
+            bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
+            manormver="manorm/1.1.4"
+        run:
+            commoncmd1 = "if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi "
+            commoncmd2 = "cd /lscratch/$SLURM_JOBID; "
+            commoncmd3 = "module load {params.manormver}; module load {params.bedtoolsver}; "
+            cmd1 = "cp {input.tAlign1} tAlign1.tagAlign.gz; gzip -d tAlign1.tagAlign.gz; "
+            cmd2 = "cp {input.tAlign2} tAlign2.tagAlign.gz; gzip -d tAlign2.tagAlign.gz; "
+            cmd3 = "cut -f 1,2,3 {input.peak1} > peak1.bed; "
+            cmd4 = "cut -f 1,2,3 {input.peak2} > peak2.bed; "
+            file=list(map(lambda z:z.strip().split(),open(input.ppqt1,'r').readlines()))
+            extenders = []
+            for ppqt_value in file[0][2].split(","):
+                if int(ppqt_value) > 1:
+                    extenders.append(ppqt_value)
+            try:
+                extsize1 = extenders[0]
+            except IndexError:
+                extsize1 = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")
+            file=list(map(lambda z:z.strip().split(),open(input.ppqt2,'r').readlines()))
+            extenders = []
+            for ppqt_value in file[0][2].split(","):
+                if int(ppqt_value) > 1:
+                    extenders.append(ppqt_value)
+            try:
+                extsize2 = extenders[0]
+            except IndexError:
+                extsize2 = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")
+            cmd5 = "manorm --p1 peak1.bed --p2 peak2.bed --r1 tAlign1.tagAlign --r2 tAlign2.tagAlign --s1 " + extsize1  + " --s2 " + extsize2 + " -o {output.fldr} --name1 '" + wildcards.group1 + "' --name2 '" + wildcards.group2 + "'; "
+            cmd6 = "gzip {output.fldr}/output_tracks/*wig; "
+            cmd7 = "mv {output.fldr}/" + wildcards.group1 + "_vs_" + wildcards.group2 + "_all_MAvalues.xls {output.xls}; "
+            cmd8 = "tail -n +2 {output.xls} | nl -w2 | awk -v OFS='\t' '{{print $2,$3,$4,$9$1,$6}}' > {output.bed}"
+            shell(commoncmd1)
+            shell( commoncmd2 + commoncmd3 + cmd1 + cmd2 + cmd3 + cmd4 + cmd5 + cmd6 + cmd7 + cmd8 )
+
 if pe == "yes":
     rule manorm:
         input: 
@@ -721,7 +732,7 @@ if pe == "yes":
         output:
             fldr = join(workpath,manorm_dir,"{group1}_vs_{group2}-{tool}"),
             xls = join(workpath,manorm_dir,"{group1}_vs_{group2}-{tool}","{group1}_vs_{group2}-{tool}_all_MAvalues.xls"),
-            bed = tmp(join(workpath,manorm_dir,"{group1}_vs_{group2}-{tool}","{group1}_vs_{group2}-{tool}_all_MA.bed"))
+            bed = temp(join(workpath,manorm_dir,"{group1}_vs_{group2}-{tool}","{group1}_vs_{group2}-{tool}_all_MA.bed"))
         params:
             rname='pl:manorm',
             bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],

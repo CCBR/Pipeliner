@@ -29,6 +29,12 @@ def outputfiles2(groupslist, inputnorm):
     for group in groupslist:
             dtoolgroups.extend([group] * 2)
             dtoolext.extend([extensions[1], extensions[0]])
+    if len(inputnorm) == 2:
+            dtoolgroups.extend(["InputNorm.protcoding"])
+            dtoolext.extend([extensions[1]])
+    for group in groupslist:
+            dtoolgroups.extend([group + ".protcoding"] * 2)
+            dtoolext.extend([extensions[1], extensions[0]])
     return dtoolgroups, dtoolext
 
 se=""
@@ -566,26 +572,29 @@ rule deeptools_prep:
             o.write("%s\n"%(" ".join(labels)))
             o.close()
             if len(bws2) > 0:
-                o4=open(join(workpath,bw_dir,"InputNorm."+x+".RPGC.deeptools_prep"),'w')
-                o4.write("%s\n"%(x+".RPGC.inputnorm"))
-                o4.write("%s\n"%(" ".join(bws2)))
-                o4.write("%s\n"%(" ".join(labels2)))
-                o4.close()
+                for i in ["","protcoding."]:
+                    o4=open(join(workpath,bw_dir,"InputNorm."+i+x+".RPGC.deeptools_prep"),'w')
+                    o4.write("%s\n"%(x+".RPGC.inputnorm"))
+                    o4.write("%s\n"%(" ".join(bws2)))
+                    o4.write("%s\n"%(" ".join(labels2)))
+                    o4.close()
             for group in groups:
                 iter = [ i for i in range(len(labels)) if labels[i] in groupdatawinput[group] ]
                 bws3 = [ bws[i] for i in iter ]
                 labels3 = [ labels[i] for i in iter ]
                 bams3 = [ bams[i] for i in iter ]
-                o2=open(join(workpath,bam_dir,group+"."+x+".deeptools_prep"),'w')
-                o2.write("%s\n"%(x))
-                o2.write("%s\n"%(" ".join(bams3)))
-                o2.write("%s\n"%(" ".join(labels3)))
-                o2.close()
-                o3=open(join(workpath,bw_dir,group+"."+x+".RPGC.deeptools_prep"),'w')
-                o3.write("%s\n"%(x+".RPGC"))
-                o3.write("%s\n"%(" ".join(bws3)))
-                o3.write("%s\n"%(" ".join(labels3)))
-                o3.close()
+                for i in ["","protcoding."]:
+                    o2=open(join(workpath,bam_dir,group+"."+i+x+".deeptools_prep"),'w')
+                    o2.write("%s\n"%(x))
+                    o2.write("%s\n"%(" ".join(bams3)))
+                    o2.write("%s\n"%(" ".join(labels3)))
+                    o2.close()
+                for i in ["","protcoding."]:
+                    o3=open(join(workpath,bw_dir,group+"."+i+x+".RPGC.deeptools_prep"),'w')
+                    o3.write("%s\n"%(x+".RPGC"))
+                    o3.write("%s\n"%(" ".join(bws3)))
+                    o3.write("%s\n"%(" ".join(labels3)))
+                    o3.close()
 
 rule deeptools_QC:
     input:
@@ -685,7 +694,10 @@ rule deeptools_genes:
         ext=listfile[0][0]
         bws=listfile[1]
         labels=listfile[2]
-        cmd1="awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' "+params.prebed+" > "+output.bed
+        if "protcoding" in wildcards.group:
+            cmd1="grep --line-buffered 'protein_coding' "+ params.prebed  +" | awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' > "+output.bed
+        else:
+            cmd1="awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' "+params.prebed+" > "+output.bed
         cmd2="computeMatrix scale-regions -S "+" ".join(bws)+" -R "+output.bed+" -p "+params.nthreads+" --upstream 1000 --regionBodyLength 2000 --downstream 1000 --skipZeros -o "+output.metamat+" --samplesLabel "+" ".join(labels)
         cmd3="computeMatrix reference-point -S "+" ".join(bws)+" -R "+output.bed+" -p "+params.nthreads+" --referencePoint TSS --upstream 3000 --downstream 3000 --skipZeros -o "+output.TSSmat+" --samplesLabel "+" ".join(labels)
         cmd4="plotHeatmap -m "+output.metamat+" -out "+output.metaheat+" --colorMap 'PuOr_r' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
