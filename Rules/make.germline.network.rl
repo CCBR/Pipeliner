@@ -1,5 +1,5 @@
 rule make_germline_network:
-    input: "exome.strictFilter.vcf"
+    input: "exome.strictFilter.vcf.gz"
     output: network="sample_network_mqc.png",
     params: rname="make.germline.network"
     shell: """
