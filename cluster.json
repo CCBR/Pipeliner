@@ -155,6 +155,10 @@
         "threads": "8",
         "time": "10-00:00:00"
     },
+    "diffbind_bed": {
+        "mem": "4g",
+        "threads":"1"
+    },
     "differential_expression": {
         "mem": "16g",
         "threads": "1",

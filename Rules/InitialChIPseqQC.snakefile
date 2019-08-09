@@ -30,10 +30,10 @@ def outputfiles2(groupslist, inputnorm):
             dtoolgroups.extend([group] * 2)
             dtoolext.extend([extensions[1], extensions[0]])
     if len(inputnorm) == 2:
-            dtoolgroups.extend(["InputNorm.protcoding"])
+            dtoolgroups.extend(["InputNorm.prot"])
             dtoolext.extend([extensions[1]])
     for group in groupslist:
-            dtoolgroups.extend([group + ".protcoding"] * 2)
+            dtoolgroups.extend([group + ".prot"] * 2)
             dtoolext.extend([extensions[1], extensions[0]])
     return dtoolgroups, dtoolext
 
@@ -121,6 +121,7 @@ if se == 'yes' :
         input: 
             # Multiqc Report
             join(workpath,"Reports","multiqc_report.html"),
+            join(workpath,"Reports","multiqc_reportA.html"),
             join(workpath,"rawQC"),
             join(workpath,"QC"),
             # FastqScreen
@@ -583,13 +584,13 @@ rule deeptools_prep:
                 bws3 = [ bws[i] for i in iter ]
                 labels3 = [ labels[i] for i in iter ]
                 bams3 = [ bams[i] for i in iter ]
-                for i in ["","protcoding."]:
+                for i in ["","prot."]:
                     o2=open(join(workpath,bam_dir,group+"."+i+x+".deeptools_prep"),'w')
                     o2.write("%s\n"%(x))
                     o2.write("%s\n"%(" ".join(bams3)))
                     o2.write("%s\n"%(" ".join(labels3)))
                     o2.close()
-                for i in ["","protcoding."]:
+                for i in ["","prot."]:
                     o3=open(join(workpath,bw_dir,group+"."+i+x+".RPGC.deeptools_prep"),'w')
                     o3.write("%s\n"%(x+".RPGC"))
                     o3.write("%s\n"%(" ".join(bws3)))
@@ -694,7 +695,7 @@ rule deeptools_genes:
         ext=listfile[0][0]
         bws=listfile[1]
         labels=listfile[2]
-        if "protcoding" in wildcards.group:
+        if "prot" in wildcards.group:
             cmd1="grep --line-buffered 'protein_coding' "+ params.prebed  +" | awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' > "+output.bed
         else:
             cmd1="awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' "+params.prebed+" > "+output.bed
@@ -952,10 +953,32 @@ rule multiqc:
         multiqc=config['bin'][pfamily]['tool_versions']['MULTIQCVER'],
 	qcconfig=config['bin'][pfamily]['CONFMULTIQC'],
 	dir=join("..",extra_fingerprint_dir)
-    threads: 1
     shell: """
 module load {params.multiqc}
 cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt --ignore {params.dir} -d ../
+"""
+
+rule multiqcA:
+    input: 
+        expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
+        expand(join(workpath,preseq_dir,"{name}.ccurve"), name=samples),
+        expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
+        expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
+        expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
+        join(workpath,"rawQC"),
+        join(workpath,"QC"),
+        join(workpath,"QC","QCTable.txt"),
+        expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+    output:
+        join(workpath,"Reports","multiqc_reportA.html")
+    params:
+        rname="pl:multiqcA",
+        multiqc=config['bin'][pfamily]['tool_versions']['MULTIQCVER'],
+	qcconfig=config['bin'][pfamily]['CONFMULTIQC'],
+	dir=join(workpath,deeptools_dir),
+    shell: """
+module load {params.multiqc}
+cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt --ignore {params.dir} -d ../ -n multiqc_reportA.html
 """
 
 
