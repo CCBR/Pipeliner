@@ -573,7 +573,7 @@ rule deeptools_prep:
             o.write("%s\n"%(" ".join(labels)))
             o.close()
             if len(bws2) > 0:
-                for i in ["","protcoding."]:
+                for i in ["","prot."]:
                     o4=open(join(workpath,bw_dir,"InputNorm."+i+x+".RPGC.deeptools_prep"),'w')
                     o4.write("%s\n"%(x+".RPGC.inputnorm"))
                     o4.write("%s\n"%(" ".join(bws2)))

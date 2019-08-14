@@ -9,6 +9,10 @@ configfile: "run.json"
 workpath = config['project']['workpath']    
 filetype = config['project']['filetype']
 readtype = config['project']['readtype']
+pipehome = config['project']['pipehome']
+
+#include: join( pipehome, "Rules", "InitialChIPseqQC.snakefile" )
+
 
 se=""
 pe=""
@@ -201,7 +205,7 @@ if reps == "yes":
             expand(join(workpath,gem_dir,"{name}","{name}.GEM_events.narrowPeak"),name=chips),
             join(workpath,qc_dir,"FRiP_barplot.png"),
             expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
-            expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_{method}"),PeakTool=PeakToolsNG,name=chips,method=["GW","TSS"]),
+            expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_{method}"),PeakTool=PeakToolsNG,name=chips,method=["GW"]),#"TSS"]),
 #            expand(join(workpath,homer2_dir,'{PeakTool}',"{name}_{PeakTool}_annotations.txt"),PeakTool=PeakTools_narrow,name=chips),
             expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_{type}_allhits.txt'),PeakTool=PeakTools,name=chips,type=UropaCats),
             expand(join(workpath,idr_dir,'{PeakTool}','{group}','{sample1}_vs_{sample2}.idrValue.txt'),zip,PeakTool=IDRpeaktool,group=IDRgroup,sample1=IDRsample1,sample2=IDRsample2),
@@ -214,10 +218,10 @@ else:
             expand(join(workpath,macsB_dir,"{name}","{name}_peaks.broadPeak"),name=chips),
             expand(join(workpath,sicer_dir,"{name}","{name}_broadpeaks.bed"),name=chips),
             expand(join(workpath,gem_dir,"{name}","{name}.GEM_events.narrowPeak"),name=chips),
-#            join(workpath,qc_dir,"FRiP_barplot.png"),
+            join(workpath,qc_dir,"FRiP_barplot.png"),
             expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
             expand(join(workpath,qc_dir,'jaccard.txt')),
-            expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_{method}"),PeakTool=PeakToolsNG,name=chips,method=["GW","TSS"]),
+            expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_{method}"),PeakTool=PeakToolsNG,name=chips,method=["GW"]),#"TSS"]),
 #            expand(join(workpath,homer2_dir,'{PeakTool}',"{name}_{PeakTool}_annotations.txt"),PeakTool=PeakTools_narrow,name=chips),
             expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_{type}_allhits.txt'),PeakTool=PeakTools,name=chips,type=UropaCats),
             expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_{type}_allhits.txt'),PeakTool="MANorm",name=contrasts,type=UropaCats),
@@ -600,8 +604,8 @@ rule HOMER_motif:
             cmd="findMotifsGenome.pl {input} {params.genomever} {output.gw} -p {threads} -preparsedDir /lscratch/$SLURM_JOBID; "
         shell(commoncmd3 + cmd)
 
-
-rule HOMER_motif_TSS:
+if False:
+  rule HOMER_motif_TSS:
     input:
         lambda w: [ join(workpath, w.PeakTool, w.name, w.name + PeakExtensions[w.PeakTool]) ]
     output:
@@ -612,7 +616,8 @@ rule HOMER_motif_TSS:
         genomever = config['project']['annotation'],
         ucscver = config['bin'][pfamily]['tool_versions']['UCSCVER'],
         chain= config['references']['ChIPseq']['CHAIN1'],
-        convertedname = lambda w: w.name + "_liftover_"+ PeakExtensions[w.PeakTool],
+        convertedname = lambda w: join(workpath, homer_dir,w.PeakTool,w.name + "_liftover"+ PeakExtensions[w.PeakTool]),
+        gtype = config['references']['ChIPseq']['ORGANISM']
     threads: 48
     shell: """
 if [ {params.chain} == "" ]; then
@@ -622,8 +627,9 @@ else
     if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
     cd /lscratch/$SLURM_JOBID
     module load {params.homerver}; module load {params.ucscver};
-    liftOver {input} {params.chain} {params.convertedname} tmp.bed
-    findMotifs.pl {params.convertedname} {output.tss} -start -1000 -end 100 -p {threads}
+    cut -f 1,2,3 {input} > tmp1.bed
+    liftOver tmp1.bed {params.chain} {params.convertedname} tmp.bed
+    findMotifs.pl {params.convertedname} {params.gtype} {output.tss} -start -1000 -end 100 -p {threads}
 fi
 """
 
@@ -636,7 +642,7 @@ rule UROPA:
         rname="pl:uropa",
         uropaver = config['bin'][pfamily]['tool_versions']['UROPAVER'],
         fldr = join(workpath, uropa_dir, '{PeakTool1}'),
-        json = join(workpath, uropa_dir, '{PeakTool1}','{name}.{type}.json'),
+        json = join(workpath, uropa_dir, '{PeakTool1}','{name}.{PeakTool2}.{type}.json'),
         outroot = join(workpath, uropa_dir, '{PeakTool1}','{name}_{PeakTool2}_uropa_{type}'),
         gtf = config['references']['ChIPseq']['GTFFILE'],
         threads = 4,
