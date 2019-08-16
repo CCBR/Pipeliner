@@ -510,7 +510,7 @@ module load {params.gemver};
 if [ {params.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
     java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
          --genome {params.fastas}  --expt {input.chip} --ctrl {params.ctrl} --f SAM \
-         --out {workpath}/{params.gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
+         --out {workpath}/{gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
 else
     java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
          --genome {params.fastas}  --expt {input.chip} --f SAM \
