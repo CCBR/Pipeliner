@@ -29,6 +29,12 @@ def outputfiles2(groupslist, inputnorm):
     for group in groupslist:
             dtoolgroups.extend([group] * 2)
             dtoolext.extend([extensions[1], extensions[0]])
+    if len(inputnorm) == 2:
+            dtoolgroups.extend(["InputNorm.prot"])
+            dtoolext.extend([extensions[1]])
+    for group in groupslist:
+            dtoolgroups.extend([group + ".prot"] * 2)
+            dtoolext.extend([extensions[1], extensions[0]])
     return dtoolgroups, dtoolext
 
 se=""
@@ -115,6 +121,7 @@ if se == 'yes' :
         input: 
             # Multiqc Report
             join(workpath,"Reports","multiqc_report.html"),
+            join(workpath,"Reports","multiqc_reportA.html"),
             join(workpath,"rawQC"),
             join(workpath,"QC"),
             # FastqScreen
@@ -268,7 +275,7 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
             macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
             bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
-            gsize=config['project']['gsize'],
+            gsize=config['references'][pfamily]['EFFECTIVEGENOMESIZE'],
             folder=join(workpath,bam_dir),
 	    genomefile=config['references'][pfamily]['REFLEN']
         shell: """
@@ -496,7 +503,6 @@ rule ppqt:
                 -tmpdir=/lscratch/$SLURM_JOBID -rf;"
         shell(commoncmd+cmd)
 
-
 rule bam2bw:
     input:
         bam=join(workpath,bam_dir,"{name}.{ext}.bam"),
@@ -507,6 +513,7 @@ rule bam2bw:
         rname="pl:bam2bw",
         reflen=config['references'][pfamily]['REFLEN'],
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
+        effectivegenomesize=config['references'][pfamily]['EFFECTIVEGENOMESIZE'],
     run:
         lines=list(map(lambda x:x.strip().split("\t"),open(params.reflen).readlines()))
         genomelen=0
@@ -520,7 +527,7 @@ rule bam2bw:
                 genomelen+=int(l)
         excludedchrs=list(set(chrs)-set(includedchrs))
         commoncmd="module load {params.deeptoolsver};"
-        cmd="bamCoverage --bam "+input.bam+" -o "+output.outbw+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+str(genomelen)
+        cmd="bamCoverage --bam "+input.bam+" -o "+output.outbw+" --binSize 25 --smoothLength 75 --ignoreForNormalization "+" ".join(excludedchrs)+" --numberOfProcessors 32 --normalizeUsing RPGC --effectiveGenomeSize "+params.effectivegenomesize
         if pe=="yes":
             cmd+=" --centerReads"
         else:
@@ -566,26 +573,29 @@ rule deeptools_prep:
             o.write("%s\n"%(" ".join(labels)))
             o.close()
             if len(bws2) > 0:
-                o4=open(join(workpath,bw_dir,"InputNorm."+x+".RPGC.deeptools_prep"),'w')
-                o4.write("%s\n"%(x+".RPGC.inputnorm"))
-                o4.write("%s\n"%(" ".join(bws2)))
-                o4.write("%s\n"%(" ".join(labels2)))
-                o4.close()
+                for i in ["","prot."]:
+                    o4=open(join(workpath,bw_dir,"InputNorm."+i+x+".RPGC.deeptools_prep"),'w')
+                    o4.write("%s\n"%(x+".RPGC.inputnorm"))
+                    o4.write("%s\n"%(" ".join(bws2)))
+                    o4.write("%s\n"%(" ".join(labels2)))
+                    o4.close()
             for group in groups:
                 iter = [ i for i in range(len(labels)) if labels[i] in groupdatawinput[group] ]
                 bws3 = [ bws[i] for i in iter ]
                 labels3 = [ labels[i] for i in iter ]
                 bams3 = [ bams[i] for i in iter ]
-                o2=open(join(workpath,bam_dir,group+"."+x+".deeptools_prep"),'w')
-                o2.write("%s\n"%(x))
-                o2.write("%s\n"%(" ".join(bams3)))
-                o2.write("%s\n"%(" ".join(labels3)))
-                o2.close()
-                o3=open(join(workpath,bw_dir,group+"."+x+".RPGC.deeptools_prep"),'w')
-                o3.write("%s\n"%(x+".RPGC"))
-                o3.write("%s\n"%(" ".join(bws3)))
-                o3.write("%s\n"%(" ".join(labels3)))
-                o3.close()
+                for i in ["","prot."]:
+                    o2=open(join(workpath,bam_dir,group+"."+i+x+".deeptools_prep"),'w')
+                    o2.write("%s\n"%(x))
+                    o2.write("%s\n"%(" ".join(bams3)))
+                    o2.write("%s\n"%(" ".join(labels3)))
+                    o2.close()
+                for i in ["","prot."]:
+                    o3=open(join(workpath,bw_dir,group+"."+i+x+".RPGC.deeptools_prep"),'w')
+                    o3.write("%s\n"%(x+".RPGC"))
+                    o3.write("%s\n"%(" ".join(bws3)))
+                    o3.write("%s\n"%(" ".join(labels3)))
+                    o3.close()
 
 rule deeptools_QC:
     input:
@@ -685,7 +695,10 @@ rule deeptools_genes:
         ext=listfile[0][0]
         bws=listfile[1]
         labels=listfile[2]
-        cmd1="awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' "+params.prebed+" > "+output.bed
+        if "prot" in wildcards.group:
+            cmd1="grep --line-buffered 'protein_coding' "+ params.prebed  +" | awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' > "+output.bed
+        else:
+            cmd1="awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' "+params.prebed+" > "+output.bed
         cmd2="computeMatrix scale-regions -S "+" ".join(bws)+" -R "+output.bed+" -p "+params.nthreads+" --upstream 1000 --regionBodyLength 2000 --downstream 1000 --skipZeros -o "+output.metamat+" --samplesLabel "+" ".join(labels)
         cmd3="computeMatrix reference-point -S "+" ".join(bws)+" -R "+output.bed+" -p "+params.nthreads+" --referencePoint TSS --upstream 3000 --downstream 3000 --skipZeros -o "+output.TSSmat+" --samplesLabel "+" ".join(labels)
         cmd4="plotHeatmap -m "+output.metamat+" -out "+output.metaheat+" --colorMap 'PuOr_r' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
@@ -862,14 +875,18 @@ rule ngsqc_plot:
         cmd1 = ""
         cmd2 = ""
         cmd3 = ""
+        cmd4 = ""
+        sample = []
         for group in groups:
             labels = [ sample for sample in samples if sample in groupdatawinput[group] ]
             cmd1 = cmd1 + "mkdir " + group + "; "
             for label in labels:
                 cmd1 = cmd1 + "cp " + workpath + "/QC/" + label + ".sorted.Q5DD.NGSQC_report.txt " + group + "; " 
+                if label not in sample:
+                    cmd4 = cmd4 + "mv " + group + "/" + label + ".sorted.Q5DD.NGSQC.txt " + workpath + "/QC; "
+                    sample.append(label)
             cmd2 = cmd2 + "python " + params.script + " -d '" + group + "' -e 'sorted.Q5DD' -g '" + group + "'; "
             cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.sorted.Q5DD.png " + workpath + "/QC/" + group + ".NGSQC.sorted.Q5DD.png" + "; "
-        cmd4 = "mv */*.sorted.Q5DD.NGSQC.txt " + workpath + "/QC; "
         shell(commoncmd1)
         shell(commoncmd2 + cmd1 + cmd2 + cmd3 + cmd4)
 
@@ -936,10 +953,32 @@ rule multiqc:
         multiqc=config['bin'][pfamily]['tool_versions']['MULTIQCVER'],
 	qcconfig=config['bin'][pfamily]['CONFMULTIQC'],
 	dir=join("..",extra_fingerprint_dir)
-    threads: 1
     shell: """
 module load {params.multiqc}
 cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt --ignore {params.dir} -d ../
+"""
+
+rule multiqcA:
+    input: 
+        expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
+        expand(join(workpath,preseq_dir,"{name}.ccurve"), name=samples),
+        expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
+        expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
+        expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
+        join(workpath,"rawQC"),
+        join(workpath,"QC"),
+        join(workpath,"QC","QCTable.txt"),
+        expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+    output:
+        join(workpath,"Reports","multiqc_reportA.html")
+    params:
+        rname="pl:multiqcA",
+        multiqc=config['bin'][pfamily]['tool_versions']['MULTIQCVER'],
+	qcconfig=config['bin'][pfamily]['CONFMULTIQC'],
+	dir=join(workpath,deeptools_dir),
+    shell: """
+module load {params.multiqc}
+cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt --ignore {params.dir} -d ../ -n multiqc_reportA.html
 """
 
 
