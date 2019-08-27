@@ -75,7 +75,7 @@ if pe=="yes":
 
         # Deeptools
         expand(join(workpath,bams_dir,"{name}.fwd.bw")),
-		expand(join(workpath,bams_dir,"{name}.rev.bw")),
+        expand(join(workpath,bams_dir,"{name}.rev.bw")),
 
         # Picard
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
@@ -390,7 +390,7 @@ if se=="yes":
 
         # Deeptools
         expand(join(workpath,bams_dir,"{name}.fwd.bw")),
-		expand(join(workpath,bams_dir,"{name}.rev.bw")),
+        expand(join(workpath,bams_dir,"{name}.rev.bw")),
 
 
         # RSEM
