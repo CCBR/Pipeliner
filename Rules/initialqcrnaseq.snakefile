@@ -892,17 +892,17 @@ module load {params.deeptoolsver};
 
 bam={input.bam}
 # Forward strand
-bamCoverage -b $bam -o {params.prefix}.fwd.bw --filterRNAstrand forward --binSize 20 --smoothLength 40 -p 32
+bamCoverage -b $bam -o {output.fbw} --filterRNAstrand forward --binSize 20 --smoothLength 40 -p 32
 
 # Reverse strand
-bamCoverage -b $bam -o {params.prefix}.rev.bw --filterRNAstrand reverse --binSize 20 --smoothLength 40 -p 32
+bamCoverage -b $bam -o {output.rbw} --filterRNAstrand reverse --binSize 20 --smoothLength 40 -p 32
 
 # reverse files if method is not dUTP/NSR/NNSR ... ie, R1 in the direction of RNA strand.
 fp=`awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "D1.0"; else print "0.5";}}' {input.strandinfo}`
 if [ $fp -lt 0.25 ];then
-mv {params.prefix}.fwd.bw {params.prefix}.fwd.bw.tmp
-mv {params.prefix}.rev.bw {params.prefix}.fwd.bw
-mv {params.prefix}.fwd.bw.tmp {params.prefix}.rev.bw
+mv {output.fbw} {output.fbw}.tmp
+mv {output.rbw} {output.fbw}
+mv {output.fbw}.tmp {output.rbw}
 fi
 """
 
