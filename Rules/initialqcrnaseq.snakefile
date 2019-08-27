@@ -830,7 +830,7 @@ if pe=="yes":
 if [ ! -d {params.outdir} ]; then mkdir {params.outdir}; fi
 cd {params.outdir}
 module load {params.rsemver}
-fp=`awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "D1.0"; else print "0.5";}}' {input.file2}`
+fp=`tail -n1 {input.file2} |awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "1.0"; else print "0.5";}}'`
 echo $fp
 rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files --forward-prob=$fp --estimate-rpsd
 """
@@ -860,7 +860,7 @@ if se=="yes":
 if [ ! -d {params.outdir} ]; then mkdir {params.outdir}; fi
 cd {params.outdir}
 module load {params.rsemver}
-fp=`awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "D1.0"; else print "0.5";}}' {input.file2}`
+fp=`tail -n1 {input.file2} |awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "1.0"; else print "0.5";}}'`
 echo $fp
 rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files --forward-prob=$fp --estimate-rpsd
 """
