@@ -73,6 +73,10 @@ if pe=="yes":
         # STAR
         expand(join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),name=samples),
 
+        # Deeptools
+        expand(join(workpath,bams_dir,"{name}.fwd.bw")),
+		expand(join(workpath,bams_dir,"{name}.rev.bw")),
+
         # Picard
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),
@@ -382,6 +386,12 @@ if se=="yes":
 
         # QualiMap
         # join(workpath,"QualiMap","GlobalReport.html"),
+
+
+        # Deeptools
+        expand(join(workpath,bams_dir,"{name}.fwd.bw")),
+		expand(join(workpath,bams_dir,"{name}.rev.bw")),
+
 
         # RSEM
         join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
