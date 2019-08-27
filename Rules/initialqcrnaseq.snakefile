@@ -74,8 +74,8 @@ if pe=="yes":
         expand(join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),name=samples),
 
         # Deeptools
-        expand(join(workpath,bams_dir,"{name}.fwd.bw")),
-        expand(join(workpath,bams_dir,"{name}.rev.bw")),
+        expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
+        expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
 
         # Picard
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
@@ -389,8 +389,8 @@ if se=="yes":
 
 
         # Deeptools
-        expand(join(workpath,bams_dir,"{name}.fwd.bw")),
-        expand(join(workpath,bams_dir,"{name}.rev.bw")),
+        expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
+        expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
 
 
         # RSEM
