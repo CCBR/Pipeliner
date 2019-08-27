@@ -841,6 +841,7 @@ if se=="yes":
    rule rsem:
       input:
         file1=join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),
+        file2=join(workpath,rseqc_dir,"{name}.strand.info")
       output:
         out1=join(workpath,degall_dir,"{name}.RSEM.genes.results"),
         out2=join(workpath,degall_dir,"{name}.RSEM.isoforms.results"),
