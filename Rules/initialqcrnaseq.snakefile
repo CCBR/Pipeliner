@@ -73,6 +73,10 @@ if pe=="yes":
         # STAR
         expand(join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),name=samples),
 
+        # Deeptools
+        expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
+        expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
+
         # Picard
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),
@@ -382,6 +386,12 @@ if se=="yes":
 
         # QualiMap
         # join(workpath,"QualiMap","GlobalReport.html"),
+
+
+        # Deeptools
+        expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
+        expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
+
 
         # RSEM
         join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
@@ -882,17 +892,17 @@ module load {params.deeptoolsver};
 
 bam={input.bam}
 # Forward strand
-bamCoverage -b $bam -o {params.prefix}.fwd.bw --filterRNAstrand forward --binSize 20 --smoothLength 40 -p 32
+bamCoverage -b $bam -o {output.fbw} --filterRNAstrand forward --binSize 20 --smoothLength 40 -p 32
 
 # Reverse strand
-bamCoverage -b $bam -o {params.prefix}.rev.bw --filterRNAstrand reverse --binSize 20 --smoothLength 40 -p 32
+bamCoverage -b $bam -o {output.rbw} --filterRNAstrand reverse --binSize 20 --smoothLength 40 -p 32
 
 # reverse files if method is not dUTP/NSR/NNSR ... ie, R1 in the direction of RNA strand.
 fp=`awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "D1.0"; else print "0.5";}}' {input.strandinfo}`
 if [ $fp -lt 0.25 ];then
-mv {params.prefix}.fwd.bw {params.prefix}.fwd.bw.tmp
-mv {params.prefix}.rev.bw {params.prefix}.fwd.bw
-mv {params.prefix}.fwd.bw.tmp {params.prefix}.rev.bw
+mv {output.fbw} {output.fbw}.tmp
+mv {output.rbw} {output.fbw}
+mv {output.fbw}.tmp {output.rbw}
 fi
 """
 
