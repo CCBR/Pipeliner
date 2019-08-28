@@ -1,4 +1,4 @@
-rule rule oncofuse:
+rule oncofuse:
      input:  fusions="fusioninspector/{x}/{x}.fusion_predictions.final"
      output: infile="oncofuse/{x}/{x}.oncofuse.input",outfile="oncofuse/{x}/{x}.oncofuse.output"
      params: rname='oncofuse',sample="{x}",oncofuse=config['bin'][pfamily]['ONCOFUSE'],build=config['references'][pfamily]['ONCOFUSEBUILD']
