@@ -73,6 +73,10 @@ if pe=="yes":
         # STAR
         expand(join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),name=samples),
 
+        # Deeptools
+        expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
+        expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
+
         # Picard
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),
@@ -382,6 +386,12 @@ if se=="yes":
 
         # QualiMap
         # join(workpath,"QualiMap","GlobalReport.html"),
+
+
+        # Deeptools
+        expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
+        expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
+
 
         # RSEM
         join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
@@ -811,6 +821,7 @@ if pe=="yes":
    rule rsem:
       input: 
         file1=join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),
+        file2=join(workpath,rseqc_dir,"{name}.strand.info")
       output: 
         out1=join(workpath,degall_dir,"{name}.RSEM.genes.results"),
         out2=join(workpath,degall_dir,"{name}.RSEM.isoforms.results"),
@@ -829,14 +840,18 @@ if pe=="yes":
 if [ ! -d {params.outdir} ]; then mkdir {params.outdir}; fi
 cd {params.outdir}
 module load {params.rsemver}
-rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files
+fp=`tail -n1 {input.file2} |awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "1.0"; else print "0.5";}}'`
+echo $fp
+rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files --forward-prob=$fp --estimate-rspd
 """
+
 
 if se=="yes":
 
    rule rsem:
       input:
         file1=join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),
+        file2=join(workpath,rseqc_dir,"{name}.strand.info")
       output:
         out1=join(workpath,degall_dir,"{name}.RSEM.genes.results"),
         out2=join(workpath,degall_dir,"{name}.RSEM.isoforms.results"),
@@ -855,7 +870,40 @@ if se=="yes":
 if [ ! -d {params.outdir} ]; then mkdir {params.outdir}; fi
 cd {params.outdir}
 module load {params.rsemver}
-rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files
+fp=`tail -n1 {input.file2} |awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "1.0"; else print "0.5";}}'`
+echo $fp
+rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files --forward-prob=$fp --estimate-rspd
+"""
+
+rule bam2bw:
+	input:
+		bam=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
+		strandinfo=join(workpath,rseqc_dir,"{name}.strand.info")
+	output:
+		fbw=join(workpath,bams_dir,"{name}.fwd.bw"),
+		rbw=join(workpath,bams_dir,"{name}.rev.bw")
+	params:
+		rname='pl:bam2bw',
+		prefix="{name}",
+		deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER']
+	threads: 32
+	shell:"""
+module load {params.deeptoolsver};
+
+bam={input.bam}
+# Forward strand
+bamCoverage -b $bam -o {output.fbw} --filterRNAstrand forward --binSize 20 --smoothLength 40 -p 32
+
+# Reverse strand
+bamCoverage -b $bam -o {output.rbw} --filterRNAstrand reverse --binSize 20 --smoothLength 40 -p 32
+
+# reverse files if method is not dUTP/NSR/NNSR ... ie, R1 in the direction of RNA strand.
+fp=`awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "D1.0"; else print "0.5";}}' {input.strandinfo}`
+if [ $fp -lt 0.25 ];then
+mv {output.fbw} {output.fbw}.tmp
+mv {output.rbw} {output.fbw}
+mv {output.fbw}.tmp {output.rbw}
+fi
 """
 
 
@@ -929,7 +977,7 @@ rule rseqc:
    shell: """
 module load {params.rseqcver}
 cd {rseqc_dir}
-infer_experiment.py -r {params.bedref} -i {input.file1} > {output.out1}
+infer_experiment.py -r {params.bedref} -i {input.file1} -s 1000000 > {output.out1}
 read_distribution.py -i {input.file1} -r {params.bedref} > {output.out4}
 """
 
