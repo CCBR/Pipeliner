@@ -181,7 +181,7 @@
     "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
     "FUSIONGTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/lib/GENCODE_GRCh37_ref_annot.gtf",
     "STARREF": "/data/CCBR_Pipeliner/db/PipeDB/lib/Star_refs/hs37d5/genes-",
-    "STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh37_gencode_v19_CTAT_lib_Aug152019.plug-n-play/ctat_genome_lib_build_dir",
+    "STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh37_gencode_v19_CTAT_lib_Mar272019.plug-n-play/ctat_genome_lib_build_dir",
     "FUSCATCHDAT": "/usr/local/apps/fusioncatcher/1.10/fusioncatcher/data/human_v95",
     "FUSCATCHCONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_hg38_configuration.cfg",
     "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",

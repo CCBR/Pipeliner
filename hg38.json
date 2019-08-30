@@ -178,7 +178,7 @@
      "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
      "STARREF": "/fdb/STAR_indices/2.5.2b/GENCODE/Gencode_human/release_26/genes-",
 #     "RRNALIST2": "/data/CCBR_Pipeliner/db/PipeDB/dev/Hg38.rRNA.interval_list_R26",
-    "STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38_gencode_v31_CTAT_lib_Aug152019.plug-n-play/ctat_genome_lib_build_dir",
+    "STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/GRCh38_gencode_v29_CTAT_lib_Mar272019.plug-n-play/ctat_genome_lib_build_dir",
     "FUSCATCHDAT": "/usr/local/apps/fusioncatcher/1.10/fusioncatcher/data/human_v95",
     "FUSCATCHCONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/hg19_hg38_configuration.cfg",
     "GENOME": "/fdb/GENCODE/Gencode_human/release_26/GRCh38.primary_assembly.genome.fa",
