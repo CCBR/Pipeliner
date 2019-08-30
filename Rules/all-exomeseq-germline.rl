@@ -1,13 +1,10 @@
 rule all_exomeseq_germline:
-    input: "combined.vcf",
-           "exome.recode.vcf",
-           config['project']['workpath']+"/full_annot.txt.zip",
-#           "variants.database",
+    input: "combined.vcf.gz",
            "sample_network_mqc.png",
            "exome.snpeff.vcf",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),
            "exome_targets.bed",
-           "exome.strictFilter.vcf",
+           "exome.strictFilter.vcf.gz",
            "manta_out/results/variants/diploidSV.vcf.gz",
            "admixture_out/admixture_table.tsv"
     output: 

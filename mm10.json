@@ -150,7 +150,7 @@
 # "SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/dev/rsemref/mouse_gencode.transcripts.fa",
 #"SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/rsem1.3.0/mouse_gencode.transcripts.fa",
 "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
-"STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_gencode_vM12_TrinityResource",
+"STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/Mouse_gencode_M20_CTAT_lib_Mar272019.plug-n-play/ctat_genome_lib_build_dir",
 "FUSCATCHDAT": "/fdb/fusioncatcher/mus_musculus",
 "FUSCATCHCONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fusioncatcher_mm10_configuration.cfg",
 "ONCOFUSEBUILD": "mm10",

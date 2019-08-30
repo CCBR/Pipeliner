@@ -770,8 +770,13 @@
         "time": "1-00:00:00"
     },
     "starfusion": {
-        "mem": "96g",
-        "threads": "32",
+        "mem": "48g",
+        "threads": "16",
+        "time": "3-00:00:00"
+    },
+    "fusioninspector": {
+        "mem": "48g",
+        "threads": "16",
         "time": "3-00:00:00"
     },
     "stats": {
