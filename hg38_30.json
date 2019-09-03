@@ -5,7 +5,7 @@
             "ORGANISM": "HUMAN",
             "KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_30/karyobeds/",
             "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_30/qualimap_info.txt",
-            "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices//hg38_30/karyoplot_gene_coordinates.txt",
+            "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_30/karyoplot_gene_coordinates.txt",
             "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
             "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
             "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/GTFs/hg38/gencode.v30.annotation.gtf",
