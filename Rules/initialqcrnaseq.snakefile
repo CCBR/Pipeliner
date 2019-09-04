@@ -875,7 +875,7 @@ echo $fp
 rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files --forward-prob=$fp --estimate-rspd
 """
 
-rule bam2bw:
+rule bam2bw_rnaseq:
 	input:
 		bam=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
 		strandinfo=join(workpath,rseqc_dir,"{name}.strand.info")
@@ -886,16 +886,16 @@ rule bam2bw:
 		rname='pl:bam2bw',
 		prefix="{name}",
 		deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER']
-	threads: 32
+	threads: 56
 	shell:"""
 module load {params.deeptoolsver};
 
 bam={input.bam}
 # Forward strand
-bamCoverage -b $bam -o {output.fbw} --filterRNAstrand forward --binSize 20 --smoothLength 40 -p 32
+bamCoverage -b $bam -o {output.fbw} --filterRNAstrand forward --binSize 20 --smoothLength 40 -p 56
 
 # Reverse strand
-bamCoverage -b $bam -o {output.rbw} --filterRNAstrand reverse --binSize 20 --smoothLength 40 -p 32
+bamCoverage -b $bam -o {output.rbw} --filterRNAstrand reverse --binSize 20 --smoothLength 40 -p 56
 
 # reverse files if method is not dUTP/NSR/NNSR ... ie, R1 in the direction of RNA strand.
 fp=`tail -n1 {input.strandinfo}|awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "1.0"; else print "0.5";}}'`
