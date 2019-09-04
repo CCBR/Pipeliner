@@ -899,7 +899,7 @@ bamCoverage -b $bam -o {output.rbw} --filterRNAstrand reverse --binSize 20 --smo
 
 # reverse files if method is not dUTP/NSR/NNSR ... ie, R1 in the direction of RNA strand.
 fp=`tail -n1 {input.strandinfo}|awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "1.0"; else print "0.5";}}'`
-if [ $fp -lt 0.25 ];then
+if [ `echo "$fp < 0.25"|bc` -eq 1 ];then
 mv {output.fbw} {output.fbw}.tmp
 mv {output.rbw} {output.fbw}
 mv {output.fbw}.tmp {output.rbw}
