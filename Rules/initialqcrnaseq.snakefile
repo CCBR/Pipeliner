@@ -24,9 +24,9 @@ pe=""
 workpath = config['project']['workpath']
 
 if config['project']['nends'] == 2 :
-	pe="yes"
+    pe="yes"
 elif config['project']['nends'] == 1 :
-	se="yes"
+    se="yes"
 
 
 trim_dir='trim'
@@ -41,8 +41,8 @@ degall_dir="DEG_ALL"
 dtypes=["RSEM_genes","Subread_junctions","Subread_genejunctions","Subread_genes"]
 
 for d in [trim_dir,kraken_dir,bams_dir,star_dir,log_dir,rseqc_dir,preseq_dir,degall_dir]:
-	if not os.path.exists(join(workpath,d)):
-		os.mkdir(join(workpath,d))
+    if not os.path.exists(join(workpath,d)):
+        os.mkdir(join(workpath,d))
 
 
 if pe=="yes":
@@ -108,7 +108,7 @@ if pe=="yes":
 
         # Subread Overlap 
         join(workpath,star_dir,"RawCountFileOverlap.txt"),
-        join(workpath,star_dir,"RawCountFileStar.txt"),    	
+        join(workpath,star_dir,"RawCountFileStar.txt"),     
         expand(join(workpath,star_dir,"{name}.star.count.info.overlap.txt"),name=samples),
         expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"),name=samples),
 
@@ -711,14 +711,14 @@ sed -i 's/MarkDuplicates/picard.sam.MarkDuplicates/g' {output.outstar3};
 """
 
 rule preseq:
-	params:
-		rname = "pl:preseq",
-		preseqver=config['bin'][pfamily]['tool_versions']['PRESEQVER'],
-	input:
-		bam = join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
-	output:
-		ccurve = join(workpath,preseq_dir,"{name}.ccurve"),
-	shell:"""
+    params:
+        rname = "pl:preseq",
+        preseqver=config['bin'][pfamily]['tool_versions']['PRESEQVER'],
+    input:
+        bam = join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
+    output:
+        ccurve = join(workpath,preseq_dir,"{name}.ccurve"),
+    shell:"""
 module load {params.preseqver};
 preseq c_curve -B -o {output.ccurve} {input.bam}            
             """
@@ -876,18 +876,18 @@ rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam -p {thre
 """
 
 rule bam2bw_rnaseq:
-	input:
-		bam=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
-		strandinfo=join(workpath,rseqc_dir,"{name}.strand.info")
-	output:
-		fbw=join(workpath,bams_dir,"{name}.fwd.bw"),
-		rbw=join(workpath,bams_dir,"{name}.rev.bw")
-	params:
-		rname='pl:bam2bw',
-		prefix="{name}",
-		deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER']
-	threads: 56
-	shell:"""
+    input:
+        bam=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
+        strandinfo=join(workpath,rseqc_dir,"{name}.strand.info")
+    output:
+        fbw=join(workpath,bams_dir,"{name}.fwd.bw"),
+        rbw=join(workpath,bams_dir,"{name}.rev.bw")
+    params:
+        rname='pl:bam2bw',
+        prefix="{name}",
+        deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER']
+    threads: 56
+    shell:"""
 module load {params.deeptoolsver};
 
 bam={input.bam}
