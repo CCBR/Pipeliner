@@ -146,7 +146,7 @@
      "KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/dev/karyobeds/hg.v26/",
      "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/karyoplot_gene_coordinates.txt",
      "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/rsemref/hs38d1",
-     "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/STAR/2.5.2b/genes-",
+     "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/STAR/2.7.0f/genes-",
      "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/hs38d1.rRNA_interval_list",
 
 
