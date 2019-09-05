@@ -96,6 +96,7 @@ if (nrow(neg_strand_down_triangle)>0) {neg_strand_down_triangle$log2fc=neg_scale
 for (i in seq(1,length(chrs_subsets))) {
   chrs2=unlist(chrs_subsets[i])
   png(paste(args$outfileprefix,"_karyoplot",i,".png",sep=""), width = 10, height = 6, units = 'in', res = 1600)
+  if (grepl('_', genome)){genome <- strsplit(genome, "_")[[1]][1]}
   kp <- plotKaryotype(genome=genome, plot.type=2, chromosomes = chrs2)
 
   kpDataBackground(kp, data.panel = 1, r0=0, r1=0.9)
