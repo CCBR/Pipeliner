@@ -73,9 +73,9 @@ if pe=="yes":
         # STAR
         expand(join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),name=samples),
 
-        # Deeptools
-        expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
-        expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
+        # Deeptools (BigWig)
+        # expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
+        # expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
 
         # Picard
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
@@ -114,7 +114,7 @@ if pe=="yes":
 
         # PCA Reports 
         expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
-        
+
         # MultiQC
         join(workpath,"Reports/multiqc_report.html"),
 
@@ -388,9 +388,9 @@ if se=="yes":
         # join(workpath,"QualiMap","GlobalReport.html"),
 
 
-        # Deeptools
-        expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
-        expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
+        # Deeptools (BigWig)
+        # expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
+        # expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
 
 
         # RSEM

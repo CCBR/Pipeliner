@@ -96,7 +96,7 @@
         "rnaseq":{
             "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/ref.fa", 
             "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/genes.gtf",
-            "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/STAR/2.5.2b/genes-",
+            "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/STAR/2.7.0f/genes-",
             "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/qualimap_info.txt",
             "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/karyoplot_gene_coordinates.txt",
             "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/annotate.genes.txt",

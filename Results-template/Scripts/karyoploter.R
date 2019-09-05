@@ -6,7 +6,7 @@ parser$add_argument("-d", "--degout", type="character", required=TRUE,
 parser$add_argument("-c", "--gene2coord", type="character", required=TRUE,
                     help="Gene to coordinate file")
 parser$add_argument("-g", "--genome", type="character", required=TRUE,
-                    help="Genome .. either hg19/hg38/mm9/mm10/Mmul8.0.1/canFam3")
+                    help="Genome .. either hg19/hg38/mm9/mm10/Mmul8.0.1/canFam3/hg38_30")
 parser$add_argument("-f", "--fdr", type="double", default=0.05,
                     help="FDR cutoff to use")
 parser$add_argument("-o", "--outfileprefix", type="character", required=TRUE,
@@ -20,8 +20,8 @@ if (! file.exists(f)) {
   stop(paste("File does not exist:",f))
 }
 
-if (! args$genome %in% c("hg19","hg38","mm9","mm10","Mmul8.0.1","canFam3")) {
-  stop("Only hg19/hg38/mm9/mm10/Mmul8.0.1/canFam3 genomes are supported!")
+if (! args$genome %in% c("hg19","hg38","hg38_30","mm9","mm10","Mmul8.0.1","canFam3")) {
+  stop("Only hg19/hg38/mm9/mm10/Mmul8.0.1/canFam3/hg38_30 genomes are supported!")
 }
 
 
@@ -54,7 +54,7 @@ if(nrow(deseqout_filtered_w_coord)==0){
 genome=args$genome
 chrs=c()
 maxchrs=0
-if (genome %in% c("hg19","hg38")) {maxchrs=22}
+if (genome %in% c("hg19","hg38","hg38_30")) {maxchrs=22}
 if (genome %in% c("mm10","mm9")) {maxchrs=19}
 if (genome %in% c("rheMac8")) {maxchrs=20}
 if (genome %in% c("canFam3")) {maxchrs=38}
@@ -96,6 +96,7 @@ if (nrow(neg_strand_down_triangle)>0) {neg_strand_down_triangle$log2fc=neg_scale
 for (i in seq(1,length(chrs_subsets))) {
   chrs2=unlist(chrs_subsets[i])
   png(paste(args$outfileprefix,"_karyoplot",i,".png",sep=""), width = 10, height = 6, units = 'in', res = 1600)
+  if (grepl('_', genome)){genome <- strsplit(genome, "_")[[1]][1]}
   kp <- plotKaryotype(genome=genome, plot.type=2, chromosomes = chrs2)
 
   kpDataBackground(kp, data.panel = 1, r0=0, r1=0.9)
