@@ -33,11 +33,18 @@ gene_name=read.delim(ANNOTATE,header=F,sep=" ")
 res2=merge(gene_name,res,by.x=1,by.y=1)
 
 #reformat and output raw counts
-res2=cbind(Ensembl_id=res2[,1],Gene_symbol=res2[,3],res2[,-c(1:9)])
-write.table(as.data.frame(res2[,-c(3)]),file="RawCountFile_Subread_genes.txt",sep="\t",row.names=F) 
+# res2=cbind(Ensembl_id=res2[,1],Gene_symbol=res2[,3],res2[,-c(1:9)])
+res3=cbind(symbol=paste(res2[,1],"|",res2[,3],sep=""),res2[,-c(1:9)])
+colnames(res3)=gsub('\\..*$','',colnames(res3))
+colnames(res3)=gsub('.*/','',colnames(res3))
+write.table(as.data.frame(res3[,-c(2)]),file="RawCountFile_Subread_genes.txt",sep="\t",row.names=F,quote = F)
 
 #using DEGlist 
-mydata<-DGEList(counts=res2[,-c(1:3)],genes=res2[,c("Ensembl_id","Gene_symbol","Length")])
+res4=res3[,-c(2)]
+rownames(res4)=res4$symbol
+res4$symbol=NULL
+# mydata<-DGEList(counts=res3[,-c(1:2)],genes=res3[,c("symbol","Length")])
+mydata<-DGEList(res4)
 
 #apply filter to counts
 #MINCOUNT<-5
@@ -45,15 +52,14 @@ mydata<-DGEList(counts=res2[,-c(1:3)],genes=res2[,c("Ensembl_id","Gene_symbol","
 val1=as.numeric(MINCOUNT)
 val2=as.numeric(MINSAMPLES)
 
-tot=colSums(res2[,-c(1:3)])
-#val1=(val1/max(tot))*1e6
-
 filter <- apply(cpm(mydata), 1, function(x) length(x[x>val1])>=val2)
 res=mydata[filter,,keep.lib.sizes=FALSE]
 
 #output filtered raw counts, still output old format for the sake of pipeline, will change it soon.
-
-write.table(data.frame(cbind(symbol=paste(res$genes[,1],"|",res$genes[,2],sep=""),res$counts)),file="RawCountFile_Subread_genes_filtered.txt",sep="\t", row.names = F)
+res2=as.data.frame(res$counts)
+res2$symbol=rownames(res2)
+res2=res2 %>% select('symbol',everything())
+write.table(res2,file="RawCountFile_Subread_genes_filtered.txt",row.names = F,quote = F,sep="\t")
 
 #draw before png
 png("HistBeforenormFilter.png")
@@ -64,18 +70,8 @@ dev.off()
 #calculate CPM_TMM and output
 tmm_y <- calcNormFactors(res,method="TMM")
 ndata= cpm(tmm_y,log=FALSE,normalized.lib.sizes=TRUE)
-write.table(data.frame(res$genes[,-c(3)], ndata),file="CPM_TMM_counts.txt",sep="\t",row.names=F)
+writegzfile(ndata,"Subread_CPM_TMM_counts.txt.gz")
 
-#calculate RPKM_TMM and output
-ndata = rpkm(tmm_y,res$genes$Length, log=FALSE,normalized.lib.sizes=TRUE)
-write.table(data.frame(res$genes[,-c(3)], ndata),file="RPKM_TMM_counts.txt",sep="\t",row.names=F)
-
-#calculate RPKM from Voom normalized logCPM and output
-sampleinfo=read.delim(FILE2)
-Group <- factor(sampleinfo$condition)
-design=model.matrix(~0+Group)
-
-v1 <- voom(tmm_y,design,plot=FALSE,normalize="quantile")
-ndata <- apply(v1$E, 2, function(z) ((2^z/v1$genes$Length)*1000))
-
-write.table(data.frame(tmm_y$genes[,-c(3)], ndata),file="Subread_genes_RPKM_limma_voom_normalized_counts.txt",sep="\t",row.names=F)
+rlogres=rlog(as.matrix(res),blind=TRUE)
+rownames(rlogres)=rownames(res)
+writegzfile(rlogres,"Subread_rlog_counts.txt.gz")

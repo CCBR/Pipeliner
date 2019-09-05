@@ -87,19 +87,17 @@ y = DGEList(counts=x,group=condition)
 y <- calcNormFactors(y,method="TMM")
 # y$samples
 
-#png("libdistrib.png")
-#par(mfrow=c(1,4))
-#barplot(y$samples$lib.size*1e-6,main="Before normalization", names= strsplit(colnames(y$counts),".star.count.txt"), ylab="Library size (millions)",las=2,cex.names=0.8)
-#barplot(y$samples$lib.size*y$samples$norm.factors*1e-6,main="TMM", names= strsplit(colnames(y$counts),".star.count.txt"), ylab="Library size (millions)",las=2,cex.names=0.8)
-ddsHTSeq<-DESeqDataSetFromMatrix(countData=x,colData=sampleinfo, design=~condition)
+Group <- factor(sampleinfo$condition)
+if ( length(levels(Group)) == 1 ) {
+  design=~1
+  v1 <- voom(as.matrix(x),design=NULL,plot=FALSE,normalize="quantile")
+} else {
+  design=model.matrix(~0+Group)
+  v1 <- voom(as.matrix(x),design,plot=FALSE,normalize="quantile")
+}
+ddsHTSeq<-DESeqDataSetFromMatrix(countData=x,colData=sampleinfo, design=design)
 dds<-DESeq(ddsHTSeq)
 dds.ndata=as.data.frame(counts(dds,normalized=TRUE))
-#barplot(colSums(dds.ndata)*1e-6,main="DESeq2", names= strsplit(colnames(y$counts),".star.count.txt"), ylab="Library size (millions)",las=2,cex.names=0.8)
-Group <- factor(sampleinfo$condition)
-design=model.matrix(~0+Group)
-v1 <- voom(as.matrix(x),design,plot=FALSE,normalize="quantile")
-#barplot(colSums(2^(v1$E))*1e-6,main="Limma", names= strsplit(colnames(y$counts),".star.count.txt"), ylab="Library size (millions)",las=2,cex.names=0.8)
-#dev.off()
 
 
 ## estimating common and tagwise dispersions -----------------------------------------
