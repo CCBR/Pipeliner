@@ -2,6 +2,16 @@ library('reshape')
 library('ggplot2')
 library('edgeR')
 library('limma')
+library('tidyverse')
+library('DESeq2')
+
+writegzfile <- function(m,f) {
+  m=as.data.frame(m)
+  m$id=rownames(m)
+  m=separate(data=m,col=id,into=c('ensID','geneName'),sep="\\|",remove=TRUE)
+  m=m %>% select('ensID','geneName',everything())
+  write.table(m,file=gzfile(f),sep="\t",row.names = FALSE,quote=F)
+}
 
 args <- commandArgs(trailingOnly = TRUE)
 DIR <- args[1]
