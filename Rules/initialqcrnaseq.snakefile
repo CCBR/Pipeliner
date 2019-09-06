@@ -141,8 +141,9 @@ fastqc {input} -t {threads} -o {output};
         file1=join(workpath,"{name}.R1."+config['project']['filetype']),
         file2=join(workpath,"{name}.R2."+config['project']['filetype']),        
       output: 
-        out1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
-        out2=join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
+        out1=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz")),
+        out2=temp(join(workpath,trim_dir,"{name}.R2.trim.fastq.gz")),
+        outdir=tmp(join(workpath,trim_dir))
       params: 
         rname='pl:trim_pe',
         batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
