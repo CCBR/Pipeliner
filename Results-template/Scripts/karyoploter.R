@@ -6,7 +6,7 @@ parser$add_argument("-d", "--degout", type="character", required=TRUE,
 parser$add_argument("-c", "--gene2coord", type="character", required=TRUE,
                     help="Gene to coordinate file")
 parser$add_argument("-g", "--genome", type="character", required=TRUE,
-                    help="Genome .. either hg19/hg38/mm9/mm10/Mmul8.0.1/canFam3/hg38_30")
+                    help="Genome .. either hg19/hg38/mm9/mm10/Mmul8.0.1/canFam3/hg38_30/mm10_M21")
 parser$add_argument("-f", "--fdr", type="double", default=0.05,
                     help="FDR cutoff to use")
 parser$add_argument("-o", "--outfileprefix", type="character", required=TRUE,
@@ -20,8 +20,8 @@ if (! file.exists(f)) {
   stop(paste("File does not exist:",f))
 }
 
-if (! args$genome %in% c("hg19","hg38","hg38_30","mm9","mm10","Mmul8.0.1","canFam3")) {
-  stop("Only hg19/hg38/mm9/mm10/Mmul8.0.1/canFam3/hg38_30 genomes are supported!")
+if (! args$genome %in% c("hg19","hg38","hg38_30","mm9","mm10","mm10_M21","Mmul8.0.1","canFam3")) {
+  stop("Only hg19/hg38/mm9/mm10/Mmul8.0.1/canFam3/hg38_30/mm10_M21 genomes are supported!")
 }
 
 
@@ -55,7 +55,7 @@ genome=args$genome
 chrs=c()
 maxchrs=0
 if (genome %in% c("hg19","hg38","hg38_30")) {maxchrs=22}
-if (genome %in% c("mm10","mm9")) {maxchrs=19}
+if (genome %in% c("mm10","mm9", "mm10_M21")) {maxchrs=19}
 if (genome %in% c("rheMac8")) {maxchrs=20}
 if (genome %in% c("canFam3")) {maxchrs=38}
 
