@@ -370,7 +370,7 @@ for(i in 1:nb){
   extension=paste0("_",cons[i],".txt")
 
   ## Pathway enrichment analysis (Over-representation test ~ l2p)
-  if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38" | SPECIES=="hg38_30") {
+  if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="hg38" | SPECIES=="hg38_30") {
     iup=which(final$PValue<0.05 & final$FC >=0)
     idw=which(final$PValue<0.05 & final$FC <0)
     fin.up=final[iup,]
@@ -460,14 +460,14 @@ for(i in 1:nb){
   volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
   v_fdr[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste(contras[i]," vs. ",contras[i+1],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 FDR",range =c(0,15)))
 
-  if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm9")&&(grepl("genes",params$dtype))) {    
+  if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9")&&(grepl("genes",params$dtype))) {    
     system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py edgeR_DEG_",cons[i],"_all_genes.txt 1 3 ",SPECIES," ",KARYOBEDS," > edgeR_DEG_",cons[i],".input.karyo"))
     system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py edgeR_DEG_",cons[i],".input.karyo ",SPECIES))
     ki1=paste0("edgeR_DEG_",cons[i],".input.karyo1.png")
     ki2=paste0("edgeR_DEG_",cons[i],".input.karyo2.png")
   }
 
-  if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ) {
+  if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ) {
     system(paste0("cd ",getwd(),";/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/r_env/bin/Rscript ../Scripts/karyoploter.R -o edgeR -d edgeR_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt -c ", params$karyotext, " -g ", SPECIES))
   }
 }
@@ -505,7 +505,7 @@ v_fdr
 ### Page1
 
 ```{r de_karyo1, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
+if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
   cat("![](edgeR_karyoplot1.png)")
 } else {
   cat("Genome Not Supported")
@@ -516,7 +516,7 @@ if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | S
 ### Page2
 
 ```{r de_karyo2, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
+if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
   cat("![](edgeR_karyoplot2.png)")
 } else {
   cat("Genome Not Supported")
@@ -529,7 +529,7 @@ if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | S
 ### Page1
 
 ```{r bin_karyo1, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
+if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
   cat("![](",ki1,")")
 } else {
   cat("Genome Not suporrted")
@@ -539,7 +539,7 @@ if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | 
 ### Page2
 
 ```{r bin_karyo2, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
+if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
   cat("![](",ki2,")")
 } else {
   cat("Genome Not Supported")
@@ -551,7 +551,7 @@ if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | 
 ### Up-Regulated
 
 ```{r up_l2p, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38" | SPECIES=="hg38_30"){
+if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="hg38" | SPECIES=="hg38_30"){
   pup
 } else {
   cat("Genome Not Supported")
@@ -561,7 +561,7 @@ if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38" | SPECIES=="hg38_30"){
 ### Down-Regulated
 
 ```{r down_l2p, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38" | SPECIES=="hg38_30"){
+if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="hg38" | SPECIES=="hg38_30"){
   pdw
 } else {
   cat("Genome Not Supported")
