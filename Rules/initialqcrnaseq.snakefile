@@ -443,7 +443,7 @@ fastqc {input} -t {threads} -o {output};
       input: 
         infq=join(workpath,"{name}.R1."+config['project']['filetype']),
       output: 
-        outfq=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
+        outfq=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"))
       params: 
         rname='pl:trim_se',
         batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
