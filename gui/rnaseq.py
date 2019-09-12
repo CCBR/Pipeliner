@@ -82,6 +82,13 @@ class RNASeqFrame( PipelineFrame ) :
         rDeg.set(rDegs[0])
         self.om4 = OptionMenu(eframe, rDeg, *rDegs, command=self.option_controller)
         self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
+
+	# Show Groups Only (For initialqcrnaseq)
+        self.om_groups = LabelFrame(eframe, text="Sample Information")
+        self.groups_button = Button(self.om_groups, text="Set Groups", command = self.popup_groups )
+        self.groups_button.grid(row=5, column=5, padx=10, pady=5)
+
+
         
         #####################
         #Sample Threshold 
@@ -126,24 +133,25 @@ class RNASeqFrame( PipelineFrame ) :
         if self.Pipeline.get() == 'initialqcrnaseq' :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
-            self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+            self.info.grid_forget()
+            self.om_groups.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10)
         elif self.Pipeline.get() == 'rnaseq' :
             self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
             self.sampleLF.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
             self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+            self.om_groups.grid_forget()
         else :
             self.om4.grid_forget()
             self.sampleLF.grid_forget()
             self.info.grid_forget()
-
-
+            self.om_groups.grid_forget()
             
     def makejson_wrapper( self, *args, **kwargs ) :
         self.makejson(*args, **kwargs)
     
     
     def add_info( self, parent ) :
-        if not self.info :
+        if not self.info:
             self.info = LabelFrame(parent, text="Sample Information")
             self.groups_button = Button(self.info, 
                                             text="Set Groups", 
@@ -151,10 +159,6 @@ class RNASeqFrame( PipelineFrame ) :
             self.contrasts_button = Button(self.info,
                                             text="Set Contrasts",
                                             command = self.popup_contrasts )
-            
-            #self.pairs_load_button.pack( side=BOTTOM, padx=5, pady=5 )
-            #self.pairs_save_button.pack( side=BOTTOM, padx=5, pady=5 )
-
             self.groups_button.grid( row=5, column=5, padx=10, pady=5 )
             self.contrasts_button.grid( row=5, column=6, padx=10, pady=5 )
 
