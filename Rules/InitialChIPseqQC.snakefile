@@ -129,14 +129,12 @@ if se == 'yes' :
             expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
             expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),name=samples),
             expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
-            # Trim and remove blacklisted reads
-            expand(join(workpath,trim_dir,'{name}.R1.trim.fastq.gz'), name=samples),
             # Kraken
             expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
             expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
             join(workpath,kraken_dir,"kraken_bacteria.taxa.summary.txt"),
             # Align using BWA and dedup with Picard or MACS2
-            expand(join(workpath,bam_dir,"{name}.{ext}"),name=samples,ext=extensions4),
+            #expand(join(workpath,bam_dir,"{name}.{ext}"),name=samples,ext=extensions4),
             # BWA --> BigWig
             expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions),
             # Input Normalization
@@ -166,7 +164,7 @@ if se == 'yes' :
         input:
             infq=join(workpath,"{name}.R1.fastq.gz"),
         output:
-            outfq=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
+            outfq=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz")),
         params:
             rname="pl:trim",
             cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
@@ -246,7 +244,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         output:
-            outbam1=join(workpath,bam_dir,"{name}.sorted.bam"), 
+            outbam1=temp(join(workpath,bam_dir,"{name}.sorted.bam")), 
             outbam2=temp(join(workpath,bam_dir,"{name}.sorted.Q5.bam")),
             flagstat1=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
             flagstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"),
@@ -309,8 +307,6 @@ if pe == 'yes':
             expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
             expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
             expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
-            	# Trim and remove blacklisted reads
-            expand(join(workpath,trim_dir,'{name}.R{rn}.trim.fastq.gz'), name=samples,rn=[1,2]),
             # Kraken
             expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
             expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
@@ -348,8 +344,8 @@ if pe == 'yes':
             file1=join(workpath,"{name}.R1.fastq.gz"),
             file2=join(workpath,"{name}.R2.fastq.gz"),
         output:
-            outfq1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
-            outfq2=join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
+            outfq1=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz")),
+            outfq2=temp(join(workpath,trim_dir,"{name}.R2.trim.fastq.gz")),
         params:
             rname="pl:trim",
             cutadaptver=config['bin'][pfamily]['tool_versions']['CUTADAPTVER'],
@@ -425,7 +421,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         output:
-            outbam1=join(workpath,bam_dir,"{name}.sorted.bam"), 
+            outbam1=temp(join(workpath,bam_dir,"{name}.sorted.bam")), 
             outbam2=temp(join(workpath,bam_dir,"{name}.sorted.Q5.bam")),
             flagstat1=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
             flagstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"),
@@ -537,12 +533,12 @@ rule bam2bw:
                 file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
                 extenders = []
                 for ppqt_value in file[0][2].split(","):
-                    if int(ppqt_value) > 1:
+                    if int(ppqt_value) > 150:
                         extenders.append(ppqt_value)
                 try:
                     cmd+=" -e "+extenders[0]
                 except IndexError:
-                    cmd+=" -e " + "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")
+                    cmd+=" -e " + "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
         shell(commoncmd+cmd)
 
 rule deeptools_prep:
@@ -916,7 +912,8 @@ cat {input.nrf} | {params.filterCollate} {wildcards.name} nrf >> {output.sampleQ
 # NSC, RSC, Qtag
 awk '{{print $(NF-2),$(NF-1),$NF}}' {input.ppqt} | {params.filterCollate} {wildcards.name} ppqt >> {output.sampleQCfile}
 # Fragment Length
-awk -F '\\t' '{{print $3}}' {input.ppqt} | awk -F ',' '{{print $1}}' | {params.filterCollate} {wildcards.name} fragLen >> {output.sampleQCfile}
+#awk -F '\\t' '{{print $3}}' {input.ppqt} | awk -F ',' '{{print $1}}' | {params.filterCollate} {wildcards.name} fragLen >> {output.sampleQCfile}
+awk -F '\\t' '{{print $3}}' {input.ppqt} | sed -e 's/,/ /g' | {params.filterCollate} {wildcards.name} fragLen >> {output.sampleQCfile}
             """
 
 rule QCTable:

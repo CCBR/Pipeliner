@@ -205,6 +205,7 @@ if reps == "yes":
             expand(join(workpath,gem_dir,"{name}","{name}.GEM_events.narrowPeak"),name=chips),
             join(workpath,qc_dir,"FRiP_barplot.png"),
             expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
+            expand(join(workpath,qc_dir,'jaccard.txt')),
             expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_{method}"),PeakTool=PeakToolsNG,name=chips,method=["GW"]),#"TSS"]),
 #            expand(join(workpath,homer2_dir,'{PeakTool}',"{name}_{PeakTool}_annotations.txt"),PeakTool=PeakTools_narrow,name=chips),
             expand(join(workpath, uropa_dir,'{PeakTool}','{name}_{PeakTool}_uropa_{type}_allhits.txt'),PeakTool=PeakTools,name=chips,type=UropaCats),
@@ -248,12 +249,12 @@ if se == "yes":
             file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
             extenders = []
             for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 1:
+                if int(ppqt_value) > 150:
                     extenders.append(ppqt_value)
             try:
                 extsize = extenders[0]
             except IndexError:
-                extsize = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")               
+                extsize = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
             if params.ctrl != join(workpath,bam_dir,".sorted.Q5DD.tagAlign.gz"):
                 cmd = "macs2 callpeak -t " + input.chip + " -c " + params.ctrl + " -g " + params.gsize + " -n " + wildcards.name + " --outdir " + join(workpath,macsN_dir,wildcards.name) + " -q 0.01 --keep-dup='all' --nomodel --extsize " + extsize
             else:
@@ -299,12 +300,12 @@ if se == "yes":
             file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
             extenders = []
             for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 1:
+                if int(ppqt_value) > 150:
                     extenders.append(ppqt_value)
             try:
                 extsize = extenders[0]
             except IndexError:
-                extsize = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")               
+                extsize = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
             if params.ctrl != join(workpath,bam_dir,".sorted.Q5DD.tagAlign.gz"):
                 cmd = "macs2 callpeak -t " + input.chip + " -c " + params.ctrl + " -g " + params.gsize + " -n " + wildcards.name + " --outdir " + join(workpath,macsB_dir,wildcards.name) + " --broad --broad-cutoff 0.01 --keep-dup='all' --nomodel --extsize " + extsize
             else:
@@ -358,12 +359,12 @@ if se == "yes":
             file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
             extenders = []
             for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 1:
+                if int(ppqt_value) > 150:
                     extenders.append(ppqt_value)
             try:
                 extsize = extenders[0]
             except IndexError:
-                extsize = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")               
+                extsize = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
             if params.ctrl != join(workpath,bam_dir,".sorted.Q5DD.tagAlign.gz"):
                 cmd2 = "cp {params.ctrl} input.bed.gz; gzip -d input.bed.gz; "
                 cmd3 =  "sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 " + extsize + " {params.frac} 600 1E-2 ; mv chip-W300-G600-islands-summary-FDR1E-2 {output.txt}"
@@ -396,12 +397,12 @@ if pe =="yes":
             file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
             extenders = []
             for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 1:
+                if int(ppqt_value) > 150:
                     extenders.append(ppqt_value)
             try:
                 extsize = extenders[0]
             except IndexError:
-                extsize = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")               
+                extsize = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
             if params.ctrl != join(workpath,bam_dir,".sorted.Q5DD.bam"):
                 cmd2 = "bamToBed -i {params.ctrl} > input.bed; "
                 cmd3 =  "sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 " + extsize + " 0.75 600 1E-2 ; mv chip-W300-G600-islands-summary-FDR1E-2 {output.txt}"
@@ -776,21 +777,21 @@ if se == "yes":
             file=list(map(lambda z:z.strip().split(),open(input.ppqt1,'r').readlines()))
             extenders = []
             for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 1:
+                if int(ppqt_value) > 150:
                     extenders.append(ppqt_value)
             try:
                 extsize1 = extenders[0]
             except IndexError:
-                extsize1 = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")
+                extsize1 = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
             file=list(map(lambda z:z.strip().split(),open(input.ppqt2,'r').readlines()))
             extenders = []
             for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 1:
+                if int(ppqt_value) > 150:
                     extenders.append(ppqt_value)
             try:
                 extsize2 = extenders[0]
             except IndexError:
-                extsize2 = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")
+                extsize2 = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
             cmd5 = "manorm --p1 peak1.bed --p2 peak2.bed --r1 tAlign1.tagAlign --r2 tAlign2.tagAlign --s1 " + extsize1  + " --s2 " + extsize2 + " -o {output.fldr} --name1 '" + wildcards.group1 + "' --name2 '" + wildcards.group2 + "'; "
             cmd6 = "gzip {output.fldr}/output_tracks/*wig; "
             cmd7 = "mv {output.fldr}/" + wildcards.group1 + "_vs_" + wildcards.group2 + "_all_MAvalues.xls {output.xls}; "
@@ -829,21 +830,21 @@ if pe == "yes":
             file=list(map(lambda z:z.strip().split(),open(input.ppqt1,'r').readlines()))
             extenders = []
             for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 1:
+                if int(ppqt_value) > 150:
                     extenders.append(ppqt_value)
             try:
                 extsize1 = extenders[0]
             except IndexError:
-                extsize1 = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")               
+                extsize1 = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
             file=list(map(lambda z:z.strip().split(),open(input.ppqt2,'r').readlines()))
             extenders = []
             for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 1:
+                if int(ppqt_value) > 150:
                     extenders.append(ppqt_value)
             try:
                 extsize2 = extenders[0]
             except IndexError:
-                extsize2 = "{} {}".format(file[0][2].split(",")[0], "# Negative Value which will cause pipeline to fail (wrong ref genome selected or low starting DNA)")               
+                extsize2 = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
             cmd5 = "manorm --p1 peak1.bed --p2 peak2.bed --r1 bam1.bed --r2 bam2.bed --s1 " + extsize1  + " --s2 " + extsize2 + " -o {output.fldr} --name1 '" + wildcards.group1 + "' --name2 '" + wildcards.group2 + "'; "
             cmd6 = "gzip {output.fldr}/output_tracks/*wig; "
             cmd7 = "mv {output.fldr}/" + wildcards.group1 + "_vs_" + wildcards.group2 + "_all_MAvalues.xls {output.xls}; "
