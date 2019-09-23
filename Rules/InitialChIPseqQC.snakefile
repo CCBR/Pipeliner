@@ -244,7 +244,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         output:
-            outbam1=temp(join(workpath,bam_dir,"{name}.sorted.bam")), 
+            outbam1=join(workpath,bam_dir,"{name}.sorted.bam"), 
             outbam2=temp(join(workpath,bam_dir,"{name}.sorted.Q5.bam")),
             flagstat1=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
             flagstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"),
@@ -421,7 +421,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         output:
-            outbam1=temp(join(workpath,bam_dir,"{name}.sorted.bam")), 
+            outbam1=join(workpath,bam_dir,"{name}.sorted.bam"), 
             outbam2=temp(join(workpath,bam_dir,"{name}.sorted.Q5.bam")),
             flagstat1=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
             flagstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"),

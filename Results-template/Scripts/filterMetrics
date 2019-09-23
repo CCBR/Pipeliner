@@ -70,10 +70,10 @@ def getmetadata(type):
 	
 
 def filteredData(sample, ftype):
-""" 
-Data grabbed by the awk or grep commands in the above example cases becomes variable 'line'
-and gets split by space to make 'linelist'
-"""
+	""" 
+	Data grabbed by the awk or grep commands in the above example cases becomes 
+	variable 'line' and gets split by space to make 'linelist'
+	"""
 	for line in sys.stdin:
 		linelist = line.strip().split()
 		if 'reads' in ftype:

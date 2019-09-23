@@ -695,7 +695,6 @@ rule diffbind:
         lambda w: [ join(workpath, w.PeakTool, chip, chip + PeakExtensions[w.PeakTool]) for chip in chips ]
     output:
         html = join(workpath,diffbind_dir,"{group1}_vs_{group2}-{PeakTool}","{group1}_vs_{group2}-{PeakTool}_Diffbind.html"),
-        csvfile = join(workpath,diffbind_dir,"{group1}_vs_{group2}-{PeakTool}","{group1}_vs_{group2}-{PeakTool}_Diffbind_prep.csv"),
     params:
         rname="pl:diffbind",
         Rver = config['bin'][pfamily]['tool_versions']['RVER'],
@@ -704,7 +703,8 @@ rule diffbind:
         projectID = config['project']['id'],
         projDesc=config['project']['description'].rstrip('\n'),
         outdir = join(workpath,diffbind_dir,"{group1}_vs_{group2}-{PeakTool}"),
-        contrast = "{group1}_vs_{group2}"
+        contrast = "{group1}_vs_{group2}",
+        csvfile = join(workpath,diffbind_dir,"{group1}_vs_{group2}-{PeakTool}","{group1}_vs_{group2}-{PeakTool}_Diffbind_prep.csv"),
     run:
         samplesheet = [",".join(["SampleID","Condition", "Replicate", "bamReads", 
 		      "ControlID", "bamControl", "Peaks", "PeakCaller"])]
@@ -723,11 +723,11 @@ rule diffbind:
                 samplesheet.append(",".join([chip, condition, replicate, bamReads, 
 						   controlID, bamControl, peaks, peakcaller]))
 
-        f = open(output.csvfile, 'w')
+        f = open(params.csvfile, 'w')
         f.write ("\n".join(samplesheet))
         f.close()
         cmd1 = "module load {params.Rver}; cp {params.rscript2} {params.outdir}; cd {params.outdir}; "
-        cmd2 = "Rscript {params.rscript1} '.' {output.html} {output.csvfile} '{params.contrast}' '{wildcards.PeakTool}' '{params.projectID}' '{params.projDesc}'"
+        cmd2 = "Rscript {params.rscript1} '.' {output.html} {params.csvfile} '{params.contrast}' '{wildcards.PeakTool}' '{params.projectID}' '{params.projDesc}'"
         shell( cmd1 + cmd2 )
 
 rule diffbind_bed:
