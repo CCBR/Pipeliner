@@ -1129,13 +1129,11 @@ rule pca:
     projDesc=config['project']['description'].rstrip('\n'),
     rver=config['bin'][pfamily]['tool_versions']['RVER'],
     scripts_dir=join(workpath,"Scripts"),
-    rscript1="pcacall.R",
-    rscript2="PcaReport.Rmd",
+    rscript1=join(workpath,"Scripts","pcacall.R"),
+    rscript2=join(workpath,"Scripts","PcaReport.Rmd"),
   shell: """
 cd {params.outdir}
-if [ ! -f {params.rscript1} ]; then cp {params.scripts_dir}/{params.rscript1} {params.outdir}/;fi
-if [ ! -f {params.rscript2} ]; then cp {params.scripts_dir}/{params.rscript2} {params.outdir}/;fi
-module load {params.rver}
-Rscript {params.rscript1} '{params.outdir}' '{output.outhtml}' '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}' 
-"""
 
+module load {params.rver}
+Rscript {params.rscript1} '{params.outdir}' '{output.outhtml}' '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}' '{params.rscript2}'
+"""

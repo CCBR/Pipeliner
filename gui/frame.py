@@ -720,7 +720,10 @@ class PipelineFrame( Frame ) :
         pl = self.pipeline_name
         pipeline_name = self.Pipeline.get()
         print("Drying-running: {}".format(pl))
-        if pipeline_name == 'rnaseq' or pipeline_name == 'initialqcrnaseq':
+        if pipeline_name == 'initialqcrnaseq':
+            if self.popup_warning('groups.tab'):
+                return
+        elif pipeline_name == 'rnaseq':
             if self.popup_warning('groups.tab') or self.popup_warning('contrasts.tab'):
                 return
         self.makejson("none")
