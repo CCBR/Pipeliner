@@ -319,7 +319,7 @@ for(i in seq(1, length(contras), by = 2)) {
     write.table(deseq2out,file=paste("DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt",sep=""),row.names=FALSE,col.names=TRUE,quote=FALSE,sep="\t")
     
     ## Pathway enrichment analysis
-    if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38") {
+    if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="hg38" | SPECIES=="hg38_30") {
       iup=which(final$pvalue<0.05 & final$FoldChange >=0)
       idw=which(final$pvalue<0.05 & final$FoldChange <0)
       fin.up=final[iup,]
@@ -341,7 +341,7 @@ for(i in seq(1, length(contras), by = 2)) {
     gdw=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
     extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
 
-      if (SPECIES=="hg19" | SPECIES=="hg38") {
+      if (SPECIES=="hg19" | SPECIES=="hg38"| SPECIES=="hg38_30") {
         write.table(gup,paste0("DESeq2_gene_up_path",extension),quote=F,row.names=F,col.names=F)
         write.table(gdw,paste0("DESeq2_gene_dw_path",extension),quote=F,row.names=F,col.names=F)
       } 
@@ -403,14 +403,14 @@ for(i in seq(1, length(contras), by = 2)) {
     volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
     v_fdr[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste(contras[i]," vs. ",contras[i+1],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 FDR",range =c(0,15)))
 
-    if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
+    if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
       system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt 1 3 ",SPECIES," ",KARYOBEDS," > DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo"))
       system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo ",SPECIES))
       ki1=paste0("DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo1.png")
       ki2=paste0("DESeq2_deg_",contras[i],"_vs_",contras[i+1],".input.karyo2.png")
     }
 
-    if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
+    if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
       system(paste0("cd ",getwd(),";/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/r_env/bin/Rscript ../Scripts/karyoploter.R -o deseq2 -d DESeq2_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt -c ", params$karyotext, " -g ", SPECIES))
     }
 }
@@ -447,7 +447,7 @@ v_fdr
 ### Page1
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
+if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
   cat("![](deseq2_karyoplot1.png)")
 } else {
   cat("Genome Not Supported")
@@ -458,7 +458,7 @@ if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECI
 ### Page2
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
+if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
   cat("![](deseq2_karyoplot2.png)")
 } else {
   cat("Genome Not Supported")
@@ -471,7 +471,7 @@ if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9" | SPECI
 ### Page1
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
+if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
   cat("![](",ki1,")")
 } else {
   cat("Genome Not suporrted")
@@ -481,7 +481,7 @@ if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9")&&(gre
 ### Page2
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
+if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
   cat("![](",ki2,")")
 } else {
   cat("Genome Not Supported")
@@ -494,7 +494,7 @@ if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="mm10" | SPECIES=="mm9")&&(gre
 ### Up-Regulated
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38"){
+if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="hg38" | SPECIES=="hg38_30"){
   pup
 } else {
   cat("Genome Not Supported")
@@ -504,7 +504,7 @@ if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38"){
 ### Down-Regulated
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38"){
+if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="hg38" | SPECIES=="hg38_30"){
   pdw
 } else {
   cat("Genome Not Supported")

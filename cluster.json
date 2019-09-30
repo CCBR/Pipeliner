@@ -30,6 +30,14 @@
         "mem": "96g",
         "time": "1-00:00:00"
     },
+    "bam2bw_rnaseq_pe": {
+        "mem": "40g",
+        "threads": "4"
+    },
+    "bam2bw_rnaseq_se": {
+        "mem": "40g",
+        "threads": "2"
+    },
     "bam2bw": {
         "threads": "32"
     },

@@ -144,7 +144,7 @@
     "rnaseq": {
     "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/ref.fa",
     "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/genes.gtf",
-    "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/STAR/2.5.2b/genes-",
+    "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/STAR/2.7.0f/genes-",
     "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/annotate.genes.txt",
     "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/qualimap_info.txt",
     "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs37d5/annotate.isoforms.txt",

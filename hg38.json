@@ -164,7 +164,7 @@
      "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/geneinfo.bed",
      "KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/dev/karyobeds/hg.v26/",
      "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/rsemref/hg38",
-     "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/STAR/2.5.2b/genes-",
+     "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/STAR/2.7.0f/genes-",
      "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/hg38.rRNA_interval_list",
 
 

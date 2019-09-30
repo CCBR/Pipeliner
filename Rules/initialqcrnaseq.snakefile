@@ -24,9 +24,9 @@ pe=""
 workpath = config['project']['workpath']
 
 if config['project']['nends'] == 2 :
-	pe="yes"
+    pe="yes"
 elif config['project']['nends'] == 1 :
-	se="yes"
+    se="yes"
 
 
 trim_dir='trim'
@@ -41,8 +41,8 @@ degall_dir="DEG_ALL"
 dtypes=["RSEM_genes","Subread_junctions","Subread_genejunctions","Subread_genes"]
 
 for d in [trim_dir,kraken_dir,bams_dir,star_dir,log_dir,rseqc_dir,preseq_dir,degall_dir]:
-	if not os.path.exists(join(workpath,d)):
-		os.mkdir(join(workpath,d))
+    if not os.path.exists(join(workpath,d)):
+        os.mkdir(join(workpath,d))
 
 
 if pe=="yes":
@@ -73,7 +73,7 @@ if pe=="yes":
         # STAR
         expand(join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),name=samples),
 
-        # Deeptools
+        # Bam to stranded bigwigs
         expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
         expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
 
@@ -108,7 +108,7 @@ if pe=="yes":
 
         # Subread Overlap 
         join(workpath,star_dir,"RawCountFileOverlap.txt"),
-        join(workpath,star_dir,"RawCountFileStar.txt"),    	
+        join(workpath,star_dir,"RawCountFileStar.txt"),     
         expand(join(workpath,star_dir,"{name}.star.count.info.overlap.txt"),name=samples),
         expand(join(workpath,star_dir,"{name}.star.count.overlap.txt"),name=samples),
 
@@ -141,8 +141,8 @@ fastqc {input} -t {threads} -o {output};
         file1=join(workpath,"{name}.R1."+config['project']['filetype']),
         file2=join(workpath,"{name}.R2."+config['project']['filetype']),        
       output: 
-        out1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
-        out2=join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
+        out1=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz")),
+        out2=temp(join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"))
       params: 
         rname='pl:trim_pe',
         batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
@@ -388,7 +388,7 @@ if se=="yes":
         # join(workpath,"QualiMap","GlobalReport.html"),
 
 
-        # Deeptools
+        # Bam to stranded bigwigs
         expand(join(workpath,bams_dir,"{name}.fwd.bw"),name=samples),
         expand(join(workpath,bams_dir,"{name}.rev.bw"),name=samples),
 
@@ -443,7 +443,7 @@ fastqc {input} -t {threads} -o {output};
       input: 
         infq=join(workpath,"{name}.R1."+config['project']['filetype']),
       output: 
-        outfq=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
+        outfq=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"))
       params: 
         rname='pl:trim_se',
         batch='--cpus-per-task=32 --mem=110g --time=48:00:00',
@@ -711,14 +711,14 @@ sed -i 's/MarkDuplicates/picard.sam.MarkDuplicates/g' {output.outstar3};
 """
 
 rule preseq:
-	params:
-		rname = "pl:preseq",
-		preseqver=config['bin'][pfamily]['tool_versions']['PRESEQVER'],
-	input:
-		bam = join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
-	output:
-		ccurve = join(workpath,preseq_dir,"{name}.ccurve"),
-	shell:"""
+    params:
+        rname = "pl:preseq",
+        preseqver=config['bin'][pfamily]['tool_versions']['PRESEQVER'],
+    input:
+        bam = join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
+    output:
+        ccurve = join(workpath,preseq_dir,"{name}.ccurve"),
+    shell:"""
 module load {params.preseqver};
 preseq c_curve -B -o {output.ccurve} {input.bam}            
             """
@@ -845,6 +845,30 @@ echo $fp
 rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam --paired-end -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files --forward-prob=$fp --estimate-rspd
 """
 
+   rule bam2bw_rnaseq_pe:
+      input:
+          bam=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
+          strandinfo=join(workpath,rseqc_dir,"{name}.strand.info")
+      output:
+          fbw=join(workpath,bams_dir,"{name}.fwd.bw"),
+          rbw=join(workpath,bams_dir,"{name}.rev.bw")
+      params:
+          rname='pl:bam2bw',
+          prefix="{name}",
+          bashscript=join(workpath,"Scripts","bam2strandedbw.pe.sh")
+      threads: 4
+      shell:"""
+  sh {params.bashscript} {input.bam}
+
+  # reverse files if method is not dUTP/NSR/NNSR ... ie, R1 in the direction of RNA strand.
+  strandinfo=`tail -n1 {input.strandinfo}|awk '{{print $NF}}'`
+  if [ `echo "$strandinfo < 0.25"|bc` -eq 1 ];then
+  mv {output.fbw} {output.fbw}.tmp
+  mv {output.rbw} {output.fbw}
+  mv {output.fbw}.tmp {output.rbw}
+  fi
+  """
+
 
 if se=="yes":
 
@@ -875,36 +899,29 @@ echo $fp
 rsem-calculate-expression --no-bam-output --calc-ci --seed 12345  --bam -p {threads}  {input.file1} {params.rsemref} {params.prefix} --time --temporary-folder /lscratch/$SLURM_JOBID --keep-intermediate-files --forward-prob=$fp --estimate-rspd
 """
 
-rule bam2bw:
-	input:
-		bam=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
-		strandinfo=join(workpath,rseqc_dir,"{name}.strand.info")
-	output:
-		fbw=join(workpath,bams_dir,"{name}.fwd.bw"),
-		rbw=join(workpath,bams_dir,"{name}.rev.bw")
-	params:
-		rname='pl:bam2bw',
-		prefix="{name}",
-		deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER']
-	threads: 32
-	shell:"""
-module load {params.deeptoolsver};
+   rule bam2bw_rnaseq_se:
+      input:
+          bam=join(workpath,bams_dir,"{name}.star_rg_added.sorted.dmark.bam"),
+          strandinfo=join(workpath,rseqc_dir,"{name}.strand.info")
+      output:
+          fbw=join(workpath,bams_dir,"{name}.fwd.bw"),
+          rbw=join(workpath,bams_dir,"{name}.rev.bw")
+      params:
+          rname='pl:bam2bw',
+          prefix="{name}",
+          bashscript=join(workpath,"Scripts","bam2strandedbw.se.sh")
+      threads: 2
+      shell:"""
+  sh {params.bashscript} {input.bam}
 
-bam={input.bam}
-# Forward strand
-bamCoverage -b $bam -o {output.fbw} --filterRNAstrand forward --binSize 20 --smoothLength 40 -p 32
-
-# Reverse strand
-bamCoverage -b $bam -o {output.rbw} --filterRNAstrand reverse --binSize 20 --smoothLength 40 -p 32
-
-# reverse files if method is not dUTP/NSR/NNSR ... ie, R1 in the direction of RNA strand.
-fp=`awk '{{if($NF > 0.75) print "0.0"; else if ($NF<0.25) print "D1.0"; else print "0.5";}}' {input.strandinfo}`
-if [ $fp -lt 0.25 ];then
-mv {output.fbw} {output.fbw}.tmp
-mv {output.rbw} {output.fbw}
-mv {output.fbw}.tmp {output.rbw}
-fi
-"""
+  # reverse files if method is not dUTP/NSR/NNSR ... ie, R1 in the direction of RNA strand.
+  strandinfo=`tail -n1 {input.strandinfo}|awk '{{print $NF}}'`
+  if [ `echo "$strandinfo < 0.25"|bc` -eq 1 ];then
+  mv {output.fbw} {output.fbw}.tmp
+  mv {output.rbw} {output.fbw}
+  mv {output.fbw}.tmp {output.rbw}
+  fi
+  """
 
 
 rule rsem_merge:
@@ -1112,13 +1129,11 @@ rule pca:
     projDesc=config['project']['description'].rstrip('\n'),
     rver=config['bin'][pfamily]['tool_versions']['RVER'],
     scripts_dir=join(workpath,"Scripts"),
-    rscript1="pcacall.R",
-    rscript2="PcaReport.Rmd",
+    rscript1=join(workpath,"Scripts","pcacall.R"),
+    rscript2=join(workpath,"Scripts","PcaReport.Rmd"),
   shell: """
 cd {params.outdir}
-if [ ! -f {params.rscript1} ]; then cp {params.scripts_dir}/{params.rscript1} {params.outdir}/;fi
-if [ ! -f {params.rscript2} ]; then cp {params.scripts_dir}/{params.rscript2} {params.outdir}/;fi
-module load {params.rver}
-Rscript {params.rscript1} '{params.outdir}' '{output.outhtml}' '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}' 
-"""
 
+module load {params.rver}
+Rscript {params.rscript1} '{params.outdir}' '{output.outhtml}' '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}' '{params.rscript2}'
+"""

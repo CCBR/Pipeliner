@@ -62,12 +62,6 @@ star_dir="STAR_files"
 bams_dir="bams"
 log_dir="logfiles"
 rseqc_dir="RSeQC"
-# rsemi_dir="DEG_RSEM_isoforms"
-# rsemg_dir="DEG_RSEM_genes"
-# salmon_dir="Salmon"
-# subreadg_dir="DEG_Subread_genes"
-# subreadj_dir="DEG_Subread_junctions"
-# subreadgj_dir="DEG_Subread_genejunctions"
 
 debug = expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "DESeq2_DEG_{con}_all_genes.txt"), zip, con=contrastsList, cpm=cpm_cutoff_list,minsamples=mincounts) + expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "limma_DEG_{con}_all_genes.txt"),  zip, con=contrastsList, cpm=cpm_cutoff_list,minsamples=mincounts) + expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "edgeR_DEG_{con}_all_genes.txt"),  zip, con=contrastsList, cpm=cpm_cutoff_list,minsamples=mincounts),
 
@@ -289,11 +283,10 @@ rule pca:
     rscript1=join(workpath,"Scripts","pcacall.R"),
     rscript2=join(workpath,"Scripts","PcaReport.Rmd"),
   shell: """
-cp {params.rscript1} {params.outdir}
-cp {params.rscript2} {params.outdir}
 cd {params.outdir}
+
 module load {params.rver}
-Rscript pcacall.R '{params.outdir}' '{output.outhtml}'  '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}'
+Rscript {params.rscript1} '{params.outdir}' '{output.outhtml}'  '{input.file1}' '{input.file2}' '{params.projectId}' '{params.projDesc}' '{params.rscript2}'
 """
 
 rule vennDiagram:
