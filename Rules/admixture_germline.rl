@@ -1,5 +1,5 @@
 rule admixture_germline:
-    input: "exome.strictFilter.vcf.gz"
+    input: "exome.strictFilter.vcf"
     output: vcf=temp("admixture_out/samples_noINDEL_nomissing.recode.vcf"),
             mergedvcf=temp("admixture_out/samples_and_knowns.vcf"),
             ped=temp("admixture_out/samples_and_knowns_filtered.ped"),
