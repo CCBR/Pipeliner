@@ -102,8 +102,9 @@ bw_dir='bigwig'
 deeptools_dir='deeptools'
 preseq_dir='preseq'
 extra_fingerprint_dir='deeptools/sorted_fingerprint'
+qc_dir="qc"
 
-for d in [trim_dir,kraken_dir,bam_dir,bw_dir,deeptools_dir,preseq_dir,extra_fingerprint_dir]:
+for d in [trim_dir,kraken_dir,bam_dir,bw_dir,deeptools_dir,preseq_dir,extra_fingerprint_dir,qc_dir]:
 	if not os.path.exists(join(workpath,d)):
 		os.mkdir(join(workpath,d))
 
@@ -122,19 +123,15 @@ if se == 'yes' :
             # Multiqc Report
             join(workpath,"Reports","multiqc_report.html"),
             join(workpath,"Reports","multiqc_reportA.html"),
-            join(workpath,"rawQC"),
-            join(workpath,"QC"),
             # FastqScreen
-            expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
             expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
-            expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),name=samples),
             expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
             # Kraken
             expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
             expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
             join(workpath,kraken_dir,"kraken_bacteria.taxa.summary.txt"),
             # Align using BWA and dedup with Picard or MACS2
-            #expand(join(workpath,bam_dir,"{name}.{ext}"),name=samples,ext=extensions4),
+            expand(join(workpath,bam_dir,"{name}.{ext}"),name=samples,ext=extensions4),
             # BWA --> BigWig
             expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions),
             # Input Normalization
@@ -151,13 +148,11 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             # ngsqc
-            expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+            expand(join(workpath,qc_dir,"{group}.NGSQC.sorted.Q5DD.png"),group=groups),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
-            expand(join(workpath,"QC","{name}.nrf"), name=samples),
-            expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
-            join(workpath,"QC","QCTable.txt"),
+            join(workpath,qc_dir,"QCTable.txt"),
 
 
     rule trim_se: # actually trim, filter polyX and remove black listed reads
@@ -248,6 +243,8 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             outbam2=temp(join(workpath,bam_dir,"{name}.sorted.Q5.bam")),
             flagstat1=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
             flagstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"),
+            idxstat1=join(workpath,bam_dir,"{name}.sorted.bam.idxstat"),
+            idxstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.idxstat"),
         threads: 32
         shell: """
 module load {params.bwaver};
@@ -256,9 +253,11 @@ bwa mem -t {threads} {params.reference} {input.infq} | \
 samtools sort -@{threads} -o {output.outbam1}
 samtools index {output.outbam1}
 samtools flagstat {output.outbam1} > {output.flagstat1}
+samtools idxstats {output.outbam1} > {output.idxstat1}
 samtools view -b -q 6 {output.outbam1} -o {output.outbam2}
 samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
+samtools idxstats {output.outbam2} > {output.idxstat2}
             """  
 
     rule macs2_dedup:
@@ -267,7 +266,8 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
         output:
             outtagalign=join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz"),
             outbam=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-            outflagstat=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat")
+            outflagstat=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
+            outidxstat=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.idxstat"),
         params:
             rname='pl:macs2_dedup',
             macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
@@ -291,6 +291,7 @@ gzip TmpTagAlign3;
 mv TmpTagAlign3.gz {output.outtagalign};
 samtools index {output.outbam};
 samtools flagstat {output.outbam} > {output.outflagstat}
+samtools idxstats {output.outbam} > {output.outidxstat}
 """
 
 if pe == 'yes':
@@ -300,17 +301,12 @@ if pe == 'yes':
         input: 
             # Multiqc Report
             join(workpath,"Reports","multiqc_report.html"),
-            join(workpath,"rawQC"),
-            join(workpath,"QC"),
             # FastqScreen
-            expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
             expand(join(workpath,"FQscreen","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
-            expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.txt"),name=samples,rn=[1,2]),
             expand(join(workpath,"FQscreen2","{name}.R{rn}.trim_screen.png"),name=samples,rn=[1,2]),
             # Kraken
             expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.taxa.txt"),name=samples),
             expand(join(workpath,kraken_dir,"{name}.trim.fastq.kraken_bacteria.krona.html"),name=samples),
-            # join(workpath,kraken_dir,"kraken_bacteria.taxa.summary.txt"),
             # Align using BWA and dedup with Picard
             expand(join(workpath,bam_dir,"{name}.{ext}"),name=samples,ext=extensions4),
             # BWA --> BigWig
@@ -330,13 +326,11 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             # ngsqc
-            expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+            expand(join(workpath,qc_dir,"{group}.NGSQC.sorted.Q5DD.png"),group=groups),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
-            expand(join(workpath,"QC","{name}.nrf"), name=samples),
-            expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
-            join(workpath,"QC","QCTable.txt"),
+            join(workpath,qc_dir,"QCTable.txt"),
 
 
     rule trim_pe: # trim, remove PolyX and remove BL reads
@@ -424,7 +418,9 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             outbam1=join(workpath,bam_dir,"{name}.sorted.bam"), 
             outbam2=temp(join(workpath,bam_dir,"{name}.sorted.Q5.bam")),
             flagstat1=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
+            idxstat1=join(workpath,bam_dir,"{name}.sorted.bam.idxstat"),
             flagstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"),
+            idxstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.idxstat"),
         threads: 32
         shell: """
 module load {params.bwaver};
@@ -433,9 +429,11 @@ bwa mem -t {threads} {params.reference} {input.infq1} {input.infq2} | \
 samtools sort -@{threads} -o {output.outbam1}
 samtools index {output.outbam1}
 samtools flagstat {output.outbam1} > {output.flagstat1}
+samtools idxstat {output.outbam1} > {output.idxstat1}
 samtools view -b -q 6 {output.outbam1} -o {output.outbam2}
 samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
+samtools idxstat {output.outbam2} > {output.idxstat2}
             """  
 
     rule picard_dedup:
@@ -445,6 +443,7 @@ samtools flagstat {output.outbam2} > {output.flagstat2}
             out4=temp(join(workpath,bam_dir,"{name}.bwa_rg_added.sorted.Q5.bam")), 
             out5=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
             out5f=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
+            out5i=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.idxstat"),
             out6=join(workpath,bam_dir,"{name}.bwa.Q5.duplic"), 
         params:
             rname='pl:dedup',
@@ -474,6 +473,7 @@ java -Xmx{params.javaram} \
   METRICS_FILE={output.out6}
 samtools index {output.out5}
 samtools flagstat {output.out5} > {output.out5f}
+samtools idxstat {output.out5} > {output.out5i}
             """
 
 rule ppqt:
@@ -747,9 +747,9 @@ rule NRF:
         preseqver=config['bin'][pfamily]['tool_versions']['PRESEQVER'],
         nrfscript=join(workpath,"Scripts","atac_nrf.py "),            
     output:
-        preseq=join(workpath,"QC","{name}.preseq.dat"),
-        preseqlog=join(workpath,"QC","{name}.preseq.log"),
-        nrf=join(workpath,"QC","{name}.nrf"),
+        preseq=join(workpath,qc_dir,"{name}.preseq.dat"),
+        preseqlog=join(workpath,qc_dir,"{name}.preseq.log"),
+        nrf=temp(join(workpath,qc_dir,"{name}.nrf")),
     threads: 16
     shell: """
 module load {params.preseqver};
@@ -763,7 +763,7 @@ rule rawfastqc:
             se == "yes" else \
             expand(join(workpath,"{name}.R{rn}.fastq.gz"), name=samples,rn=[1,2])
     output:
-        join(workpath,'rawQC'),
+        join(workpath,'rawfastQC'),
     priority: 2
     params:
         rname='pl:rawfastqc',
@@ -787,7 +787,7 @@ rule fastqc:
         expand(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),name=samples) if \
             se == "yes" else \
             expand(join(workpath,trim_dir,"{name}.R{rn}.trim.fastq.gz"), name=samples,rn=[1,2])
-    output: join(workpath,"QC")
+    output: join(workpath,"fastQC")
     priority: 2
     threads: 32
     shell: """
@@ -836,7 +836,7 @@ rule ngsqc:
           se == "yes" else \
           join(workpath,bam_dir,"{name}.sorted.Q5DD.bam")
     output:
-        file=join(workpath,"QC","{name}.sorted.Q5DD.NGSQC_report.txt"),
+        file=join(workpath,qc_dir,"{name}.sorted.Q5DD.NGSQC_report.txt"),
     params:
         rname="pl:ngsqc",
         bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
@@ -859,9 +859,9 @@ mv tmpOut/NGSQC_report.txt {output.file}
 
 rule ngsqc_plot:
     input:
-        ngsqc=expand(join(workpath,"QC","{name}.sorted.Q5DD.NGSQC_report.txt"),name=samples),
+        ngsqc=expand(join(workpath,qc_dir,"{name}.sorted.Q5DD.NGSQC_report.txt"),name=samples),
     output:
-        png=expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+        png=expand(join(workpath,qc_dir,"{group}.NGSQC.sorted.Q5DD.png"),group=groups),
     params:
         rname="pl:ngsqc_plot",
         script=join(workpath,"Scripts","ngsqc_plot.py"),
@@ -891,13 +891,13 @@ rule QCstats:
         flagstat=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
         infq=join(workpath,"{name}.R1.fastq.gz"),	
         ddflagstat=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
-        nrf=join(workpath,"QC","{name}.nrf"),
+        nrf=join(workpath,qc_dir,"{name}.nrf"),
         ppqt=join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
     params:
         rname='pl:QCstats',
         filterCollate=join(workpath,"Scripts","filterMetrics"),   
     output:
-        sampleQCfile=join(workpath,"QC","{name}.qcmetrics"),
+        sampleQCfile=temp(join(workpath,qc_dir,"{name}.qcmetrics")),
     threads: 16
     shell: """
 # Number of reads
@@ -918,13 +918,13 @@ awk -F '\\t' '{{print $3}}' {input.ppqt} | sed -e 's/,/ /g' | {params.filterColl
 
 rule QCTable:
     input:
-        expand(join(workpath,"QC","{name}.qcmetrics"), name=samples),
+        expand(join(workpath,qc_dir,"{name}.qcmetrics"), name=samples),
     params:
         rname='pl:QCTable',
         inputstring=" ".join(expand(join(workpath,"QC","{name}.qcmetrics"), name=samples)),
         filterCollate=join(workpath,"Scripts","createtable"),
     output:
-        qctable=join(workpath,"QC","QCTable.txt"),
+        qctable=join(workpath,qc_dir,"QCTable.txt"),
     threads: 16
     shell: """
 cat {params.inputstring} | {params.filterCollate} > {output.qctable}
@@ -937,11 +937,11 @@ rule multiqc:
         expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
         expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
 	expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
-        join(workpath,"QC","QCTable.txt"),
-        join(workpath,"rawQC"),
-        join(workpath,"QC"),
+        join(workpath,qc_dir,"QCTable.txt"),
+        join(workpath,"rawfastQC"),
+        join(workpath,"fastQC"),
         expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.sorted.Q5DD.tab"),group=groups),
-        expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+        expand(join(workpath,qc_dir,"{group}.NGSQC.sorted.Q5DD.png"),group=groups),
         join(workpath,deeptools_dir,"spearman_heatmap.sorted.Q5DD.RPGC.pdf"),
     output:
         join(workpath,"Reports","multiqc_report.html")
@@ -962,10 +962,10 @@ rule multiqcA:
         expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
         expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
         expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
-        join(workpath,"rawQC"),
-        join(workpath,"QC"),
-        join(workpath,"QC","QCTable.txt"),
-        expand(join(workpath,"QC","{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+        join(workpath,"rawfastQC"),
+        join(workpath,"fastQC"),
+        join(workpath,qc_dir,"QCTable.txt"),
+        expand(join(workpath,qc_dir,"{group}.NGSQC.sorted.Q5DD.png"),group=groups),
     output:
         join(workpath,"Reports","multiqc_reportA.html")
     params:
@@ -977,5 +977,3 @@ rule multiqcA:
 module load {params.multiqc}
 cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt --ignore {params.dir} -d ../ -n multiqc_reportA.html
 """
-
-

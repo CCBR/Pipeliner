@@ -1,5 +1,5 @@
 ---
-title: "DiffBind: CCBR ChIP-seq pipeline"
+title: "DiffBind: CCBR ATAC-seq pipeline"
 output: 
     html_document:
         toc: true
@@ -45,6 +45,7 @@ suppressMessages(library(DiffBind))
 ## Read in sample sheet information and peak information
 ```{r samples, echo=FALSE, warning=FALSE,message=FALSE} 
 samples <- dba(sampleSheet=csvfile)
+consensus <- dba.peakset(samples,consensus=DBA_CONDITION)
 print(samples)
 ```
 
@@ -62,30 +63,30 @@ try(dba.plotPCA(samples,DBA_CONDITION),silent=TRUE)
 ```
 
 ### Overlapping peak counts
-```{r Venn, echo=FALSE, warning=FALSE,message=FALSE,fig.align="center"}
+```{r Venn, echo=FALSE, warning=FALSE,message=FALSE,fig.align="center",fig.height=5,fig.width=5}
 if (nrow(samples$samples) < 5) {
    dba.plotVenn(samples,1:nrow(samples$samples)) 
 } else {
    dba.plotVenn(samples,samples$masks[[3]])
    dba.plotVenn(samples,samples$masks[[4]])
-   dba.plotVenn(samples,samples$masks$Replicate.1)
+   dba.plotVenn(consensus,consensus$masks$Consensus)
 }
 ```
 
 ```{r peaksORsummits, echo=F}
-if ( grepl("narrow",samples$samples$Peaks[1]) ) {
-   summits <- TRUE
-   print ("Narrow peak calling tool.")
-   print ("Differential peaks are 250bp upstream and downstream of the summits.")
-} else if ( grepl("broad",samples$samples$Peaks[1]) ) {
+#if ( grepl("narrow",samples$samples$Peaks[1]) ) {
+#   summits <- TRUE
+#   print ("Narrow peak calling tool.")
+#   print ("Differential peaks are 250bp upstream and downstream of the summits.")
+#} else if ( grepl("broad",samples$samples$Peaks[1]) ) {
+#  summits <- FALSE
+#  print ("Broad peak calling tool.")
+#  print ("Differential peaks are consensus peaks.")
+#} else {
   summits <- FALSE
-  print ("Broad peak calling tool.")
+#  print ("Indeterminate peak calling tool.")
   print ("Differential peaks are consensus peaks.")
-} else {
-  summits <- FALSE
-  print ("Indeterminate peak calling tool.")
-  print ("Differential peaks are consensus peaks.")
-}
+#}
 ```
 
 ## Read in bam file information under all peaks found in at least two samples
