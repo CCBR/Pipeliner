@@ -1,5 +1,6 @@
  {"references": {
     "exomeseq": {
+    "VARDICTBED": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10.chroms.bed",
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
     "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_dbSNP_allStrains_compSet.vcf.gz",
     "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
@@ -60,6 +61,7 @@
     "CNVKITANNO": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_refFlat.txt",
 },
     "genomeseq": {
+    "VARDICTBED": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10.chroms.bed",
     "PON": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_dbSNP_allStrains_compSet.vcf.gz",
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
     "GENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/WholeGenomeFasta/genome.fa",
@@ -127,7 +129,9 @@
      "rnaseq":{
 "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/mm10.fa",
 "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/genes.gtf",
-"STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/STAR/2.5.2b/genes-",
+"STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/STAR/2.7.0f/genes-",
+"QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/qualimap_info.txt",
+"KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/karyoplot_gene_coordinates.txt",
 "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/annotate.genes.txt",
 "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/annotate.isoforms.txt",
 "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/refFlat.txt",
@@ -146,7 +150,7 @@
 # "SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/dev/rsemref/mouse_gencode.transcripts.fa",
 #"SALMONREF": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/rsem1.3.0/mouse_gencode.transcripts.fa",
 "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
-"STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10_gencode_vM12_TrinityResource",
+"STARFUSIONLIB": "/data/CCBR_Pipeliner/db/PipeDB/lib/Mouse_gencode_M20_CTAT_lib_Mar272019.plug-n-play/ctat_genome_lib_build_dir",
 "FUSCATCHDAT": "/fdb/fusioncatcher/mus_musculus",
 "FUSCATCHCONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fusioncatcher_mm10_configuration.cfg",
 "ONCOFUSEBUILD": "mm10",
@@ -261,12 +265,13 @@
   "ORGANISM": "Mouse"
 }
         "ChIPseq":{
-            "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.blacklist.chrM",
+            "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.blacklist.chrM.chr_rDNA",
             "BWA": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10",
             "BOWTIE2INDEX": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10",
             "CHROMS": ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10",
                        "chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19",
                        "chrX","chrY","chrM"],
+            "EFFECTIVEGENOMESIZE": "2400000000", ### based upon Deeptools khmer output for 75bp fragments and rounded
             "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
             "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
             "FASTAWITHADAPTERSETD": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",

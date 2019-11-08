@@ -1,6 +1,6 @@
 ---
-title: "EdgeR results"
-author: "CCBR RNAseq pipeline"
+title: "edgeR Results"
+author: "CCBR RNA-seq pipeline"
 output: html_document
 params:
   folder: result
@@ -13,9 +13,10 @@ params:
   gtffile: "gencode.v19.annotation.gtf"
   dtype: "<count type>"
   karyobeds: "path/to/karyobedfiles"
+  karyotext: "path/to/karyoplotertxt"
 ---
 
-```{r, include=FALSE, warning=FALSE, message=FALSE}
+```{r params, include=FALSE, warning=FALSE, message=FALSE}
 countMethod <- "subread"
 if(grepl("RSEM",params$data)){
   countMethod <- "rsem"
@@ -32,24 +33,24 @@ dateandtime<-format(Sys.time(), "%a %b %d %Y - %X")
 ####    *`r countMethod`* 
 ### **Report generated:** 
 ####    *`r dateandtime`* 
-
-## **Histogram after normalization**
+### **Session Info:** {.tabset .tabset-fade .tabset-pills}
+#### Hide
 
 ```{r setup, echo=FALSE, warning=FALSE,message=FALSE}
 
-library(rgl)
-library(knitr)
-library('edgeR')
-library('statmod')
-library('RColorBrewer') 
-library('gplots')
-library('reshape') 
-library('ggplot2')
-library('ggfortify')
-library(amap)
-library(DT)
-library(plotly)
-library('geneplotter')
+suppressMessages(library(rgl))
+suppressMessages(library(knitr))
+suppressMessages(library('edgeR'))
+suppressMessages(library('statmod'))
+suppressMessages(library('RColorBrewer'))
+suppressMessages(library('gplots'))
+suppressMessages(library('reshape') )
+suppressMessages(library('ggplot2'))
+suppressMessages(library('ggfortify'))
+suppressMessages(library(amap))
+suppressMessages(library(DT))
+suppressMessages(library(plotly))
+suppressMessages(library('geneplotter'))
 
 knit_hooks$set(rgl = function(before, options, envir) {
   if (!before) {
@@ -64,7 +65,16 @@ knit_hooks$set(rgl = function(before, options, envir) {
 knit_hooks$set(webgl = hook_webgl)
 ```
 
-```{r, echo=FALSE, warning=FALSE,message=FALSE}
+#### Show
+```{r sessioninfo, echo=FALSE, warning=FALSE,message=FALSE}
+sessionInfo()
+```
+
+## **Count Distribution** {.tabset}
+
+### Before Normalization
+
+```{r init, echo=FALSE, warning=FALSE, message=FALSE, webgl=TRUE,include=FALSE}
 
 ## grab args & normalization
 
@@ -74,17 +84,14 @@ FILE2 <- params$data
 CONTRASTS <- params$contrasts
 SPECIES <-params$species
 KARYOBEDS <-params$karyobeds
-# ANNOTATE <- args[4]
+KARYOTEXT <-params$karyotext
 
-#
-## setwd(DIR)
-# read files
+
+# Read in files
 sampleinfo=read.delim(FILE1)
 x = read.delim(FILE2,row.names=1)
 colnames(x)=as.character(sampleinfo[,4])
-# sampleFiles=as.character(sampleinfo[,2])
-## read annotation file
-## ann=read.delim(ANNOTATE)
+
 # DGElist object --------------------------------------------------------------
 condition = as.factor(sampleinfo$condition)
 y = DGEList(counts=x,group=condition)
@@ -98,12 +105,12 @@ cons=c(cons,paste(contras[i],"-",contras[i+1],sep=""))
 }}
 
 ## Normalization TMM ------------------------------------------------------------
-## method = =c("TMM","RLE","upperquartile","none")
+## Methods = "TMM", "RLE", "upperquartile", or "none"
 y <- calcNormFactors(y,method="TMM")
-# y$samples
 
 #png("libdistrib.png")
-barplot(y$samples$lib.size*1e-6,main="Library size distribution", names= strsplit(colnames(y$counts),".star.count.txt"), ylab="Library size (millions)",las=2,cex.names=0.8)
+# Library Size Distribution
+#barplot(y$samples$lib.size*1e-6,main="Library size distribution", names= strsplit(colnames(y$counts),".star.count.txt"), ylab="Library size (millions)",las=2,cex.names=0.8)
 #dev.off()
 
 ## MDS plots ----------------------------------------------------------------------
@@ -114,9 +121,9 @@ barplot(y$samples$lib.size*1e-6,main="Library size distribution", names= strspli
 #plotMDS(y, method="bcv", , main="MDS plot bcv")
 #dev.off()
 
-# png("MDS_logFC.png")
+png("EdgeR_MDS_logFC.png")
 plotMDS(y, method="logFC" , main="MDS plot logFC") ## plotMDS(y) default
-# dev.off()
+dev.off()
 # plotMDS(y, method="logFC",gene.selection="common", main="MDS plot common")
 
 ## estimating common and tagwise dispersions -----------------------------------------
@@ -124,12 +131,24 @@ y <- estimateDisp(y, design, robust=TRUE)
 
 # 
 ## plotting
-# png("BCVplot.png")
- plotBCV(y,main="BCV plot")
-#dev.off()
+png("EdgeR_BCVplot.png")
+plotBCV(y,main="BCV plot")
+dev.off()
+```
+
+```{r before_hist, echo=FALSE, warning=FALSE, message=FALSE, webgl=TRUE}
 
 ylog2=cpm(y,log=TRUE,normalized.lib.sizes=TRUE,prior.count=2) # prior count like avelogcpm
+rawlog2= cpm(y,log=TRUE,normalized.lib.sizes=FALSE,prior.count=2)
 ndata= cpm(y,log=FALSE,normalized.lib.sizes=TRUE)*1e6
+
+beforehist <- ggplotly(ggplot(melt(as.data.frame(rawlog2))) + geom_line(stat="density", aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10() + theme_bw())
+beforehist
+```
+
+### EdgeR
+
+```{r edger_hist, echo=FALSE, warning=FALSE,message=FALSE,webgl=TRUE}
 ## save it
 rn=rownames(ylog2)
 ensID=apply(array(as.character(rn)),1,function(z) unlist(strsplit(z, "\\|"))[1])
@@ -142,8 +161,10 @@ mydata=cbind(ensID,gene,ndata)
 write.table(mydata,file="edgeR_normalized_counts.txt",sep="\t",col.names=NA)
 ## png("HistEdgeRnormFilter.png")
 df.m <- melt(as.data.frame(ndata))
-print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10() + ggtitle("Normalized Counts"))
 
+#print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10() + ggtitle("Normalized Counts"))
+edgerhist <- ggplotly(ggplot(melt(as.data.frame(ylog2))) + geom_line(stat="density", aes(x = value,colour = variable)) + labs(x = NULL) + theme(legend.position='right') + scale_x_log10() + theme_bw())
+edgerhist
 ```
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,include=FALSE}
 ## dev.off()
@@ -161,17 +182,67 @@ autoplot(pr2,data=dd, colour = 'condition')
 dev.off()
 
 ```
-## **Boxplot and PCA**
+## **Boxplot** {.tabset}
 
-```{r, echo=FALSE,webgl=TRUE,message=FALSE}
+### Before Normalization
 
-## Boxplot and PCA
+```{r before_boxplot, echo=FALSE,warning=FALSE,webgl=TRUE,message=FALSE}
+
+before.dfm <- melt(as.data.frame(rawlog2))
+sampfactor = as.factor(sampleinfo$condition)
+groupcolors <- brewer.pal(nlevels(sampfactor), "Paired")
+before.dfm <- melt(as.data.frame(rawlog2))
+
+par(mar=c(10,7,1,1))
+boxplot(value~variable,las=2,data=before.dfm,
+  ylab="Counts", col= c("#A6CEE3", "#B2DF8A")[as.numeric(as.factor(sampleinfo$condition))]) #col=as.numeric(as.factor(sampleinfo$condition)))
+```
+
+### EdgeR
+
+```{r edger_boxplot, echo=FALSE,warning=FALSE,webgl=TRUE,message=FALSE}
+
 df.m <- melt(as.data.frame(ylog2))
 
 #dev.off()
 par(mar=c(10,7,1,1))
-boxplot(value~variable,las=2,data=df.m,main="Normalized Signal",
-        ylab="Counts",col=as.numeric(as.factor(sampleinfo$condition)))
+boxplot(value~variable,las=2,data=df.m,
+  ylab="Counts", col= c("#A6CEE3", "#B2DF8A")[as.numeric(as.factor(sampleinfo$condition))]) #col=as.numeric(as.factor(sampleinfo$condition)))
+```
+
+## **PCA Plot** {.tabset}
+
+### Before Normalization
+
+```{r before_pca, echo=FALSE,warning=FALSE,webgl=TRUE,message=FALSE,fig.width=9, fig.height=6}
+
+# PCA for before norm
+before.edf=rawlog2
+before.tedf= t(before.edf)
+before.pca=prcomp(before.tedf,scale.=T)
+before.tedf1 = data.frame(before.tedf)
+Phenotype=sampleinfo$condition
+cell_rep=sampleinfo$label
+before.tedf1$group = as.factor(Phenotype)
+before.pc1 = round(before.pca$sdev[1]^2/sum(before.pca$sdev^2)*100,2)
+before.pc2 = round(before.pca$sdev[2]^2/sum(before.pca$sdev^2)*100,2)
+before.pc3 = round(before.pca$sdev[3]^2/sum(before.pca$sdev^2)*100,2)
+
+pcafactor = as.factor(sampleinfo$condition)
+col <- brewer.pal(nlevels(pcafactor), "Paired")
+
+p <- plot_ly(as.data.frame(before.pca$x[,1:3]), x = ~PC1, y = ~PC2, z = ~PC3, color = pcafactor, colors = col, hoverinfo="text",
+             hovertext = ~sampleinfo$label) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = paste0("PC1 (",before.pc1,"%)")),
+                      yaxis = list(title = paste0("PC2 (",before.pc2,"%)")),
+                      zaxis = list(title = paste0("PC3 (",before.pc3,"%)"))))
+p
+```
+
+### EdgeR
+
+```{r edger_pca, echo=FALSE,warning=FALSE,webgl=TRUE,message=FALSE,fig.width=9, fig.height=6}
 
 edf=ylog2
 tedf= t(edf)
@@ -188,251 +259,311 @@ pc3 = round(pca$sdev[3]^2/sum(pca$sdev^2)*100,2)
 
 pcafactor = as.factor(sampleinfo$condition)
 
-library(RColorBrewer)
-
 col <- brewer.pal(nlevels(pcafactor), "Paired")
 
 p <- plot_ly(as.data.frame(pca$x[,1:3]), x = ~PC1, y = ~PC2, z = ~PC3, color = pcafactor, colors = col, hoverinfo="text",
              hovertext = ~sampleinfo$label) %>%
   add_markers() %>%
-  layout(title = "PCA plot", 
-         scene = list(xaxis = list(title = paste0("PC1 (",pc1,"%)")),
+  layout(scene = list(xaxis = list(title = paste0("PC1 (",pc1,"%)")),
                       yaxis = list(title = paste0("PC2 (",pc2,"%)")),
                       zaxis = list(title = paste0("PC3 (",pc3,"%)"))))
 
 p
-
-# plot(pca,type="lines")  #Decide how many PC's are relevant for plotting
-  #pca$x[,1:3]  #look at first 3 PC's
-
-#plot3d(pca$x[,1:3],col = as.integer(tedf1$group),type="s",size=2)
-#group.v<-as.vector(cell_rep)
-#text3d(pca$x, pca$y, pca$z, group.v, cex=1.0, adj = 1.2)
-# rgl.postscript("pca3d_edgeR.pdf","pdf")
-
 ```
 
-## **Similarity Heatmap**
-```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+```{r heatmaps, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
 
-## clustering / heatmap
+# Before
 hmcol <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
+distrawlog2=dist(t(rawlog2))
+mat = as.matrix(distrawlog2)
+# rownames(mat) <- colnames(mat)
+png("edgeR_heatmaps_samplebysample.png")
+heatmap.2(mat, trace="none", col = rev(hmcol), margin=c(16, 16))
+dev.off() 
+
+## EdgeR
 distylog2=dist(t(ylog2))
 mat = as.matrix(distylog2)
 # rownames(mat) <- colnames(mat)
 png("edgeR_heatmaps_samplebysample.png")
 heatmap.2(mat, trace="none", col = rev(hmcol), margin=c(16, 16))
-## dev.copy(png,"edgeR_heatmaps_samplebysample.png")
 dev.off()
+```
+## **Pearson Correlation Heatmap** {.tabset}
 
+### Before Normalization
+
+```{r before_heatmaps, echo=FALSE,warning=FALSE,message=FALSE}
+
+d=Dist(before.tedf,method="pearson",diag=TRUE)
+m=as.matrix(d)
+
+new.palette=colorRampPalette(c("black","red","yellow","white"),space="rgb")
+heatmap(m,symm=TRUE,col=new.palette(20))
 ```
 
+### EdgeR
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE}
+```{r edger_heatmaps, echo=FALSE,warning=FALSE,message=FALSE}
 
 d=Dist(tedf,method="pearson",diag=TRUE)
 m=as.matrix(d)
 
 new.palette=colorRampPalette(c("black","red","yellow","white"),space="rgb")
-#levelplot(m[1:ncol(m),ncol(m):1],col.regions=new.palette(20))
 heatmap(m,symm=TRUE,col=new.palette(20))
-
 ```
 
-## **Differentially expressed genes (DEG) for all contrasts: Volcano plots, Pathways and DEG tables**
+## **Differentially Expression Analysis: `r params$contrasts`**
+*** 
+```{r deg, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
 
-
-```{r, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
-
-## differentially expressed genes -----
-# contras=unlist(strsplit(CONTRASTS, split=" "))        
-# cat(contras,"\t",length(contras),"\t",contras[1],"\t",contras[2],"\n",file="readcontra-edgeR.txt")
+# Differentially expressed genes
 mfc=c()
 mpval=c()
 # cons=c()
 l <- htmltools::tagList()
+v_fdr <- htmltools::tagList()
 pup = htmltools::tagList()
 pdw = htmltools::tagList()
 
-#if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype)))
-#{
-#system(paste0("cd ",getwd(),"; perl ../Scripts/gtf2bed.pl ",params$gtffile," |sort -k1,1 -k2,2n > karyobed.bed"))
-#system(paste0("cd ",getwd(),"; cut -f1 karyobed.bed|uniq > chrs.txt; while read a ;do cat karyobed.bed | awk -F \"\\t\" -v a=$a \'{if ($1==a) {print}}\' > karyobed.${a}.bed;done < chrs.txt"))
-#}
-
 nb=length(contras)/2
 colnames(design) <- levels(condition)
-#fit <- glmFit(y,design)
 
+# DE Testing
 fit <- glmQLFit(y, design, robust=TRUE)
 
 # plotQLDisp(fit)
 contrast.matrix <- makeContrasts(contrasts=cons,levels=design)
 
-for(i in 1:nb)
-{{
+for(i in 1:nb){
 
-## deg<-glmLRT(fit, contrast=contrast.matrix[,i])
+  deg<-glmQLFTest(fit, contrast=contrast.matrix[,i])
+  
+  n=dim(y$counts)[1]
+  tt=topTags(deg, n=n,sort.by="none")
+  res1 = as.data.frame(tt)
+  
+  final=res1
+  final$FC <- ifelse(final$logFC<0, -1/(2^final$logFC), 2^final$logFC)
+  mfc=cbind(mfc,final$FC)
+  mpval=cbind(mpval,final$PValue)
+  
+  x=rownames(final)
+  ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
+  gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+  final=cbind(ensID,gene,final)
+  write.table(final,file=paste("edgeR_DEG_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
+  
+  #Reformatted DEG File
+  edgerout=read.table(paste("edgeR_DEG_",cons[i],"_all_genes.txt",sep=""),header = TRUE)
+  edgerout=edgerout[,which(names(edgerout) %in% c("X","gene","logFC","PValue"))]
+  edgerout$fc=2^edgerout$logFC
+  down_reg=edgerout$logFC<0
+  edgerout$fc[down_reg]=-1/edgerout$fc[down_reg]
+  edgerout=edgerout[,c("X","gene","fc","logFC","PValue")]
+  colnames(edgerout)=c("ensid_gene","gene","fc","log2fc","pvalue")
+  edgerout$fdr=p.adjust(edgerout$pvalue,method='fdr',n=length(edgerout$pvalue))
+  edgerout$gsea_ranking_score=-log10(edgerout$pvalue)*sign(edgerout$log2fc)
+  write.table(edgerout,file=paste("edgeR_DEG_",cons[i],"_all_genes.txt",sep=""),row.names=FALSE,col.names=TRUE,quote=FALSE,sep="\t")
+  
+  extension=paste0("_",cons[i],".txt")
 
-deg<-glmQLFTest(fit, contrast=contrast.matrix[,i])
+  ## Pathway enrichment analysis (Over-representation test ~ l2p)
+  if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="hg38" | SPECIES=="hg38_30") {
+    iup=which(final$PValue<0.05 & final$FC >=0)
+    idw=which(final$PValue<0.05 & final$FC <0)
+    fin.up=final[iup,]
+    
+    if (length(iup) > 500){
+      fin.up=fin.up[order(fin.up$PValue),]
+      fin.up=fin.up[1:500,]
+    }
 
-n=dim(y$counts)[1]
-tt=topTags(deg, n=n,sort.by="none")
-res1 = as.data.frame(tt)
+    x2=rownames(fin.up)
+    gup=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+    
+    fin.dw=final[idw,]
 
-#mfc=cbind(mfc,res1$logFC)
-#mpval=cbind(mpval,res1$PValue)
-## cons=c(cons,paste(contras[i],"-",contras[i+1],sep=""))
-#
-## res1=cbind(Ensembl.Gene.ID=substr(rownames(res1),1,18),id.ver=rownames(res1),res1)
-## final= merge(res1,ann,all.x=TRUE)
-##final=final[order(final$FDR),]
-## final=res1[order(res1$FDR),] for now 
-final=res1
-final$FC <- ifelse(final$logFC<0, -1/(2^final$logFC), 2^final$logFC)
-mfc=cbind(mfc,final$FC)
-mpval=cbind(mpval,final$PValue)
+    if (length(idw) > 500){
+       fin.dw=fin.dw[order(fin.dw$PValue),]
+       fin.dw=fin.dw[1:500,]
+    }
 
-x=rownames(final)
-ensID=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[1])
-gene=apply(array(as.character(x)),1,function(z) unlist(strsplit(z, "\\|"))[2])
-final=cbind(ensID,gene,final)
-write.table(final,file=paste("edgeR_DEG_",cons[i],"_all_genes.txt",sep=""),sep="\t",col.names=NA)
+    x2=rownames(fin.dw)
+    gdw=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
+    
+    if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30") {
+      write.table(gup,paste0("edgeR_gene_up_path",extension),quote=F,row.names=F,col.names=F)
+      write.table(gdw,paste0("edgeR_gene_dw_path",extension),quote=F,row.names=F,col.names=F)
+    }
+    else {
+      write.table(gup,"edgeR_temp_up.txt",quote=F,row.names=F,col.names=F)
+      write.table(gdw,"edgeR_temp_dw.txt",quote=F,row.names=F,col.names=F)
+      system(paste0("cat edgeR_temp_up.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >edgeR_gene_up_path",extension))
+      system(paste0("cat edgeR_temp_dw.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >edgeR_gene_dw_path",extension))
+    }
 
-#Reformatted DEG File
-edgerout=read.table(paste("edgeR_DEG_",cons[i],"_all_genes.txt",sep=""),header = TRUE)
-edgerout=edgerout[,which(names(edgerout) %in% c("X","gene","logFC","PValue"))]
-edgerout$fc=2^edgerout$logFC
-down_reg=edgerout$logFC<0
-edgerout$fc[down_reg]=-1/edgerout$fc[down_reg]
-edgerout=edgerout[,c("X","gene","fc","logFC","PValue")]
-colnames(edgerout)=c("ensid_gene","gene","fc","log2fc","pvalue")
-edgerout$fdr=p.adjust(edgerout$pvalue,method='fdr',n=length(edgerout$pvalue))
-edgerout$gsea_ranking_score=-log10(edgerout$pvalue)*sign(edgerout$log2fc)
-write.table(edgerout,file=paste("edgeR_DEG_",cons[i],"_all_genes.txt",sep=""),row.names=FALSE,col.names=TRUE,quote=FALSE,sep="\t")
-
-extension=paste0("_",cons[i],".txt")
-## pathway enrichment --------------------------------------------
-if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="hg38")
-{
-#gup=gene[which(final$PValue<0.05 & final$FC >=1.5)]
-#gdw=gene[which(final$PValue<0.05 & final$FC <=-1.5)]
-iup=which(final$PValue<0.05 & final$FC >=0)
-idw=which(final$PValue<0.05 & final$FC <0)
-fin.up=final[iup,]
-if (length(iup) > 500)
-  {
-   fin.up=fin.up[order(fin.up$PValue),]
-   fin.up=fin.up[1:500,]
+    system(paste0("cat edgeR_gene_up_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >edgeR_res_path_up",extension))
+    system(paste0("cat edgeR_gene_dw_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >edgeR_res_path_dw",extension))
+    
+    mup=read.delim(paste0("edgeR_res_path_up",extension),header=F)
+    mdw=read.delim(paste0("edgeR_res_path_dw",extension),header=F)
+    colnames(mup)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
+    colnames(mdw)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
+    
+    mup=mup[which(mup[,1]<0.05 & mup[,4]>=5),]
+    mdw=mdw[which(mdw[,1]<0.05 & mdw[,4]>=5),]
+    
+    mup=mup[order(mup[,1]),]
+    mdw=mdw[order(mdw[,1]),]
+    mup=mup[,c(8,9,10,11,1:7,12)]
+    mdw=mdw[,c(8,9,10,11,1:7,12)]
+    
+    
+    pup[[i]] <- DT::datatable(mup, extensions = 'Responsive', caption=htmltools::tags$caption(paste0("Pathways for top 500 up-regulated genes ",cons[i]) ,style="color:gray; font-size: 18px" ),rownames=F)
+    pdw[[i]] <- DT::datatable(mdw, extensions = 'Responsive', caption=htmltools::tags$caption(paste0("Pathways for top 500 down-regulated genes ",cons[i]) ,style="color:gray; font-size: 18px" ),rownames=F )
+  
   }
-x2=rownames(fin.up)
-gup=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 
-fin.dw=final[idw,]
-if (length(idw) > 500)
-  {
-   fin.dw=fin.dw[order(fin.dw$PValue),]
-   fin.dw=fin.dw[1:500,]
+  # Similar to MAplot
+  deg1sel <- decideTestsDGE(deg, p=0.05, adjust="BH")
+  detags <- rownames(y)[as.logical(deg1sel)]
+  png(paste("edgeR_Smearplot_",cons[i],".png",sep=""))
+  plotSmear(deg, de.tags=detags,main= paste("Smearplot FDR<0.05 ",contras[i],"_vs_",contras[i+1],sep=""))
+  abline(h = c(-2, 2), col = "blue")
+  dev.off()
+  
+  # Volcano Plots 
+  ## P-value and logFC
+  log_FC=final$logFC
+  log_pval=-log10(final$PValue)
+  Significant=rep("NotSignificant",length(log_FC))
+  Significant[which(final$PValue<0.05 & abs(final$logFC)>=1)]="Significant&LogFoldChange"
+  Significant[which(final$PValue<0.05 & abs(final$logFC)<1)]="Significant"
+  Significant[which(final$PValue>=0.05 & abs(final$logFC)>=1)]="LogFoldChange"
+  gene=rownames(final)
+  volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
+  
+  l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",cons[i],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 pvalue",range =c(0,10)))
+  
+  write.table(final, "final.tmp")
+
+  ## FDR and logFC
+  log_FC=final$logFC
+  log_pval=-log10(final$FDR)
+  Significant=rep("NotSignificant",length(log_FC))
+  Significant[which(final$FDR<0.05 &  abs(final$logFC)>=1)]="Significant&LogFoldChange"
+  Significant[which(final$FDR<0.05 &  abs(final$logFC)<1)]="Significant"
+  Significant[which(final$FDR>=0.05 & abs(final$logFC)>=1)]="LogFoldChange"
+  gene=rownames(final)
+  volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
+  v_fdr[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste(contras[i]," vs. ",contras[i+1],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 FDR",range =c(0,15)))
+
+  if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9")&&(grepl("genes",params$dtype))) {    
+    system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py edgeR_DEG_",cons[i],"_all_genes.txt 1 3 ",SPECIES," ",KARYOBEDS," > edgeR_DEG_",cons[i],".input.karyo"))
+    system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py edgeR_DEG_",cons[i],".input.karyo ",SPECIES))
+    ki1=paste0("edgeR_DEG_",cons[i],".input.karyo1.png")
+    ki2=paste0("edgeR_DEG_",cons[i],".input.karyo2.png")
   }
-x2=rownames(fin.dw)
-gdw=apply(array(as.character(x2)),1,function(z) unlist(strsplit(z, "\\|"))[2])
 
-## extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
-if (SPECIES=="hg19" | SPECIES=="hg38")
-{
-write.table(gup,paste0("edgeR_gene_up_path",extension),quote=F,row.names=F,col.names=F)
-write.table(gdw,paste0("edgeR_gene_dw_path",extension),quote=F,row.names=F,col.names=F)
-}
-else
-{
-write.table(gup,"edgeR_temp_up.txt",quote=F,row.names=F,col.names=F)
-write.table(gdw,"edgeR_temp_dw.txt",quote=F,row.names=F,col.names=F)
-system(paste0("cat edgeR_temp_up.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >edgeR_gene_up_path",extension))
-system(paste0("cat edgeR_temp_dw.txt | grep -v \"^NA\" | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/m2h | grep -v XXXX | cut -f2 -d\" \"  >edgeR_gene_dw_path",extension))
-}
-# extension=paste0("_",contras[i],"_vs_",contras[i+1],".txt")
-system(paste0("cat edgeR_gene_up_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >edgeR_res_path_up",extension))
-system(paste0("cat edgeR_gene_dw_path",extension," |sort | uniq | /data/CCBR_Pipeliner/db/PipeDB/bin/L2P/l2p >edgeR_res_path_dw",extension))
-
-mup=read.delim(paste0("edgeR_res_path_up",extension),header=F)
-mdw=read.delim(paste0("edgeR_res_path_dw",extension),header=F)
-colnames(mup)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
-colnames(mdw)=c("pval","fdr","ratio","nb.hits","nb.genes.path","nb.user.genes","tot.back.genes","path_id","source","description","type","gene.list")
-
-#mup=mup[which(mup[,1]<0.05),]
-#mdw=mdw[which(mdw[,1]<0.05),]
-
-mup=mup[which(mup[,1]<0.05 & mup[,4]>=5),]
-mdw=mdw[which(mdw[,1]<0.05 & mdw[,4]>=5),]
-
-mup=mup[order(mup[,1]),]
-mdw=mdw[order(mdw[,1]),]
-mup=mup[,c(8,9,10,11,1:7,12)]
-mdw=mdw[,c(8,9,10,11,1:7,12)]
-
-
-pup[[i]] <- DT::datatable(mup, caption=htmltools::tags$caption(paste0("Pathways for top 500 up-regulated genes ",cons[i]) ,style="color:red; font-size: 18px" ),rownames=F)
-pdw[[i]] <- DT::datatable(mdw, caption=htmltools::tags$caption(paste0("Pathways for top 500 down-regulated genes ",cons[i]) ,style="color:green; font-size: 18px" ),rownames=F )
-
-}
-## ------------------------------------------------------------------
-
-#  like MAplot
-deg1sel <- decideTestsDGE(deg, p=0.05, adjust="BH")
-detags <- rownames(y)[as.logical(deg1sel)]
-png(paste("edgeR_Smearplot_",cons[i],".png",sep=""))
-plotSmear(deg, de.tags=detags,main= paste("Smearplot FDR<0.05 ",contras[i],"_vs_",contras[i+1],sep=""))
-abline(h = c(-2, 2), col = "blue")
-dev.off()
-# volcano
-
-log_FC=final$logFC
-log_pval=-log10(final$PValue)
-Significant=rep("NotSignificant",length(log_FC))
-Significant[which(final$PValue<0.05 & abs(final$logFC)>=1)]="Significant&LogFoldChange"
-Significant[which(final$PValue<0.05 & abs(final$logFC)<1)]="Significant"
-Significant[which(final$PValue>=0.05 & abs(final$logFC)>=1)]="LogFoldChange"
-gene=rownames(final)
-volcano_data=as.data.frame(cbind(gene,log_FC,log_pval,Significant))
-# l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",contras[i],"_vs_",contras[i+1],sep=""),xaxis=list(title="Log2_FC",range =c(-10,10)),yaxis=list(title="-Log10_pvalue",range =c(0,10)))
-#  %>% layout(annotations = a)
-l[[i]] <- plot_ly(data = volcano_data, x = log_FC, y = log_pval, text = gene, mode = "markers", color = Significant) %>% layout(title =paste("Volcano Plot for ",cons[i],sep=""),xaxis=list(title="Fold Change",range =c(-5,5),tickvals=c(-5,-4,-3,-2,-1,0,1,2,3,4,5),ticktext=c('-32','-16','-8','-4','-2','1','2','4','8','16','32')),yaxis=list(title="-Log10 pvalue",range =c(0,10)))
-
-if ((grepl("hg",SPECIES)||grepl("mm",SPECIES))&&(grepl("genes",params$dtype)))
-{
-system(paste0("cd ",getwd(),"; python ../Scripts/FC2karyo.py edgeR_DEG_",cons[i],"_all_genes.txt 1 3 ",SPECIES," ",KARYOBEDS," > edgeR_DEG_",cons[i],".input.karyo"))
-system(paste0("cd ",getwd(),"; python ../Scripts/karyoplot.py edgeR_DEG_",cons[i],".input.karyo ",SPECIES))
-ki1=paste0("edgeR_DEG_",cons[i],".input.karyo1.png")
-ki2=paste0("edgeR_DEG_",cons[i],".input.karyo2.png")
-cat("\n###KARYO PLOT",cons[i],"\n")
-cat("![](",ki1,")")
-cat("\n")
-cat("![](",ki2,")")
-cat("\n\n")
+  if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ) {
+    system(paste0("cd ",getwd(),";/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/r_env/bin/Rscript ../Scripts/karyoploter.R -o edgeR -d edgeR_DEG_",contras[i],"-",contras[i+1],"_all_genes.txt -c ", params$karyotext, " -g ", SPECIES))
+  }
 }
 
-}}
+```
 
+```{r deg_table, echo=FALSE, warning=FALSE,message=FALSE,results='asis', fig.width=6, fig.height=7}
 # add DEG  table
 colnames(mfc)=paste(cons,"logFC",sep="_")
 colnames(mpval)=paste(cons,"pval",sep="_")
 res=as.data.frame(cbind(mfc,mpval))
 rownames(res)=rownames(res1)
 write.table(res,file="edgeR_res_all_contrasts.txt",sep="\t",col.names=NA)
+#DT::datatable(res, caption=htmltools::tags$caption("DEG for all contrasts",style="color:blue; font-size: 18px"))
 
+DT::datatable(edgerout, extensions = 'Buttons', options = list(dom = 'Bfrtip', buttons = c('colvis','excel', 'csv'), pageLength = 15))
+```
+
+## **Volcano Plots** {.tabset}
+
+### p-value
+
+```{r p_volcano, echo=FALSE, warning=FALSE,message=FALSE,fig.width=6, fig.height=7}
 l
-
-pup
-
-pdw
-
-DT::datatable(res, caption=htmltools::tags$caption("DEG for all contrasts",style="color:blue; font-size: 18px" ))
 ```
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+### FDR
 
-sessionInfo()
+```{r fdr_volcano, echo=FALSE, warning=FALSE,message=FALSE,fig.width=6, fig.height=7}
+v_fdr
+```
+
+## **Karyoplots: Significant Genes** {.tabset .tabset-fade .tabset-pills}
+
+### Page1
+
+```{r de_karyo1, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
+  cat("![](edgeR_karyoplot1.png)")
+} else {
+  cat("Genome Not Supported")
+}
 
 ```
 
+### Page2
 
+```{r de_karyo2, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if (SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9" | SPECIES=="canFam3" | SPECIES=="Mmul_8.0.1" ){
+  cat("![](edgeR_karyoplot2.png)")
+} else {
+  cat("Genome Not Supported")
+}
+```
+
+
+## **Karyoplots: Binned Expression** {.tabset .tabset-fade .tabset-pills}
+
+### Page1
+
+```{r bin_karyo1, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
+  cat("![](",ki1,")")
+} else {
+  cat("Genome Not suporrted")
+}
+```
+
+### Page2
+
+```{r bin_karyo2, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if ((SPECIES=="hg19" | SPECIES=="hg38" | SPECIES=="hg38_30" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="mm9")&&(grepl("genes",params$dtype))){
+  cat("![](",ki2,")")
+} else {
+  cat("Genome Not Supported")
+}
+```
+
+## **Enriched Pathways** {.tabset}
+
+### Up-Regulated
+
+```{r up_l2p, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="hg38" | SPECIES=="hg38_30"){
+  pup
+} else {
+  cat("Genome Not Supported")
+}
+```
+
+### Down-Regulated
+
+```{r down_l2p, echo=FALSE, warning=FALSE,message=FALSE,results='asis'}
+if (SPECIES=="hg19" | SPECIES=="mm10" | SPECIES=="mm10_M21" | SPECIES=="hg38" | SPECIES=="hg38_30"){
+  pdw
+} else {
+  cat("Genome Not Supported")
+}
+```

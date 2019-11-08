@@ -53,6 +53,12 @@ class ChIPSeqFrame( PipelineFrame ) :
         #om.pack(side=LEFT,padx=20,pady=5)
         om.grid(row=3,column=1,sticky=W,padx=20,pady=5)
 
+
+        # Show Groups Only (For InitialChIPseqQC)
+        self.om_peaks = LabelFrame(eframe, text="Sample Information")
+        self.peaks_button = Button(self.om_peaks, text="Set Peak Information", command = self.popup_peakinfo)
+        self.peaks_button.grid(row=5, column=5, padx=10, pady=5)
+
         #readtypes = ['Single', 'Paired']
         #self.readtype = readtype = StringVar()
         #readtype.set(readtypes[0])
@@ -68,29 +74,29 @@ class ChIPSeqFrame( PipelineFrame ) :
     def option_controller( self, *args, **kwargs ) :
         PipelineFrame.option_controller( self )
         if self.Pipeline.get() == 'InitialChIPseqQC' :
-       	    self.info.grid(row=7,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+       	    self.info.grid_forget()
+            self.om_peaks.grid(row=7,column=0, columnspan=6, sticky=W, padx=20, pady=10)
         elif self.Pipeline.get() == 'ChIPseq' :
-       	    self.info.grid(row=7,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+       	    self.info.grid(row=7,column=0, columnspan=6, sticky=W, padx=20, pady=10)
        	    contrast_file=join(self.workpath.get(),self.contrast_fn)
        	    print(contrast_file)
        	    if not os.path.exists(contrast_file):
        	        open(contrast_file,'a').close()
-       	            
+
     def add_info( self, parent ) :
         if not self.info :
-            self.info = LabelFrame(parent, text='Peak Call Info')
-            self.peakinfo_button = Button(self.info, 
-                                            text="Set Peak Infomation", 
-                                            command = self.popup_peakinfo )
-            self.peakinfo_button.grid( row=5, column=5, padx=10, pady=5 )
+            self.info = LabelFrame(parent, text='Sample Information')
+            self.peakinfo_button = Button(self.info,
+                                            text="Set Peak Infomation",
+                                            command = self.popup_peakinfo)
+            self.peakinfo_button.grid(row=5, column=5, padx=10, pady=5)
 
-            if self.Pipeline.get() == 'ChIPseq' :
-                self.contrast_button = Button(self.info, 
-                                                text="Set Groups to compare peaks", 
-                                                command = self.popup_window_contrast )
-                self.contrast_button.grid( row=5, column=6, padx=10, pady=5 )
-            
-            
+            self.contrast_button = Button(self.info,
+                                            text="Set Groups to compare peaks",
+                                            command = self.popup_window_contrast)
+            self.contrast_button.grid(row=5, column=6, padx=10, pady=5)
+
+
     def popup_peakinfo( self ) :
         self.popup_window( "Peak Information",
                           join(self.workpath.get(),self.peakinfo_fn), 
@@ -500,7 +506,7 @@ class ChIPSeqFrame( PipelineFrame ) :
                 'analyst': gi.eanalyst.get(), 
                 'poc': gi.epoc.get(), 
                 'pipeline': self.Pipeline.get(), 
-                'version':"1.0", 
+                'version':"4.0", 
                 'annotation': gi.annotation.get(), 
                 'datapath': self.datapath.get(), 
                 'targetspath': self.targetspath.get(), 

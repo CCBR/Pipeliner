@@ -10,7 +10,7 @@ my @AllFiles = ();
 my $cmd = '';
 my $vcf=shift;
 
-$cmd = 'module load vcftools; vcftools --vcf ' . $vcf . ' --plink --remove-indels --out plink';
+$cmd = 'module load vcftools; vcftools --gzvcf ' . $vcf . ' --plink --remove-indels --out plink';
 system($cmd);
 $cmd = 'module load plink/1.9.0-beta4.4; plink --file plink --distance-matrix --out distance';
 system($cmd);

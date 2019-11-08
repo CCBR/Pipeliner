@@ -574,7 +574,7 @@ class PipelineFrame( Frame ) :
              'analyst': gi.eanalyst.get(), 
              'poc': gi.epoc.get(), 
              'pipeline': self.Pipeline.get(), 
-             'version':"3.0", 
+             'version':"4.0", 
              'annotation': gi.annotation.get(), 
              'datapath': self.datapath.get(), 
              'targetspath': self.targetspath.get(), 
@@ -718,8 +718,12 @@ class PipelineFrame( Frame ) :
     
     def dryrun( self ) :
         pl = self.pipeline_name
+        pipeline_name = self.Pipeline.get()
         print("Drying-running: {}".format(pl))
-        if pl == 'RNAseq':
+        if pipeline_name == 'initialqcrnaseq':
+            if self.popup_warning('groups.tab'):
+                return
+        elif pipeline_name == 'rnaseq':
             if self.popup_warning('groups.tab') or self.popup_warning('contrasts.tab'):
                 return
         self.makejson("none")

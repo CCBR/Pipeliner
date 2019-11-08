@@ -96,7 +96,9 @@
         "rnaseq":{
             "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/ref.fa", 
             "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/genes.gtf",
-            "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/STAR/2.5.2b/genes-",
+            "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/STAR/2.7.0f/genes-",
+            "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/qualimap_info.txt",
+            "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/karyoplot_gene_coordinates.txt",
             "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/annotate.genes.txt",
             "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/annotate.isoforms.txt",
             "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/refFlat.txt",
@@ -168,10 +170,11 @@
         "ChIPseq":{
             "BWA": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/indexes/mm9",
             "BOWTIE2INDEX": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/indexes/mm9",
-            "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/indexes/mm9.blacklist.chrM",
+            "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/indexes/mm9.blacklist.chrM.chr_rDNA",
             "CHROMS": ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10",
                        "chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19",
                        "chrX","chrY","chrM"],
+            "EFFECTIVEGENOMESIZE": "2400000000", ### based upon Deeptools khmer output for 75bp fragments and rounded
             "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
             "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
             "FASTAWITHADAPTERSETD": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",

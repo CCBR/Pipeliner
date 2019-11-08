@@ -138,13 +138,15 @@
      "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/ref.fa",
      "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/genes.gtf",
      "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/annotate.genes.txt",
+     "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/qualimap_info.txt",
      "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/annotate.isoforms.txt",
      "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/refFlat.txt",
      "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/genes.ref.bed",
      "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/geneinfo.bed",
      "KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/dev/karyobeds/hg.v26/",
+     "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/karyoplot_gene_coordinates.txt",
      "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/rsemref/hs38d1",
-     "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/STAR/2.5.2b/genes-",
+     "STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/STAR/2.7.0f/genes-",
      "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hs38d1/hs38d1.rRNA_interval_list",
 
 

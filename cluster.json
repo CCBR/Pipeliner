@@ -4,31 +4,39 @@
         "mem": "48g",
         "partition": "norm",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "admixture_germline": {
         "mem": "96g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "admixture_somatic": {
         "mem": "96g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "admixture_wgs": {
         "mem": "96g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "admixture_wgs_somatic": {
         "mem": "96g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "avia_make_bed_germ": {
         "mem": "96g",
         "time": "1-00:00:00"
+    },
+    "bam2bw_rnaseq_pe": {
+        "mem": "40g",
+        "threads": "4"
+    },
+    "bam2bw_rnaseq_se": {
+        "mem": "40g",
+        "threads": "2"
     },
     "bam2bw": {
         "threads": "32"
@@ -47,26 +55,26 @@
     "bwa_mem": {
         "mem": "48g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "bwa_pe": {
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "canvas_wgs_germ": {
         "mem": "120g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "canvas_wgs_somatic": {
         "mem": "120g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "canvas_wgs_tumoronly": {
         "mem": "120g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "cellranger": {
         "mem": "110g",
@@ -75,22 +83,22 @@
     "cnvkit_germ": {
         "mem": "64g",
         "threads": "12",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "cnvkit_somatic": {
         "mem": "96g",
         "threads": "2",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "cnvkit_somatic_tumoronly": {
         "mem": "48g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "cnvkit_wgs_somatic": {
         "mem": "96g",
         "threads": "2",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "conpair": {
         "threads": "1",
@@ -99,7 +107,7 @@
     "cutadapt": {
         "mem": "32g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "dedup": {
         "mem": "24g"
@@ -123,42 +131,46 @@
     "delly_germline": {
         "mem": "64g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "delly_somatic": {
         "mem": "64g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "delly_somatic_del": {
         "mem": "64g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "delly_somatic_dup": {
         "mem": "64g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "delly_somatic_ins": {
         "mem": "64g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "delly_somatic_inv": {
         "mem": "64g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "delly_somatic_trans": {
         "mem": "64g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
+    },
+    "diffbind_bed": {
+        "mem": "4g",
+        "threads":"1"
     },
     "differential_expression": {
         "mem": "16g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "EBSeq": {
         "mem": "110g",
@@ -173,7 +185,7 @@
     "fastq_screen": {
         "mem": "24g",
         "threads": "24",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "fastqc": {
         "mem": "24g",
@@ -213,7 +225,7 @@
     "fusioncatcher": {
         "mem": "96g",
         "threads": "16",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "fusioninspector": {
         "mem": "48g",
@@ -223,211 +235,211 @@
     "gatk_apply_variant_recal": {
         "mem": "64g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "gatk_apply_vqsr": {
         "mem": "64g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "gatk_chrom_mutect2": {
         "threads": "2",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "gatk_combine_gvcfs": {
         "mem": "96g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_combine_somatic_gvcfs": {
         "mem": "96g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_1": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_10": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_11": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_12": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_13": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_14": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_15": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_16": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_17": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_18": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_19": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_2": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_20": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_21": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_22": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_3": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_4": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_5": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_6": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_7": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_8": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_9": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_MT": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_X": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_gvcfs_Y": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_genotype_somatic_gvcfs": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "gatk_genotyping": {
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "gatk_haplotype_caller": {
         "mem": "64g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "gatk_mutect2": {
         "mem": "48g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "gatk_realign": {
         "gres": "lscratch:500",
         "mem": "64g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "gatk_recal": {
         "mem": "64g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_rnaseqvar_haplotype_caller": {
         "mem": "96g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "gatk_select_variants_rnaseqvar": {
         "mem": "64g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "3-00:00:00"
     },
     "gatk_splitcigar": {
         "mem": "96g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "gatk_variant_annnotator": {
         "mem": "64g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "gatk_variant_recal": {
         "mem": "64g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "GEM": {
         "mem": "32g",
@@ -437,6 +449,9 @@
         "mem": "64g",
         "threads": "1",
         "time": "1-00:00:00"
+    },
+    "HOMER_motif": {
+        "threads": "48"
     },
     "kraken_pe": {
         "cpus-per-task": "24",
@@ -461,17 +476,17 @@
     "manta_germline": {
         "mem": "96g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "manta_somatic": {
         "mem": "96g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "manta_wgs": {
         "mem": "96g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "MEMEChIP": {
         "mem": "64g",
@@ -480,37 +495,22 @@
     "mirdeep2": {
         "mem": "16g",
         "threads": "1",
-        "time": "1-00:00:00"
-    },
-    "mirdeep2_1p": {
-        "mem": "16g",
-        "threads": "4",
-        "time": "1-00:00:00"
-    },
-    "mirdeep2_2p": {
-        "mem": "16g",
-        "threads": "16",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "mirdeep2_mapper": {
         "mem": "16g",
-        "threads": "8",
-        "time": "1-00:00:00"
-    },
-    "mirdeep2_single":{
-        "mem": "16g",
-        "threads": "16",
-        "time": "1-00:00:00"
+        "threads": "1",
+        "time": "4-00:00:00"
     },
     "mirseq_gencode_classification": {
         "mem": "16g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "mirseq_init": {
         "mem": "16g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "mirseq_main_document": {
         "mem": "16g",
@@ -520,12 +520,12 @@
     "mirseq_make_bams": {
         "mem": "32g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "mirseq_make_bams_bwa": {
         "mem": "32g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "mirseq_miRspring_bowtie": {
         "mem": "16g",
@@ -535,7 +535,7 @@
     "mirseq_miRspring_bwa": {
         "mem": "16g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "mirseq_summarize": {
         "mem": "16g",
@@ -545,12 +545,12 @@
     "mirseq_targetscan": {
         "mem": "16g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "mirseq_variants": {
         "mem": "16g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "multiqc": {
         "mem": "24g",
@@ -567,21 +567,25 @@
     "novo_sort": {
         "mem": "120g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "novocraft_novoalign": {
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "6-00:00:00"
     },
     "novocraft_sort": {
         "mem": "120g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "oncofuse": {
         "mem": "48g",
         "threads": "1",
         "time": "1-00:00:00"
+    },
+    "pca": {
+        "mem": "88g",
+        "threads": "2",
     },
     "picard": {
         "gres": "lscratch:256",
@@ -595,12 +599,12 @@
     },
     "picard_headers": {
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "picard_headers2": {
         "mem": "24g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "picard_index_bam": {
         "threads": "1",
@@ -608,15 +612,15 @@
     },
     "picard_markdups": {
         "threads": "12",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "picard_rnaseqvar_markdups": {
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "picard_rnaseqvarheaders": {
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "pindel_germline": {
         "mem": "64g",
@@ -628,20 +632,25 @@
     "preseq": {
         "mem": "24g"
     },
+    "qualibam": {
+        "threads": "8",
+        "mem": "12g",
+        "time": "1-00:00:00"
+        },
     "qualimap": {
         "mem": "96g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "qualimap_rna": {
         "mem": "96g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "qualimap_wgs": {
         "mem": "96g",
         "threads": "8",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "rawfastqc": {
         "threads": "8"
@@ -654,7 +663,7 @@
     "rsem": {
         "gres": "lscratch:500",
         "threads": "16",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "salmon": {
         "mem": "110g",
@@ -671,15 +680,15 @@
     },
     "samtools_mpileup": {
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "samtools_sam2bam": {
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "samtools_sort": {
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "script_batchgvcf": {
         "mem": "12g",
@@ -692,7 +701,7 @@
     },
     "script_checkqc": {
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "script_coverage_qc": {
         "threads": "1",
@@ -742,36 +751,41 @@
     "somatic_germline_calls": {
         "mem": "64g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "star1p": {
         "mem": "110g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "star2p": {
         "mem": "110g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "star_align_1": {
         "mem": "96g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "star_align_2": {
         "mem": "96g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "star_generate": {
         "threads": "1",
         "time": "1-00:00:00"
     },
     "starfusion": {
-        "mem": "96g",
-        "threads": "32",
-        "time": "1-00:00:00"
+        "mem": "48g",
+        "threads": "16",
+        "time": "3-00:00:00"
+    },
+    "fusioninspector": {
+        "mem": "48g",
+        "threads": "16",
+        "time": "3-00:00:00"
     },
     "stats": {
         "gres": "lscratch:256",
@@ -781,7 +795,7 @@
     "strelka": {
         "mem": "64g",
         "threads": "4",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "subread": {
         "gres": "lscratch:500",
@@ -796,17 +810,17 @@
     "svaba_germline": {
         "mem": "96g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "10-00:00:00"
     },
     "theta": {
         "mem": "48g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     },
     "trim": {
         "mem": "66g",
         "threads": "16",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "trim_pe": {
         "mem": "24g",
@@ -822,16 +836,16 @@
     "trimmomatic": {
         "mem": "24g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "5-00:00:00"
     },
     "trimmomatic_pe": {
         "mem": "24g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "varscan": {
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "4-00:00:00"
     },
     "vcf2maf_mutect": {
         "mem": "96g",
@@ -856,6 +870,7 @@
     "wgs_theta": {
         "mem": "48g",
         "threads": "1",
-        "time": "1-00:00:00"
+        "time": "2-00:00:00"
     }
 }
+

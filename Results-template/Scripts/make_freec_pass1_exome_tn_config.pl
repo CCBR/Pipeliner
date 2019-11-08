@@ -23,7 +23,7 @@ print C '[general]' . "\n\n";
 
 print C "BedGraphOutput = TRUE\ndegree = 1\nforceGCcontentNormalization = 1\nminCNAlength = 3\nnoisyData = TRUE\nreadCountThreshold = 50\n";
 print C "chrLenFile = $chrLenFile\n";
-print C "ploidy = 2,3,4,5\nbreakPointThreshold = 0.8\nwindow = 0\n";
+print C "ploidy = 2\nbreakPointThreshold = 0.8\nwindow = 0\n";
 print C "chrFiles = $chrFiles\n";
 print C "minimalSubclonePresence = 30\nprintNA = FALSE\ncontaminationAdjustment = TRUE\nmaxThreads = 24\nnumberOfProcesses = 24\n";
 print C "outputDir = $ARGV[0]\n\n";

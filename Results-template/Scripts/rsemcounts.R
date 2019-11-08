@@ -17,12 +17,6 @@ DIR <- args[1]
 FILES <- args[2]
 ANNOTATE <- args[3]
 SAMPLETABLE <- args[4]
-
-#SAMPLETABLE="fullsampletable.txt"
-#DIR="~/Desktop/Temp/ccbr842/RNASeq/RSEM_filtering"
-#FILES=c("iv_4T1C1_1.RSEM.genes.results iv_4T1C1_2.RSEM.genes.results iv_NF1_1.RSEM.genes.results iv_NF1_2.RSEM.genes.results iv_TSC1_1.RSEM.genes.results iv_TSC1_2.RSEM.genes.results iv_Tgfbr_2_1.RSEM.genes.results iv_Tgfbr_2_2.RSEM.genes.results")
-#ANNOTATE="annotate.genes.txt"
-
 MINCOUNT=0.5
 MINSAMPLES=0.5
 
@@ -42,13 +36,11 @@ res=merge(res,temp)
 gene_name=read.delim(ANNOTATE,header=F,sep=" ")
 res2=merge(gene_name,res,by.x=1,by.y=1)
 res3=cbind(symbol=paste(res2[,1],"|",res2[,3],sep=""),res2[,-c(1,2,3,4,5)])
-write.table(as.data.frame(res3),file="RawCountFile_RSEM_genes.txt",sep="\t",row.names=F,quote = F) 
-mydata=read.delim("RawCountFile_RSEM_genes.txt",row.names=1,check.names=FALSE,header=T)
-print(colnames(mydata))
-colnames(mydata)=gsub('\\..*$','',colnames(mydata))
-print(colnames(mydata))
-colnames(mydata)=gsub('.*/','',colnames(mydata))
-print(colnames(mydata))
+colnames(res3)=gsub('\\..*$','',colnames(res3))
+colnames(res3)=gsub('.*/','',colnames(res3))
+write.table(as.data.frame(res3),file="RawCountFile_RSEM_genes.txt",sep="\t",row.names=F,quote = F)
+rownames(res3)=res3$symbol
+mydata=res3[,-c(1)]
 mydata=ceiling(mydata)
 writegzfile(cpm(mydata),"RSEM_CPM_counts.txt.gz")
 
@@ -62,14 +54,16 @@ k_g1=rowSums(cpm(mydata1)>CPM_CUTOFF)>=ng1
 k=k_g1
 table(k)
 
-for(i in seq(2,length(levels(x$condition)))){
-  Gi=groups[i]
-  gi_samples=(x$condition==Gi)
-  ngi=max(1,floor(length(gi_samples[gi_samples==TRUE])*MINSAMPLES))
-  mydatai=mydata[,gi_samples]
-  k_gi=rowSums(cpm(mydatai)>CPM_CUTOFF)>=ngi
-  k=k|k_gi
-  print(table(k))
+if (length(groups)>1) {
+  for(i in seq(2,length(levels(x$condition)))){
+    Gi=groups[i]
+    gi_samples=(x$condition==Gi)
+    ngi=max(1,floor(length(gi_samples[gi_samples==TRUE])*MINSAMPLES))
+    mydatai=mydata[,gi_samples]
+    k_gi=rowSums(cpm(mydatai)>CPM_CUTOFF)>=ngi
+    k=k|k_gi
+    print(table(k))
+  }
 }
 
 res=mydata[k,]
@@ -77,16 +71,11 @@ res2=res
 res2$symbol=rownames(res2)
 res2=res2 %>% select('symbol',everything())
 write.table(res2,file="RawCountFile_RSEM_genes_filtered.txt",row.names = F,quote = F,sep="\t")
-# png("RSEM_HistBeforenormFilter.png")
-# df.m <- melt(as.data.frame(res))
-# print(ggplot(df.m) + geom_density(aes(x = value, colour = variable)) + labs(x = NULL) + theme(legend.position='top') + scale_x_log10())
-# dev.off() 
 y = DGEList(counts=res)
 ## Normalization TMM ------------------------------------------------------------
 ## method = =c("TMM","RLE","upperquartile","none")
 y <- calcNormFactors(y,method="TMM")
 ndata= cpm(y,log=FALSE,normalized.lib.sizes=TRUE)
-## save it 
 writegzfile(ndata,"RSEM_CPM_TMM_counts.txt.gz")
 	## unfiltered normalization
 y2 = DGEList(counts=mydata)
