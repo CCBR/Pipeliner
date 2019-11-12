@@ -1,4 +1,4 @@
- {"references": {
+{"references": {
     "exomeseq": {
     "VARDICTBED": "/data/CCBR_Pipeliner/db/PipeDB/lib/mm10.chroms.bed",
     "BWAGENOME": "/fdb/igenomes/Mus_musculus/UCSC/mm10/Sequence/BWAIndex/genome.fa",
@@ -263,7 +263,7 @@
   "MIRBASE_MATURE": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/miRBase_v22/mmu_mature.fa",
   "MIRBASE_HAIRPIN": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/miRBase_v22/mmu_hairpin.fa",
   "ORGANISM": "Mouse"
-}
+},
         "ChIPseq":{
             "BLACKLISTBWAINDEX":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.blacklist.chrM.chr_rDNA",
             "BWA": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10",
