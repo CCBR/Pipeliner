@@ -404,14 +404,13 @@ if se=="yes":
       configFile=join(workpath,"mirdeep_config.txt"),
       resultdir = join(workpath,"mirdeep2_results"),
       sampleCounts = len(samples)+4,
-      configFile=join(workpath,"mirdeep_config.txt")
       groupsFile = join(workpath,"groups.tab")
     threads: 4
     shell: """
       mkdir -p {params.resultdir}
       cut -f 1-{params.sampleCounts} {input.mirbaseResults} > {output.mirbaseCts}
-      while read FILE ABB; do FILE=${FILE%%.trim*};FILE=${FILE##*trim/}; sed -i "s/$ABB/$FILE/" {output.mirbaseCts}; done < {params.configFile}
-      while read FILE GROUP NAME; do sed -i "s/$FILE/$NAME/" {output.mirbaseCts}; done < {params.groupFile}
+      while read FILE ABB; do FILE=${{FILE%%.trim*}};FILE=${{FILE##*trim/}}; sed -i "s/$ABB/$FILE/" {output.mirbaseCts}; done < {params.configFile}
+      while read FILE GROUP NAME; do sed -i "s/$FILE/$NAME/" {output.mirbaseCts}; done < {params.groupsFile}
       sed -i 's/^#//' {output.mirbaseCts}
     """
     
