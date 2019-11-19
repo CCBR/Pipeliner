@@ -235,27 +235,20 @@ else:
 if se == "yes":
     rule MACS2_narrow:
         input:
-            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz"),
-            ppqt = join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt")
+            chip = join(workpath,bam_dir,"{name}.Q5DD.tagAlign.gz"),
+            ppqt=join(workpath,bam_dir,"Q5DD.ppqt.txt"),
         output:
             join(workpath,macsN_dir,"{name}","{name}_peaks.narrowPeak"),
         params:
             rname='pl:MACS2_narrow',
             gsize=config['references'][pfamily]['EFFECTIVEGENOMESIZE'],
             macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
-            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.tagAlign.gz"),
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".Q5DD.tagAlign.gz"),
         run:
             commoncmd = "module load {params.macsver}; "
             file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
-            extenders = []
-            for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 150:
-                    extenders.append(ppqt_value)
-            try:
-                extsize = extenders[0]
-            except IndexError:
-                extsize = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
-            if params.ctrl != join(workpath,bam_dir,".sorted.Q5DD.tagAlign.gz"):
+            extsize = [ ppqt[1] for ppqt in file if ppqt[0] == wildcards.name ][0]
+            if params.ctrl != join(workpath,bam_dir,".Q5DD.tagAlign.gz"):
                 cmd = "macs2 callpeak -t " + input.chip + " -c " + params.ctrl + " -g " + params.gsize + " -n " + wildcards.name + " --outdir " + join(workpath,macsN_dir,wildcards.name) + " -q 0.01 --keep-dup='all' --nomodel --extsize " + extsize
             else:
                 cmd = "macs2 callpeak -t " + input.chip + " -g " + params.gsize + " -n " + wildcards.name + " --outdir " + join(workpath,macsN_dir,wildcards.name) + " -q 0.01 --keep-dup='all' --nomodel --extsize " + extsize
@@ -264,17 +257,17 @@ if se == "yes":
 if pe == "yes":
     rule MACS2_narrow:
         input:
-            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+            chip = join(workpath,bam_dir,"{name}.Q5DD.bam"),
         output:
             join(workpath,macsN_dir,"{name}","{name}_peaks.narrowPeak"),
         params:
             rname='pl:MACS2_narrow',
             gsize=config['references'][pfamily]['EFFECTIVEGENOMESIZE'],
             macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
-            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".Q5DD.bam"),
         shell: """
 module load {params.macsver};
-if [ {params.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
+if [ {params.ctrl} != "{workpath}/{bam_dir}/.Q5DD.bam" ]; then
     macs2 callpeak -t {input.chip} -c {params.ctrl} -g {params.gsize} -n {wildcards.name} \
           --outdir {workpath}/{macsN_dir}/{wildcards.name} -q 0.01 --keep-dup="all" -f "BAMPE";
 else
@@ -286,27 +279,20 @@ fi
 if se == "yes":
     rule MACS2_broad:
         input:
-            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz"),
-            ppqt = join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt")
+            chip = join(workpath,bam_dir,"{name}.Q5DD.tagAlign.gz"),
+            ppqt = join(workpath,bam_dir,"Q5DD.ppqt.txt")
         output:
             join(workpath,macsB_dir,"{name}","{name}_peaks.broadPeak"),
         params:
             rname='pl:MACS2_broad',
             gsize=config['references'][pfamily]['EFFECTIVEGENOMESIZE'],
             macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
-            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.tagAlign.gz"),
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".Q5DD.tagAlign.gz"),
         run:
             commoncmd = "module load {params.macsver}; "
             file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
-            extenders = []
-            for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 150:
-                    extenders.append(ppqt_value)
-            try:
-                extsize = extenders[0]
-            except IndexError:
-                extsize = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
-            if params.ctrl != join(workpath,bam_dir,".sorted.Q5DD.tagAlign.gz"):
+      	    extsize = [ ppqt[1] for ppqt in file if ppqt[0] == wildcards.name ][0]
+            if params.ctrl != join(workpath,bam_dir,".Q5DD.tagAlign.gz"):
                 cmd = "macs2 callpeak -t " + input.chip + " -c " + params.ctrl + " -g " + params.gsize + " -n " + wildcards.name + " --outdir " + join(workpath,macsB_dir,wildcards.name) + " --broad --broad-cutoff 0.01 --keep-dup='all' --nomodel --extsize " + extsize
             else:
                 cmd = "macs2 callpeak -t " + input.chip + " -g " + params.gsize + " -n " + wildcards.name + " --outdir " + join(workpath,macsB_dir,wildcards.name) + " --broad --broad-cutoff 0.01 --keep-dup='all' --nomodel --extsize " + extsize
@@ -315,17 +301,17 @@ if se == "yes":
 if pe == "yes":
     rule MACS2_broad:
         input:
-            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+            chip = join(workpath,bam_dir,"{name}.Q5DD.bam"),
         output:
             join(workpath,macsB_dir,"{name}","{name}_peaks.broadPeak"),
         params:
             rname='pl:MACS2_broad',
             gsize=config['references'][pfamily]['EFFECTIVEGENOMESIZE'],
             macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
-            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".Q5DD.bam"),
         shell: """
 module load {params.macsver};
-if [ {params.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
+if [ {params.ctrl} != "{workpath}/{bam_dir}/.Q5DD.bam" ]; then
     macs2 callpeak -t {input.chip} -c {params.ctrl} -g {params.gsize} -n {wildcards.name} \
           --outdir {workpath}/{macsB_dir}/{wildcards.name} --broad --broad-cutoff 0.01 \
           --keep-dup="all" -f "BAMPE";
@@ -339,8 +325,8 @@ fi
 if se == "yes":
     rule SICER:
         input:
-            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz"),
-            ppqt = join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+            chip = join(workpath,bam_dir,"{name}.Q5DD.tagAlign.gz"),
+            ppqt = join(workpath,bam_dir,"Q5DD.ppqt.txt"),
         output:
             txt = join(workpath,sicer_dir,"{name}","{name}_broadpeaks.txt"),
 # output columns: chrom, start, end, ChIP tag count, control tag count, p-value, fold-enrichment, q-value
@@ -350,22 +336,15 @@ if se == "yes":
             bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
             genomever = config['project']['annotation'],
             frac = calc_effective_genome_fraction(effectivegenomesize, reflen),
-            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.tagAlign.gz"),
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".Q5DD.tagAlign.gz"),
         run:
             commoncmd1 = "if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi "
             commoncmd2 = "cd /lscratch/$SLURM_JOBID; "
             commoncmd3 = "module load {params.sicerver}; module load {params.bedtoolsver}; "
             cmd1 = "cp {input.chip} chip.bed.gz; gzip -d chip.bed.gz; "
             file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
-            extenders = []
-            for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 150:
-                    extenders.append(ppqt_value)
-            try:
-                extsize = extenders[0]
-            except IndexError:
-                extsize = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
-            if params.ctrl != join(workpath,bam_dir,".sorted.Q5DD.tagAlign.gz"):
+      	    extsize = [ ppqt[1] for ppqt in file if ppqt[0] == wildcards.name ][0]
+            if params.ctrl != join(workpath,bam_dir,".Q5DD.tagAlign.gz"):
                 cmd2 = "cp {params.ctrl} input.bed.gz; gzip -d input.bed.gz; "
                 cmd3 =  "sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 " + extsize + " {params.frac} 600 1E-2 ; mv chip-W300-G600-islands-summary-FDR1E-2 {output.txt}"
                 shell(commoncmd1)
@@ -378,8 +357,8 @@ if se == "yes":
 if pe =="yes":
     rule SICER:
         input: 
-            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-            ppqt = join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+            chip = join(workpath,bam_dir,"{name}.Q5DD.bam"),
+            ppqt = join(workpath,bam_dir,"Q5DD.ppqt.txt"),
         output:
             txt = join(workpath,sicer_dir,"{name}","{name}_broadpeaks.txt"),
 # output columns: chrom, start, end, ChIP tag count, control tag count, p-value, fold-enrichment, q-value
@@ -388,22 +367,15 @@ if pe =="yes":
             sicerver=config['bin'][pfamily]['tool_versions']['SICERVER'],
             bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
             genomever = config['project']['annotation'],
-            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".Q5DD.bam"),
         run:
             commoncmd1 = "if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi "
             commoncmd2 = "cd /lscratch/$SLURM_JOBID; "
             commoncmd3 = "module load {params.sicerver}; module load {params.bedtoolsver}; "
             cmd1 = "bamToBed -i {input.chip} > chip.bed; "
             file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
-            extenders = []
-            for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 150:
-                    extenders.append(ppqt_value)
-            try:
-                extsize = extenders[0]
-            except IndexError:
-                extsize = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
-            if params.ctrl != join(workpath,bam_dir,".sorted.Q5DD.bam"):
+      	    extsize = [ ppqt[1] for ppqt in file if ppqt[0] == wildcards.name ][0]
+            if params.ctrl != join(workpath,bam_dir,".Q5DD.bam"):
                 cmd2 = "bamToBed -i {params.ctrl} > input.bed; "
                 cmd3 =  "sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 " + extsize + " 0.75 600 1E-2 ; mv chip-W300-G600-islands-summary-FDR1E-2 {output.txt}"
                 shell(commoncmd1)
@@ -460,7 +432,7 @@ rule convertSICER:
 if se =="yes":
     rule GEM:
         input:
-            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz"),
+            chip = join(workpath,bam_dir,"{name}.Q5DD.tagAlign.gz"),
         output:
             join(workpath,gem_dir,"{name}","{name}.GEM_events.narrowPeak"),         
         params:
@@ -469,7 +441,7 @@ if se =="yes":
             readDist=config['bin'][pfamily]['GEMREADDIST'],
             genome = config['references']['ChIPseq']['REFLEN'],
             fastas = config['references']['ChIPseq']['GENOMECHR'],
-            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.tagAlign.gz"),
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".Q5DD.tagAlign.gz"),
         threads: 32
         shell: """
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
@@ -477,7 +449,7 @@ cd /lscratch/$SLURM_JOBID;
 module load {params.gemver};
 cp {input.chip} chip.tagAlign.gz
 gzip -d chip.tagAlign.gz
-if [ "{params.ctrl}" != "{workpath}/{bam_dir}/.sorted.Q5DD.tagAlign.gz" ]; then
+if [ "{params.ctrl}" != "{workpath}/{bam_dir}/.Q5DD.tagAlign.gz" ]; then
     cp {params.ctrl} input.tagAlign.gz
     gzip -d input.tagAlign.gz
     java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
@@ -493,7 +465,7 @@ fi
 if pe == "yes":
     rule GEM:
         input:
-            chip = join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
+            chip = join(workpath,bam_dir,"{name}.Q5DD.bam"),
         output:
             join(workpath,gem_dir,"{name}","{name}.GEM_events.narrowPeak"),         
         params:
@@ -502,13 +474,13 @@ if pe == "yes":
             readDist=config['bin'][pfamily]['GEMREADDIST'],
             genome = config['references']['ChIPseq']['REFLEN'],
             fastas = config['references']['ChIPseq']['GENOMECHR'],
-            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".sorted.Q5DD.bam"),
+            ctrl = lambda w : join(workpath,bam_dir,chip2input[w.name] + ".Q5DD.bam"),
         threads: 32
         shell: """
 if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
 cd /lscratch/$SLURM_JOBID;
 module load {params.gemver};
-if [ {params.ctrl} != "{workpath}/{bam_dir}/.sorted.Q5DD.bam" ]; then
+if [ {params.ctrl} != "{workpath}/{bam_dir}/.Q5DD.bam" ]; then
     java -Xmx30g -jar $GEMJAR --t {threads} --d {params.readDist} --g {params.genome} \
          --genome {params.fastas}  --expt {input.chip} --ctrl {params.ctrl} --f SAM \
          --out {workpath}/{gem_dir}/{wildcards.name} --k_min 6 --k_max 13 --outNP --nrf
@@ -570,7 +542,7 @@ python {params.script} -i "{input}" -g {params.genome} -t "{zipTool}" -o "{param
 
 rule FRiP:
      input:
-        bam = expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),name=samples),
+        bam = expand(join(workpath,bam_dir,"{name}.Q5DD.bam"),name=samples),
         bed = expand(join(workpath,'{PeakTool}','{name}','{name}{PeakExt}'),zip,name=zipSample,PeakTool=zipTool,PeakExt=zipExt),
      output:
         join(workpath,qc_dir,"FRiP_barplot.png"),
@@ -604,35 +576,6 @@ rule HOMER_motif:
         else:
             cmd="findMotifsGenome.pl {input} {params.genomever} {output.gw} -p {threads} -preparsedDir /lscratch/$SLURM_JOBID; "
         shell(commoncmd3 + cmd)
-
-if False:
-  rule HOMER_motif_TSS:
-    input:
-        lambda w: [ join(workpath, w.PeakTool, w.name, w.name + PeakExtensions[w.PeakTool]) ]
-    output:
-        tss=join(workpath, homer_dir,'{PeakTool}',"{name}_{PeakTool}_TSS")
-    params:
-        rname="pl:HOMER_motif",
-        homerver = config['bin'][pfamily]['tool_versions']['HOMERVER'],
-        genomever = config['project']['annotation'],
-        ucscver = config['bin'][pfamily]['tool_versions']['UCSCVER'],
-        chain= config['references']['ChIPseq']['CHAIN1'],
-        convertedname = lambda w: join(workpath, homer_dir,w.PeakTool,w.name + "_liftover"+ PeakExtensions[w.PeakTool]),
-        gtype = config['references']['ChIPseq']['ORGANISM']
-    threads: 48
-    shell: """
-if [ {params.chain} == "" ]; then
-    module load {params.homerver}
-    findMotifs.pl {input} {params.genomever} {output.tss} -start -1000 -end 100 -p {threads}
-else
-    if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi
-    cd /lscratch/$SLURM_JOBID
-    module load {params.homerver}; module load {params.ucscver};
-    cut -f 1,2,3 {input} > tmp1.bed
-    liftOver tmp1.bed {params.chain} {params.convertedname} tmp.bed
-    findMotifs.pl {params.convertedname} {params.gtype} {output.tss} -start -1000 -end 100 -p {threads}
-fi
-"""
 
 rule UROPA:
     input:
@@ -712,10 +655,10 @@ rule diffbind:
             for chip in groupdata[condition]:
                 file = join(workpath, wildcards.PeakTool, chip, chip + PeakExtensions[wildcards.PeakTool])
                 replicate = str([ i + 1 for i in range(len(groupdata[condition])) if groupdata[condition][i]== chip ][0])
-                bamReads = join(workpath, bam_dir, chip + ".sorted.Q5DD.bam")
+                bamReads = join(workpath, bam_dir, chip + ".Q5DD.bam")
                 controlID = chip2input[chip]
                 if controlID != "":
-                    bamControl = join(workpath, bam_dir, controlID + ".sorted.Q5DD.bam")
+                    bamControl = join(workpath, bam_dir, controlID + ".Q5DD.bam")
                 else:
                     bamControl = ""
                 peaks = join(workpath, wildcards.PeakTool, chip, chip + PeakExtensions[wildcards.PeakTool])
@@ -749,10 +692,9 @@ tail -n +2 $ROOT2.txt | nl -w2 | awk -v OFS='\t' '{{print $2,$3,$4,"Peak"$1}}' >
 if se == "yes":
     rule manorm:
         input:
-            tAlign1 = lambda w: join(workpath,bam_dir, groupdata[w.group1][0] + ".sorted.Q5DD.tagAlign.gz"),
-            ppqt1 = lambda w: join(workpath,bam_dir, groupdata[w.group1][0] + ".sorted.Q5DD.ppqt"),
-            tAlign2 = lambda w: join(workpath,bam_dir, groupdata[w.group2][0] + ".sorted.Q5DD.tagAlign.gz"),
-            ppqt2 = lambda w: join(workpath,bam_dir, groupdata[w.group2][0] + ".sorted.Q5DD.ppqt"),
+            tAlign1 = lambda w: join(workpath,bam_dir, groupdata[w.group1][0] + ".Q5DD.tagAlign.gz"),
+            tAlign2 = lambda w: join(workpath,bam_dir, groupdata[w.group2][0] + ".Q5DD.tagAlign.gz"),
+            ppqt = join(workpath,bam_dir, "Q5DD.ppqt.txt"),
             peak1 = lambda w: join(workpath, w.tool, groupdata[w.group1][0], groupdata[w.group1][0] + PeakExtensions[w.tool]),
             peak2 = lambda w: join(workpath, w.tool, groupdata[w.group2][0], groupdata[w.group2][0] + PeakExtensions[w.tool]),
         output:
@@ -765,6 +707,8 @@ if se == "yes":
         params:
             rname='pl:manorm',
             bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
+            sample1= lambda w: groupdata[w.group1][0],
+            sample2= lambda w: groupdata[w.group2][0],
             manormver="manorm/1.1.4"
         run:
             commoncmd1 = "if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi "
@@ -774,24 +718,9 @@ if se == "yes":
             cmd2 = "cp {input.tAlign2} tAlign2.tagAlign.gz; gzip -d tAlign2.tagAlign.gz; "
             cmd3 = "cut -f 1,2,3 {input.peak1} > peak1.bed; "
             cmd4 = "cut -f 1,2,3 {input.peak2} > peak2.bed; "
-            file=list(map(lambda z:z.strip().split(),open(input.ppqt1,'r').readlines()))
-            extenders = []
-            for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 150:
-                    extenders.append(ppqt_value)
-            try:
-                extsize1 = extenders[0]
-            except IndexError:
-                extsize1 = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
-            file=list(map(lambda z:z.strip().split(),open(input.ppqt2,'r').readlines()))
-            extenders = []
-            for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 150:
-                    extenders.append(ppqt_value)
-            try:
-                extsize2 = extenders[0]
-            except IndexError:
-                extsize2 = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
+            file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
+            extsize1 = [ ppqt[1] for ppqt in file if ppqt[0] == params.sample1 ][0]
+            extsize2 = [ ppqt[1] for ppqt in file if ppqt[0] == params.sample2 ][0]
             cmd5 = "manorm --p1 peak1.bed --p2 peak2.bed --r1 tAlign1.tagAlign --r2 tAlign2.tagAlign --s1 " + extsize1  + " --s2 " + extsize2 + " -o {output.fldr} --name1 '" + wildcards.group1 + "' --name2 '" + wildcards.group2 + "'; "
             cmd6 = "gzip {output.fldr}/output_tracks/*wig; "
             cmd7 = "mv {output.fldr}/" + wildcards.group1 + "_vs_" + wildcards.group2 + "_all_MAvalues.xls {output.xls}; "
@@ -802,10 +731,9 @@ if se == "yes":
 if pe == "yes":
     rule manorm:
         input: 
-            bam1 = lambda w: join(workpath,bam_dir, groupdata[w.group1][0] + ".sorted.Q5DD.bam"),
-            ppqt1 = lambda w: join(workpath,bam_dir, groupdata[w.group1][0] + ".sorted.Q5DD.ppqt"),
-            bam2 = lambda w: join(workpath,bam_dir, groupdata[w.group2][0] + ".sorted.Q5DD.bam"),
-            ppqt2 = lambda w: join(workpath,bam_dir, groupdata[w.group2][0] + ".sorted.Q5DD.ppqt"),
+            bam1 = lambda w: join(workpath,bam_dir, groupdata[w.group1][0] + ".Q5DD.bam"),
+            bam2 = lambda w: join(workpath,bam_dir, groupdata[w.group2][0] + ".Q5DD.bam"),
+            ppqt = join(workpath,bam_dir, "Q5DD.ppqt.txt"),
             peak1 = lambda w: join(workpath, w.tool, groupdata[w.group1][0], groupdata[w.group1][0] + PeakExtensions[w.tool]),
             peak2 = lambda w: join(workpath, w.tool, groupdata[w.group2][0], groupdata[w.group2][0] + PeakExtensions[w.tool]),
         output:
@@ -827,24 +755,9 @@ if pe == "yes":
             cmd2 = "bamToBed -i {input.bam2} > bam2.bed; "
             cmd3 = "cut -f 1,2,3 {input.peak1} > peak1.bed; "
             cmd4 = "cut -f 1,2,3 {input.peak2} > peak2.bed; "
-            file=list(map(lambda z:z.strip().split(),open(input.ppqt1,'r').readlines()))
-            extenders = []
-            for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 150:
-                    extenders.append(ppqt_value)
-            try:
-                extsize1 = extenders[0]
-            except IndexError:
-                extsize1 = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
-            file=list(map(lambda z:z.strip().split(),open(input.ppqt2,'r').readlines()))
-            extenders = []
-            for ppqt_value in file[0][2].split(","):
-                if int(ppqt_value) > 150:
-                    extenders.append(ppqt_value)
-            try:
-                extsize2 = extenders[0]
-            except IndexError:
-                extsize2 = "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
+            file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
+            extsize1 = [ ppqt[1] for ppqt in file if ppqt[0] == params.sample1 ][0]
+            extsize2 = [ ppqt[1] for ppqt in file if ppqt[0] == params.sample2 ][0]
             cmd5 = "manorm --p1 peak1.bed --p2 peak2.bed --r1 bam1.bed --r2 bam2.bed --s1 " + extsize1  + " --s2 " + extsize2 + " -o {output.fldr} --name1 '" + wildcards.group1 + "' --name2 '" + wildcards.group2 + "'; "
             cmd6 = "gzip {output.fldr}/output_tracks/*wig; "
             cmd7 = "mv {output.fldr}/" + wildcards.group1 + "_vs_" + wildcards.group2 + "_all_MAvalues.xls {output.xls}; "

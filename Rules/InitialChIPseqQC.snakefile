@@ -16,13 +16,13 @@ def outputfiles2(groupslist, inputnorm):
     '''
     Produces correct output filenames based on group information.
     Names will be:
-    Inputnorm.sorted.Q5DD.RPGC.metagene_heatmap.pdf
-    {groupName}.sorted.Q5DD.RPGC.metagene_heatmap.pdf
+    Inputnorm.Q5DD.RPGC.metagene_heatmap.pdf
+    {groupName}.Q5DD.RPGC.metagene_heatmap.pdf
     {groupName}.sorted.RPGC.metagene_heatmap.pdf
     Note: Inputnorm will only be included when there are input samples.
     '''
     dtoolgroups, dtoolext = [], []
-    extensions = ["sorted.RPGC", "sorted.Q5DD.RPGC"]
+    extensions = ["sorted.RPGC", "Q5DD.RPGC"]
     if len(inputnorm) == 2:
             dtoolgroups.extend(["InputNorm"])
             dtoolext.extend([extensions[1]])
@@ -46,12 +46,12 @@ elif config['project']['nends'] == 1 :
     se="yes"
 
 if pe == "yes":
-    extensions = [ "sorted.RPGC", "sorted.Q5DD.RPGC" ]
+    extensions = [ "sorted.RPGC", "Q5DD.RPGC" ]
     extensions2 = list(map(lambda x:re.sub(".RPGC","",x),extensions))
     extensions3 = { extensions2[i] + "." : "bam" for i in range(len(extensions2)) }
     extensions4 = [ extensions2[i] + ".bam" for i in range(len(extensions2)) ]
 else:
-    extensions = [ "sorted.RPGC", "sorted.Q5DD.RPGC" ]
+    extensions = [ "sorted.RPGC", "Q5DD.RPGC" ]
     extensions2 = list(map(lambda x:re.sub(".RPGC","",x),extensions))
     types = [ "bam", "tagAlign.gz" ]
     extensions3 = { extensions2[i] + "." : types[i] for i in range(len(extensions2)) }
@@ -102,7 +102,7 @@ bw_dir='bigwig'
 deeptools_dir='deeptools'
 preseq_dir='preseq'
 extra_fingerprint_dir='deeptools/sorted_fingerprint'
-qc_dir="qc"
+qc_dir="QC"
 
 for d in [trim_dir,kraken_dir,bam_dir,bw_dir,deeptools_dir,preseq_dir,extra_fingerprint_dir,qc_dir]:
 	if not os.path.exists(join(workpath,d)):
@@ -122,7 +122,6 @@ if se == 'yes' :
         input: 
             # Multiqc Report
             join(workpath,"Reports","multiqc_report.html"),
-            join(workpath,"Reports","multiqc_reportA.html"),
             # FastqScreen
             expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
             expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
@@ -135,9 +134,10 @@ if se == 'yes' :
             # BWA --> BigWig
             expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions),
             # Input Normalization
-            expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.inputnorm.bw",),name=sampleswinput), 
+            expand(join(workpath,bw_dir,"{name}.Q5DD.RPGC.inputnorm.bw",),name=sampleswinput), 
             # PhantomPeakQualTools
             expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
+            expand(join(workpath,bam_dir,'{ext}.ppqt.txt'),ext=extensions2),
             # deeptools
             expand(join(workpath,deeptools_dir,"spearman_heatmap.{ext}.pdf"),ext=extensions),
             expand(join(workpath,deeptools_dir,"spearman_scatterplot.{ext}.pdf"),ext=extensions),
@@ -148,7 +148,7 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             # ngsqc
-            expand(join(workpath,qc_dir,"{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+            expand(join(workpath,qc_dir,"{group}.NGSQC.Q5DD.png"),group=groups),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -240,11 +240,11 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         output:
             outbam1=join(workpath,bam_dir,"{name}.sorted.bam"), 
-            outbam2=temp(join(workpath,bam_dir,"{name}.sorted.Q5.bam")),
+            outbam2=temp(join(workpath,bam_dir,"{name}.Q5.bam")),
             flagstat1=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
-            flagstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"),
+            flagstat2=join(workpath,bam_dir,"{name}.Q5.bam.flagstat"),
             idxstat1=join(workpath,bam_dir,"{name}.sorted.bam.idxstat"),
-            idxstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.idxstat"),
+            idxstat2=join(workpath,bam_dir,"{name}.Q5.bam.idxstat"),
         threads: 32
         shell: """
 module load {params.bwaver};
@@ -262,12 +262,12 @@ samtools idxstats {output.outbam2} > {output.idxstat2}
 
     rule macs2_dedup:
         input:
-            join(workpath,bam_dir,"{name}.sorted.Q5.bam")
+            join(workpath,bam_dir,"{name}.Q5.bam")
         output:
-            outtagalign=join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz"),
-            outbam=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-            outflagstat=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
-            outidxstat=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.idxstat"),
+            outtagalign=join(workpath,bam_dir,"{name}.Q5DD.tagAlign.gz"),
+            outbam=join(workpath,bam_dir,"{name}.Q5DD.bam"),
+            outflagstat=join(workpath,bam_dir,"{name}.Q5DD.bam.flagstat"),
+            outidxstat=join(workpath,bam_dir,"{name}.Q5DD.bam.idxstat"),
         params:
             rname='pl:macs2_dedup',
             macsver=config['bin'][pfamily]['tool_versions']['MACSVER'],
@@ -312,7 +312,7 @@ if pe == 'yes':
             # BWA --> BigWig
             expand(join(workpath,bw_dir,"{name}.{ext}.bw",),name=samples,ext=extensions),
             # Input Normalization
-            expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.inputnorm.bw",),name=sampleswinput),
+            expand(join(workpath,bw_dir,"{name}.Q5DD.RPGC.inputnorm.bw",),name=sampleswinput),
             # PhantomPeakQualTools
             expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
             expand(join(workpath,bam_dir,"{name}.{ext}.pdf"),name=samples,ext=extensions2),
@@ -326,7 +326,7 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             # ngsqc
-            expand(join(workpath,qc_dir,"{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+            expand(join(workpath,qc_dir,"{group}.NGSQC.Q5DD.png"),group=groups),
             # preseq
             expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
@@ -416,11 +416,11 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
         output:
             outbam1=join(workpath,bam_dir,"{name}.sorted.bam"), 
-            outbam2=temp(join(workpath,bam_dir,"{name}.sorted.Q5.bam")),
+            outbam2=temp(join(workpath,bam_dir,"{name}.Q5.bam")),
             flagstat1=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
             idxstat1=join(workpath,bam_dir,"{name}.sorted.bam.idxstat"),
-            flagstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"),
-            idxstat2=join(workpath,bam_dir,"{name}.sorted.Q5.bam.idxstat"),
+            flagstat2=join(workpath,bam_dir,"{name}.Q5.bam.flagstat"),
+            idxstat2=join(workpath,bam_dir,"{name}.Q5.bam.idxstat"),
         threads: 32
         shell: """
 module load {params.bwaver};
@@ -438,12 +438,12 @@ samtools idxstat {output.outbam2} > {output.idxstat2}
 
     rule picard_dedup:
         input: 
-            bam2=join(workpath,bam_dir,"{name}.sorted.Q5.bam")
+            bam2=join(workpath,bam_dir,"{name}.Q5.bam")
         output:
-            out4=temp(join(workpath,bam_dir,"{name}.bwa_rg_added.sorted.Q5.bam")), 
-            out5=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam"),
-            out5f=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
-            out5i=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.idxstat"),
+            out4=temp(join(workpath,bam_dir,"{name}.bwa_rg_added.Q5.bam")), 
+            out5=join(workpath,bam_dir,"{name}.Q5DD.bam"),
+            out5f=join(workpath,bam_dir,"{name}.Q5DD.bam.flagstat"),
+            out5i=join(workpath,bam_dir,"{name}.Q5DD.bam.idxstat"),
             out6=join(workpath,bam_dir,"{name}.bwa.Q5.duplic"), 
         params:
             rname='pl:dedup',
@@ -478,10 +478,10 @@ samtools idxstat {output.out5} > {output.out5i}
 
 rule ppqt:
     input:
-        bam = lambda w : join(workpath,bam_dir,w.name + ".sorted" + w.ext + extensions3["sorted" + w.ext])
+        bam = lambda w : join(workpath,bam_dir,w.name + "." + w.ext + "." + extensions3[w.ext + "."])
     output:
-        ppqt= join(workpath,bam_dir,"{name}.sorted{ext}ppqt"),
-        pdf= join(workpath,bam_dir,"{name}.sorted{ext}pdf"),
+        ppqt= join(workpath,bam_dir,"{name}.{ext}.ppqt"),
+        pdf= join(workpath,bam_dir,"{name}.{ext}.pdf"),
     params:
         rname="pl:ppqt",
         samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
@@ -499,10 +499,40 @@ rule ppqt:
                 -tmpdir=/lscratch/$SLURM_JOBID -rf;"
         shell(commoncmd+cmd)
 
+rule ppqt_process:
+    input:
+        lambda w: [ join(workpath,bam_dir,sample + "." + w.ext + ".ppqt") for sample in samples ],
+    output:
+        out=join(workpath,bam_dir,'{ext}.ppqt.txt'),
+    params:
+        rname="pl:ppqt_process",
+    run:
+        o=open(output.out,'w')
+        for inppqt in input:
+            sample_name = inppqt.split("." + wildcards.ext)[0].split("/")[-1]
+            if sample_name in uniq_inputs:
+                o.write(sample_name + "\t" + "200" + "\n")
+            else:
+                file = list(map(lambda z:z.strip().split(),open(inppqt,'r').readlines()))
+                ppqt_values = file[0][2].split(",")
+                extenders = []
+                for ppqt_value in ppqt_values:
+                    if int(ppqt_value) > 150:
+                        extenders.append(ppqt_value)
+                if len(extenders) > 0:
+                    o.write(sample_name + "\t" + extenders[0] + "\n")
+                else:
+                    print(sample_name)
+                    print("All estimated fragments lengths were less than 150bp which will may cause the pipeline to fail.")
+                    print("Potential causes include: wrong ref genome selected or low starting DNA.")
+                    print("Assuming default estimated fragment length of 200bp.\n")
+                    o.write(sample_name + "\t" + "200" + "\n")
+        o.close()
+
 rule bam2bw:
     input:
         bam=join(workpath,bam_dir,"{name}.{ext}.bam"),
-        ppqt=join(workpath,bam_dir,"{name}.{ext}.ppqt"),
+        ppqt=join(workpath,bam_dir,"{ext}.ppqt.txt"),
     output:
         outbw=join(workpath,bw_dir,"{name}.{ext}.RPGC.bw"),
     params:
@@ -527,25 +557,16 @@ rule bam2bw:
         if pe=="yes":
             cmd+=" --centerReads"
         else:
-            if len([i for i in uniq_inputs if i in input.bam]) != 0:
-                cmd+=" -e 200"
-            else:
-                file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
-                extenders = []
-                for ppqt_value in file[0][2].split(","):
-                    if int(ppqt_value) > 150:
-                        extenders.append(ppqt_value)
-                try:
-                    cmd+=" -e "+extenders[0]
-                except IndexError:
-                    cmd+=" -e " + "{} {}".format(file[0][2].split(",")[0], "# All estimated fragments lengths were less than 150 which will may cause the pipeline to fail (wrong ref genome selected or low starting DNA)")
+            file = list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
+            extender = [ ppqt[1] for ppqt in file if ppqt[0] == wildcards.name ] 
+            cmd+=" -e "+extender[0]
         shell(commoncmd+cmd)
 
 rule deeptools_prep:
     input:
         bw=expand(join(workpath,bw_dir,"{name}.{ext}.bw"),name=samples,ext=extensions),
         bam=expand(join(workpath,bam_dir,"{name}.{ext}.bam"),name=samples,ext=extensions2),
-        bw2=expand(join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.inputnorm.bw"),name=sampleswinput)
+        bw2=expand(join(workpath,bw_dir,"{name}.Q5DD.RPGC.inputnorm.bw"),name=sampleswinput)
     output:
         temp(expand(join(workpath,bw_dir,"{ext}.deeptools_prep"),ext=extensions)),
         temp(expand(join(workpath,bam_dir,"{group}.{ext}.deeptools_prep"),group=groups,ext=extensions2)),
@@ -604,6 +625,7 @@ rule deeptools_QC:
     params:
         rname="pl:deeptools_QC",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
+        png=lambda w: join(workpath,deeptools_dir,"spearman_heatmap." + w.ext + "_mqc.png")
     run:
         import re
         commoncmd="module load {params.deeptoolsver}; module load python;"
@@ -615,7 +637,7 @@ rule deeptools_QC:
         cmd2="plotCorrelation -in "+output.npz+" -o "+output.heatmap+" -c 'spearman' -p 'heatmap' --skipZeros --removeOutliers --plotNumbers"
 	cmd3="plotCorrelation -in "+output.npz+" -o "+output.scatter+" -c 'spearman' -p 'scatterplot' --skipZeros --removeOutliers"
         cmd4="plotPCA -in "+output.npz+" -o "+output.pca
-        cmd5="plotCorrelation -in "+output.npz+" -o "+join(workpath,deeptools_dir,"spearman_heatmap."+wildcards.ext+"_mqc.png")+" -c 'spearman' -p 'heatmap' --skipZeros --removeOutliers --plotNumbers"
+        cmd5="plotCorrelation -in "+output.npz+" -o "+ params.png +" -c 'spearman' -p 'heatmap' --skipZeros --removeOutliers --plotNumbers"
 	shell(commoncmd+cmd1)
         shell(commoncmd+cmd2)
 	shell(commoncmd+cmd3)
@@ -647,11 +669,11 @@ rule deeptools_fingerprint:
 
 rule deeptools_fingerprint_Q5DD:
     input:
-        join(workpath,bam_dir,"{group}.sorted.Q5DD.deeptools_prep")
+        join(workpath,bam_dir,"{group}.Q5DD.deeptools_prep")
     output:
-        image=join(workpath,deeptools_dir,"{group}.fingerprint.sorted.Q5DD.pdf"),
-        raw=temp(join(workpath,deeptools_dir,"{group}.fingerprint.raw.sorted.Q5DD.tab")),
-        metrics=join(workpath,deeptools_dir,"{group}.fingerprint.metrics.sorted.Q5DD.tsv"),
+        image=join(workpath,deeptools_dir,"{group}.fingerprint.Q5DD.pdf"),
+        raw=temp(join(workpath,deeptools_dir,"{group}.fingerprint.raw.Q5DD.tab")),
+        metrics=join(workpath,deeptools_dir,"{group}.fingerprint.metrics.Q5DD.tsv"),
     params:
         rname="pl:deeptools_fingerprint_Q5DD",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
@@ -711,10 +733,10 @@ rule deeptools_genes:
 
 rule inputnorm:
     input:
-        chip = join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.bw"),
-        ctrl = lambda w : join(workpath,bw_dir,chip2input[w.name] + ".sorted.Q5DD.RPGC.bw")
+        chip = join(workpath,bw_dir,"{name}.Q5DD.RPGC.bw"),
+        ctrl = lambda w : join(workpath,bw_dir,chip2input[w.name] + ".Q5DD.RPGC.bw")
     output:
-        join(workpath,bw_dir,"{name}.sorted.Q5DD.RPGC.inputnorm.bw")
+        join(workpath,bw_dir,"{name}.Q5DD.RPGC.inputnorm.bw")
     params:
         rname="pl:inputnorm",
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
@@ -832,11 +854,11 @@ module load {params.perlver};
 
 rule ngsqc:
     input:
-        tagAlign=join(workpath,bam_dir,"{name}.sorted.Q5DD.tagAlign.gz") if \
+        tagAlign=join(workpath,bam_dir,"{name}.Q5DD.tagAlign.gz") if \
           se == "yes" else \
-          join(workpath,bam_dir,"{name}.sorted.Q5DD.bam")
+          join(workpath,bam_dir,"{name}.Q5DD.bam")
     output:
-        file=join(workpath,qc_dir,"{name}.sorted.Q5DD.NGSQC_report.txt"),
+        file=join(workpath,qc_dir,"{name}.Q5DD.NGSQC_report.txt"),
     params:
         rname="pl:ngsqc",
         bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
@@ -859,9 +881,9 @@ mv tmpOut/NGSQC_report.txt {output.file}
 
 rule ngsqc_plot:
     input:
-        ngsqc=expand(join(workpath,qc_dir,"{name}.sorted.Q5DD.NGSQC_report.txt"),name=samples),
+        ngsqc=expand(join(workpath,qc_dir,"{name}.Q5DD.NGSQC_report.txt"),name=samples),
     output:
-        png=expand(join(workpath,qc_dir,"{group}.NGSQC.sorted.Q5DD.png"),group=groups),
+        png=expand(join(workpath,qc_dir,"{group}.NGSQC.Q5DD.png"),group=groups),
     params:
         rname="pl:ngsqc_plot",
         script=join(workpath,"Scripts","ngsqc_plot.py"),
@@ -877,12 +899,12 @@ rule ngsqc_plot:
             labels = [ sample for sample in samples if sample in groupdatawinput[group] ]
             cmd1 = cmd1 + "mkdir " + group + "; "
             for label in labels:
-                cmd1 = cmd1 + "cp " + workpath + "/QC/" + label + ".sorted.Q5DD.NGSQC_report.txt " + group + "; " 
+                cmd1 = cmd1 + "cp " + workpath + "/" + qc_dir + "/" + label + ".Q5DD.NGSQC_report.txt " + group + "; " 
                 if label not in sample:
-                    cmd4 = cmd4 + "mv " + group + "/" + label + ".sorted.Q5DD.NGSQC.txt " + workpath + "/QC; "
+                    cmd4 = cmd4 + "mv " + group + "/" + label + ".Q5DD.NGSQC.txt " + workpath + "/" + qc_dir + "; "
                     sample.append(label)
-            cmd2 = cmd2 + "python " + params.script + " -d '" + group + "' -e 'sorted.Q5DD' -g '" + group + "'; "
-            cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.sorted.Q5DD.png " + workpath + "/QC/" + group + ".NGSQC.sorted.Q5DD.png" + "; "
+            cmd2 = cmd2 + "python " + params.script + " -d '" + group + "' -e 'Q5DD' -g '" + group + "'; "
+            cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.Q5DD.png " + workpath + "/" + qc_dir + "/" + group + ".NGSQC.Q5DD.png" + "; "
         shell(commoncmd1)
         shell(commoncmd2 + cmd1 + cmd2 + cmd3 + cmd4)
 
@@ -890,14 +912,15 @@ rule QCstats:
     input:
         flagstat=join(workpath,bam_dir,"{name}.sorted.bam.flagstat"),
         infq=join(workpath,"{name}.R1.fastq.gz"),	
-        ddflagstat=join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"),
+        ddflagstat=join(workpath,bam_dir,"{name}.Q5DD.bam.flagstat"),
         nrf=join(workpath,qc_dir,"{name}.nrf"),
-        ppqt=join(workpath,bam_dir,"{name}.sorted.Q5DD.ppqt"),
+        ppqt=join(workpath,bam_dir,"{name}.Q5DD.ppqt"),
+        ppqt2=join(workpath,bam_dir,"Q5DD.ppqt.txt"),
     params:
         rname='pl:QCstats',
         filterCollate=join(workpath,"Scripts","filterMetrics"),   
     output:
-        sampleQCfile=temp(join(workpath,qc_dir,"{name}.qcmetrics")),
+        sampleQCfile=join(workpath,qc_dir,"{name}.qcmetrics"),
     threads: 16
     shell: """
 # Number of reads
@@ -912,8 +935,8 @@ cat {input.nrf} | {params.filterCollate} {wildcards.name} nrf >> {output.sampleQ
 # NSC, RSC, Qtag
 awk '{{print $(NF-2),$(NF-1),$NF}}' {input.ppqt} | {params.filterCollate} {wildcards.name} ppqt >> {output.sampleQCfile}
 # Fragment Length
-#awk -F '\\t' '{{print $3}}' {input.ppqt} | awk -F ',' '{{print $1}}' | {params.filterCollate} {wildcards.name} fragLen >> {output.sampleQCfile}
-awk -F '\\t' '{{print $3}}' {input.ppqt} | sed -e 's/,/ /g' | {params.filterCollate} {wildcards.name} fragLen >> {output.sampleQCfile}
+fragLen=`grep {wildcards.name} {input.ppqt2} | cut -f 2`
+echo "{wildcards.name}\tFragmentLength\t$fragLen" >> {output.sampleQCfile}
             """
 
 rule QCTable:
@@ -921,7 +944,7 @@ rule QCTable:
         expand(join(workpath,qc_dir,"{name}.qcmetrics"), name=samples),
     params:
         rname='pl:QCTable',
-        inputstring=" ".join(expand(join(workpath,"QC","{name}.qcmetrics"), name=samples)),
+        inputstring=" ".join(expand(join(workpath,qc_dir,"{name}.qcmetrics"), name=samples)),
         filterCollate=join(workpath,"Scripts","createtable"),
     output:
         qctable=join(workpath,qc_dir,"QCTable.txt"),
@@ -934,15 +957,15 @@ rule multiqc:
     input: 
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
         expand(join(workpath,preseq_dir,"{name}.ccurve"), name=samples),
-        expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
-        expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
-	expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
+        expand(join(workpath,bam_dir,"{name}.Q5DD.bam.flagstat"), name=samples),
+        expand(join(workpath,bam_dir,"{name}.Q5.bam.flagstat"), name=samples),
+	#expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
         join(workpath,qc_dir,"QCTable.txt"),
         join(workpath,"rawfastQC"),
         join(workpath,"fastQC"),
-        expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.sorted.Q5DD.tab"),group=groups),
-        expand(join(workpath,qc_dir,"{group}.NGSQC.sorted.Q5DD.png"),group=groups),
-        join(workpath,deeptools_dir,"spearman_heatmap.sorted.Q5DD.RPGC.pdf"),
+        expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.Q5DD.tab"),group=groups),
+        expand(join(workpath,qc_dir,"{group}.NGSQC.Q5DD.png"),group=groups),
+        join(workpath,deeptools_dir,"spearman_heatmap.Q5DD.RPGC.pdf"),
     output:
         join(workpath,"Reports","multiqc_report.html")
     params:
@@ -953,27 +976,4 @@ rule multiqc:
     shell: """
 module load {params.multiqc}
 cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt --ignore {params.dir} -d ../
-"""
-
-rule multiqcA:
-    input: 
-        expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
-        expand(join(workpath,preseq_dir,"{name}.ccurve"), name=samples),
-        expand(join(workpath,bam_dir,"{name}.sorted.Q5.bam.flagstat"), name=samples),
-        expand(join(workpath,bam_dir,"{name}.sorted.Q5DD.bam.flagstat"), name=samples),
-        expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
-        join(workpath,"rawfastQC"),
-        join(workpath,"fastQC"),
-        join(workpath,qc_dir,"QCTable.txt"),
-        expand(join(workpath,qc_dir,"{group}.NGSQC.sorted.Q5DD.png"),group=groups),
-    output:
-        join(workpath,"Reports","multiqc_reportA.html")
-    params:
-        rname="pl:multiqcA",
-        multiqc=config['bin'][pfamily]['tool_versions']['MULTIQCVER'],
-	qcconfig=config['bin'][pfamily]['CONFMULTIQC'],
-	dir=join(workpath,deeptools_dir),
-    shell: """
-module load {params.multiqc}
-cd Reports && multiqc -f -c {params.qcconfig} --interactive -e cutadapt --ignore {params.dir} -d ../ -n multiqc_reportA.html
 """
