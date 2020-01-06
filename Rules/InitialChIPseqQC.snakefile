@@ -433,7 +433,7 @@ samtools idxstat {output.outbam1} > {output.idxstat1}
 samtools view -b -q 6 {output.outbam1} -o {output.outbam2}
 samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
-samtools idxstat {output.outbam2} > {output.idxstat2}
+samtools idxstats {output.outbam2} > {output.idxstat2}
             """  
 
     rule picard_dedup:
@@ -473,7 +473,7 @@ java -Xmx{params.javaram} \
   METRICS_FILE={output.out6}
 samtools index {output.out5}
 samtools flagstat {output.out5} > {output.out5f}
-samtools idxstat {output.out5} > {output.out5i}
+samtools idxstats {output.out5} > {output.out5i}
             """
 
 rule ppqt:

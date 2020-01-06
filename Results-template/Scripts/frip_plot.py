@@ -121,13 +121,17 @@ def create_barplot(out2,outbar):
     used to create the peak file, and the panels are the different 
     peak calling tools
     """
-    sns.set(style="whitegrid", palette="Set1", font_scale=1.5)
-    bp = sns.catplot(x="bamsample", y="FRiP", hue="bedsample",
+    sns.set(style="whitegrid", palette="Set1", font_scale=0.75)
+    if len(out2.bedtool.unique()) > 1:
+        bp = sns.catplot(x="bamsample", y="FRiP", hue="bedsample",
              col="bedtool", data=out2, kind="bar", col_wrap=2)
+    else:
+        bp = sns.catplot(x="bamsample", y="FRiP", hue="bedsample",
+             col="bedtool", data=out2, kind="bar")
     bp.set_axis_labels("Bam File", 'Fraction Reads in Peaks (FRiP)')
     bp.set_titles("{col_name}")
     bp._legend.set_title("Peak File")
-    bp.set_xticklabels(rotation=10)
+    bp.set_xticklabels(rotation=70)
     #plt.show(bp)
     plt.savefig(outbar, bbox_inches='tight')
     plt.close("all")
@@ -141,16 +145,21 @@ def create_scatter(out2, outscatter):
     """
     bams= out2.loc[:,'bamsample'].unique()
     nplots= len(bams)
-    sns.set(style="whitegrid", palette="Set1")
-    f, axes = plt.subplots(1, nplots, sharey=True)
+    nplotsmid= int(nplots/2)
+    sns.set(style="whitegrid", palette="Set1",font_scale=0.75)
+    f, axes = plt.subplots(1, nplots, sharey=True, sharex=True)
     for bi in range(nplots-1):
         tmp = out2.loc[ out2['bamsample'] == bams[bi] ]
         sns.scatterplot(data=tmp, x="n_basesM", y="FRiP",
                         hue="bedsample", style="bedtool", ax=axes[bi],
                         markers=['o','s','v','X'], legend=False)
-        axes[bi].set(xlabel="# bases in peaks (M)", 
+        if bi == nplotsmid:
+            axes[bi].set(xlabel="# bases in peaks (M)", 
                      ylabel='Fraction Reads in Peaks (FRiP)')
-        axes[bi].set_title( bams[bi] )
+        else:
+            axes[bi].set(xlabel="", 
+                     ylabel='Fraction Reads in Peaks (FRiP)')
+        axes[bi].set_title( bams[bi], rotation=70, rotation_mode="anchor")
         axes[bi].get_xaxis().set_minor_locator( mpl.ticker.AutoMinorLocator() )
         axes[bi].grid(b=True, which='major', color="gray", linewidth=1)
         axes[bi].grid(b=True, which='minor', linestyle="--", 
@@ -159,9 +168,9 @@ def create_scatter(out2, outscatter):
     sns.scatterplot(data=tmp, x="n_basesM", y="FRiP", hue="bedsample",
                     style="bedtool", ax=axes[nplots-1],
                     markers=['o','s','v','X'])
-    axes[nplots-1].set(xlabel="# bases in peaks (M)", 
+    axes[nplots-1].set(xlabel="", 
                        ylabel='Fraction Reads in Peaks (FRiP)')
-    axes[nplots-1].set_title( bams[nplots-1] )
+    axes[nplots-1].set_title( bams[nplots-1], rotation=70, rotation_mode="anchor")
     axes[nplots-1].get_xaxis().set_minor_locator( mpl.ticker.AutoMinorLocator() )
     axes[nplots-1].grid(b=True, which='major', color="gray", linewidth=1)
     axes[nplots-1].grid(b=True, which='minor', linestyle="--",

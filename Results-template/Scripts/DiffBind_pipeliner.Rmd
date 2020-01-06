@@ -1,5 +1,5 @@
 ---
-title: "DiffBind: CCBR ATAC-seq pipeline"
+title: "DiffBind: CCBR ChIP-seq pipeline"
 output: 
     html_document:
         toc: true
