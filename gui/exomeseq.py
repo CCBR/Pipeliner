@@ -62,6 +62,8 @@ class ExomeSeqFrame( PipelineFrame ) :
         targetsL.grid(row=5,column=0,sticky=W,padx=10,pady=5)
         targetsE = Entry(eframe,textvariable=self.targetspath, width=50)
 
+        label_ref_text = "By default, the path to the Agilent SureSelect V7 targets file is filled in here"
+
         if self.genome=="hg19":
             self.targetspath.set( 
                 "/data/CCBR_Pipeliner/db/PipeDB/lib/Agilent_SSv7_allExons_hg19.bed" )
@@ -71,12 +73,12 @@ class ExomeSeqFrame( PipelineFrame ) :
         else:
             self.targetspath.set(
                 "/data/CCBR_Pipeliner/db/PipeDB/lib/SureSelect_mm10.bed")
+            label_ref_text = "By default, the path to the Agilent SureSelect Mouse All Exon V1 targets file is filled in here"
 
         targetsE.grid(row=5,column=1,columnspan=6,sticky=W,padx=10,pady=5)
         self.targetspath.trace('w', lambda a,b,c,x="targetspath":self.makejson(x))
-        label = Label (eframe, 
-                       text = 
-                       "By default, the path to the Agilent V5+UTR targets file is filled in here" ) 
+	
+        label = Label (eframe, text = label_ref_text)
         
         label.grid(row=6, column=0, columnspan=5, sticky=W, padx=10, pady=5)
         
