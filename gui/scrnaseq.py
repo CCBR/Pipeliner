@@ -42,8 +42,8 @@ class scRNASeqFrame( PipelineFrame ) :
         
         label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
         label.grid(row=3,column=0,sticky=W,padx=10,pady=5)
-        PipelineLabels=["CellRanger","Initial/QC","Clustering","Multi-Sample Clustering" ]
-        Pipelines=["cellranger","scrnaseqinit","scrnaseqcluster", "scrnaseqmulticluster"]
+        PipelineLabels=["Initial QC","Differential Expression"]
+        Pipelines=["scrnaQC","scrnaDE"]
 
         self.label2pipeline = { k:v for k,v in zip(PipelineLabels, Pipelines)}
         
@@ -56,124 +56,104 @@ class scRNASeqFrame( PipelineFrame ) :
         om["menu"].config()#bg = widgetBgColor,fg=widgetFgColor)
         #om.pack(side=LEFT,padx=20,pady=5)
         om.grid(row=3,column=1,sticky=W,padx=10,pady=5)
+
+
+######## QUALITY CONTROL/FILTERING/CLUSTERING ###############        
+        self.qcOptions = qcOptions = LabelFrame( eframe, text = "QC, Filtering, and Initial Clustering")
+
+        #algorithm selection
+        self.clustAlg = clustAlg = StringVar()
+        clustAlgLabel = Label(qcOptions, text="Clustering Algorithm: ")
+        clustAlgDropdown = ["SLM (Smart Local Moving)", "Louvain (Original)","Louvain (with Multilevel Refinement)"]
+        clustAlg.set(clustAlgDropdown[0])
+        clustAlgOptMenu = OptionMenu(qcOptions, clustAlg, *clustAlgDropdown)
+        clustAlgLabel.grid(row=8,column=1,sticky=W,padx=10,pady=5)
+        clustAlgOptMenu.grid(row=8,column=2,sticky=W,padx=0,pady=5)
         
-        self.crOpts = crOpts = LabelFrame( eframe, 
-                                              text="CellRanger Settings" )
-        self.scrCRID = scrCRID = StringVar()
-        scrCRID.set("SPECIFY_PREFIX_HERE")
-        self.scrExpected = scrExpected = StringVar()
-        scrExpected.set("3000")
-
-        scrcridL = Label(crOpts, text="CellRanger Sample ID: ")
-        scrcridE = Entry(crOpts, bd =2, width=25, textvariable=scrCRID)
-        scrcridL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
-        scrcridE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
+        #clustering resolutions
+        self.resolution = resolution = StringVar()
+        resolution.set("0.4,0.6,0.8,1.0,1.2")
+        resolutionLabel = Label(qcOptions,text="Clustering Resolution(s): \nSeparate with commas")
+        resolutionEntry = Entry(qcOptions,bd=2,width=25,textvariable=resolution)
+        resolutionLabel.grid(row=9,column=1,sticky=W,padx=10,pady=5)
+        resolutionEntry.grid(row=9,column=2,sticky=W,padx=0,pady=5)
         
-        screxpectedL = Label(crOpts, text="Expected number of cells: ")
-        screxpectedE = Entry(crOpts, bd =2, width=8, textvariable=scrExpected)
-        screxpectedL.grid(row=10,column=1,sticky=W,padx=10,pady=5)
-        screxpectedE.grid(row=10,column=2,sticky=W,padx=0,pady=5)
-
-        self.clusterOpts = clusterOpts = LabelFrame( eframe, 
-                                              text="Clustering and tSNE Options" )
-
-        self.scrPCs = scrPCs = StringVar()
-        scrPCs.set("12")
-        self.scrRes = scrRes = StringVar()
-        scrRes.set("0.6")
+        #annotation db: human: HPCA/BP Encode; mouse: immgen/mouseRNAseq
+        self.annotDB = annotDB = StringVar()
+        annotLabel = Label(qcOptions,text="Annotation database: ")
+        annotHuman = ["HPCA","BP Encode"]
+        annotMouse = ["immgen","mouseRNAseq"]
+        annotDropdown = []
+        genome = self.global_info.annotation.get()
+        if (genome == "GRCh38"):
+            annotDropdown = annotHuman.copy()
+        elif (genome == "mm10"):
+            annotDropdown = annotMouse.copy()
+        else:
+            annotDropdown.append("No genome selected")
+        annotDB.set(annotDropdown[0])
+        annotDB_om = OptionMenu(qcOptions,annotDB,*annotDropdown)
+        annotLabel.grid(row=10,column=1,sticky=W,padx =10, pady =5)
+        annotDB_om.grid(row=10,column=2,sticky=W,padx=0,pady=5)
         
-        #scrPCs.trace('w', lambda a,b,c,x="scrPCs": makejson(x))
+        #set groups, mostly for relabeling purposes
+        self.add_info( qcOptions ) #Position 11
+        # self.option_controller()
 
-        #Filter out genes < [5] read counts in < [2] samples
-        scrpcsL = Label(clusterOpts, text="Include principal components 1 through ")
-        scrpcsE = Entry(clusterOpts, bd =2, width=3, textvariable=scrPCs)
-        scrresL = Label(clusterOpts, text="with clustering resolution: ")
-        scrresE = Entry(clusterOpts, bd =2, width=3, textvariable=scrRes)
+        # groups_buttonL = Label(qcOptions, text="Sample Information: ")
+        # groups_button = Button(qcOptions, 
+        #                                     text="Set Groups", 
+        #                                     command = self.popup_groups )
+        # groups_buttonL.grid(row=12,column=1,sticky=W,padx=10,pady=5)
+        # groups_button.grid(row=12,column=2,sticky=W,padx=0,pady=5)
+        #
+        #
+######### DIFFERENTIAL EXPRESSION #########
+        self.deOptions = deOptions = LabelFrame( eframe, text = "Differential Gene Expression")
         
-        scrpcsL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
-        scrpcsE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
-        scrresL.grid(row=9,column=3,sticky=W,padx=5,pady=5)
-        scrresE.grid(row=9,column=4,sticky=W,padx=0,pady=5)
-        #scrRes.trace('w', lambda a,b,c,x="scrPCs": makejson(x))
+        #option for cluster resolution for DE
+        self.resolutionDE = resolutionDE = StringVar()
+        resolutionDE.set("0.8")
+        resolutionDELabel = Label(deOptions,text="Clustering Resolution: \nChoose a previous resolution or \nselect a new resolution to run")
+        resolutionDEEntry = Entry(deOptions,bd=2,width=25,textvariable=resolutionDE)
+        resolutionDELabel.grid(row=10,column=1,sticky=W,padx=10,pady=5)
+        resolutionDEEntry.grid(row=10,column=2,sticky=W,padx=0,pady=5)
         
-        clusterOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
-        
+        #option for merged/integrated object
+        # self.integrateOption = integrateOption = StringVar()
+        # integrateLabel = Label(deOptions, text="Merged or Integrated (batch corrected): ")
+        # integrateDropdown = ["Merged","Integrated"]
+        # integrateOption.set(integrateDropdown[0])
+        # integrateOptMenu = OptionMenu(deOptions, integrateOption, *integrateDropdown)
+        # integrateLabel.grid(row=9,column=1,sticky=W,padx=10,pady=5)
+        # integrateOptMenu.grid(row=9,column=2,sticky=W,padx=0,pady=5)        
 
-        self.multiclusterOpts = multiclusterOpts = LabelFrame( eframe,
-                                                text = "Multi-Sample Clustering and tSNE Options")
-
-        scrccsL = Label(multiclusterOpts, text="Include canonical components 1 through ")
-        scrccsE = Entry(multiclusterOpts, bd =2, width=3, textvariable=scrPCs)
-        scrmcresL = Label(multiclusterOpts, text="with clustering resolution: ")
-        scrmcresE = Entry(multiclusterOpts, bd =2, width=3, textvariable=scrRes)
-
-        scrccsL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
-        scrccsE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
-        scrmcresL.grid(row=9,column=3,sticky=W,padx=5,pady=5)
-        scrmcresE.grid(row=9,column=4,sticky=W,padx=0,pady=5)
-
-
-        self.qcOpts = qcOpts = LabelFrame( eframe, 
-                                              text="Initial Settings" )
-        countL = Label( qcOpts, text="Counts/Matrix Dir:" )
-        countL.grid(row=9, column=1, sticky=W, padx=10, pady=5 )
-        countpath=StringVar()  
-        self.countpath = countpath
-        count_entry = Entry(qcOpts, 
-                           bd =2, 
-                           width = 50, 
-                           #bg = entryBgColor, 
-                           #fg = entryFgColor, 
-                           textvariable = countpath, state='normal'
-                          )
-        count_entry.grid( row=9, column=2, columnspan=3 )
-        self.count_button = count_button = Button( qcOpts, 
-                             text="Open Directory", 
-                             command=self.set_count_directory )
-        count_button.grid( row=9, column=5 )
-
-        self.mattype = mattype = StringVar()
-        mattypeL = Label(qcOpts, text="Count matrix format: ")
-        scrMatTypeDropdown = ["cellranger", "cellranger_raw", "zumi", "biorad"]
-        mattype.set(scrMatTypeDropdown[0])
-        mattype_om = OptionMenu(qcOpts, mattype, *scrMatTypeDropdown)
-        mattypeL.grid(row=10,column=1,sticky=W,padx=10,pady=5)
-        mattype_om.grid(row=10,column=2,sticky=W,padx=0,pady=5)
-        
-        self.docycleregress = docycleregress = StringVar()
-        docycleregressL = Label(qcOpts, text="Do cell cycle regression? ")
-        scrCycleDropdown = ["TRUE", "FALSE"]
-        docycleregress.set(scrCycleDropdown[0])
-        cycle_om = OptionMenu(qcOpts, docycleregress, *scrCycleDropdown)
-        docycleregressL.grid(row=11,column=1,sticky=W,padx=10,pady=5)
-        cycle_om.grid(row=11,column=2,sticky=W,padx=0,pady=5)
-
-        usecycleregressL_c = Label(clusterOpts, text="Use cell cycle regressed data? ")
-        docycleregress.set(scrCycleDropdown[0])
-        cycle_om_c = OptionMenu(clusterOpts, docycleregress, *scrCycleDropdown)
-        usecycleregressL_c.grid(row=10,column=1,sticky=W,padx=10,pady=5)
-        cycle_om_c.grid(row=10,column=2,sticky=W,padx=0,pady=5)
-
-        usecycleregressL_mc = Label(multiclusterOpts, text="Use cell cycle regressed data? ")
-        docycleregress.set(scrCycleDropdown[0])
-        cycle_om_mc = OptionMenu(multiclusterOpts, docycleregress, *scrCycleDropdown)
-        usecycleregressL_mc.grid(row=10,column=1,sticky=W,padx=10,pady=5)
-        cycle_om_mc.grid(row=10,column=2,sticky=W,padx=0,pady=5)
-
-
-        groups_buttonL = Label(qcOpts, text="SAMPLE INFORMATION: ")
-        groups_button = Button(qcOpts, 
-                                            text="Set Groups", 
-                                            command = self.popup_groups )
-        groups_buttonL.grid(row=12,column=1,sticky=W,padx=10,pady=5)
-        groups_button.grid(row=12,column=2,sticky=W,padx=0,pady=5)
-        #####################
-        
+        self.add_info( deOptions ) #Position 11
         self.option_controller()
 
+### SUBFUNCTION FOR CREATING GROUPS.TAB AND CLUSTERS.TAB WINDOW ######    
+    def add_info( self, parent ) :
+        if not self.info :
+            self.info = LabelFrame(parent, text="Sample Information")
+            self.groups_button = Button(self.info, 
+                                            text="Set Groups", 
+                                            command = self.popup_groups )
+            self.contrasts_button = Button(self.info,
+                                            text="Set Contrasts",
+                                            command = self.popup_contrasts )
+          
+            #self.pairs_load_button.pack( side=BOTTOM, padx=5, pady=5 )
+            #self.pairs_save_button.pack( side=BOTTOM, padx=5, pady=5 )
+
+            self.groups_button.grid( row=5, column=5, padx=10, pady=5 )
+            self.contrasts_button.grid( row=5, column=6, padx=10, pady=5 )
+            
+        self.info.grid(row=11,column=0, columnspan=6, sticky=W, padx=20, pady=10)
+                       
     def popup_groups( self ) :
         self.popup_window( "Groups Information", "groups.tab" )
-
+    def popup_contrasts( self ) :
+        self.popup_window( "Contrasts Information", "contrasts.tab" )
     def popup_window( self, text, filename ) :
         top = Toplevel()
   
@@ -223,27 +203,13 @@ class scRNASeqFrame( PipelineFrame ) :
         self.Pipeline.set( self.label2pipeline[self.PipelineLabel.get()] )
         print( self.Pipeline.get() )
 
-        if self.Pipeline.get() == 'cellranger' :
-            self.clusterOpts.grid_forget()
-            self.crOpts.grid(row=8,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
-            self.qcOpts.grid_forget()
-            self.multiclusterOpts.grid_forget()
-        elif self.Pipeline.get() == 'scrnaseqcluster' :
-            self.clusterOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
-            self.crOpts.grid_forget()
-            self.qcOpts.grid_forget()
-            self.multiclusterOpts.grid_forget()
-        elif self.Pipeline.get() == 'scrnaseqinit' :
-            self.clusterOpts.grid_forget()
-            self.crOpts.grid_forget()
-            self.qcOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
-            self.multiclusterOpts.grid_forget()
-        elif self.Pipeline.get() == 'scrnaseqmulticluster' :
-            self.clusterOpts.grid_forget()
-            self.crOpts.grid_forget()
-            self.qcOpts.grid_forget()
-            self.multiclusterOpts.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
+        if self.Pipeline.get() == 'scrnaQC' :
+            self.deOptions.grid_forget()
+            self.qcOptions.grid(row=8,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
 
+        elif self.Pipeline.get() == 'scrnaDE' :
+            self.deOptions.grid( row=8, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
+            self.qcOptions.grid_forget()
 
             
     def makejson_wrapper( self, *args, **kwargs ) :
@@ -390,6 +356,15 @@ class scRNASeqFrame( PipelineFrame ) :
         PD=dict()
 
         smparams=[]
+        algorithmDict = {"Louvain (Original)": 1, "Louvain (with Multilevel Refinement)": 2,"SLM (Smart Local Moving)":3}        
+
+        algorithm = algorithmDict[self.clustAlg.get()]
+        resolutionStr = self.resolution.get()
+        resolutionStr = re.sub("\s",",",resolutionStr) #remove whitespaces
+        resolutionStr = re.sub("[,]+",",",resolutionStr) #remove multiple commas
+        
+       
+
 
         for i in range(len(self.parameters)):
 
@@ -401,7 +376,12 @@ class scRNASeqFrame( PipelineFrame ) :
                            ), "r"
                      ).read()
                )
-        gi = self.global_info 
+        gi = self.global_info
+        species = ""
+        if gi.annotation.get() == "GRCh38":
+            species = "human"
+        elif gi.annotation.get() == "mm10":
+            species = "mouse"
         PD={
             'project': {
                 'pfamily': gi.pfamily.get(),
@@ -432,13 +412,21 @@ class scRNASeqFrame( PipelineFrame ) :
                 "cluster": "cluster_medium.json", 
                 "description": gi.description.get('1.0',END), 
                 "technique" : gi.technique.get(),
-                "CRID": self.scrCRID.get(),
-                "EXPECTED": self.scrExpected.get(),
-                "COUNTSPATH": self.countpath.get(),
-                "MATTYPE": self.mattype.get(),
-                "DOCYCLEREGRESS": self.docycleregress.get(),
-                "RESOLUTION": self.scrRes.get(),
-                "PCS": self.scrPCs.get(),
+                
+                "CLUSTALG" : algorithm,
+                "ANNOTDB" : self.annotDB.get(),
+                "CLUSTRESOLUTION": resolutionStr,
+ #               "INTEGRATEDE": self.integrateOption.get(),
+                "CLUSTERDE": self.resolutionDE.get(),
+                "SPECIES": species,
+                # "CRID": self.scrCRID.get(),
+                # "EXPECTED": self.scrExpected.get(),
+                # "COUNTSPATH": self.countpath.get(),
+                # "MATTYPE": self.mattype.get(),
+                # "DOCYCLEREGRESS": self.docycleregress.get(),
+                # "RESOLUTION": self.scrRes.get(),
+                # "PCS": self.scrPCs.get(),
+                "contrasts" : contrasts,
                 "groups": groups
              }
         } 

@@ -664,6 +664,13 @@ class PipelineFrame( Frame ) :
                         print("Found 'peakcall.tab': Symlinking file!")
                         cmd="cp {0}peakcall.tab {1}".format(data, self.workpath.get())
                         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                elif pl == 'scRNAseq':
+                    print (os.path.join(data,"h5"))
+                    if os.path.isdir(os.path.join(data,"h5")):
+                        print ("Found 'h5/' directory: Symlinking h5 files")
+                        h5Path = os.path.join(data,"h5")
+                        cmd = "for f in `ls {0}/*[._]h5`;do ln -s $f {1};done".format(h5Path,self.workpath.get())
+                        p = Popen(cmd, shell=True, stdin = PIPE, stdout=PIPE, stderr = STDOUT, close_fds=True)
 
         except Exception as e: 
             showerror("Error",str(e))
