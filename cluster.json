@@ -766,6 +766,11 @@
         "mem": "100g",
         "threads": "4"
     },
+    "sequenza": {
+        "mem": "32g",
+        "threads": "24",
+        "time": "4:00:00"
+    },
     "sleuth": {
         "mem": "110g",
         "threads": "4"
