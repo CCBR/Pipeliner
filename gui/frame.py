@@ -234,6 +234,11 @@ class PipelineFrame( Frame ) :
             outtxt+="Paired - end files:\n"
             for f,g in zip(sorted(fR1),sorted(fR2)):
                 outtxt+="%s\t%s\n"%(f,g)
+        elif [f for f in listdir(os.path.join(self.datapath.get(),"counts")) if f.endswith('.txt')] and self.pipeline_name == 'RNAseq':
+            print ("Raw counts matrix detected!")
+            outtxt_short="File found ... counts matrix".format()
+            self.data_count['text'] += '... counts matrix'
+            outtxt+="Counts file: {}\n".format(', '.join([f for f in listdir(os.path.join(self.datapath.get(),"counts")) if f.endswith('.txt')]))
         else:
             outtxt_short="Some files many be missing or misnamed!!\n"
             self.data_count['text'] += " ... FILES MAY BE MISSING!!!"
