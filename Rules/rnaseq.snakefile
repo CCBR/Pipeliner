@@ -67,7 +67,7 @@ debug = expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "DESeq2_DEG_{con}_a
 
 #print(debug)
 
-if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
+if config['project']['DEG'] == "yes" and config['project']['from_counts'] == "False":
   rule all:
     params:
       batch="--time=168:00:00",
@@ -86,6 +86,30 @@ if config['project']['DEG'] == "yes" and config['project']['TRIM'] == "yes":
       expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "EBSeq_isoform_completed.txt"), zip, con=contrastsList, cpm=cpm_cutoff_list,minsamples=mincounts),
       expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "EBSeq_gene_completed.txt"),    zip, con=contrastsList, cpm=cpm_cutoff_list,minsamples=mincounts),
 
+      expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "DESeq2_DEG_{con}_all_genes.txt"), zip, con=contrastsList, cpm=cpm_cutoff_list,minsamples=mincounts), 
+      expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "limma_DEG_{con}_all_genes.txt"),  zip, con=contrastsList, cpm=cpm_cutoff_list,minsamples=mincounts),
+      expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "edgeR_DEG_{con}_all_genes.txt"),  zip, con=contrastsList, cpm=cpm_cutoff_list,minsamples=mincounts),
+
+      #PCA (limma, DESeq2, edgeR)
+      expand(join(workpath,"DEG_{deg_dir}","PcaReport.html"), deg_dir=contrasts_w_cpm_cutoff_list),
+
+      #Venn Diagram (Overlap of sig genes between limma, DESeq2, edgeR)
+      expand(join(workpath,"DEG_{deg_dir}","limma_edgeR_DESeq2_vennDiagram.png"), deg_dir=contrasts_w_cpm_cutoff_list),
+
+elif config['project']['DEG'] == "yes" and config['project']['from_counts'] == "True":
+  rule all:
+    params:
+      batch="--time=168:00:00",
+
+    input:
+      #Initialize DEG (Filter raw counts matrix by cpm and min sample thresholds)
+      expand(join(workpath,"DEG_{deg_dir}", "RawCountFile_RSEM_genes_filtered.txt"), deg_dir=contrasts_w_cpm_cutoff_list),
+      expand(join(workpath,"DEG_{deg_dir}", "RawCountFile_RSEM_genes.txt"), deg_dir=contrasts_w_cpm_cutoff_list),
+
+      #DEG (limma, DESeq2, edgeR)
+      expand(join(workpath,"DEG_{deg_dir}", "DESeq2_PCA.png"),   deg_dir=contrasts_w_cpm_cutoff_list),
+      expand(join(workpath,"DEG_{deg_dir}", "edgeR_prcomp.png"), deg_dir=contrasts_w_cpm_cutoff_list),
+      expand(join(workpath,"DEG_{deg_dir}", "limma_MDS.png"),    deg_dir=contrasts_w_cpm_cutoff_list),
       expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "DESeq2_DEG_{con}_all_genes.txt"), zip, con=contrastsList, cpm=cpm_cutoff_list,minsamples=mincounts), 
       expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "limma_DEG_{con}_all_genes.txt"),  zip, con=contrastsList, cpm=cpm_cutoff_list,minsamples=mincounts),
       expand(join(workpath,"DEG_{con}_{cpm}_{minsamples}", "edgeR_DEG_{con}_all_genes.txt"),  zip, con=contrastsList, cpm=cpm_cutoff_list,minsamples=mincounts),
