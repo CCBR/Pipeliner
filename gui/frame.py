@@ -638,6 +638,14 @@ class PipelineFrame( Frame ) :
                         print("Found 'peakcall.tab': Symlinking file!")
                         cmd="cp {0}peakcall.tab {1}".format(data, self.workpath.get())
                         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                elif pl == 'RNAseq':
+                    print("\n\nChecking for 'counts/' directories...")
+                    if os.path.isdir(os.path.join(data,"counts")):
+                        print("Found 'counts/' directory: Symlinking counts matrix!")
+                        countspath = os.path.join(data,"counts")
+                        cmd="mkdir {1}/DEG_ALL/ {1}/STAR_files/ && touch {1}/STAR_files/sampletable.txt && ln -s {0}/*[._]txt {1}/DEG_ALL/RawCountFile_RSEM_genes.txt".format(countspath,self.workpath.get())
+                        #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
+                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
 
             else:
                 cmd="for f in `ls {0}*[._]{1}`;do ln -s $f {2};done".format(data,FT, self.workpath.get())
@@ -671,6 +679,15 @@ class PipelineFrame( Frame ) :
                         h5Path = os.path.join(data,"h5")
                         cmd = "for f in `ls {0}/*[._]h5`;do ln -s $f {1};done".format(h5Path,self.workpath.get())
                         p = Popen(cmd, shell=True, stdin = PIPE, stdout=PIPE, stderr = STDOUT, close_fds=True)
+                elif pl == 'RNAseq':
+                    print("\n\nChecking for 'counts/' directories...")
+                    if os.path.isdir(os.path.join(data,"counts")):
+                        print("Found 'counts/' directory: Symlinking counts matrix!")
+                        countspath = os.path.join(data,"counts")
+                        cmd="mkdir {1}/DEG_ALL/ {1}/STAR_files/ && touch {1}/STAR_files/sampletable.txt && ln -s {0}/*[._]txt {1}/DEG_ALL/RawCountFile_RSEM_genes.txt".format(countspath,self.workpath.get())
+                        #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
+                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+
 
         except Exception as e: 
             showerror("Error",str(e))
