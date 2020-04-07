@@ -217,6 +217,13 @@ class PipelineFrame( Frame ) :
         outtxt="\n"
         print(outtxt)
 
+        # Check existence of counts matrix
+        try:
+            countdir = listdir(os.path.join(self.datapath.get(),"counts"))
+            counts_exist = [f for f in countdir if f.endswith('.txt')]
+        except FileNotFoundError:
+            counts_exist = []
+
         self.data_count['text'] = str( len(self.datafiles) ) 
         outtxt="\n"
         print( "Found", self.data_count['text'], filetype, "files!" )
@@ -234,7 +241,7 @@ class PipelineFrame( Frame ) :
             outtxt+="Paired - end files:\n"
             for f,g in zip(sorted(fR1),sorted(fR2)):
                 outtxt+="%s\t%s\n"%(f,g)
-        elif [f for f in listdir(os.path.join(self.datapath.get(),"counts")) if f.endswith('.txt')] and self.pipeline_name == 'RNAseq':
+        elif counts_exist and self.pipeline_name == 'RNAseq':
             print ("Raw counts matrix detected!")
             outtxt_short="File found ... counts matrix".format()
             self.data_count['text'] += '... counts matrix'
