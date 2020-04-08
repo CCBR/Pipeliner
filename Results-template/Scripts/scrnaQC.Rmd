@@ -11,8 +11,8 @@ dir<-params$dir
 
 
 ```{r setup, echo=FALSE, warning=FALSE,message=FALSE,fig.keep='all'}
-
-library("Seurat",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+.libPaths("/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.1_scRNA")
+library("Seurat")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
 #opts_chunk$set(root.dir = dir)
 ```
 

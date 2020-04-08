@@ -58,7 +58,7 @@ rule qc_scrna:
 		outDir= join(workpath,"QC")
 	shell: """
 
-module load R/3.6.0;
+module load R/3.6.1;
 Rscript Scripts/scrnaQC.R {input} {output.rds} {output.rdata} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.citeseq};
 touch {output.qc}
         """
@@ -72,8 +72,8 @@ rule qcReport_scrna:
 	params:
 		rname='pl:qcReport_scrna',
 	shell: """
-module load R/3.6.0
-Rscript Scripts/scrnaQC_Reports.R {input.path}
+module load R/3.6.1;
+Rscript Scripts/scrnaQC_Reports.R {input.path};
 mv Scripts/samples_QC.html QC
 	"""
 	
@@ -99,7 +99,7 @@ rule integratedBatch:
 		citeseq = citeseq,
 		contrasts = "{myGroups}"
 	shell: """
-module load R/3.6.0;
+module load R/3.6.1;
 Rscript Scripts/integrateBatches.R {params.dir} {output.rdsBatch} {output.mergeRDS} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.nAnchors} {params.citeseq} {params.groups} {params.contrasts};
 	"""
 

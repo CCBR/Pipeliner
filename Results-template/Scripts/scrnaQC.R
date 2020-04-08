@@ -1,6 +1,7 @@
 #.libPaths(c("/data//CCBR_Pipeliner/db/PipeDB/scrna_lib/R-3.6.1/library",.libPaths()[1],.libPaths()[2],.libPaths()[3]))
-.libPaths(c("/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA",.libPaths()[1],.libPaths()[2],.libPaths()[3]))
-
+#.libPaths(c("/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA",.libPaths()[1],.libPaths()[2],.libPaths()[3]))
+.libPaths("/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.1_scRNA")
+print(.libPaths())
 
 args <- commandArgs(trailingOnly = TRUE)
 
@@ -27,27 +28,25 @@ resolution = as.numeric(strsplit(gsub(",+",",",resolution),split=",")[[1]]) #rem
 #library(scran,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
 #library(scater,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
 library(BiocGenerics)
-library(Biobase,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
-library(farver,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
-library(S4Vectors,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
-library("Seurat",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
-library("DoubletFinder",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+library(Biobase)#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
+library(farver)#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
+library(S4Vectors)#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
+library("Seurat")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+library("DoubletFinder")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
 library(AnnotationDbi)
-library("modes",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+library("modes")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
 
 library(SingleR)
 library(scRNAseq)
 library(SingleCellExperiment)
-library("modes",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
-#library("SingleR",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
-library("URD",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
-library(Routliers,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+library("URD")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+library(Routliers)#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
 library(dplyr)
 library(Matrix) 
 library(reshape2)
 library(tools)
-library("DoubletFinder",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
-library("modes",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+library("DoubletFinder")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+
 
 
 ###Run Seurat Clustering 

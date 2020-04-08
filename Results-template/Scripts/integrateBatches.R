@@ -1,11 +1,14 @@
-library(Biobase,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
-library(farver,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
-library(S4Vectors,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
-library("SingleR",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
+.libPaths("/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.1_scRNA")
+print(.libPaths())
+
+library(Biobase)#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
+library(farver)#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
+library(S4Vectors)#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
+library("SingleR")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
 library(scRNAseq)
 library(SingleCellExperiment)
-library("destiny",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
-library("URD",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib")
+library("destiny")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
+library("URD")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib")
 library("Seurat")
 library(dplyr)
 library(Matrix) 
@@ -79,11 +82,39 @@ for (i in 1:length(x = reference.list)) {
 
 print(length(reference.list))
 print(reference.list)
-combinedObj.anchors <- FindIntegrationAnchors(object.list = reference.list, dims = 1:30,anchor.features = nAnchors)
-combinedObj.integrated <- IntegrateData(anchorset = combinedObj.anchors, dims = 1:30)
+#combinedObj.anchors <- FindIntegrationAnchors(object.list = reference.list, dims = 1:30,anchor.features = nAnchors)
+#combinedObj.integrated <- IntegrateData(anchorset = combinedObj.anchors, dims = 1:30)
+#UPDATE VIA SEURAT VIGNETTE
+reference.features <- SelectIntegrationFeatures(object.list = reference.list, nfeatures = 3000)
+reference.list <- PrepSCTIntegration(object.list = reference.list, anchor.features = reference.features)
+reference.anchors=FindIntegrationAnchors(object.list = reference.list, normalization.method = "SCT",anchor.features = reference.features)
+combinedObj.integrated=IntegrateData(anchorset = reference.anchors, normalization.method = "SCT")
+
+#Recover SingleR Annotations and Statistics
+singleRList=list()
+for (i in 1:length(reference.list)){
+  obj=reference.list[[names(reference.list)[i]]]
+  sample=gsub("^S_","",names(reference.list)[i])
+  idTag=gsub(".*_","",names(which(combinedObj.integrated$Sample==sample))[1])
+  singleR=obj@misc$SingleR
+  for (j in 1:length(singleR)){
+    if(names(singleR)[j]%in%names(singleRList)){
+      indivSingleR=singleR[[j]]
+      rownames(indivSingleR)=paste(rownames(indivSingleR),idTag,sep="_")
+      indivSingleR=indivSingleR[intersect(rownames(indivSingleR),colnames(combinedObj.integrated)),]
+      singleRList[[names(singleR)[j]]]=rbind(singleRList[[names(singleR)[j]]],indivSingleR)
+    }else{
+      indivSingleR=singleR[[j]]
+      rownames(indivSingleR)=paste(rownames(indivSingleR),idTag,sep="_")
+      indivSingleR=indivSingleR[intersect(rownames(indivSingleR),colnames(combinedObj.integrated)),]
+      singleRList[[names(singleR)[j]]]=indivSingleR
+    }
+  }
+}
+combinedObj.integrated@misc$SingleR=singleRList
 
 DefaultAssay(object = combinedObj.integrated) <- "integrated"
-combinedObj.integrated <- ScaleData(object = combinedObj.integrated, verbose = FALSE)
+#combinedObj.integrated <- ScaleData(object = combinedObj.integrated, verbose = FALSE) #DO NOT SCALE AFTER INTEGRATION, PER SEURAT VIGNETTE
 
 combinedObj.integratedRNA = combinedObj.integrated
 DefaultAssay(object = combinedObj.integratedRNA) <- "SCT"
@@ -119,7 +150,7 @@ runInt = function(obj,res,npcs){
 	obj <- RunPCA(object = obj, npcs = 50, verbose = FALSE)
 	obj <- FindNeighbors(obj,dims = 1:npcs)
 	for (i in 1:length(res)){
-		obj <- FindClusters(obj, reduction.type = "pca", dims.use = 1:npcs, save.SNN = T,resolution = res[i],algorithm = clusterAlg)
+		obj <- FindClusters(obj, reduction = "pca", dims = 1:npcs, save.SNN = T,resolution = res[i],algorithm = clusterAlg)
 	}
 	obj <- RunUMAP(object = obj, reduction = "pca",dims = 1:npcs,n.components = 3)
 	obj$groups = groupFile$V2[match(obj$Sample,  groupFile$V1,nomatch = F)]
