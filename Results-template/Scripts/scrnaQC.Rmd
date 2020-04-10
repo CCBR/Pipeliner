@@ -1,0 +1,44 @@
+---
+params:
+  dir: "path/to/count/matrix"
+---
+
+```{r headers, include=FALSE, warning=FALSE, message=FALSE}
+dateandtime<-format(Sys.time(), "%a %b %d %Y - %X")
+dir<-params$dir
+```
+
+
+
+```{r setup, echo=FALSE, warning=FALSE,message=FALSE,fig.keep='all'}
+
+library("Seurat",lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+#opts_chunk$set(root.dir = dir)
+```
+
+
+```{r plots, echo=FALSE , warning=FALSE,fig.keep='all',results='asis'}
+
+setwd(dir)
+file.names <- dir(path = dir ,pattern =".RData")
+
+for (file in file.names){
+fullPath=paste0(dir,"/",file)
+load(file)
+
+Name=strsplit(file,".RData")[[1]][1]
+
+print(Name)
+
+print(VlnPlot(so_BC, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)) #before
+
+print(VlnPlot(so_filt, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)) #after
+
+print(DimPlot(so,group.by = "annot")) #annot
+ 
+print(DimPlot(so,group.by = "DF_hi.lo")) #double
+
+}
+
+
+```

@@ -610,7 +610,7 @@ rule deeptools_QC:
         deeptoolsver=config['bin'][pfamily]['tool_versions']['DEEPTOOLSVER'],
     run:
         import re
-        commoncmd="module load {params.deeptoolsver}; module load python;"
+        commoncmd="module load {params.deeptoolsver}; module load python/2.7;"
         listfile=list(map(lambda z:z.strip().split(),open(input[0],'r').readlines()))
         ext=listfile[0][0]
         bws=listfile[1]
@@ -639,7 +639,7 @@ rule deeptools_fingerprint:
 	nthreads="8"
     run:
         import re
-        commoncmd="module load {params.deeptoolsver}; module load python;"
+        commoncmd="module load {params.deeptoolsver}; module load python/2.7;"
         listfile=list(map(lambda z:z.strip().split(),open(input.prep,'r').readlines()))
         ext=listfile[0][0]
         bams=listfile[1]
@@ -662,7 +662,7 @@ rule deeptools_fingerprint_Q5DD:
 	nthreads="8"
     run:
         import re
-        commoncmd="module load {params.deeptoolsver}; module load python;"
+        commoncmd="module load {params.deeptoolsver}; module load python/2.7;"
         listfile=list(map(lambda z:z.strip().split(),open(input[0],'r').readlines()))
         ext=listfile[0][0]
         bams=listfile[1]
@@ -690,7 +690,7 @@ rule deeptools_genes:
         nthreads="16"
     run:
         import re
-        commoncmd="module load {params.deeptoolsver}; module load python;"
+        commoncmd="module load {params.deeptoolsver}; module load python/2.7;"
         listfile=list(map(lambda z:z.strip().split(),open(input[0],'r').readlines()))
         ext=listfile[0][0]
         bws=listfile[1]
