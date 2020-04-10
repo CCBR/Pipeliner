@@ -217,6 +217,13 @@ class PipelineFrame( Frame ) :
         outtxt="\n"
         print(outtxt)
 
+        # Check existence of counts matrix
+        try:
+            countdir = listdir(os.path.join(self.datapath.get(),"counts"))
+            counts_exist = [f for f in countdir if f.endswith('.txt')]
+        except FileNotFoundError:
+            counts_exist = []
+
         self.data_count['text'] = str( len(self.datafiles) ) 
         outtxt="\n"
         print( "Found", self.data_count['text'], filetype, "files!" )
@@ -234,6 +241,11 @@ class PipelineFrame( Frame ) :
             outtxt+="Paired - end files:\n"
             for f,g in zip(sorted(fR1),sorted(fR2)):
                 outtxt+="%s\t%s\n"%(f,g)
+        elif counts_exist and self.pipeline_name == 'RNAseq':
+            print ("Raw counts matrix detected!")
+            outtxt_short="File found ... counts matrix".format()
+            self.data_count['text'] += '... counts matrix'
+            outtxt+="Counts file: {}\n".format(', '.join([f for f in listdir(os.path.join(self.datapath.get(),"counts")) if f.endswith('.txt')]))
         else:
             outtxt_short="Some files many be missing or misnamed!!\n"
             self.data_count['text'] += " ... FILES MAY BE MISSING!!!"
@@ -638,7 +650,18 @@ class PipelineFrame( Frame ) :
                         print("Found 'peakcall.tab': Symlinking file!")
                         cmd="cp {0}peakcall.tab {1}".format(data, self.workpath.get())
                         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-
+                elif pl == 'RNAseq':
+                    print("\n\nChecking for 'counts/' directory...")
+                    if os.path.isdir(os.path.join(data,"counts")):
+                        print("Found 'counts/' directory: Symlinking counts matrix!")
+                        countspath = os.path.join(data,"counts")
+                        cmd="mkdir {1}/DEG_ALL/ {1}/STAR_files/ && touch {1}/STAR_files/sampletable.txt && ln -s {0}/*[._]txt {1}/DEG_ALL/RawCountFile_RSEM_genes.txt".format(countspath,self.workpath.get())
+                        #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
+                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                        if os.path.isfile(os.path.join(data,"counts","groups.tab")) and os.path.isfile(os.path.join(data,"counts","contrasts.tab")):
+                            print("Found 'groups.tab' and 'contrasts.tab': Symlinking sample metadata!")
+                            cmd="ln -s {0}/groups.tab {1}/; ln -s {0}/contrasts.tab {1}/;".format(countspath,self.workpath.get())
+                            p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
             else:
                 cmd="for f in `ls {0}*[._]{1}`;do ln -s $f {2};done".format(data,FT, self.workpath.get())
                 p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
@@ -671,6 +694,18 @@ class PipelineFrame( Frame ) :
                         h5Path = os.path.join(data,"h5")
                         cmd = "for f in `ls {0}/*[._]h5`;do ln -s $f {1};done".format(h5Path,self.workpath.get())
                         p = Popen(cmd, shell=True, stdin = PIPE, stdout=PIPE, stderr = STDOUT, close_fds=True)
+                elif pl == 'RNAseq':
+                    print("\n\nChecking for 'counts/' directory...")
+                    if os.path.isdir(os.path.join(data,"counts")):
+                        print("Found 'counts/' directory: Symlinking counts matrix!")
+                        countspath = os.path.join(data,"counts")
+                        cmd="mkdir {1}/DEG_ALL/ {1}/STAR_files/ && touch {1}/STAR_files/sampletable.txt && ln -s {0}/*[._]txt {1}/DEG_ALL/RawCountFile_RSEM_genes.txt".format(countspath,self.workpath.get())
+                        #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
+                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                        if os.path.isfile(os.path.join(data,"counts","groups.tab")) and os.path.isfile(os.path.join(data,"counts","contrasts.tab")):
+                            print("Found 'groups.tab' and 'contrasts.tab': Symlinking sample metadata!")
+                            cmd="ln -s {0}/groups.tab {1}/; ln -s {0}/contrasts.tab {1}/;".format(countspath,self.workpath.get())
+                            p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
 
         except Exception as e: 
             showerror("Error",str(e))
