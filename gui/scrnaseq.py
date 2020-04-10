@@ -81,8 +81,8 @@ class scRNASeqFrame( PipelineFrame ) :
         #annotation db: human: HPCA/BP Encode; mouse: immgen/mouseRNAseq
         self.annotDB = annotDB = StringVar()
         annotLabel = Label(qcOptions,text="Annotation database: ")
-        annotHuman = ["HPCA","BP Encode"]
-        annotMouse = ["immgen","mouseRNAseq"]
+        annotHuman = ["Human Primary Cell Atlas","Blueprint/ENCODE","Monaco Immune","Database of Immune Cell Expression (DICE)"]
+        annotMouse = ["ImmGen","Mouse RNASeq"]
         annotDropdown = []
         genome = self.global_info.annotation.get()
         if (genome == "GRCh38"):
@@ -96,8 +96,16 @@ class scRNASeqFrame( PipelineFrame ) :
         annotLabel.grid(row=10,column=1,sticky=W,padx =10, pady =5)
         annotDB_om.grid(row=10,column=2,sticky=W,padx=0,pady=5)
         
+        self.citeseq = citeseq = StringVar()
+        citeseqLabel = Label(qcOptions, text = "CITESeq Included: ")
+        citeseqDropdown = ["Yes","No"]
+        citeseq.set(citeseqDropdown[1])
+        citeseqOptMenu = OptionMenu(qcOptions, citeseq, *citeseqDropdown)
+        citeseqLabel.grid(row=11,column=1,sticky=W,padx=10,pady=5)
+        citeseqOptMenu.grid(row=11,column=2,sticky=W,padx=0,pady=5)
+
         #set groups, mostly for relabeling purposes
-        self.add_info( qcOptions ) #Position 11
+        self.add_info( qcOptions ) #Position 13
         # self.option_controller()
 
         # groups_buttonL = Label(qcOptions, text="Sample Information: ")
@@ -111,14 +119,55 @@ class scRNASeqFrame( PipelineFrame ) :
 ######### DIFFERENTIAL EXPRESSION #########
         self.deOptions = deOptions = LabelFrame( eframe, text = "Differential Gene Expression")
         
+        #option for which object to run DE on
+        self.rdsObject = rdsObject = StringVar()
+        rdsLabel = Label(deOptions, text = "Use the pre- or post-batch corrected data:")
+        rdsDropdown = ["Merged (Pre-batch correction)","Integrated (Post-batch correction)","Both"]
+        rdsObject.set(rdsDropdown[2])
+        rdsOptMenu=OptionMenu(deOptions,rdsObject,*rdsDropdown)
+        rdsLabel.grid(row=8,column=1,sticky=W,padx=10,pady=5)
+        rdsOptMenu.grid(row=8,column=2,sticky=W,padx=0,pady=5)
+        
         #option for cluster resolution for DE
         self.resolutionDE = resolutionDE = StringVar()
-        resolutionDE.set("0.8")
+        resolutionDE.set("0.4,0.6,0.8,1.0,1.2")
         resolutionDELabel = Label(deOptions,text="Clustering Resolution: \nChoose a previous resolution or \nselect a new resolution to run")
         resolutionDEEntry = Entry(deOptions,bd=2,width=25,textvariable=resolutionDE)
-        resolutionDELabel.grid(row=10,column=1,sticky=W,padx=10,pady=5)
-        resolutionDEEntry.grid(row=10,column=2,sticky=W,padx=0,pady=5)
+        resolutionDELabel.grid(row=9,column=1,sticky=W,padx=10,pady=5)
+        resolutionDEEntry.grid(row=9,column=2,sticky=W,padx=0,pady=5)
         
+        #options for difftest
+        self.testDE = testDE = StringVar()
+        testDELabel = Label(deOptions, text = "Statistical test for differential expression:")
+        testDEDropdown = ["MAST","DESeq2","Likelihood Ratio","Logistic regression","Negative Binomial","Wilcoxon","Student's T"]
+        testDE.set(testDEDropdown[0])
+        testDEMenu = OptionMenu(deOptions,testDE,*testDEDropdown)
+        testDELabel.grid(row=10,column=1,sticky=W,padx=10,pady=5)
+        testDEMenu.grid(row=10,column=2,sticky=W,padx=0,pady=5)
+        
+        #options for filters
+        self.deMinPct = deMinPct = StringVar()
+        deMinPctLabel = Label(deOptions, text = "Minimum fraction of cells expressing DE genes:")
+        deMinPct.set("0.1")
+        deMinPctEntry = Entry(deOptions,bd=2,width = 10, textvariable=deMinPct)
+        deMinPctLabel.grid(row=11,column=1,sticky=W,padx=10,pady=5)
+        deMinPctEntry.grid(row=11,column=2,sticky=W,padx=0,pady=5)
+        
+        self.deMinFC = deMinFC = StringVar()
+        deMinFCLabel = Label(deOptions, text = "Minimum fold change to report DE genes:")
+        deMinFC.set("0.25")
+        deMinFCEntry = Entry(deOptions,bd=2,width = 10, textvariable=deMinFC)
+        deMinFCLabel.grid(row=12,column=1,sticky=W,padx=10,pady=5)
+        deMinFCEntry.grid(row=12,column=2,sticky=W,padx=0,pady=5)
+        
+        #use groups and contrasts for differential expression, have options to create new groups
+        self.om_groups = LabelFrame(deOptions, text="Sample Information")
+        self.groups_button = Button(self.om_groups, text="Set Groups", command = self.popup_groups )
+        self.groups_button.grid(row=5, column=5, padx=10, pady=5)
+        self.contrasts_button = Button(self.om_groups, text="Set Contrasts", command = self.popup_groups )
+        self.contrasts_button.grid(row=5, column=6, padx=10, pady=5)
+        self.om_groups.grid(row=13,column=0,columnspan=6,sticky=W,padx=20,pady=10)
+
         #option for merged/integrated object
         # self.integrateOption = integrateOption = StringVar()
         # integrateLabel = Label(deOptions, text="Merged or Integrated (batch corrected): ")
@@ -128,7 +177,6 @@ class scRNASeqFrame( PipelineFrame ) :
         # integrateLabel.grid(row=9,column=1,sticky=W,padx=10,pady=5)
         # integrateOptMenu.grid(row=9,column=2,sticky=W,padx=0,pady=5)        
 
-        self.add_info( deOptions ) #Position 11
         self.option_controller()
 
 ### SUBFUNCTION FOR CREATING GROUPS.TAB AND CLUSTERS.TAB WINDOW ######    
@@ -148,7 +196,7 @@ class scRNASeqFrame( PipelineFrame ) :
             self.groups_button.grid( row=5, column=5, padx=10, pady=5 )
             self.contrasts_button.grid( row=5, column=6, padx=10, pady=5 )
             
-        self.info.grid(row=11,column=0, columnspan=6, sticky=W, padx=20, pady=10)
+        self.info.grid(row=13,column=0, columnspan=6, sticky=W, padx=20, pady=10)
                        
     def popup_groups( self ) :
         self.popup_window( "Groups Information", "groups.tab" )
@@ -356,15 +404,26 @@ class scRNASeqFrame( PipelineFrame ) :
         PD=dict()
 
         smparams=[]
+        
         algorithmDict = {"Louvain (Original)": 1, "Louvain (with Multilevel Refinement)": 2,"SLM (Smart Local Moving)":3}        
-
         algorithm = algorithmDict[self.clustAlg.get()]
+        
+        annotationDict = {"Human Primary Cell Atlas":"HPCA", "Blueprint/ENCODE":"BP_encode","Monaco Immune":"monaco","Database of Immune Cell Expression (DICE)":"dice","ImmGen":"immgen","Mouse RNASeq":"mouseRNAseq"}
+        annotation = annotationDict[self.annotDB.get()]
+        
         resolutionStr = self.resolution.get()
         resolutionStr = re.sub("\s",",",resolutionStr) #remove whitespaces
         resolutionStr = re.sub("[,]+",",",resolutionStr) #remove multiple commas
         
-       
+        rdsDict = {"Merged (Pre-batch correction)":"merged","Integrated (Post-batch correction)":"integrated","Both":"both"}
+        rdsSelect = rdsDict[self.rdsObject.get()]
 
+        deResolutionStr = self.resolutionDE.get()
+        deResolutionStr = re.sub("\s",",",deResolutionStr) #remove whitespace
+        deResolutionStr = re.sub("[,]+",",",deResolutionStr) #remove multiple commas       
+
+        deTestDict = {"MAST":"MAST","DESeq2":"DESeq2","Likelihood Ratio":"bimod","Logistic regression":"LR","Negative Binomial":"negbinom","Wilcoxon":"wilcox","Student's T":"t"}
+        testDESelect = deTestDict[self.testDE.get()]
 
         for i in range(len(self.parameters)):
 
@@ -414,11 +473,11 @@ class scRNASeqFrame( PipelineFrame ) :
                 "technique" : gi.technique.get(),
                 
                 "CLUSTALG" : algorithm,
-                "ANNOTDB" : self.annotDB.get(),
+                "ANNOTDB" : annotation,
                 "CLUSTRESOLUTION": resolutionStr,
  #               "INTEGRATEDE": self.integrateOption.get(),
-                "CLUSTERDE": self.resolutionDE.get(),
                 "SPECIES": species,
+                "CITESEQ": self.citeseq.get(),
                 # "CRID": self.scrCRID.get(),
                 # "EXPECTED": self.scrExpected.get(),
                 # "COUNTSPATH": self.countpath.get(),
@@ -426,6 +485,11 @@ class scRNASeqFrame( PipelineFrame ) :
                 # "DOCYCLEREGRESS": self.docycleregress.get(),
                 # "RESOLUTION": self.scrRes.get(),
                 # "PCS": self.scrPCs.get(),
+                "FILEDE": rdsSelect,
+                "CLUSTERDE": deResolutionStr,
+                "TESTDE": testDESelect,
+                "DEMINPCT" : self.deMinPct.get(),
+                "DEMINFC": self.deMinFC.get(),
                 "contrasts" : contrasts,
                 "groups": groups
              }
