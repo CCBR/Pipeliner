@@ -14,7 +14,8 @@ workpath=config['project']['workpath']
 specie = config['project']['SPECIES'] #human
 resolution = config['project']['CLUSTRESOLUTION']#"0.8"
 clustAlg = config['project']['CLUSTALG'] #1-3
-annotDB = config['project']['ANNOTDB']#"HPCA" #mouse 
+annotDB = config['project']['ANNOTDB']#"HPCA" #mouse
+citeseq = config['project']['CITESEQ']
 nAnchors = "2000"
 groups = "YES" #YES/NO
 
@@ -42,7 +43,7 @@ rule all:
 		
 rule qc_scrna:
 	input: 
-		join(workpath,"{name}")
+		join(workpath,"{name}.h5")
 	output: 
 		rds=join(workpath,"filtered","{name}.rds"),
 		rdata=join(workpath,"QC","{name}.RData"),
@@ -53,11 +54,12 @@ rule qc_scrna:
 		resolution = resolution,
 		clustAlg = clustAlg,
 		annotDB = annotDB,
+		citeseq = citeseq,
 		outDir= join(workpath,"QC")
 	shell: """
 
-module load R/3.6.0;
-Rscript Scripts/scrnaQC.R {input} {output.rds} {output.rdata} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB};
+module load R/3.6.1;
+Rscript Scripts/scrnaQC.R {input} {output.rds} {output.rdata} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.citeseq};
 touch {output.qc}
         """
 
@@ -70,8 +72,9 @@ rule qcReport_scrna:
 	params:
 		rname='pl:qcReport_scrna',
 	shell: """
-module load R/3.6.0
-Rscript Scripts/scrnaQC_Reports.R {input.path}
+module load R/3.6.1;
+Rscript Scripts/scrnaQC_Reports.R {input.path};
+mv Scripts/samples_QC.html QC
 	"""
 	
 rule integratedBatch:
@@ -93,10 +96,11 @@ rule integratedBatch:
 		nAnchors = nAnchors,
 		groups = groups,
 		dir = join(workpath,"filtered"),
+		citeseq = citeseq,
 		contrasts = "{myGroups}"
 	shell: """
-module load R/3.6.0;
-Rscript Scripts/integrateBatches.R {params.dir} {output.rdsBatch} {output.mergeRDS} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.nAnchors} {params.groups} {params.contrasts};
+module load R/3.6.1;
+Rscript Scripts/integrateBatches.R {params.dir} {output.rdsBatch} {output.mergeRDS} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.nAnchors} {params.citeseq} {params.groups} {params.contrasts};
 	"""
 
 
