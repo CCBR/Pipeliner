@@ -254,7 +254,7 @@ class PipelinerGUI(Tk):
         annotation=self.annotation.get()
         set1=['Select the genome','hg19','mm10','mm9','hg38','hs37d5','hs38d1','hg38_30_KSHV','hg38_HPV16','canFam3','Mmul_8.0.1', 'hg38_30', 'mm10_M21']
         set2=['Select the genome','hg19','mm10','mm9','hg38']
-        set3=['Select the genome','GRCh38']
+        set3=['Select the genome','GRCh38','mm10']
         set4=['Select the genome','hg19','mm10','hg38']
 
         if self.pipelineframe :

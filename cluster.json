@@ -453,6 +453,11 @@
     "HOMER_motif": {
         "threads": "48"
     },
+    "integratedBatch":{
+        "threads": "8",
+        "mem": "200g",
+        "time": "2-00:00:00"
+    },
     "kraken_pe": {
         "cpus-per-task": "24",
         "gres": "lscratch:256",
@@ -497,10 +502,25 @@
         "threads": "1",
         "time": "2-00:00:00"
     },
+    "mirdeep2_1p": {
+        "mem": "16g",
+        "threads": "4",
+        "time": "1-00:00:00"
+    },
+    "mirdeep2_2p": {
+        "mem": "16g",
+        "threads": "16",
+        "time": "1-00:00:00"
+    },
     "mirdeep2_mapper": {
         "mem": "16g",
         "threads": "1",
         "time": "4-00:00:00"
+    },
+    "mirdeep2_single":{
+        "mem": "16g",
+        "threads": "16",
+        "time": "1-00:00:00"
     },
     "mirseq_gencode_classification": {
         "mem": "16g",
@@ -631,6 +651,16 @@
     },
     "preseq": {
         "mem": "24g"
+    },
+    "qc_scrna":{
+        "threads": "1",
+        "mem": "150g",
+        "time": "1-00:00:00"
+    },
+    "qcReport_scrna":{
+        "threads": "1",
+        "mem": "48g",
+        "time": "1:00:00"
     },
     "qualibam": {
         "threads": "8",
@@ -878,3 +908,4 @@
         "time": "2-00:00:00"
     }
 }
+

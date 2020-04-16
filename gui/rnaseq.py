@@ -37,7 +37,7 @@ class RNASeqFrame( PipelineFrame ) :
         self.info = None
         
         eframe = self.eframe = LabelFrame(self,text="Options") 
-        #,fg=textLightColor,bg=baseColor)
+        #fg=textLightColor,bg=baseColor)
         eframe.grid( row=5, column=1, sticky=W, columnspan=7, padx=10, pady=5 )
         
         label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
@@ -83,7 +83,7 @@ class RNASeqFrame( PipelineFrame ) :
         self.om4 = OptionMenu(eframe, rDeg, *rDegs, command=self.option_controller)
         self.om4.grid(row=6,column=1,sticky=W,padx=10,pady=5)
 
-	# Show Groups Only (For initialqcrnaseq)
+        # Show Groups Only (For initialqcrnaseq)
         self.om_groups = LabelFrame(eframe, text="Sample Information")
         self.groups_button = Button(self.om_groups, text="Set Groups", command = self.popup_groups )
         self.groups_button.grid(row=5, column=5, padx=10, pady=5)
@@ -382,6 +382,12 @@ class RNASeqFrame( PipelineFrame ) :
         SD=AD['references']['rnaseq']['STARDIR']
     #    tkinter.messagebox.showinfo("initLock","SD={0}".format(SD))
         gi = self.global_info 
+        
+        # Boolean to indicate whether Pipliner should start from raw counts matrix
+        from_counts = False 
+        if os.path.isdir(os.path.join(self.datapath.get(),"counts")):
+            from_counts = True
+
         PD={
             'project': {
                 'pfamily': gi.pfamily.get(),
@@ -397,7 +403,8 @@ class RNASeqFrame( PipelineFrame ) :
                 'pipeline': self.Pipeline.get(), 
                 'version':"4.0", 
                 'annotation': gi.annotation.get(), 
-                'datapath': self.datapath.get(), 
+                'datapath': self.datapath.get(),
+                'from_counts': "{}".format(from_counts),
                 'targetspath': self.targetspath.get(),
                 'nends': self.nends, 
                 'filetype': filetype , 
