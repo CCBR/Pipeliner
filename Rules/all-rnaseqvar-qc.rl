@@ -14,6 +14,6 @@ rule all-rnaseqvar-qc:
     output:
     params: rname="final"
     shell:  """
-             mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; rm *sorted.bam.bai; mv *sorted.txt logfiles/
+             mv *.out slurmfiles/; module load perl/5.18.4; perl Scripts/summarize_usage.pl; rm *sorted.bam.bai; mv *sorted.txt logfiles/
 
             """
