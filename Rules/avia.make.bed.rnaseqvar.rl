@@ -3,7 +3,7 @@ rule avia_make_bed_rnaseqvar:
     output: bed=config['project']['workpath']+"/variants.bed"
     params: genome=config['references'][pfamily]['GENOME'],batch ="-l nodes=1:gpfs -q ccr",rname="make_bed"
     shell: """
-         perl Scripts/avia_make_bed.pl {input}
+         module load perl/5.18.4; perl Scripts/avia_make_bed.pl {input}
 
            """
 
