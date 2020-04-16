@@ -1,6 +1,6 @@
 rule vardict_tumoronly:
        input:  tumor="{x}.recal.bam",
-               targets=ancient("exome_targets.bed"),
+               targets=config["project"]["workpath"]+"/exome_targets.bed",
                tumorbai="{x}.recal.bam.bai"
        output: vcf=config['project']['workpath']+"/vardict_out/{x}.vcf",
                filtvcf=config['project']['workpath']+"/vardict_out/{x}.FINAL.vcf",
