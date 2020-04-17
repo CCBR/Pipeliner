@@ -114,7 +114,7 @@ elif config['project']['annotation'] == "mm10":
             config['project']['workpath']+"/exome_targets.bed",
             expand("manta_out/{p}/results/variants/candidateSV.vcf.gz", p=pairs),
             "admixture_out/admixture_table.tsv",
-            "QC/decoy"
+            "QC/decoy",
             "sample_network_mqc.png",
             expand(config['project']['workpath']+"/vardict_out/{p}"+".FINAL.vcf",p=pairs),
             expand(config['project']['workpath']+"/vardict_out/oncotator_out/{p}"+".maf",p=pairs),
