@@ -455,8 +455,8 @@
     },
     "integratedBatch":{
         "threads": "8",
-        "mem": "200g",
-        "time": "2-00:00:00"
+        "mem": "64g",
+        "time": "1-00:00:00"
     },
     "kraken_pe": {
         "cpus-per-task": "24",
@@ -654,8 +654,8 @@
     },
     "qc_scrna":{
         "threads": "1",
-        "mem": "150g",
-        "time": "1-00:00:00"
+        "mem": "48g",
+        "time": "8:00:00"
     },
     "qcReport_scrna":{
         "threads": "1",
@@ -812,8 +812,18 @@
         "threads": "16",
         "time": "3-00:00:00"
     },
-    "fusioninspector": {
-        "mem": "48g",
+    "fusioninsp": {
+        "mem": "64g",
+        "threads": "16",
+        "time": "3-00:00:00"
+    },
+    "fusioninsp_fuscatch": {
+        "mem": "64g",
+        "threads": "16",
+        "time": "3-00:00:00"
+    },
+    "fusioninsp_starfus": {
+        "mem": "96g",
         "threads": "16",
         "time": "3-00:00:00"
     },
