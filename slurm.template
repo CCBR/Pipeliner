@@ -10,7 +10,7 @@ D=/home/fake
 R=/home/fake
 
 cd $D
-module load git/2.15.1
+module load git/2.26.2
 git log |head -n3 > $R/Reports/ccbr_pipeliner_git_commit_version.txt
 
 cd $SLURM_SUBMIT_DIR
