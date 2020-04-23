@@ -88,8 +88,8 @@ def get_colnames(infileList, filetypeList):
 def create_outfile_names(outroot):
     """ uses outroot to create the output file names """
     outTableFile = "jaccard.txt"
-    outPCAFile = "jaccard_PCA.png"
-    outHeatmapFile = "jaccard_heatmap.png"
+    outPCAFile = "jaccard_PCA.pdf"
+    outHeatmapFile = "jaccard_heatmap.pdf"
     if outroot != "":
         if outroot[-1] == "/":
             outTableFile= outroot + outTableFile

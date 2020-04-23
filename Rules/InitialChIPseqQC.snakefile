@@ -100,11 +100,10 @@ kraken_dir='kraken'
 bam_dir='bam'
 bw_dir='bigwig'
 deeptools_dir='deeptools'
-preseq_dir='preseq'
 extra_fingerprint_dir='deeptools/sorted_fingerprint'
 qc_dir="QC"
 
-for d in [trim_dir,kraken_dir,bam_dir,bw_dir,deeptools_dir,preseq_dir,extra_fingerprint_dir,qc_dir]:
+for d in [trim_dir,kraken_dir,bam_dir,bw_dir,deeptools_dir,extra_fingerprint_dir,qc_dir]:
 	if not os.path.exists(join(workpath,d)):
 		os.mkdir(join(workpath,d))
 
@@ -147,10 +146,6 @@ if se == 'yes' :
             expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
-            # ngsqc
-            expand(join(workpath,qc_dir,"{group}.NGSQC.Q5DD.png"),group=groups),
-            # preseq
-            expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
             join(workpath,qc_dir,"QCTable.txt"),
 
@@ -229,7 +224,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
                 cmd="sh Scripts/kraken_process_taxa.sh "+f+" "+t+" >> "+output.kraken_taxa_summary
                 shell(cmd)
 
-    rule BWA_se:
+    rule BWA_SE:
         input:
             infq=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
         params:
@@ -325,10 +320,6 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"{group}.TSS_heatmap.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.metagene_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
-            # ngsqc
-            expand(join(workpath,qc_dir,"{group}.NGSQC.Q5DD.png"),group=groups),
-            # preseq
-            expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
             # QC Table
             join(workpath,qc_dir,"QCTable.txt"),
 
@@ -404,7 +395,7 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.krakentaxa {output.krakentaxa}
 mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
 """
 
-    rule BWA_pe:
+    rule BWA_PE:
         input:
             infq1 = join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
             infq2 = join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"),
@@ -429,7 +420,7 @@ bwa mem -t {threads} {params.reference} {input.infq1} {input.infq2} | \
 samtools sort -@{threads} -o {output.outbam1}
 samtools index {output.outbam1}
 samtools flagstat {output.outbam1} > {output.flagstat1}
-samtools idxstat {output.outbam1} > {output.idxstat1}
+samtools idxstats {output.outbam1} > {output.idxstat1}
 samtools view -b -q 6 {output.outbam1} -o {output.outbam2}
 samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
@@ -647,7 +638,7 @@ rule deeptools_QC:
 
 rule deeptools_fingerprint:
     input:
-        prep=join(workpath,bam_dir,"{group}.sorted.deeptools_prep"),
+        join(workpath,bam_dir,"{group}.sorted.deeptools_prep"),
     output:
         image=join(workpath,deeptools_dir,"{group}.fingerprint.sorted.pdf"),
         metrics=join(workpath,extra_fingerprint_dir,"{group}.fingerprint.metrics.sorted.tsv"),
@@ -658,7 +649,7 @@ rule deeptools_fingerprint:
     run:
         import re
         commoncmd="module load {params.deeptoolsver}; module load python;"
-        listfile=list(map(lambda z:z.strip().split(),open(input.prep,'r').readlines()))
+        listfile=list(map(lambda z:z.strip().split(),open(input[0],'r').readlines()))
         ext=listfile[0][0]
         bams=listfile[1]
         labels=listfile[2]
@@ -752,7 +743,7 @@ rule preseq:
     input:
         bam = join(workpath,bam_dir,"{name}.sorted.bam"),
     output:
-        ccurve = join(workpath,preseq_dir,"{name}.ccurve"),
+        ccurve = join(workpath,qc_dir,"{name}.ccurve"),
     shell:
         """
 module load {params.preseqver};
@@ -785,8 +776,8 @@ rule rawfastqc:
             se == "yes" else \
             expand(join(workpath,"{name}.R{rn}.fastq.gz"), name=samples,rn=[1,2])
     output:
-        join(workpath,'rawfastQC'),
-    priority: 2
+        folder=join(workpath,'rawfastQC'),
+        html=expand(join(workpath,'rawfastQC',"{name}.R1_fastqc.html"),name=samples)
     params:
         rname='pl:rawfastqc',
         batch='--cpus-per-task=32 --mem=100g --time=48:00:00',
@@ -794,10 +785,10 @@ rule rawfastqc:
     threads: 32
     shell: """
 if [ ! -d {output} ]; then
-mkdir {output};
+mkdir {output.folder};
 fi
 module load {params.fastqcver};
-fastqc {input} -t {threads} -o {output}
+fastqc {input} -t {threads} -o {output.folder}
             """
 
 rule fastqc:
@@ -809,13 +800,14 @@ rule fastqc:
         expand(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),name=samples) if \
             se == "yes" else \
             expand(join(workpath,trim_dir,"{name}.R{rn}.trim.fastq.gz"), name=samples,rn=[1,2])
-    output: join(workpath,"fastQC")
-    priority: 2
+    output:
+        folder=join(workpath,'fastQC'),
+        html=expand(join(workpath,'fastQC',"{name}.R1_fastqc.html"),name=samples)
     threads: 32
     shell: """
-mkdir -p {output};
+mkdir -p {output.folder};
 module load {params.fastqcver};
-fastqc {input} -t {threads} -o {output}
+fastqc {input} -t {threads} -o {output.folder}
             """
 
 rule fastq_screen:
@@ -881,9 +873,9 @@ mv tmpOut/NGSQC_report.txt {output.file}
 
 rule ngsqc_plot:
     input:
-        ngsqc=expand(join(workpath,qc_dir,"{name}.Q5DD.NGSQC_report.txt"),name=samples),
+        ngsqc=join(workpath,qc_dir,"{name}.Q5DD.NGSQC_report.txt"),
     output:
-        png=expand(join(workpath,qc_dir,"{group}.NGSQC.Q5DD.png"),group=groups),
+        txt=temp(join(workpath,qc_dir,"{name}.Q5DD.NGSQC.txt"))
     params:
         rname="pl:ngsqc_plot",
         script=join(workpath,"Scripts","ngsqc_plot.py"),
@@ -920,7 +912,7 @@ rule QCstats:
         rname='pl:QCstats',
         filterCollate=join(workpath,"Scripts","filterMetrics"),   
     output:
-        sampleQCfile=join(workpath,qc_dir,"{name}.qcmetrics"),
+        sampleQCfile=temp(join(workpath,qc_dir,"{name}.qcmetrics")),
     threads: 16
     shell: """
 # Number of reads
@@ -956,15 +948,15 @@ cat {params.inputstring} | {params.filterCollate} > {output.qctable}
 rule multiqc:
     input: 
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
-        expand(join(workpath,preseq_dir,"{name}.ccurve"), name=samples),
+        expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),name=samples),
+        expand(join(workpath,qc_dir,"{name}.ccurve"), name=samples),
         expand(join(workpath,bam_dir,"{name}.Q5DD.bam.flagstat"), name=samples),
         expand(join(workpath,bam_dir,"{name}.Q5.bam.flagstat"), name=samples),
-	#expand(join(workpath,bam_dir,"{name}.{ext}.ppqt"),name=samples,ext=extensions2),
         join(workpath,qc_dir,"QCTable.txt"),
-        join(workpath,"rawfastQC"),
-        join(workpath,"fastQC"),
+        expand(join(workpath,'rawfastQC',"{name}.R1_fastqc.html"),name=samples),
+        expand(join(workpath,'fastQC',"{name}.R1_fastqc.html"),name=samples),
+        expand(join(workpath,qc_dir,"{name}.Q5DD.NGSQC.txt"),name=samples),
         expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.Q5DD.tab"),group=groups),
-        expand(join(workpath,qc_dir,"{group}.NGSQC.Q5DD.png"),group=groups),
         join(workpath,deeptools_dir,"spearman_heatmap.Q5DD.RPGC.pdf"),
     output:
         join(workpath,"Reports","multiqc_report.html")

@@ -52,6 +52,12 @@
         "mem": "64g",
         "threads": "32"
     },
+    "BWA_SE": {
+        "threads": "32"
+    },
+    "BWA_PE": {
+        "threads": "32"
+    },
     "bwa_mem": {
         "mem": "48g",
         "threads": "32",
@@ -162,6 +168,9 @@
         "mem": "64g",
         "threads": "8",
         "time": "10-00:00:00"
+    },
+    "diffbind": {
+        "threads":"10"
     },
     "diffbind_bed": {
         "mem": "4g",

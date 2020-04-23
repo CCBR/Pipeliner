@@ -74,19 +74,19 @@ if (nrow(samples$samples) < 5) {
 ```
 
 ```{r peaksORsummits, echo=F}
-#if ( grepl("narrow",samples$samples$Peaks[1]) ) {
-#   summits <- TRUE
-#   print ("Narrow peak calling tool.")
-#   print ("Differential peaks are 250bp upstream and downstream of the summits.")
-#} else if ( grepl("broad",samples$samples$Peaks[1]) ) {
-#  summits <- FALSE
-#  print ("Broad peak calling tool.")
-#  print ("Differential peaks are consensus peaks.")
-#} else {
+if ( grepl("narrow",samples$samples$Peaks[1]) ) {
+   summits <- TRUE
+   print ("Narrow peak calling tool.")
+   print ("Differential peaks are 250bp upstream and downstream of the summits.")
+} else if ( grepl("broad",samples$samples$Peaks[1]) ) {
   summits <- FALSE
-#  print ("Indeterminate peak calling tool.")
+  print ("Broad peak calling tool.")
   print ("Differential peaks are consensus peaks.")
-#}
+} else {
+  summits <- FALSE
+  print ("Indeterminate peak calling tool.")
+  print ("Differential peaks are consensus peaks.")
+}
 ```
 
 ## Read in bam file information under all peaks found in at least two samples

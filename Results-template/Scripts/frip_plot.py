@@ -4,6 +4,7 @@
 Name: frip_plot.py
 Created by: Tovah Markowitz
 Date: 5/14/19
+Updated: 1/16/20 to allow more control of the peaktool name and splitting of the bedfile name, also adjusted for when nplots is 1 for the scatter plot
 
 Purpose: To create visually appealing plots of FRiP scores
 Currently only works with python/3.5
@@ -68,16 +69,20 @@ def clip_bamfile_name(bamfile):
     condition =  ".".join(bamfile.split("/")[-1].split(".")[1:-1])
     return( sample, condition )
 
-def clip_bedfile_name(bedfile):
+def clip_bedfile_name(bedfile,filetype):
     """
     clip bed file name for table/plotting purposes; assumes file 
     naming system matches that of Pipeliner
     """
-    toolused = bedfile.split("/")[-3]
-    sample = bedfile.split("/")[-2]
+    if filetype == "":
+        toolused = bedfile.split("/")[-3]
+        sample = bedfile.split("/")[-2]
+    else:
+        toolused = filetype
+        sample = bedfile.split("/")[-1].split(".")[0].strip("_peaks").strip("_broadpeaks")
     return( toolused, sample )
 
-def process_files(bamfiles, bedfiles, genome):
+def process_files(bamfiles, bedfiles, genome, filetypes):
     """ 
     this is the main function to take in list of input files and 
     put out an array containing key file name information, read 
@@ -85,13 +90,19 @@ def process_files(bamfiles, bedfiles, genome):
     """
     bamfileL = split_infiles(bamfiles)
     bedfileL = split_infiles(bedfiles)
+    filetypesL = split_infiles(filetypes)
     out = [[ "bedtool", "bedsample", "bamsample", "bamcondition", 
     "n_reads", "n_overlap_reads", "FRiP", "n_basesM" ]]
     for bam in bamfileL:
         nreads = count_reads_in_bam(bam)
         (bamsample, condition) = clip_bamfile_name(bam)
-        for bed in bedfileL:
-            (bedtool, bedsample) = clip_bedfile_name(bed)
+        for i in range(len(bedfileL)):
+            bed = bedfileL[i]
+            if len(filetypesL) > 1:
+                filetype = filetypesL[i]
+            else:
+                filetype = filetypesL[0]
+            (bedtool, bedsample) = clip_bedfile_name(bed,filetype)
             noverlaps = count_reads_in_bed(bam, bed, genome)
             frip = calculate_frip(nreads, noverlaps)
             nbases = measure_bedfile_coverage(bed, genome) / 1000000
@@ -147,34 +158,43 @@ def create_scatter(out2, outscatter):
     nplots= len(bams)
     nplotsmid= int(nplots/2)
     sns.set(style="whitegrid", palette="Set1",font_scale=0.75)
-    f, axes = plt.subplots(1, nplots, sharey=True, sharex=True)
-    for bi in range(nplots-1):
-        tmp = out2.loc[ out2['bamsample'] == bams[bi] ]
-        sns.scatterplot(data=tmp, x="n_basesM", y="FRiP",
+    if nplots > 1:
+        f, axes = plt.subplots(1, nplots, sharey=True, sharex=True)
+        for bi in range(nplots-1):
+            tmp = out2.loc[ out2['bamsample'] == bams[bi] ]
+            sns.scatterplot(data=tmp, x="n_basesM", y="FRiP",
                         hue="bedsample", style="bedtool", ax=axes[bi],
                         markers=['o','s','v','X'], legend=False)
-        if bi == nplotsmid:
-            axes[bi].set(xlabel="# bases in peaks (M)", 
+            if bi == nplotsmid:
+                axes[bi].set(xlabel="# bases in peaks (M)", 
                      ylabel='Fraction Reads in Peaks (FRiP)')
-        else:
-            axes[bi].set(xlabel="", 
+            else:
+                axes[bi].set(xlabel="", 
                      ylabel='Fraction Reads in Peaks (FRiP)')
-        axes[bi].set_title( bams[bi], rotation=70, rotation_mode="anchor")
-        axes[bi].get_xaxis().set_minor_locator( mpl.ticker.AutoMinorLocator() )
-        axes[bi].grid(b=True, which='major', color="gray", linewidth=1)
-        axes[bi].grid(b=True, which='minor', linestyle="--", 
+            axes[bi].set_title( bams[bi], rotation=70, rotation_mode="anchor")
+            axes[bi].get_xaxis().set_minor_locator( mpl.ticker.AutoMinorLocator() )
+            axes[bi].grid(b=True, which='major', color="gray", linewidth=1)
+            axes[bi].grid(b=True, which='minor', linestyle="--", 
                       color="gray", linewidth=0.5)
-    tmp = out2.loc[ out2['bamsample'] == bams[nplots-1] ]
-    sns.scatterplot(data=tmp, x="n_basesM", y="FRiP", hue="bedsample",
+        tmp = out2.loc[ out2['bamsample'] == bams[nplots-1] ]
+        sns.scatterplot(data=tmp, x="n_basesM", y="FRiP", hue="bedsample",
                     style="bedtool", ax=axes[nplots-1],
                     markers=['o','s','v','X'])
-    axes[nplots-1].set(xlabel="", 
+        axes[nplots-1].set(xlabel="", 
                        ylabel='Fraction Reads in Peaks (FRiP)')
-    axes[nplots-1].set_title( bams[nplots-1], rotation=70, rotation_mode="anchor")
-    axes[nplots-1].get_xaxis().set_minor_locator( mpl.ticker.AutoMinorLocator() )
-    axes[nplots-1].grid(b=True, which='major', color="gray", linewidth=1)
-    axes[nplots-1].grid(b=True, which='minor', linestyle="--",
+        axes[nplots-1].set_title( bams[nplots-1], rotation=70, rotation_mode="anchor")
+        axes[nplots-1].get_xaxis().set_minor_locator( mpl.ticker.AutoMinorLocator() )
+        axes[nplots-1].grid(b=True, which='major', color="gray", linewidth=1)
+        axes[nplots-1].grid(b=True, which='minor', linestyle="--",
                         color="gray", linewidth=0.5)
+    else:
+        bp = sns.scatterplot(data=out2, x="n_basesM", y="FRiP", hue="bedsample",
+                    style="bedtool", markers=['o','s','v','X'])
+        bp.set(xlabel="", ylabel='Fraction Reads in Peaks (FRiP)')
+        bp.set_title( bams[0], rotation=70, rotation_mode="anchor")
+        bp.get_xaxis().set_minor_locator( mpl.ticker.AutoMinorLocator() )
+        bp.grid(b=True, which='major', color="gray", linewidth=1)
+        bp.grid(b=True, which='minor', linestyle="--", color="gray", linewidth=0.5)
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2)
     #plt.show()
     plt.savefig(outscatter, bbox_inches='tight')
@@ -207,14 +227,17 @@ matches that of Pipeliner.
 size of every chromosome.')
     parser.add_option('-o', dest='outroot', default='', 
            help='The root name of the multiple output files. Default: ""')
+    parser.add_option('-t', dest='filetypes', default='', help='A space- \
+or semicolon-delimited list of input file sources/types. Default: ""')
 
     (options,args) = parser.parse_args()
     bedfiles = options.peakfiles
     bamfiles = options.bamfiles
     genomefile = options.genomefile
     outroot = options.outroot
+    filetypes = options.filetypes
 
-    out2 = process_files(bamfiles, bedfiles, genomefile)
+    out2 = process_files(bamfiles, bedfiles, genomefile, filetypes)
     (outtable, outbar, outscatter) = create_outfile_names(outroot)
     write_table(out2, outtable)
     create_barplot(out2,outbar)
