@@ -40,18 +40,35 @@ class MiRSeqFrame( PipelineFrame ) :
         
         label = Label(eframe,text="Pipeline")#,fg=textLightColor,bg=baseColor)
         label.grid(row=3,column=0,sticky=W,padx=10,pady=5)
-        Pipelines=["CAPmirseq-plus"]
+        PipelineLabels=["miRSeq_v2","CAPmirseq-plus"]
+        Pipelines=["miRSeq_v2","CAPmirseq-plus"]
+                
+        self.label2pipeline = { k:v for k,v in zip(PipelineLabels, Pipelines)}
+        PipelineLabel = self.PipelineLabel = StringVar()
         Pipeline = self.Pipeline = StringVar()
-        Pipeline.set(Pipelines[0])
+        PipelineLabel.set(PipelineLabels[0])
         
-        om = OptionMenu(eframe, Pipeline, *Pipelines, command=self.option_controller)
+        om = OptionMenu(eframe, PipelineLabel, *PipelineLabels, command=self.option_controller)
         om.config()#bg = widgetBgColor,fg=widgetFgColor)
         om["menu"].config()#bg = widgetBgColor,fg=widgetFgColor)
         #om.pack(side=LEFT,padx=20,pady=5)
         om.grid(row=3,column=1,sticky=W,padx=10,pady=5)
+        
+        # self.mirseqOpts = mirseqOpts = LabelFrame(eframe,text="miRSeq Settings")
+        self.novelMirsFrame = novelMirsFrame = Frame(eframe)
+        self.novelMirs = novelMirs = StringVar()
+        novelMirLabel = Label(novelMirsFrame, text= "Identify Novel miRNAs: ")
+        novelMirsDropdown = ["YES","NO"]
+        novelMirs.set(novelMirsDropdown[1])
+        novelMirs_om = OptionMenu(novelMirsFrame,novelMirs,*novelMirsDropdown)
+        novelMirLabel.grid(row=5,column=1,sticky=W,padx=10,pady=5)
+        novelMirs_om.grid(row=5,column=2,sticky=W,padx=10,pady=0)
+        # novelMirsFrame.grid(row=5,column=0, columnspan=4, sticky=W, padx=20, pady=10 )
+
+        
      
         self.add_info( eframe )
-        
+        self.option_controller()
     
     def add_info( self, parent ) :
         if not self.info :
@@ -70,7 +87,7 @@ class MiRSeqFrame( PipelineFrame ) :
             self.contrasts_button.grid( row=5, column=6, padx=10, pady=5 )
             
 
-        self.info.grid(row=10,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
+        self.info.grid(row=11,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
    
   
     def popup_groups( self ) :
@@ -115,7 +132,19 @@ class MiRSeqFrame( PipelineFrame ) :
 
         info.grid(row=7,column=0, columnspan=6, sticky=W, padx=20, pady=10 )
         top.focus_force()
- 
+    def option_controller( self, *args, **kwargs ) :
+
+        PipelineFrame.option_controller( self )
+
+        self.Pipeline.set( self.label2pipeline[self.PipelineLabel.get()] )
+        print( self.Pipeline.get() )
+        
+        if self.Pipeline.get() == 'miRSeq_v2' :
+            self.novelMirsFrame.grid(row=5,column=0, columnspan=4, sticky=W, padx=20, pady=10 )
+        elif self.Pipeline.get() == "CAPmirseq-plus":
+            self.novelMirsFrame.grid_forget()
+            
+            
     def makejson(self, *args):
         #print(args[0])
         caller=args[0]
@@ -302,6 +331,7 @@ class MiRSeqFrame( PipelineFrame ) :
                 "TRIM": "yes", 
                 "groups": groups,
                 "contrasts": contrasts,
+                "novelMirs": self.novelMirs.get(),
              }
         } 
         

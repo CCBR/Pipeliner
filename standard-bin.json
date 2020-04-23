@@ -339,6 +339,18 @@
             },
 
     "mirseq":{
+        "tool_versions": {
+	        "FASTQCVER": "fastqc/0.11.5",
+                "CUTADAPTVER": "cutadapt/1.18",
+                "KRAKENVER": "kraken/1.1",
+                "KRONATOOLSVER": "kronatools/2.7",
+                "FASTXTOOLKITVER": "fastxtoolkit/0.0.14",
+                "FASTQ_SCREEN": "/data/CCBR_Pipeliner/db/PipeDB/bin/fastq_screen_v0.9.3/fastq_screen",
+                "BOWTIE2VER": "bowtie/2-2.3.4",
+                "PERLVER": "perl/5.24.3",
+                "MULTIQCVER": "multiqc/1.4",
+                "MIRDEEP2VER": "mirdeep/2.0.0.8"
+        },
 
     "tool_paths":{
 
@@ -370,6 +382,15 @@
 #    "CUTADAPT_PARAMS": "-b AATCTCGTATGCCGTCTTCTGCTTGC -O 3 -m 17 -f fastq",
 #    "CUTADAPT_PARAMS": "-a  CAAGCAGAAGACGGCATACGAGAT  -O 3 -m 17 -f fastq",
 #    "CUTADAPT_PARAMS": "-b  CAAGCAGAAGACGGCATACGAGATNNNNNNGTGACTGGAGTTCCTTGGCACCCGAGAATTCCA -b TGGAATTCTCGGGTGCCAAGGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG  -O 3 -m 17 -f fastq",
+        "FASTAWITHADAPTERSETD": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",
+        "LEADINGQUALITY": 10,
+        "TRAILINGQUALITY": 10,
+        "MINLEN": 17,
+        "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
+        "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
+        "FASTQ_SCREEN_CONFIG2": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen_2.conf",
+        "CONFMULTIQC": "/data/CCBR_Pipeliner/db/PipeDB/Rnaseq/multiqc_config.yaml",
+    
     "CUTADAPT_PARAMS": "-b  CAAGCAGAAGACGGCATACGAGAT -b TGGAATTCTCGGGTGCCAAGGAACTCCAGTCAC  -O 3 -m 17 -f fastq",
     "TRIMMOMATIC": "java -Xmx8g -Djava.io.tmpdir=/scratch -jar /usr/local/apps/trimmomatic/Trimmomatic-0.33/trimmomatic-0.33.jar",
     "TRIMMOMATIC.ADAPTERS": "/data/CCBR_Pipeliner/db/PipeDB/miRseq/References/adapters2.fa",
