@@ -817,6 +817,21 @@
         "threads": "16",
         "time": "3-00:00:00"
     },
+    "fusioninsp": {
+        "mem": "64g",
+        "threads": "16",
+        "time": "3-00:00:00"
+    },
+    "fusioninsp_fuscatch": {
+        "mem": "64g",
+        "threads": "16",
+        "time": "3-00:00:00"
+    },
+    "fusioninsp_starfus": {
+        "mem": "96g",
+        "threads": "16",
+        "time": "3-00:00:00"
+    },
     "stats": {
         "gres": "lscratch:256",
         "mem": "110g",
@@ -903,4 +918,3 @@
         "time": "2-00:00:00"
     }
 }
-
