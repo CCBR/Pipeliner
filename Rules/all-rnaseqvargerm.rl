@@ -1,6 +1,5 @@
 rule all_rnaseqvargerm:
     input: "combined.vcf",
-           config['project']['workpath']+"/full_annot.txt.zip",
            "sample_network_mqc.png",
            "combined.strictFilter.snpeff.vcf",
            expand("sample_vcfs/{s}"+".stats.csv",s=samples),
