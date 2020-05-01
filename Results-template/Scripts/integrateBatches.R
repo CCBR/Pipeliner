@@ -123,7 +123,8 @@ combinedObj.integratedRNA = FindVariableFeatures(combinedObj.integratedRNA,mean.
 combinedObj.integratedRNA <- ScaleData(object = combinedObj.integratedRNA, verbose = FALSE)
 
 if(ncol(combinedObj.integratedRNA)<50000){
-	mat1 <- t(as.matrix(FetchData(object = combinedObj.integratedRNA,slot = "counts",vars = rownames(combinedObj.integratedRNA))))
+#	mat1 <- t(as.matrix(FetchData(object = combinedObj.integratedRNA,slot = "counts",vars = rownames(combinedObj.integratedRNA))))
+	mat1 <- as.matrix(combinedObj.integratedRNA@assays$SCT@counts) #BUG FIX - NW_20200501
 	urdObj <- createURD(count.data = mat1, min.cells=3, min.counts=3)
 	varGenes_batch = VariableFeatures(combinedObj.integrated)[VariableFeatures(combinedObj.integrated) %in% rownames(urdObj@logupx.data)]
 	varGenes_merge = VariableFeatures(combinedObj.integratedRNA)[VariableFeatures(combinedObj.integratedRNA) %in% rownames(urdObj@logupx.data)]
