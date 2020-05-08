@@ -37,7 +37,7 @@ if config['project']['annotation'] == "hg19":
     output: 
     params: rname="final"
     shell:  """
-             Scripts/fusionSummary.sh; module load multiqc/1.7; multiqc -f .; rm *featureCounts; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl
+             Scripts/fusionSummary.sh; module load multiqc/1.7; multiqc -f .; rm *featureCounts; mv *.out slurmfiles/; module load perl/5.18.4; perl Scripts/summarize_usage.pl
 
             """
 

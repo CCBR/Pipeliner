@@ -41,6 +41,6 @@ rule all_exomeseq_somatic:
     output:
     params: rname="final"
     shell:  """
-             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; perl Scripts/summarize_usage.pl; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped *.avia_status.txt *.avia.log *_genotypes.vcf logfiles/
+             module load multiqc/1.4; multiqc -f -e featureCounts .; mv *.out slurmfiles/; module load perl/5.18.4; perl Scripts/summarize_usage.pl; mv *.fin.bam.intervals logfiles/; rm *realign.bai; mv distance.cluster0 distance.cluster1 distance.cluster2 distance.cluster3 distance.nosex samples.txt plink.map plink.ped *.avia_status.txt *.avia.log *_genotypes.vcf logfiles/
 
             """

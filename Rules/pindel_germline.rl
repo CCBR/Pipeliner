@@ -2,7 +2,7 @@ rule pindel_conf:
   params: workdir=config['project']['workpath'],genome=config['references'][pfamily]['GENOME'],rname="pindelconf"
   input: expand("{x}.recal.bam", x=samples)
   output: "pindel_out/pindel_config",
-  shell: "mkdir -p pindel_out; perl Scripts/make_pindel_config.pl"
+  shell: "mkdir -p pindel_out; module load perl/5.18.4; perl Scripts/make_pindel_config.pl"
 
 if config['project']['annotation'] == "hg19":
   rule pindel_germline_1:
