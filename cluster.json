@@ -53,9 +53,11 @@
         "threads": "32"
     },
     "BWA_SE": {
+        "mem": "64g",
         "threads": "32"
     },
     "BWA_PE": {
+        "mem": "64g",
         "threads": "32"
     },
     "bwa_mem": {
