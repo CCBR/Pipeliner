@@ -802,7 +802,7 @@ rule fastqc:
             expand(join(workpath,trim_dir,"{name}.R{rn}.trim.fastq.gz"), name=samples,rn=[1,2])
     output:
         folder=join(workpath,'fastQC'),
-        html=expand(join(workpath,'fastQC',"{name}.R1_fastqc.html"),name=samples)
+        html=expand(join(workpath,'fastQC',"{name}.R1.trim_fastqc.html"),name=samples)
     threads: 32
     shell: """
 mkdir -p {output.folder};
@@ -954,7 +954,7 @@ rule multiqc:
         expand(join(workpath,bam_dir,"{name}.Q5.bam.flagstat"), name=samples),
         join(workpath,qc_dir,"QCTable.txt"),
         expand(join(workpath,'rawfastQC',"{name}.R1_fastqc.html"),name=samples),
-        expand(join(workpath,'fastQC',"{name}.R1_fastqc.html"),name=samples),
+        expand(join(workpath,'fastQC',"{name}.R1.trim_fastqc.html"),name=samples),
         expand(join(workpath,qc_dir,"{name}.Q5DD.NGSQC.txt"),name=samples),
         expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.Q5DD.tab"),group=groups),
         join(workpath,deeptools_dir,"spearman_heatmap.Q5DD.RPGC.pdf"),
