@@ -45,6 +45,7 @@ suppressMessages(library(DiffBind))
 ## Read in sample sheet information and peak information
 ```{r samples, echo=FALSE, warning=FALSE,message=FALSE} 
 samples <- dba(sampleSheet=csvfile)
+consensus <- dba.peakset(samples,consensus=DBA_CONDITION)
 print(samples)
 ```
 
@@ -53,22 +54,22 @@ print(samples)
 ## Plot raw information about the peaks
 ### Correlation heatmap: Only peaks
 ```{r heatmap1, echo=FALSE, warning=FALSE,message=FALSE,out.width = "80%",fig.align="center"}
-plot(samples,main="")
+try(plot(samples,main=""),silent=TRUE)
 ```
 
 ### PCA: Only peaks
 ```{r PCA1, echo=FALSE, warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align="center",fig.caption="PCA:\nOnlyPeaks"}
-dba.plotPCA(samples,DBA_CONDITION)
+try(dba.plotPCA(samples,DBA_CONDITION),silent=TRUE)
 ```
 
 ### Overlapping peak counts
-```{r Venn, echo=FALSE, warning=FALSE,message=FALSE,fig.align="center"}
+```{r Venn, echo=FALSE, warning=FALSE,message=FALSE,fig.align="center",fig.height=5,fig.width=5}
 if (nrow(samples$samples) < 5) {
    dba.plotVenn(samples,1:nrow(samples$samples)) 
 } else {
    dba.plotVenn(samples,samples$masks[[3]])
    dba.plotVenn(samples,samples$masks[[4]])
-   dba.plotVenn(samples,samples$masks$Replicate.1)
+   dba.plotVenn(consensus,consensus$masks$Consensus)
 }
 ```
 
@@ -103,17 +104,17 @@ print(DBdataCounts)
 ## Plot raw information about all analyzed peaks
 ### Correlation heatmap: Peaks and reads
 ```{r heatmap2, echo=FALSE, warning=FALSE,message=FALSE,out.width = "80%",fig.align="center"}
-plot(DBdataCounts, main="")
+try(plot(DBdataCounts, main=""),silent=TRUE)
 ```
 
 ### Heatmap: Average signal across each peak
 ```{r heatmap3, echo=FALSE, warning=FALSE,message=FALSE,out.width = "80%",fig.align="center"}
-dba.plotHeatmap(DBdataCounts,correlations=FALSE)
+try(dba.plotHeatmap(DBdataCounts,correlations=FALSE),silent=TRUE)
 ```
 
 ### PCA: Peaks and reads
 ```{r PCA2, echo=FALSE, warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align="center"}
-dba.plotPCA(DBdataCounts,DBA_CONDITION)
+try(dba.plotPCA(DBdataCounts,DBA_CONDITION),silent=TRUE)
 ```
 
 ## Associate individual samples with the different contrasts
@@ -131,67 +132,46 @@ DBAnalysisEdgeR <- dba.analyze(DBdatacontrast, method = DBA_EDGER)
 ```
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE}
-nsamples <- sum(DBdatacontrast$contrasts[[1]]$group1) + sum(DBdatacontrast$contrasts[[1]]$group2)
-
 DBReportDeseq2 <- dba.report(DBAnalysisDeseq2, method = DBA_DESEQ2)
-#sum(DBAnalysisDeseq2$contrasts[[1]]$DESeq2$de$padj < 0.05)
-nDeseq2 <- length(DBReportDeseq2)
-nDeseq2P <- sum(DBReportDeseq2$Conc > 0)
-nDeseq2N <- sum(DBReportDeseq2$Conc < 0)
 DBReportEdgeR <- dba.report(DBAnalysisEdgeR, method = DBA_EDGER)
-nEdgeR <- length(DBReportEdgeR)
-nEdgeRP <- sum(DBReportEdgeR$Conc > 0)
-nEdgeRN <- sum(DBReportEdgeR$Conc < 0)
 ```
 
 ### PCA: DeSeq2
 ```{r PCA3, echo=FALSE, warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align="center"}
-if (nDeseq2 > nsamples) {
-	dba.plotPCA(DBAnalysisDeseq2, contrast=1, method= DBA_DESEQ2)
-}
+try(dba.plotPCA(DBAnalysisDeseq2, contrast=1, method= DBA_DESEQ2),silent=TRUE)
 ```
 
 ### PCA: EdgeR
 ```{r PCA4, echo=FALSE, warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align="center"}
-if (nEdgeR > nsamples) {
-	dba.plotPCA(DBAnalysisEdgeR, contrast=1, method = DBA_EDGER)
-}
+try(dba.plotPCA(DBAnalysisEdgeR, contrast=1, method = DBA_EDGER),silent=TRUE)
 ```
 
 ### MANorm: (left) Deseq2, (right) EdgeR
 ```{r MA, echo=FALSE, warning=FALSE,message=FALSE,fig.width=10,fig.height=4,fig.align="center"}
 par(mfcol=c(1,2))
-dba.plotMA(DBAnalysisDeseq2, method = DBA_DESEQ2)
-dba.plotMA(DBAnalysisEdgeR, method = DBA_EDGER)
+try(dba.plotMA(DBAnalysisDeseq2, method = DBA_DESEQ2),silent=TRUE)
+try(dba.plotMA(DBAnalysisEdgeR, method = DBA_EDGER),silent=TRUE)
 ```
 
 ### Volcano plot: DeSeq2
 ```{r Volcano1, echo=FALSE, warning=FALSE,message=FALSE,out.width = "80%",fig.align="center"}
-if (nDeseq2 > 0) {
-	dba.plotVolcano(DBAnalysisDeseq2, method = DBA_DESEQ2)
-}
+try(dba.plotVolcano(DBAnalysisDeseq2, method = DBA_DESEQ2),silent=TRUE)
 ```
 
 ### Volcano plot: EdgeR
 ```{r Volcano2, echo=FALSE, warning=FALSE,message=FALSE,out.width = "80%",fig.align="center"}
-if (nEdgeR > 0) {
-	dba.plotVolcano(DBAnalysisEdgeR, method = DBA_EDGER)
-}
+try(dba.plotVolcano(DBAnalysisEdgeR, method = DBA_EDGER),silent=TRUE)
 ```
 
 ### Boxplots: (left) Deseq2, (right) EdgeR
 ```{r BoxPlot, echo=FALSE, warning=FALSE,message=FALSE,fig.width=10,fig.height=4,fig.align="center"}
 par(mfcol=c(1,2))
-if ((nDeseq2N > 1) & (nDeseq2P > 1)) {
-	dba.plotBox(DBAnalysisDeseq2, method = DBA_DESEQ2)
+if (length(DBReportDeseq2) > 0) {
+   try(dba.plotBox(DBAnalysisDeseq2, method = DBA_DESEQ2),silent=TRUE)
 } else {
-    if ((nEdgeRN > 1) & (nEdgeRP > 1)) {
-		plot(0,type='n',axes=FALSE,ann=FALSE)
-	}
+   plot(0,type='n',axes=FALSE,ann=FALSE)
 }
-if ((nEdgeRN > 1) & (nEdgeRP > 1)) {
-	dba.plotBox(DBAnalysisEdgeR, method = DBA_EDGER)
-}
+try(dba.plotBox(DBAnalysisEdgeR, method = DBA_EDGER),silent=TRUE)
 ```
 
 ## Differentially bound peaks: Deseq2 output
