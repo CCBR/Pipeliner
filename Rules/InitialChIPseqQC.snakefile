@@ -873,9 +873,9 @@ mv tmpOut/NGSQC_report.txt {output.file}
 
 rule ngsqc_plot:
     input:
-        ngsqc=join(workpath,qc_dir,"{name}.Q5DD.NGSQC_report.txt"),
+        ngsqc=expand(join(workpath,"QC","{name}.Q5DD.NGSQC_report.txt"),name=samples),
     output:
-        txt=temp(join(workpath,qc_dir,"{name}.Q5DD.NGSQC.txt"))
+        png=expand(join(workpath,"QC","{group}.NGSQC.Q5DD.png"),group=groups),
     params:
         rname="pl:ngsqc_plot",
         script=join(workpath,"Scripts","ngsqc_plot.py"),
@@ -891,12 +891,12 @@ rule ngsqc_plot:
             labels = [ sample for sample in samples if sample in groupdatawinput[group] ]
             cmd1 = cmd1 + "mkdir " + group + "; "
             for label in labels:
-                cmd1 = cmd1 + "cp " + workpath + "/" + qc_dir + "/" + label + ".Q5DD.NGSQC_report.txt " + group + "; " 
+                cmd1 = cmd1 + "cp " + workpath + "/QC/" + label + ".Q5DD.NGSQC_report.txt " + group + "; " 
                 if label not in sample:
-                    cmd4 = cmd4 + "mv " + group + "/" + label + ".Q5DD.NGSQC.txt " + workpath + "/" + qc_dir + "; "
+                    cmd4 = cmd4 + "mv " + group + "/" + label + ".Q5DD.NGSQC.txt " + workpath + "/QC; "
                     sample.append(label)
             cmd2 = cmd2 + "python " + params.script + " -d '" + group + "' -e 'Q5DD' -g '" + group + "'; "
-            cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.Q5DD.png " + workpath + "/" + qc_dir + "/" + group + ".NGSQC.Q5DD.png" + "; "
+            cmd3 = cmd3 + "mv " + group + "/" + group + ".NGSQC.Q5DD.png " + workpath + "/QC/" + group + ".NGSQC.Q5DD.png" + "; "
         shell(commoncmd1)
         shell(commoncmd2 + cmd1 + cmd2 + cmd3 + cmd4)
 
@@ -955,7 +955,7 @@ rule multiqc:
         join(workpath,qc_dir,"QCTable.txt"),
         expand(join(workpath,'rawfastQC',"{name}.R1_fastqc.html"),name=samples),
         expand(join(workpath,'fastQC',"{name}.R1.trim_fastqc.html"),name=samples),
-        expand(join(workpath,qc_dir,"{name}.Q5DD.NGSQC.txt"),name=samples),
+        expand(join(workpath,"QC","{group}.NGSQC.Q5DD.png"),group=groups),
         expand(join(workpath,deeptools_dir,"{group}.fingerprint.raw.Q5DD.tab"),group=groups),
         join(workpath,deeptools_dir,"spearman_heatmap.Q5DD.RPGC.pdf"),
     output:
