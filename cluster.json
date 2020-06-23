@@ -620,8 +620,8 @@
     },
     "picard": {
         "gres": "lscratch:256",
-        "mem": "96g",
-        "threads": "2"
+        "mem": "110g",
+        "threads": "6"
     },
     "picard_dedup": {
         "gres": "lscratch:256",
