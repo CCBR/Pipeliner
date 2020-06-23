@@ -203,7 +203,7 @@ if reps == "yes":
             expand(join(workpath,macsB_dir,"{name}","{name}_peaks.broadPeak"),name=chips),
             expand(join(workpath,sicer_dir,"{name}","{name}_broadpeaks.bed"),name=chips),
             expand(join(workpath,gem_dir,"{name}","{name}.GEM_events.narrowPeak"),name=chips),
-            expand(join(workpath,qc_dir,"{PeakTool}.FRiP_barplot.png"),PeakTool=PeakTools),
+            expand(join(workpath,qc_dir,"{Group}.FRiP_barplot.pdf"),Group=groups),
             expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
             expand(join(workpath,qc_dir,'jaccard.txt')),
             expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_{method}"),PeakTool=PeakToolsNG,name=chips,method=["GW"]),#"TSS"]),
@@ -219,7 +219,7 @@ else:
             expand(join(workpath,macsB_dir,"{name}","{name}_peaks.broadPeak"),name=chips),
             expand(join(workpath,sicer_dir,"{name}","{name}_broadpeaks.bed"),name=chips),
             expand(join(workpath,gem_dir,"{name}","{name}.GEM_events.narrowPeak"),name=chips),
-            expand(join(workpath,qc_dir,'{PeakTool}.FRiP_barplot.png'),PeakTool=PeakTools),
+            expand(join(workpath,qc_dir,"{Group}.FRiP_barplot.pdf"),Group=groups),
             expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
             expand(join(workpath,qc_dir,'jaccard.txt')),
             expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_{method}"),PeakTool=PeakToolsNG,name=chips,method=["GW"]),#"TSS"]),
@@ -543,19 +543,35 @@ python {params.script} -i "{input}" -g {params.genome} -t "{zipTool}" -o "{param
 rule FRiP:
      input:
         bed = lambda w: [ join(workpath, w.PeakTool, chip, chip + PeakExtensions[w.PeakTool]) for chip in chips ],
-        bam = expand(join(workpath,bam_dir,"{name}.Q5DD.bam"),name=samples),
+        bam = join(workpath,bam_dir,"{Sample}.Q5DD.bam"),
      output:
-        join(workpath,qc_dir,"{PeakTool}.FRiP_barplot.png"),
+        temp(join(workpath,qc_dir,"{PeakTool}.{Sample}.Q5DD.FRiP_table.txt")),
      params:
         rname="pl:frip",
         pythonver="python/3.5",
         outroot = lambda w: join(workpath,qc_dir,w.PeakTool),
-        script=join(workpath,"Scripts","frip_plot.py"),
+        script=join(workpath,"Scripts","frip.py"),
         genome = config['references']['ChIPseq']['REFLEN']
      shell: """
 module load {params.pythonver}
 python {params.script} -p "{input.bed}" -b "{input.bam}" -g {params.genome} -o "{params.outroot}"
 """
+
+rule FRiP_plot:
+     input:
+        expand(join(workpath,qc_dir,"{PeakTool}.{Sample}.Q5DD.FRiP_table.txt"), PeakTool=PeakTools, Sample=samples),
+     output:
+        expand(join(workpath, qc_dir, "{Group}.FRiP_barplot.pdf"),Group=groups),
+     params:
+        rname="pl:frip_plot",
+        Rver="R/3.5",
+        script=join(workpath,"Scripts","FRiP_plot.R"),
+     shell: """
+module load {params.Rver}
+Rscript {params.script} {workpath}
+"""
+
+
 
 rule HOMER_motif:
     input:
