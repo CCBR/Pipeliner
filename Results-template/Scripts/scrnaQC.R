@@ -8,16 +8,18 @@ args <- commandArgs(trailingOnly = TRUE)
 file <- as.character(args[1])
 sample = basename(file)
 outRDS = as.character(args[2])
-outRdata = as.character(args[3])
+#outRdata = as.character(args[3])
+outImageDir=as.character(args[3])
 species = as.character(args[4])
 resolution = as.character(args[5])
 clusterAlg =  as.numeric(args[6])
 annotDB = as.character(args[7])
 citeseq = as.character(args[8])
 #matrix = paste0(file,"/outs/filtered_feature_bc_matrix.h5")
-
+outRDS.doublets=gsub("\\.rds","_doublets\\.rds",outRDS)
 matrix=file
-
+sample = gsub("\\.h5$","",sample)
+resolutionString = as.character(strsplit(gsub(",+",",",resolution),split=",")[[1]])
 resolution = as.numeric(strsplit(gsub(",+",",",resolution),split=",")[[1]]) #remove excess commas, split into numeric vector
 
 #library(future)
@@ -46,8 +48,10 @@ library(Matrix)
 library(reshape2)
 library(tools)
 library("DoubletFinder")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
-
-
+library(VennDiagram)
+library(ggplot2)
+library(scales)
+library(cluster)
 
 ###Run Seurat Clustering 
 seuratClustering = function(so){
@@ -74,7 +78,7 @@ seuratClustering = function(so){
 		so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = resolution[i],algorithm = clusterAlg)
 	}
 	so <- RunUMAP(so,dims = 1:npcs)
-	
+	so@misc$npcs=npcs
 	return(so)
 }
 
@@ -128,26 +132,35 @@ convertHumanGeneList <- function(x){
   
   return(humanx)
 }
+fileInput = Read10X_h5(matrix)
 
 if (citeseq=="Yes"){
-	fileInput = Read10X_h5(matrix)
 	so_BC = CreateSeuratObject(fileInput[[1]])
 	so_BC[['CITESeq']] = CreateAssayObject(counts=fileInput[[2]])
 	so_BC = NormalizeData(so_BC,assay="CITESeq",normalization.method="CLR")
 	so_BC = ScaleData(so_BC,assay="CITESeq")
 }else{
-	so_BC = Read10X_h5(matrix) 
-	so_BC = CreateSeuratObject(so_BC)
+	if (length(fileInput)==1){
+		so_BC = CreateSeuratObject(fileInput)
+	}
+	else{
+		so_BC = CreateSeuratObject(fileInput[[1]])
+	}
 }
 
 if(species=="human"){so_BC[["percent.mt"]] <- PercentageFeatureSet(so_BC, pattern = "^MT-")}
 if(species=="mouse"){so_BC[["percent.mt"]] <- PercentageFeatureSet(so_BC, pattern = "^mt-")}
 
-nCount_out = outliers_mad(so_BC$nCount_RNA,threshold = 3)$LL_CI_MAD
-nFeature_out = outliers_mad(so_BC$nFeature_RNA,threshold = 3)$LL_CI_MAD
-mt_out = outliers_mad(so_BC$percent.mt,threshold = 3)$UL_CI_MAD
+#NW EDIT 2020 MAY: REIMPLEMENTED LOG TRANSFORM ON THRESHOLDS
+nCount_out = outliers_mad(log2(so_BC$nCount_RNA),threshold = 3)$LL_CI_MAD
+nFeature_out = outliers_mad(log2(so_BC$nFeature_RNA),threshold = 3)$LL_CI_MAD
+mt_out = outliers_mad(log2(so_BC$percent.mt),threshold = 3)$UL_CI_MAD
 
-so_filt <- subset(so_BC, subset = nFeature_RNA > nFeature_out & nCount_RNA > nFeature_out & percent.mt < mt_out)
+cellsToRemove.Feature= colnames(so_BC)[which(log2(so_BC$nFeature_RNA)<nFeature_out)]
+cellsToRemove.Count = colnames(so_BC)[which(log2(so_BC$nCount_RNA)<nCount_out)]
+cellsToRemove.Mito = colnames(so_BC)[which(log2(so_BC$percent.mt)>mt_out)]
+
+so_filt <- subset(so_BC,cells=unique(c(cellsToRemove.Feature,cellsToRemove.Count,cellsToRemove.Mito)),invert=T)
 
 load("/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/immgenMod.RData")
 
@@ -217,5 +230,170 @@ so = doublets(so)
 so$DF_hi.lo = so[[tail(names(so@meta.data),1)]]
 so_noDoublet=subset(so,cells=names(so$DF_hi.lo)[so$DF_hi.lo =="Singlet"])
 
+#### IMAGE OUTPUTS #####
+#Preliminary statistics
+png(paste0(outImageDir,"/filterStats_",sample,".png"),height=3000,width=3000,res=500,units="px")
+par(mar=c(0,0,0,0))
+plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+text(x=0.05, y=0.95, paste0("QC Metrics for ",sample,":"),
+     cex = 1.5, col = "black", family="serif", font=2, adj=0)
+
+text(x=0.075, y=0.9, paste0("Cells before filtering: ", ncol(so_BC)),
+     cex = 1.25, col = "black", family="serif", font=3, adj=0)
+text(x=0.075, y=0.865, paste0("Cells after filtering: ", ncol(so_noDoublet)),
+     cex = 1.25, col = "black", family="serif", font=3, adj=0)
+
+text(x=0.1, y=0.815,paste0("Cells removed for nFeature (number of genes): ",length(cellsToRemove.Feature)),
+		 cex = 1, col="dimgray",family="serif", font = 1, adj =0)
+text(x=0.1, y=0.785,paste0("Cells removed for nCount (number of genes): ",length(cellsToRemove.Count)),
+		 cex = 1, col="dimgray",family="serif", font = 1, adj =0)
+text(x=0.1, y=0.755,paste0("Cells removed for mitochondrial percentage: ",length(cellsToRemove.Mito)),
+		 cex = 1, col="dimgray",family="serif", font = 1, adj =0)
+text(x=0.1, y=0.725,paste0("Cells removed as doublets: ",length(which(so$DF_hi.lo =="Doublet"))),
+		 cex = 1, col="dimgray",family="serif", font = 1, adj =0)
+
+text(x=0.1, y=0.68, paste0("Number of principal components used: ",so@misc$npcs),
+		 cex = 1, col="dimgray",family="serif", font = 1, adj =0)
+
+dev.off()
+par(mar = c(5, 4, 4, 2) + 0.1)
+#Venn Diagram of initial filtered cells
+colorList=hue_pal()(3)
+venn.diagram(x=list(cellsToRemove.Feature,cellsToRemove.Count,cellsToRemove.Mito),
+			 filename=paste0(outImageDir,"/cellsRemovedVenn_",sample,".png"),
+			 category.names=c("Below feature threshold","Below count threshold","Above mitochondrial threshold"),
+			 main = paste(sample,"filtered cells:",
+						  length(unique(c(cellsToRemove.Feature,cellsToRemove.Count,cellsToRemove.Mito),sep=" "))),
+			 cat.dist=c(-0.07,-0.07,-0.07),
+			 fill = colorList,
+			 alpha = 0.5
+			)
+
+#Violin Plots
+pdf(paste0(outImageDir,"/nFeature_preFilter_",sample,".pdf"))#,height=3000,width=3000,res=500,units="px")
+gplot=ggplot(so_BC@meta.data,aes(x=orig.ident,y=log2(as.numeric(as.character(nFeature_RNA))),fill=orig.ident))
+gplot+geom_violin(trim=F)+scale_fill_manual(values=hue_pal()(3)[1],labels=c("nFeature"))+
+	geom_boxplot(width=0.1,fill="white")+
+	scale_x_discrete(labels=NULL)+
+	theme_classic()+geom_hline(yintercept=nFeature_out,linetype="dashed")+labs(x=paste(sample,"Pre-filter"), y="Log2(nFeature_RNA)")+
+	labs(fill = paste(sample,"Pre-filter"),title="Pre-filter nFeature_RNA")
+dev.off()
+#Post-filter nFeature
+pdf(paste0(outImageDir,"/nFeature_postFilter_",sample,".pdf"))
+gplot=ggplot(so_filt@meta.data,aes(x=orig.ident,y=log2(as.numeric(as.character(nFeature_RNA))),fill=orig.ident))
+gplot+geom_violin(trim=F)+scale_fill_manual(values=hue_pal()(3)[1],labels=c("nFeature"))+
+	geom_boxplot(width=0.1,fill="white")+
+	scale_x_discrete(labels=NULL)+
+	theme_classic()+labs(x=sample, y="Log2(nFeature_RNA)")+
+	labs(fill = paste(sample,"Post-filter"),title="Post-filter nFeature_RNA")
+dev.off()
+#Pre-filter nCount
+pdf(paste0(outImageDir,"/nCount_preFilter_",sample,".pdf"))
+gplot=ggplot(so_BC@meta.data,aes(x=orig.ident,y=log2(as.numeric(as.character(nCount_RNA))),fill=orig.ident))
+gplot+geom_violin(trim=F)+scale_fill_manual(values=hue_pal()(3)[2],labels=c("nCount"))+
+	geom_boxplot(width=0.1,fill="white")+
+	scale_x_discrete(labels=NULL)+
+	theme_classic()+geom_hline(yintercept=nCount_out,linetype="dashed")+labs(x=paste(sample,"Pre-filter"), y="Log2(nCount_RNA)")+
+	labs(fill = paste(sample,"Pre-filter"),title="Pre-filter nCount_RNA")
+dev.off()
+#Post-filter nCount
+pdf(paste0(outImageDir,"/nCount_postFilter_",sample,".pdf"))
+gplot=ggplot(so_filt@meta.data,aes(x=orig.ident,y=log2(as.numeric(as.character(nCount_RNA))),fill=orig.ident))
+gplot+geom_violin(trim=F)+scale_fill_manual(values=hue_pal()(3)[2],labels=c("nCount"))+
+	geom_boxplot(width=0.1,fill="white")+
+	scale_x_discrete(labels=NULL)+
+	theme_classic()+labs(x= paste(sample,"Post-filter"), y="Log2(nCount_RNA)")+
+	labs(fill =  paste(sample,"Post-filter"),title="Post-filter nCount_RNA")
+dev.off()
+#Pre-filter mitochondrial
+pdf(paste0(outImageDir,"/mitoPct_preFilter_",sample,".pdf"))
+gplot=ggplot(so_BC@meta.data,aes(x=orig.ident,y=log2(as.numeric(as.character(percent.mt))),fill=orig.ident))
+gplot+geom_violin(trim=F)+scale_fill_manual(values=hue_pal()(3)[3],labels=c("Percent Mito"))+
+	geom_boxplot(width=0.1,fill="white")+
+	scale_x_discrete(labels=NULL)+
+	theme_classic()+geom_hline(yintercept=mt_out,linetype="dashed")+labs(x=paste(sample,"Pre-filter"), y="Log2(Percent Mito)")+
+	labs(fill = paste(sample,"Pre-filter"),title="Pre-filter Percent Mito")
+dev.off()
+#post-filter mitochondrial
+pdf(paste0(outImageDir,"/mitoPct_postFilter_",sample,".pdf"))
+gplot=ggplot(so_filt@meta.data,aes(x=orig.ident,y=log2(as.numeric(as.character(percent.mt))),fill=orig.ident))
+gplot+geom_violin(trim=F)+scale_fill_manual(values=hue_pal()(3)[3],labels=c("Percent Mito"))+
+	geom_boxplot(width=0.1,fill="white")+
+	scale_x_discrete(labels=NULL)+
+	theme_classic()+labs(x= paste(sample,"Post-filter"), y="Log2(Percent Mito)")+
+	labs(fill =  paste(sample,"Post-filter"),title="Post-filter Percent Mito")
+dev.off()
+
+#Cluster analysis: UMAPs and silhouettes
+for (res in resolutionString){
+	pdf(paste0(outImageDir,"/clusterResolution_",res,"_",sample,".pdf"))
+	resMod=as.numeric(gsub("\\.0$","",res))
+	clusterPlot=DimPlot(so_noDoublet,group.by=paste0("SCT_snn_res.",resMod),label=T,repel=T)
+	print(clusterPlot + labs(title = paste0("Sample: ",sample," at resolution ",res)))
+	dev.off()
+	
+	pdf(paste0(outImageDir,"/silhouetteResolution_",res,"_",sample,".pdf"))
+
+	Idents(so_noDoublet)=paste0("SCT_snn_res.",resMod)
+	coord=Embeddings(so_noDoublet,reduction='pca')[,1:so@misc$npcs]
+	clusters=Idents(so_noDoublet)
+	d = dist(coord,method="euclidean")
+	sil=silhouette(as.numeric(as.character(clusters)),dist=d)
+	palette=alpha(colour=hue_pal()(length(unique(Idents(so_noDoublet)))),alpha=0.7)
+	print(plot(sil, col=palette[as.factor(clusters[order(clusters,decreasing=F)])], main=paste0("Silhouette plot of clustering resolution ", res), lty=2))
+  
+	abline(v=mean(sil[,3]), col="red4", lty=2)
+	dev.off()
+
+}
+
+#Primary cell type annotation
+pdf(paste0(outImageDir,"/primaryAnnotation_",sample,".pdf"))
+singleRPlot=DimPlot(so_noDoublet,group.by="annot",label=T,repel=T)
+print(singleRPlot + labs(title = paste0(sample," annotations by ",annotDB)))
+dev.off()
+
+#All cell type annotations ####NEED TO FIGURE BEST WAY TO COUNT CELL TYPES
+if(species == "human"){
+	annotList=c("HPCA","BP_encode","monaco","dice","Novershtern")
+	for (annot in annotList){
+		pdf(paste0(outImageDir,"/cellAnnotUMAP_",annot,"_",sample,".pdf"))
+		singleRPlot=DimPlot(so_noDoublet,group.by=paste0(annot,"_main"),label=T,repel=T)
+		print(singleRPlot + labs(title = paste0(sample," annotations by ",toupper(annot))))
+		dev.off()
+		pdf(paste0(outImageDir,"/cellAnnotVln_",annot,"_",sample,".pdf"))
+		print(plotScoreDistribution(so@misc$SingleR[[paste0(annot,"_main")]],show="delta.med",dots.on.top=F,size = 0.01,show.nmads=3))
+		dev.off()
+		
+	}
+}
+if (species=="mouse"){
+	annotList=c("immgen","mouseRNAseq")
+	for (annot in annotList){
+		pdf(paste0(outImageDir,"/cellAnnotUMAP_",annot,"_",sample,".pdf"))
+		singleRPlot=DimPlot(so_noDoublet,group.by=paste0(annot,"_main"),label=T,repel=T)
+		print(singleRPlot + labs(title = paste0(sample," annotations by ",toupper(annot))))
+		dev.off()
+		pdf(paste0(outImageDir,"/cellAnnotVln_",annot,"_",sample,".pdf"))
+		plotScoreDistribution(so@misc$SingleR[[paste0(annot,"_main")]],show="delta.med",dots.on.top=F,size = 0.01,show.nmads=3)
+		dev.off()
+	}
+}
+
+#Doublet locations
+pdf(paste0(outImageDir,"/doublets_",sample,".pdf"))
+doubletPlot=DimPlot(so,group.by="DF_hi.lo")
+print(doubletPlot+labs(title = paste0(sample," Doublets")))
+dev.off()
+
+#Cell cycle annotations
+pdf(paste0(outImageDir,"/cellCycle_",sample,".pdf"))
+cellCyclePlot=DimPlot(so_noDoublet,group.by="Phase")
+print(cellCyclePlot+labs(title = paste0(sample," Cell Cycle")))
+dev.off()
+
+
+#### FINAL OUTPUT FILES ####
+saveRDS(so,outRDS.doublets)
 saveRDS(so_noDoublet,outRDS)
-save.image(outRdata)
+#save.image(outRdata)

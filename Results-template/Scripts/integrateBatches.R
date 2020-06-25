@@ -198,30 +198,9 @@ runInt = function(obj,res,npcs){
 																																	   return(obj)
 }
 
-#combinedObj.integrated = runInt(combinedObj.integrated,0.3,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_0.3.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,0.6,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_0.6.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,0.8,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_0.8.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,1.0,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_1.0.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,1.2,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_1.2.rds"))
-
 combinedObj.integrated=runInt(combinedObj.integrated,resolution,npcs_batch)
 saveRDS(combinedObj.integrated,outDirSeurat)
 
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,0.3,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_0.3.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,0.6,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_0.6.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,0.8,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_0.8.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,1.0,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_1.0.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,1.2,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_1.2.rds"))
 
 combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,resolution,npcs_merge)
 saveRDS(combinedObj.integratedRNA,outDirMerge)
