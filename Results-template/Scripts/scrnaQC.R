@@ -140,7 +140,7 @@ if (citeseq=="Yes"){
 	so_BC = NormalizeData(so_BC,assay="CITESeq",normalization.method="CLR")
 	so_BC = ScaleData(so_BC,assay="CITESeq")
 }else{
-	if (length(fileInput)==1){
+	if (is.list(fileInput)==FALSE){
 		so_BC = CreateSeuratObject(fileInput)
 	}
 	else{
