@@ -84,6 +84,7 @@ p2 <- ggdraw() + draw_image(list.files(pattern = "Venn.*png$"), scale = 1)
 plot_grid(p1, p2)
 
 ```
+
 ### Cell Filtering Criteria {.tabset}
 
 #### nFeature
