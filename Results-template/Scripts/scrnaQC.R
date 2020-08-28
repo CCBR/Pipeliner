@@ -142,8 +142,7 @@ if (citeseq=="Yes"){
 }else{
 	if (is.list(fileInput)==FALSE){
 		so_BC = CreateSeuratObject(fileInput)
-	}
-	else{
+	}	else{
 		so_BC = CreateSeuratObject(fileInput[[1]])
 	}
 }
