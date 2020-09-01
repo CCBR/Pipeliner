@@ -39,6 +39,8 @@ resolutionString = as.character(strsplit(gsub(",+",",",resolution),split=",")[[1
 
 file.names <- dir(path = matrix,pattern ="rds")
 
+file.names = grep("doublets",file.names,invert=T,value=T)
+
 if (groups == "YES") {   
    groupFile = read.delim("groups.tab",header=F,stringsAsFactors = F)
    groupFile=groupFile[groupFile$V2 %in% stringr::str_split_fixed(contrasts,pattern = "-",n = Inf)[1,],]

@@ -334,7 +334,7 @@ for (res in resolutionString){
 	pdf(paste0(outImageDir,"/silhouetteResolution_",res,"_",sample,".pdf"))
 
 	Idents(so_noDoublet)=paste0("SCT_snn_res.",resMod)
-	coord=Embeddings(so_noDoublet,reduction='pca')[,1:so@misc$npcs]
+	coord=Embeddings(so_noDoublet,reduction='pca')[,1:so_noDoublet@misc$npcs]
 	clusters=Idents(so_noDoublet)
 	d = dist(coord,method="euclidean")
 	sil=silhouette(as.numeric(as.character(clusters)),dist=d)

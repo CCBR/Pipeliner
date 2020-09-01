@@ -123,6 +123,7 @@ rule integratedBatch:
 	output:
 		rdsBatch=join(workpath,"integration","seurat_batch_corrected","{myGroups}","{myGroups}.rds"),
 		mergeRDS=join(workpath,"integration","merged","{myGroups}","{myGroups}.rds"),
+		imageDir=join(workpath,"QC","integration","images")
 	params:
 		rname='pl:integratedBatch',
 		batch='--cpus-per-task=8 --mem=48g --time=24:00:00',
@@ -139,7 +140,7 @@ rule integratedBatch:
 		contrasts = "{myGroups}"
 	shell: """
 module load R/3.6.1;
-Rscript Scripts/integrateBatches.R {params.dir} {output.rdsBatch} {output.mergeRDS} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.nAnchors} {params.citeseq} {params.groups} {params.contrasts};
+Rscript Scripts/integrateBatches.R {params.dir} {output.rdsBatch} {output.mergeRDS} {output.imageDir} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.nAnchors} {params.citeseq} {params.groups} {params.contrasts};
 	"""
 
 
