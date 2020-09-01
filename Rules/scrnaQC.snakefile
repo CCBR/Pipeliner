@@ -63,7 +63,7 @@ rule all:
 		expand(join(workpath,"QC","QC_Report_{name}.html"),name=samples),
 		expand(join(workpath,"integration","seurat_batch_corrected","{myGroups}","{myGroups}.rds"),myGroups=contList),
 		expand(join(workpath,"integration","merged","{myGroups}","{myGroups}.rds"),myGroups=contList),
-		expand(join(workpath,"QC","integration","{myGroups}"),myGroups=contList),
+		expand(join(workpath,"integration","QC","{myGroups}"),myGroups=contList),
 		
 rule qc_scrna:
 	input: 
@@ -124,7 +124,7 @@ rule integratedBatch:
 	output:
 		rdsBatch=join(workpath,"integration","seurat_batch_corrected","{myGroups}","{myGroups}.rds"),
 		mergeRDS=join(workpath,"integration","merged","{myGroups}","{myGroups}.rds"),
-		jointImageDir=join(workpath,"QC","integration","{myGroups}","images")
+		jointImageDir=join(workpath,"integration","QC","{myGroups}","images")
 	params:
 		rname='pl:integratedBatch',
 		batch='--cpus-per-task=8 --mem=48g --time=24:00:00',
