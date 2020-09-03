@@ -14,7 +14,8 @@ library(dplyr)
 library(Matrix) 
 library(tools)
 library(stringr)
-
+library(cluster)
+library(scales)
 
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -33,9 +34,10 @@ citeseq = as.character(args[10])
 groups = as.character(args[11])
 contrasts = as.character(args[12])
 
-
-resolution = as.numeric(strsplit(gsub(",+",",",resolution),split=",")[[1]]) #remove excess commas, split into numeric vector
 resolutionString = as.character(strsplit(gsub(",+",",",resolution),split=",")[[1]])
+resolution = as.numeric(strsplit(gsub(",+",",",resolution),split=",")[[1]]) #remove excess commas, split into numeric vector
+
+print(resolutionString)
 
 file.names <- dir(path = matrix,pattern ="rds")
 
@@ -219,7 +221,7 @@ pdf(paste0(outImageDir,"/merged_sample.pdf"))
 DimPlot(combinedObj.integratedRNA,group.by="Sample")
 dev.off()
 
-pdf(paste0(outImageDir,"integrated_sample.pdf"))
+pdf(paste0(outImageDir,"/integrated_sample.pdf"))
 DimPlot(combinedObj.integrated,group.by="Sample")
 dev.off()
 

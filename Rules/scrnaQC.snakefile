@@ -63,7 +63,7 @@ rule all:
 		expand(join(workpath,"QC","QC_Report_{name}.html"),name=samples),
 		expand(join(workpath,"integration","seurat_batch_corrected","{myGroups}","{myGroups}.rds"),myGroups=contList),
 		expand(join(workpath,"integration","merged","{myGroups}","{myGroups}.rds"),myGroups=contList),
-		expand(join(workpath,"integration","QC","{myGroups}"),myGroups=contList),
+		expand(join(workpath,"integration","QC","{myGroups}","images"),myGroups=contList),
 		
 rule qc_scrna:
 	input: 
@@ -141,6 +141,7 @@ rule integratedBatch:
 		contrasts = "{myGroups}"
 	shell: """
 module load R/3.6.1;
+if [ ! -d {output.jointImageDir} ]; then mkdir {output.jointImageDir}; fi
 Rscript Scripts/integrateBatches.R {params.dir} {output.rdsBatch} {output.mergeRDS} {output.jointImageDir} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.nAnchors} {params.citeseq} {params.groups} {params.contrasts};
 	"""
 
