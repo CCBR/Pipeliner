@@ -203,7 +203,7 @@ if reps == "yes":
             expand(join(workpath,macsB_dir,"{name}","{name}_peaks.broadPeak"),name=chips),
             expand(join(workpath,sicer_dir,"{name}","{name}_broadpeaks.bed"),name=chips),
             expand(join(workpath,gem_dir,"{name}","{name}.GEM_events.narrowPeak"),name=chips),
-            expand(join(workpath,qc_dir,"{PeakTool}.FRiP_barplot.png"),PeakTool=PeakTools),
+            expand(join(workpath,qc_dir,"{Group}.FRiP_barplot.pdf"),Group=groups),
             expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
             expand(join(workpath,qc_dir,'jaccard.txt')),
             expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_{method}"),PeakTool=PeakToolsNG,name=chips,method=["GW"]),#"TSS"]),
@@ -219,7 +219,7 @@ else:
             expand(join(workpath,macsB_dir,"{name}","{name}_peaks.broadPeak"),name=chips),
             expand(join(workpath,sicer_dir,"{name}","{name}_broadpeaks.bed"),name=chips),
             expand(join(workpath,gem_dir,"{name}","{name}.GEM_events.narrowPeak"),name=chips),
-            expand(join(workpath,qc_dir,'{PeakTool}.FRiP_barplot.png'),PeakTool=PeakTools),
+            expand(join(workpath,qc_dir,"{Group}.FRiP_barplot.pdf"),Group=groups),
             expand(join(workpath,qc_dir,'{PeakTool}_jaccard.txt'),PeakTool=PeakTools),
             expand(join(workpath,qc_dir,'jaccard.txt')),
             expand(join(workpath,homer_dir,'{PeakTool}',"{name}_{PeakTool}_{method}"),PeakTool=PeakToolsNG,name=chips,method=["GW"]),#"TSS"]),
@@ -358,7 +358,8 @@ if pe =="yes":
     rule SICER:
         input: 
             chip = join(workpath,bam_dir,"{name}.Q5DD.bam"),
-            ppqt = join(workpath,bam_dir,"Q5DD.ppqt.txt"),
+            fragLen= join(workpath,"QC","{name}.Q5DD.insert_size_metrics.txt"),
+# using median fragment length
         output:
             txt = join(workpath,sicer_dir,"{name}","{name}_broadpeaks.txt"),
 # output columns: chrom, start, end, ChIP tag count, control tag count, p-value, fold-enrichment, q-value
@@ -373,8 +374,8 @@ if pe =="yes":
             commoncmd2 = "cd /lscratch/$SLURM_JOBID; "
             commoncmd3 = "module load {params.sicerver}; module load {params.bedtoolsver}; "
             cmd1 = "bamToBed -i {input.chip} > chip.bed; "
-            file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
-      	    extsize = [ ppqt[1] for ppqt in file if ppqt[0] == wildcards.name ][0]
+            file=list(map(lambda z:z.strip().split(),open(input.fragLen,'r').readlines()))
+            extsize= str(int(round(float(file[7][5]))))
             if params.ctrl != join(workpath,bam_dir,".Q5DD.bam"):
                 cmd2 = "bamToBed -i {params.ctrl} > input.bed; "
                 cmd3 =  "sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 " + extsize + " 0.75 600 1E-2 ; mv chip-W300-G600-islands-summary-FDR1E-2 {output.txt}"
@@ -543,19 +544,35 @@ python {params.script} -i "{input}" -g {params.genome} -t "{zipTool}" -o "{param
 rule FRiP:
      input:
         bed = lambda w: [ join(workpath, w.PeakTool, chip, chip + PeakExtensions[w.PeakTool]) for chip in chips ],
-        bam = expand(join(workpath,bam_dir,"{name}.Q5DD.bam"),name=samples),
+        bam = join(workpath,bam_dir,"{Sample}.Q5DD.bam"),
      output:
-        join(workpath,qc_dir,"{PeakTool}.FRiP_barplot.png"),
+        temp(join(workpath,qc_dir,"{PeakTool}.{Sample}.Q5DD.FRiP_table.txt")),
      params:
         rname="pl:frip",
         pythonver="python/3.5",
         outroot = lambda w: join(workpath,qc_dir,w.PeakTool),
-        script=join(workpath,"Scripts","frip_plot.py"),
+        script=join(workpath,"Scripts","frip.py"),
         genome = config['references']['ChIPseq']['REFLEN']
      shell: """
 module load {params.pythonver}
 python {params.script} -p "{input.bed}" -b "{input.bam}" -g {params.genome} -o "{params.outroot}"
 """
+
+rule FRiP_plot:
+     input:
+        expand(join(workpath,qc_dir,"{PeakTool}.{Sample}.Q5DD.FRiP_table.txt"), PeakTool=PeakTools, Sample=samples),
+     output:
+        expand(join(workpath, qc_dir, "{Group}.FRiP_barplot.pdf"),Group=groups),
+     params:
+        rname="pl:frip_plot",
+        Rver="R/3.5",
+        script=join(workpath,"Scripts","FRiP_plot.R"),
+     shell: """
+module load {params.Rver}
+Rscript {params.script} {workpath}
+"""
+
+
 
 rule HOMER_motif:
     input:

@@ -322,6 +322,7 @@ if pe == 'yes':
             expand(join(workpath,deeptools_dir,"{group}.TSS_profile.{ext}.pdf"), zip, group=deepgroups,ext=deepexts),
             # QC Table
             join(workpath,qc_dir,"QCTable.txt"),
+            expand(join(workpath,qc_dir,"{name}.{ext}.insert_size_metrics.txt"),name=samples,ext=extensions2),
 
 
     rule trim_pe: # trim, remove PolyX and remove BL reads
@@ -405,6 +406,8 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
             reference=config['references'][pfamily]['BWA'],
             bwaver=config['bin'][pfamily]['tool_versions']['BWAVER'],
             samtoolsver=config['bin'][pfamily]['tool_versions']['SAMTOOLSVER'],
+            script=join(workpath,"Scripts","bam_filter_by_mapq.py"),
+            pythonver="python/3.5"
         output:
             outbam1=join(workpath,bam_dir,"{name}.sorted.bam"), 
             outbam2=temp(join(workpath,bam_dir,"{name}.Q5.bam")),
@@ -416,12 +419,14 @@ mv /lscratch/$SLURM_JOBID/{params.prefix}.kronahtml {output.kronahtml}
         shell: """
 module load {params.bwaver};
 module load {params.samtoolsver};
+module load {params.pythonver};
 bwa mem -t {threads} {params.reference} {input.infq1} {input.infq2} | \
 samtools sort -@{threads} -o {output.outbam1}
 samtools index {output.outbam1}
 samtools flagstat {output.outbam1} > {output.flagstat1}
 samtools idxstats {output.outbam1} > {output.idxstat1}
-samtools view -b -q 6 {output.outbam1} -o {output.outbam2}
+#samtools view -b -q 6 {output.outbam1} -o {output.outbam2}
+python {params.script} -i {output.outbam1} -o {output.outbam2} -q 6
 samtools index {output.outbam2}
 samtools flagstat {output.outbam2} > {output.flagstat2}
 samtools idxstats {output.outbam2} > {output.idxstat2}
@@ -466,6 +471,22 @@ samtools index {output.out5}
 samtools flagstat {output.out5} > {output.out5f}
 samtools idxstats {output.out5} > {output.out5i}
             """
+
+    rule insert_size:
+        input:
+            bam = lambda w : join(workpath,bam_dir,w.name + "." + w.ext + "." + extensions3[w.ext + "."])
+        output:
+            txt= join(workpath,qc_dir,"{name}.{ext}.insert_size_metrics.txt"),
+            pdf= temp(join(workpath,qc_dir,"{name}.{ext}.insert_size_histogram.pdf")),
+        params:
+            rname="pl:insert_size",
+            picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
+            javaram='16g',
+        shell: """
+module load {params.picardver};
+java -Xmx{params.javaram} -jar $PICARDJARPATH/picard.jar CollectInsertSizeMetrics \
+INPUT={input.bam} OUTPUT={output.txt} H={output.pdf}
+"""
 
 rule ppqt:
     input:
