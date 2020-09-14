@@ -14,7 +14,8 @@ library(dplyr)
 library(Matrix) 
 library(tools)
 library(stringr)
-
+library(cluster)
+library(scales)
 
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -23,18 +24,24 @@ matrix <- as.character(args[1])
 #output = as.character(args[2])
 outDirSeurat = as.character(args[2])
 outDirMerge = as.character(args[3])
-specie = as.character(args[4])
-resolution = as.character(args[5])
-clusterAlg =  as.numeric(args[6])
-annotDB = as.character(args[7])
-nAnchors = as.numeric(args[8])
-citeseq = as.character(args[9])
-groups = as.character(args[10])
-contrasts = as.character(args[11])
+outImageDir=as.character(args[4])
+specie = as.character(args[5])
+resolution = as.character(args[6])
+clusterAlg =  as.numeric(args[7])
+annotDB = as.character(args[8])
+nAnchors = as.numeric(args[9])
+citeseq = as.character(args[10])
+groups = as.character(args[11])
+contrasts = as.character(args[12])
 
+resolutionString = as.character(strsplit(gsub(",+",",",resolution),split=",")[[1]])
 resolution = as.numeric(strsplit(gsub(",+",",",resolution),split=",")[[1]]) #remove excess commas, split into numeric vector
 
+print(resolutionString)
+
 file.names <- dir(path = matrix,pattern ="rds")
+
+file.names = grep("doublets",file.names,invert=T,value=T)
 
 if (groups == "YES") {   
    groupFile = read.delim("groups.tab",header=F,stringsAsFactors = F)
@@ -154,7 +161,7 @@ runInt = function(obj,res,npcs){
 	      	  obj <- FindClusters(obj, reduction = "pca", dims = 1:npcs, save.SNN = T,resolution = res[i],algorithm = clusterAlg)
 		  }
 		  obj <- RunUMAP(object = obj, reduction = "pca",dims = 1:npcs,n.components = 3)
-		  obj$groups = groupFile$V2[match(obj$Sample,  groupFile$V1,nomatch = F)]
+    if (groups=="YES"){obj$groups = groupFile$V2[match(obj$Sample,  groupFile$V1,nomatch = F)]}
 		  
 		  runSingleR = function(obj,refFile,fineORmain){ #SingleR function call as implemented below
 		  	     avg = AverageExpression(obj,assays = "SCT")
@@ -198,30 +205,70 @@ runInt = function(obj,res,npcs){
 																																	   return(obj)
 }
 
-#combinedObj.integrated = runInt(combinedObj.integrated,0.3,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_0.3.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,0.6,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_0.6.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,0.8,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_0.8.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,1.0,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_1.0.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,1.2,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_1.2.rds"))
-
 combinedObj.integrated=runInt(combinedObj.integrated,resolution,npcs_batch)
 saveRDS(combinedObj.integrated,outDirSeurat)
 
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,0.3,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_0.3.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,0.6,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_0.6.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,0.8,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_0.8.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,1.0,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_1.0.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,1.2,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_1.2.rds"))
 
 combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,resolution,npcs_merge)
 saveRDS(combinedObj.integratedRNA,outDirMerge)
+
+
+#IMAGE OUTPUT
+### Sample output
+
+
+pdf(paste0(outImageDir,"/merged_sample.pdf"))
+DimPlot(combinedObj.integratedRNA,group.by="Sample")
+dev.off()
+
+pdf(paste0(outImageDir,"/integrated_sample.pdf"))
+DimPlot(combinedObj.integrated,group.by="Sample")
+dev.off()
+
+### Clusters and silhouettes
+for (res in resolutionString){
+	pdf(paste0(outImageDir,"/clusterResolution_",res,"_merged.pdf"))
+	resMod=as.numeric(gsub("\\.0$","",res))
+	clusterPlot=DimPlot(combinedObj.integratedRNA,group.by=paste0("SCT_snn_res.",resMod),label=T,repel=T)
+	print(clusterPlot + labs(title = paste0("Merged Samples at resolution ",res)))
+	dev.off()
+	
+ pdf(paste0(outImageDir,"/clusterResolution_",res,"_integrated.pdf"))
+	resMod=as.numeric(gsub("\\.0$","",res))
+	clusterPlot=DimPlot(combinedObj.integrated,group.by=paste0("SCT_snn_res.",resMod),label=T,repel=T)
+	print(clusterPlot + labs(title = paste0("Integrated Samples at resolution ",res)))
+	dev.off()
+ 
+ 
+	pdf(paste0(outImageDir,"/silhouetteResolution_",res,"_merged.pdf"))
+
+	Idents(combinedObj.integratedRNA)=paste0("SCT_snn_res.",resMod)
+	coord=Embeddings(combinedObj.integratedRNA,reduction='pca')[,1:30]
+	clusters=Idents(combinedObj.integratedRNA)
+	d = dist(coord,method="euclidean")
+	sil=silhouette(as.numeric(as.character(clusters)),dist=d)
+	palette=alpha(colour=hue_pal()(length(unique(Idents(combinedObj.integratedRNA)))),alpha=0.7)
+	print(plot(sil, col=palette[as.factor(clusters[order(clusters,decreasing=F)])],
+	main=paste0("Silhouette plot of clustering resolution ", res), lty=2,
+	sub=paste("Average silhouette width:",format(round(mean(sil[,3]), 4), nsmall = 4))))
+  
+	abline(v=mean(sil[,3]), col="red4", lty=2)
+	dev.off()
+
+ pdf(paste0(outImageDir,"/silhouetteResolution_",res,"_integrated.pdf"))
+
+	Idents(combinedObj.integrated)=paste0("SCT_snn_res.",resMod)
+	coord=Embeddings(combinedObj.integrated,reduction='pca')[,1:30]
+	clusters=Idents(combinedObj.integrated)
+	d = dist(coord,method="euclidean")
+	sil=silhouette(as.numeric(as.character(clusters)),dist=d)
+	palette=alpha(colour=hue_pal()(length(unique(Idents(combinedObj.integrated)))),alpha=0.7)
+	print(plot(sil, col=palette[as.factor(clusters[order(clusters,decreasing=F)])],
+	main=paste0("Silhouette plot of clustering resolution ", res), lty=2,
+	sub=paste("Average silhouette width:",format(round(mean(sil[,3]), 4), nsmall = 4))))
+  
+	abline(v=mean(sil[,3]), col="red4", lty=2)
+	dev.off()
+}
+
+###
