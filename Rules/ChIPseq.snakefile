@@ -358,7 +358,8 @@ if pe =="yes":
     rule SICER:
         input: 
             chip = join(workpath,bam_dir,"{name}.Q5DD.bam"),
-            ppqt = join(workpath,bam_dir,"Q5DD.ppqt.txt"),
+            fragLen= join(workpath,"QC","{name}.Q5DD.insert_size_metrics.txt"),
+# using median fragment length
         output:
             txt = join(workpath,sicer_dir,"{name}","{name}_broadpeaks.txt"),
 # output columns: chrom, start, end, ChIP tag count, control tag count, p-value, fold-enrichment, q-value
@@ -373,8 +374,8 @@ if pe =="yes":
             commoncmd2 = "cd /lscratch/$SLURM_JOBID; "
             commoncmd3 = "module load {params.sicerver}; module load {params.bedtoolsver}; "
             cmd1 = "bamToBed -i {input.chip} > chip.bed; "
-            file=list(map(lambda z:z.strip().split(),open(input.ppqt,'r').readlines()))
-      	    extsize = [ ppqt[1] for ppqt in file if ppqt[0] == wildcards.name ][0]
+            file=list(map(lambda z:z.strip().split(),open(input.fragLen,'r').readlines()))
+            extsize= str(int(round(float(file[7][5]))))
             if params.ctrl != join(workpath,bam_dir,".Q5DD.bam"):
                 cmd2 = "bamToBed -i {params.ctrl} > input.bed; "
                 cmd3 =  "sh $SICERDIR/SICER.sh . chip.bed input.bed . {params.genomever} 100 300 " + extsize + " 0.75 600 1E-2 ; mv chip-W300-G600-islands-summary-FDR1E-2 {output.txt}"
