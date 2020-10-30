@@ -1,0 +1,32 @@
+# Project Information
+site_name: CCBR Pipeliner
+site_author: CCBR
+# Repository
+repo_name: CCBR/Pipeliner
+repo_url: https://github.com/CCBR/Pipeliner
+
+# Copyright
+copyright: Copyright &copy; 2020 CCBR
+
+# Configuration
+theme:
+  name: readthedocs
+  palette:
+    scheme: default
+
+plugins:
+  - search
+
+# Customization
+extra:
+  social:
+    - icon: fontawesome/solid/users
+      link: http://bioinformatics.cancer.gov
+    - icon: fontawesome/brands/github
+      link: https://github.com/CCBR
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/orgs/nciccbr/repositories
+
+# Page Tree
+nav:
+  - Home: index.htmld

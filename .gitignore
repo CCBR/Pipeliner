@@ -4,3 +4,4 @@
 **/*.bak
 **/*.DS_Store
 gui/__pycache__/
+site/
