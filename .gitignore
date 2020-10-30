@@ -1,5 +1,6 @@
 **/.*
 !.gitignore
+!.gitattributes
 **/*~
 **/*.bak
 **/*.DS_Store
