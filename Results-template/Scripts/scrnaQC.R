@@ -19,6 +19,7 @@ citeseq = as.character(args[8])
 outRDS.doublets=gsub("\\.rds","_doublets\\.rds",outRDS)
 matrix=file
 sample = gsub("\\.h5$","",sample)
+sample = gsub("\\.rds$","",sample)
 resolutionString = as.character(strsplit(gsub(",+",",",resolution),split=",")[[1]])
 resolution = as.numeric(strsplit(gsub(",+",",",resolution),split=",")[[1]]) #remove excess commas, split into numeric vector
 
@@ -132,6 +133,7 @@ convertHumanGeneList <- function(x){
   
   return(humanx)
 }
+
 fileInput = Read10X_h5(matrix)
 
 if (citeseq=="Yes"){
@@ -411,6 +413,8 @@ pdf(paste0(outImageDir,"/cellCycle_",sample,".pdf"))
 cellCyclePlot=DimPlot(so_noDoublet,group.by="Phase")
 print(cellCyclePlot+labs(title = paste0(sample," Cell Cycle")))
 dev.off()
+
+#CITESeq Ridge plots, if applicable #see integrateBatches for pseudocode
 
 
 #### FINAL OUTPUT FILES ####

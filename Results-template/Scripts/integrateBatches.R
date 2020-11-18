@@ -151,58 +151,56 @@ if(ncol(combinedObj.integratedRNA)<50000){
 }
 
 runInt = function(obj,res,npcs){
-       if (citeseq=="Yes"){
-       	  obj = NormalizeData(obj,assay="CITESeq",normalization.method="CLR")
-	      obj = ScaleData(obj,assay="CITESeq")
-	      }
-	      obj <- RunPCA(object = obj, npcs = 50, verbose = FALSE)
-	      obj <- FindNeighbors(obj,dims = 1:npcs)
-	      for (i in 1:length(res)){
-	      	  obj <- FindClusters(obj, reduction = "pca", dims = 1:npcs, save.SNN = T,resolution = res[i],algorithm = clusterAlg)
-		  }
-		  obj <- RunUMAP(object = obj, reduction = "pca",dims = 1:npcs,n.components = 3)
-    if (groups=="YES"){obj$groups = groupFile$V2[match(obj$Sample,  groupFile$V1,nomatch = F)]}
+ if (citeseq=="Yes"){
+ 	obj = NormalizeData(obj,assay="CITESeq",normalization.method="CLR")
+  obj = ScaleData(obj,assay="CITESeq")
+	}
+ obj <- RunPCA(object = obj, npcs = 50, verbose = FALSE)
+	obj <- FindNeighbors(obj,dims = 1:npcs)
+	for (i in 1:length(res)){
+  obj <- FindClusters(obj, reduction = "pca", dims = 1:npcs, save.SNN = T,resolution = res[i],algorithm = clusterAlg)
+	}
+	obj <- RunUMAP(object = obj, reduction = "pca",dims = 1:npcs,n.components = 3)
+ if (groups=="YES"){obj$groups = groupFile$V2[match(obj$Sample,  groupFile$V1,nomatch = F)]}
 		  
-		  runSingleR = function(obj,refFile,fineORmain){ #SingleR function call as implemented below
-		  	     avg = AverageExpression(obj,assays = "SCT")
-			     	 avg = as.data.frame(avg)
-				     ref = refFile
-				     	 s = SingleR(test = as.matrix(avg),ref = ref,labels = ref[[fineORmain]])
-					   
-						clustAnnot = s$labels
-							   names(clustAnnot) = colnames(avg)
-							   		     names(clustAnnot) = gsub("SCT.","",names(clustAnnot))
-									     		       
-												obj$clustAnnot = clustAnnot[match(obj$seurat_clusters,names(clustAnnot))]
-													       return(obj$clustAnnot)
-													       }
+	runSingleR = function(obj,refFile,fineORmain){ #SingleR function call as implemented below
+		avg = AverageExpression(obj,assays = "SCT")
+		avg = as.data.frame(avg)
+		ref = refFile
+		s = SingleR(test = as.matrix(avg),ref = ref,labels = ref[[fineORmain]])
 
-													       if(annotDB == "HPCA"){
-													       		  obj$clustAnnot <- runSingleR(obj,HumanPrimaryCellAtlasData(),"label.main")
-															  		 obj$clustAnnotDetail <-  runSingleR(obj,HumanPrimaryCellAtlasData(),"label.fine")
-																	 }
-																	 if(annotDB == "BP_encode"){
-																	 	    obj$clustAnnot <-  runSingleR(obj,BlueprintEncodeData(),"label.main")
-																		    		   obj$clustAnnotDetail <-  runSingleR(obj,BlueprintEncodeData(),"label.fine")
-																				   }
-																				   if(annotDB == "monaco"){
-																				   	      obj$clustAnnot <-  runSingleR(obj,MonacoImmuneData(),"label.main")
-																					      		     obj$clustAnnotDetail <-     runSingleR(obj,MonacoImmuneData(),"label.fine")
-																							     }
-																							     if(annotDB == "immu_cell_exp"){
-																							     		obj$clustAnnot <-  runSingleR(obj,DatabaseImmuneCellExpressionData(),"label.main")
-																										       obj$clustAnnotDetail <- runSingleR(obj,DatabaseImmuneCellExpressionData(),"label.fine")
-																										       }
-																										       
-																										       if(annotDB == "immgen"){
-																										       		  obj$clustAnnot <-  runSingleR(obj,ImmGenData(),"label.main")
-																												  		 obj$clustAnnotDetail <- runSingleR(obj,ImmGenData(),"label.fine")
-																														 }
-																														 if(annotDB == "mouseRNAseq"){
-																														 	    obj$clustAnnot <-  runSingleR(obj,MouseRNAseqData(),"label.main")
-																															    		   obj$clustAnnotDetail <- runSingleR(obj,MouseRNAseqData(),"label.fine")
-																																	   }
-																																	   return(obj)
+		clustAnnot = s$labels
+		names(clustAnnot) = colnames(avg)
+		names(clustAnnot) = gsub("SCT.","",names(clustAnnot))
+  
+		obj$clustAnnot = clustAnnot[match(obj$seurat_clusters,names(clustAnnot))]
+		return(obj$clustAnnot)
+	}
+ if(annotDB == "HPCA"){
+		obj$clustAnnot <- runSingleR(obj,HumanPrimaryCellAtlasData(),"label.main")
+		obj$clustAnnotDetail <-  runSingleR(obj,HumanPrimaryCellAtlasData(),"label.fine")
+	}
+	if(annotDB == "BP_encode"){
+	 obj$clustAnnot <-  runSingleR(obj,BlueprintEncodeData(),"label.main")
+		obj$clustAnnotDetail <-  runSingleR(obj,BlueprintEncodeData(),"label.fine")
+	}
+	if(annotDB == "monaco"){
+		obj$clustAnnot <-  runSingleR(obj,MonacoImmuneData(),"label.main")
+		obj$clustAnnotDetail <-     runSingleR(obj,MonacoImmuneData(),"label.fine")
+	}
+	if(annotDB == "immu_cell_exp"){
+		obj$clustAnnot <-  runSingleR(obj,DatabaseImmuneCellExpressionData(),"label.main")
+		obj$clustAnnotDetail <- runSingleR(obj,DatabaseImmuneCellExpressionData(),"label.fine")
+	}
+	if(annotDB == "immgen"){
+  obj$clustAnnot <-  runSingleR(obj,ImmGenData(),"label.main")
+		obj$clustAnnotDetail <- runSingleR(obj,ImmGenData(),"label.fine")
+	}
+	if(annotDB == "mouseRNAseq"){
+		obj$clustAnnot <-  runSingleR(obj,MouseRNAseqData(),"label.main")
+		obj$clustAnnotDetail <- runSingleR(obj,MouseRNAseqData(),"label.fine")
+	}
+	return(obj)
 }
 
 combinedObj.integrated=runInt(combinedObj.integrated,resolution,npcs_batch)
@@ -270,5 +268,43 @@ for (res in resolutionString){
 	abline(v=mean(sil[,3]), col="red4", lty=2)
 	dev.off()
 }
+
+#Primary cell type annotation
+pdf(paste0(outImageDir,"/primaryAnnotation_integrated.pdf"))
+singleRPlot=DimPlot(combinedObj.integrated,group.by="annot",label=T,repel=T)
+print(singleRPlot + labs(title = paste0(sample," annotations by ",annotDB)))
+dev.off()
+
+pdf(paste0(outImageDir,"/primaryAnnotation_merged.pdf"))
+singleRPlot=DimPlot(combinedObj.integratedRNA,group.by="annot",label=T,repel=T)
+print(singleRPlot + labs(title = paste0(sample," annotations by ",annotDB)))
+
+library(grid)
+library(gridExtra)
+mytheme = gridExtra::ttheme_default(core = list(fg_params=list(cex=0.6)),colhead = list(fg_params=list(cex=0.6)),rowhead = list(fg_params=list(cex=0.8)))
+tableWidth = length(unique(combinedObj.integrated$Sample))*1.3
+g = gridExtra::tableGrob(table(so$immgen_main, so$Sample),theme=mytheme)
+pdf(paste0 (outImageDir,"/sampleCellTypeCounts.pdf"),width = tableWidth);grid.draw(g);dev.off()
+
+#CITESeq Ridge plots, if applicable
+#if(citeseq=="Yes"){
+# Figure out dynamic loop for this code
+#  plot1 = RidgePlot(so, features=rownames(so@assays$CITESeq)[1],group.by="Sample")
+
+# After all plots formed, Create following code
+# CombinePlots(list(plot1+scale_fill_manual(values=alpha(colour=hue_pal()(length(unique(so$groups))),alpha=0.5))+NoLegend(), plot2+scale_fill_manual(values=alpha(colour=hue_pal()(length(unique(so$groups))),alpha=0.5))+NoLegend()))
+# Likely have to create list of objects in the dynamic build.
+
+#  pseudo loop x 2: One for sample (guaranteed), one for groups
+#citeseqPlots = list()
+#for protein in rownames(so@assays$CITESeq){
+# basePlot = RidgePlot(so, features = protein)
+# plot = basePlot+scale_fill_manual(values=alpha(colour=hue_pal()(length(unique(Idents(so)))),alpha=0.5))+NoLegend()
+# citeseqPlots[[protein]] = plot
+#}
+#colNums=2
+#if(length(citeseqPlots)==1){colNums=1}
+#CombinePlots(citeseqPlots,ncol=colnums)
+#}
 
 ###
