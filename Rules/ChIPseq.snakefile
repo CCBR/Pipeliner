@@ -587,9 +587,9 @@ rule HOMER_motif:
     run:
         commoncmd3="module load {params.homerver}; "
         if wildcards.PeakTool in PeakTools_broad:
-            cmd="findMotifsGenome.pl {input} {params.genomever} {output.gw} -size given -p {threads} -preparsedDir /lscratch/$SLURM_JOBID; "
+            cmd="findMotifsGenome.pl {input} {params.genomever} {output.gw} -size given -p {threads} -len 8,10 -preparsedDir /lscratch/$SLURM_JOBID; "
         else:
-            cmd="findMotifsGenome.pl {input} {params.genomever} {output.gw} -p {threads} -preparsedDir /lscratch/$SLURM_JOBID; "
+            cmd="findMotifsGenome.pl {input} {params.genomever} {output.gw} -p {threads} -len 8,10 -preparsedDir /lscratch/$SLURM_JOBID; "
         shell(commoncmd3 + cmd)
 
 rule UROPA:
