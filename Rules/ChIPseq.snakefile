@@ -616,12 +616,12 @@ elif [ '{wildcards.type}' == 'genes' ]; then
      echo '      {{ "feature":"gene","distance":5000,"show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
      echo '      {{ "feature":"gene","show.attributes":["gene_id", "gene_name","gene_type"] }}],' >> {params.json}
 elif [ '{wildcards.type}' == 'TSSprot' ]; then
-     echo '      {{ "feature":"gene","distance":[3000,500],"filter.attribute":"gene_type","attribute.value":"protein_coding","feature.anchor":"start","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
+     echo '      {{ "feature":"gene","distance":[3000,1000],"filter.attribute":"gene_type","attribute.value":"protein_coding","feature.anchor":"start","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
      echo '      {{ "feature":"gene","distance":3000,"filter.attribute":"gene_type","attribute.value":"protein_coding","feature.anchor":"end","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
      echo '      {{ "feature":"gene","distance":100000,"filter.attribute":"gene_type","attribute.value":"protein_coding","feature.anchor":"center","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
      echo '      {{ "feature":"gene","distance":100000,"filter.attribute":"gene_type","attribute.value":"protein_coding","show.attributes":["gene_id", "gene_name","gene_type"] }}],' >> {params.json}
 else
-     echo '      {{ "feature":"gene","distance":[3000,500],"feature.anchor":"start","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
+     echo '      {{ "feature":"gene","distance":[3000,1000],"feature.anchor":"start","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
      echo '      {{ "feature":"gene","distance":3000,"feature.anchor":"end","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
      echo '      {{ "feature":"gene","distance":100000,"feature.anchor":"center","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
      echo '      {{ "feature":"gene","distance":100000,"show.attributes":["gene_id", "gene_name","gene_type"] }}],' >> {params.json}
