@@ -436,7 +436,6 @@ samtools idxstats {output.outbam2} > {output.idxstat2}
         input: 
             bam2=join(workpath,bam_dir,"{name}.Q5.bam")
         output:
-            out4=temp(join(workpath,bam_dir,"{name}.bwa_rg_added.Q5.bam")), 
             out5=join(workpath,bam_dir,"{name}.Q5DD.bam"),
             out5f=join(workpath,bam_dir,"{name}.Q5DD.bam.flagstat"),
             out5i=join(workpath,bam_dir,"{name}.Q5DD.bam.idxstat"),
@@ -450,18 +449,8 @@ samtools idxstats {output.outbam2} > {output.idxstat2}
 module load {params.samtoolsver};
 module load {params.picardver}; 
 java -Xmx{params.javaram} \
-  -jar $PICARDJARPATH/picard.jar AddOrReplaceReadGroups \
-  INPUT={input.bam2} \
-  OUTPUT={output.out4} \
-  TMP_DIR=/lscratch/$SLURM_JOBID \
-  RGID=id \
-  RGLB=library \
-  RGPL=illumina \
-  RGPU=machine \
-  RGSM=sample; 
-java -Xmx{params.javaram} \
   -jar $PICARDJARPATH/picard.jar MarkDuplicates \
-  INPUT={output.out4} \
+  INPUT={input.bam2} \
   OUTPUT={output.out5} \
   TMP_DIR=/lscratch/$SLURM_JOBID \
   VALIDATION_STRINGENCY=SILENT \
@@ -731,8 +720,8 @@ rule deeptools_genes:
             cmd1="awk -v OFS='\t' -F'\t' '{{print $1, $2, $3, $5, \".\", $4}}' "+params.prebed+" > "+output.bed
         cmd2="computeMatrix scale-regions -S "+" ".join(bws)+" -R "+output.bed+" -p "+params.nthreads+" --upstream 1000 --regionBodyLength 2000 --downstream 1000 --skipZeros -o "+output.metamat+" --samplesLabel "+" ".join(labels)
         cmd3="computeMatrix reference-point -S "+" ".join(bws)+" -R "+output.bed+" -p "+params.nthreads+" --referencePoint TSS --upstream 3000 --downstream 3000 --skipZeros -o "+output.TSSmat+" --samplesLabel "+" ".join(labels)
-        cmd4="plotHeatmap -m "+output.metamat+" -out "+output.metaheat+" --colorMap 'PuOr_r' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
-        cmd5="plotHeatmap -m "+output.TSSmat+" -out "+output.TSSheat+" --colorMap 'RdBu_r' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
+        cmd4="plotHeatmap -m "+output.metamat+" -out "+output.metaheat+" --colorMap 'BuGn' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
+        cmd5="plotHeatmap -m "+output.TSSmat+" -out "+output.TSSheat+" --colorMap 'BuPu' --yAxisLabel 'average RPGC' --regionsLabel 'genes' --legendLocation 'none'"
         cmd6="plotProfile -m "+output.metamat+" -out "+output.metaline+" --plotHeight 15 --plotWidth 15 --perGroup --yAxisLabel 'average RPGC' --plotType 'se' --legendLocation upper-right"
         cmd7="plotProfile -m "+output.TSSmat+" -out "+output.TSSline+" --plotHeight 15 --plotWidth 15 --perGroup --yAxisLabel 'average RPGC' --plotType 'se' --legendLocation upper-left"
         shell(commoncmd+cmd1)
