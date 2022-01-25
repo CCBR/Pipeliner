@@ -623,7 +623,7 @@ elif [ '{wildcards.type}' == 'protSEC' ]; then
 else
      echo '      {{ "feature":"gene","distance":[3000,1000],"filter.attribute":"gene_type","attribute.value":"protein_coding","feature.anchor":"start","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
      echo '      {{ "feature":"gene","distance":10000,"filter.attribute":"gene_type","attribute.value":"protein_coding","feature.anchor":"start","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
-     echo '      {{ "feature":"gene","distance":100000,"filter.attribute":"gene_type","attribute.value":"protein_coding","feature.anchor":"start","show.attributes":["gene_id", "gene_name","gene_type"] }},' >> {params.json}
+     echo '      {{ "feature":"gene","distance":100000,"filter.attribute":"gene_type","attribute.value":"protein_coding","feature.anchor":"start","show.attributes":["gene_id", "gene_name","gene_type"] }}],' >> {params.json}
 
 fi
 echo '"priority":"Yes",' >> {params.json}
@@ -779,3 +779,5 @@ if pe == "yes":
             cmd8 = "tail -n +2 {output.xls} | nl -w2 | awk -v OFS='\t' '{{print $2,$3,$4,$9$1,$6}}' > {output.bed}"
             shell(commoncmd1)
             shell( commoncmd2 + commoncmd3 + cmd1 + cmd2 + cmd3 + cmd4 + cmd5 + cmd6 + cmd7 + cmd8 )
+
+
