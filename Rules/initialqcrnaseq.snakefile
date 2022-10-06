@@ -666,14 +666,14 @@ rule get_strandness:
     files=expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
   output: 
     outfile=join(workpath,log_dir,"strandness.txt"),
-    outdir=join(workpath,log_dir)
   params: 
+    outdir=join(workpath,log_dir),
     rname='pl:get_strandness',
     pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
     pythonscript=join(workpath,"Scripts","get_strandness.py")
   run:
     import os
-    os.chdir(output.outdir)
+    os.chdir(params.outdir)
     check_readaccess(input.groupsfile)
     os.system("module load "+params.pythonver+";python "+params.pythonscript+" "+input.groupsfile+" > "+output.outfile)
     strandfile=open(output.outfile,'r')

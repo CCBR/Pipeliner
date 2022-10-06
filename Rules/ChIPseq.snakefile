@@ -761,6 +761,8 @@ if pe == "yes":
         params:
             rname='pl:manorm',
             bedtoolsver=config['bin'][pfamily]['tool_versions']['BEDTOOLSVER'],
+            sample1= lambda w: groupdata[w.group1][0],
+            sample2= lambda w: groupdata[w.group2][0],
             manormver="manorm/1.1.4"
         run:
             commoncmd1 = "if [ ! -e /lscratch/$SLURM_JOBID ]; then mkdir /lscratch/$SLURM_JOBID; fi "
