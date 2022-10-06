@@ -167,7 +167,7 @@ if se == 'yes' :
             minlen=35,
             leadingquality=10,
             trailingquality=10,
-            javaram="64g",
+            javaram="100g",
         threads: 16
         shell: """
 module load {params.cutadaptver};
@@ -344,7 +344,7 @@ if pe == 'yes':
             minlen=35,
             leadingquality=10,
             trailingquality=10,
-            javaram="64g",
+            javaram="100g",
         threads: 16
         shell: """
 module load {params.cutadaptver};
