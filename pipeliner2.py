@@ -125,7 +125,7 @@ class PipelinerGUI(Tk):
         l = Label( pipeline_panel, text="Pipeline Family:" )
         l.grid(row=1,column=1,sticky=W,padx=0,pady=5)
         
-        annotations=['hg19','mm10','mm9','hg38','hs37d5','hs38d1','GRCh38','hg38_30_KSHV','hg38_HPV16','canFam3','Mmul_8.0.1', 'hg38_30', 'mm10_M21']
+        annotations=['hg19','mm10','mm9','hg38','hs37d5','hs38d1','GRCh38','hg38_30_KSHV','hg38_HPV16','canFam3','Mmul_8.0.1', 'hg38_30', 'mm10_M21', 'mm10_M25']
         self.annotation = annotation = StringVar()
         annotation.set('Select the genome')
         #annotation.trace('w', lambda *_ :settargets(annotation) )
@@ -252,8 +252,8 @@ class PipelinerGUI(Tk):
         print( self.pfamily.get() )
         print( self.annotation.get() )
         annotation=self.annotation.get()
-        set1=['Select the genome','hg19','mm10','mm9','hg38','hs37d5','hs38d1','hg38_30_KSHV','hg38_HPV16','canFam3','Mmul_8.0.1', 'hg38_30', 'mm10_M21']
-        set2=['Select the genome','hg19','mm10','mm9','hg38']
+        set1=['Select the genome','hg19','mm10','mm9','hg38','hs37d5','hs38d1','hg38_30_KSHV','hg38_HPV16','canFam3','Mmul_8.0.1', 'hg38_30', 'mm10_M21', 'mm10_M25']
+        set2=['Select the genome','mm10','hg38']
         set3=['Select the genome','GRCh38','mm10']
         set4=['Select the genome','hg19','mm10','hg38']
 
