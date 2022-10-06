@@ -816,7 +816,8 @@ class PipelineFrame( Frame ) :
                 json.dump(P, F, sort_keys = True, indent = 4, ensure_ascii=False)
             F.close()
             #showinfo("Project Json Write","Project Json file written.")
-        except:
+        except Exception as e:
+            print('Error occured while writing {}/project.json:\n{}'.format(USER_HOME, e))
             showerror("Error","Project Json file not written.")
 
     def workflow(self):
