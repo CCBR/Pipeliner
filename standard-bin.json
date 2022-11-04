@@ -333,7 +333,7 @@
         "FASTQ_SCREEN": "/data/CCBR_Pipeliner/db/PipeDB/bin/fastq_screen_v0.9.3/fastq_screen",
         "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
         "FASTQ_SCREEN_CONFIG2": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen_2.conf",
-        "GEMREADDIST": '/usr/local/apps/gem/3.0/Read_Distribution_default.txt',
+        "GEMREADDIST": "/data/CCBR_Pipeliner/db/PipeDB/ChIPseq/gem/3.0/Read_Distribution_default.txt",
         "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
         "NGSQC": "/data/CCBR_Pipeliner/db/PipeDB/ChIPseq/NGSQC_linux_x86_64",
             },
