@@ -326,7 +326,7 @@
         "SAMTOOLSVER": "samtools/1.6",
         "SICERVER": "sicer/1.1",
         "UCSCVER": "ucsc/384",
-        "UROPAVER": "uropa/2.0.3",
+        "UROPAVER": "uropa/4.0.2",
 },
         "CONFMULTIQC": "/data/CCBR_Pipeliner/db/PipeDB/ChIPseq/multiqc_config.yaml",
         "FASTAWITHADAPTERSETD" : "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",
