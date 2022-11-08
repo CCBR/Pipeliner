@@ -163,7 +163,7 @@ FileTypesIDR = { 'macsNarrow': 'narrowPeak', 'macsBroad': 'broadPeak',
 RankColIDR = { 'macsNarrow': 'q.value', 'macsBroad': 'q.value',
                'sicer': 'q.value' }
 
-UropaCats = ["genes","prot","TSSgenes","TSSprot"]
+UropaCats = ["genes","prot","protSEC","protTSS"]
 
 IDRgroup, IDRsample1, IDRsample2, IDRpeaktool =	outputIDR(groupswreps, groupdata, chip2input, PeakToolsNG)
 
