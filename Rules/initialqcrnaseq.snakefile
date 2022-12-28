@@ -197,8 +197,8 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
         fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
         outdir = join(workpath,"FQscreen"),
         outdir2 = join(workpath,"FQscreen2"),
-        fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
-        fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
+        fastq_screen_config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG'],
+        fastq_screen_config2=config['references'][pfamily]['FASTQ_SCREEN_CONFIG2'],
         perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
         bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
       threads: 24
@@ -491,8 +491,8 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
         fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
         outdir = join(workpath,"FQscreen"),
         outdir2 = join(workpath,"FQscreen2"),
-        fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
-        fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
+        fastq_screen_config=config['references'][pfamily]['FASTQ_SCREEN_CONFIG'],
+        fastq_screen_config2=config['references'][pfamily]['FASTQ_SCREEN_CONFIG2'],
         perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
         bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
       threads: 24
