@@ -81,7 +81,7 @@ rule qc_scrna:
 		annotUMAP=join(workpath,"QC","{name}","images","primaryAnnotation_{name}.pdf"),
 		doubletUMAP=join(workpath,"QC","{name}","images","doublets_{name}.pdf"),
 		cellCycleUMAP=join(workpath,"QC","{name}","images","cellCycle_{name}.pdf"),
-		imageDir = join(workpath,"QC","{name}","images"),
+#		imageDir = join(workpath,"QC","{name}","images"),
 	params:
 		rname='pl:qc_scrna',
 		specie = specie, 
