@@ -283,7 +283,7 @@ library(grid)
 library(gridExtra)
 mytheme = gridExtra::ttheme_default(core = list(fg_params=list(cex=0.6)),colhead = list(fg_params=list(cex=0.6)),rowhead = list(fg_params=list(cex=0.8)))
 tableWidth = length(unique(combinedObj.integrated$Sample))*1.3
-g = gridExtra::tableGrob(table(so$immgen_main, so$Sample),theme=mytheme)
+g = gridExtra::tableGrob(table(combinedObj.integrated$immgen_main, combinedObj.integrated$Sample),theme=mytheme)
 pdf(paste0 (outImageDir,"/sampleCellTypeCounts.pdf"),width = tableWidth);grid.draw(g);dev.off()
 
 #CITESeq Ridge plots, if applicable
