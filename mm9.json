@@ -176,6 +176,7 @@
                        "chrX","chrY","chrM"],
             "EFFECTIVEGENOMESIZE": "2400000000", ### based upon Deeptools khmer output for 75bp fragments and rounded
             "FASTQ_SCREEN_CONFIG": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf",
+	    "FASTQ_SCREEN_CONFIG2": "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen_2.conf",
             "FASTAWITHADAPTERSETC": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa",
             "FASTAWITHADAPTERSETD": "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.consolidated.fa",
             "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm9_basic/geneinfo.bed",

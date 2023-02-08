@@ -194,8 +194,8 @@
         "time": "1-00:00:00"
     },
     "fastq_screen": {
-        "mem": "24g",
-        "threads": "24",
+        "mem": "90g",
+        "threads": "36",
         "time": "2-00:00:00"
     },
     "fastqc": {
