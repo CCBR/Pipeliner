@@ -424,7 +424,7 @@
     },
     "gatk_recal": {
         "mem": "64g",
-        "threads": "32",
+        "threads": "16",
         "time": "5-00:00:00"
     },
     "gatk_rnaseqvar_haplotype_caller": {
