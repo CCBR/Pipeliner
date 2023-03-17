@@ -586,7 +586,7 @@ class PipelineFrame( Frame ) :
              'analyst': gi.eanalyst.get(), 
              'poc': gi.epoc.get(), 
              'pipeline': self.Pipeline.get(), 
-             'version':"4.0.5", 
+             'version':"4.0.6", 
              'annotation': gi.annotation.get(), 
              'datapath': self.datapath.get(), 
              'targetspath': self.targetspath.get(), 

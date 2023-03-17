@@ -10,10 +10,10 @@ def build_in_progress( msg="" ) :
 def about():
     info="""
     CCBR Pipeliner
-    Version 4.0.5
+    Version 4.0.6
     January, 2023.
     """
-    showinfo("CCBR Pipeliner\nVersion 4.0.5",info)
+    showinfo("CCBR Pipeliner\nVersion 4.0.6",info)
 
 def add_menubar( root ):
 	menubar = Menu(root)
