@@ -11,6 +11,16 @@ workpath = config['project']['workpath']
 filetype = config['project']['filetype']
 readtype = config['project']['readtype']
 
+try:
+  FASTQ_SCREEN_CONFIG = config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
+except KeyError:
+  FASTQ_SCREEN_CONFIG = config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG']
+
+try:
+  FASTQ_SCREEN_CONFIG2 = config['references'][pfamily]['FASTQ_SCREEN_CONFIG2']
+except KeyError:
+  FASTQ_SCREEN_CONFIG2 = config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2']
+
 
 def outputfiles2(groupslist, inputnorm):
     '''
@@ -167,7 +177,7 @@ if se == 'yes' :
             minlen=35,
             leadingquality=10,
             trailingquality=10,
-            javaram="64g",
+            javaram="100g",
         threads: 16
         shell: """
 module load {params.cutadaptver};
@@ -344,7 +354,7 @@ if pe == 'yes':
             minlen=35,
             leadingquality=10,
             trailingquality=10,
-            javaram="64g",
+            javaram="100g",
         threads: 16
         shell: """
 module load {params.cutadaptver};
@@ -838,8 +848,8 @@ rule fastq_screen:
         bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
         perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
         fastq_screen=config['bin'][pfamily]['FASTQ_SCREEN'],
-        fastq_screen_config=config['bin'][pfamily]['FASTQ_SCREEN_CONFIG'],
-        fastq_screen_config2=config['bin'][pfamily]['FASTQ_SCREEN_CONFIG2'],
+        fastq_screen_config=FASTQ_SCREEN_CONFIG,
+        fastq_screen_config2=FASTQ_SCREEN_CONFIG2,
         outdir = "FQscreen",
         outdir2 = "FQscreen2",
     threads: 24

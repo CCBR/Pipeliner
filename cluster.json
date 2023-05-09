@@ -194,8 +194,8 @@
         "time": "1-00:00:00"
     },
     "fastq_screen": {
-        "mem": "24g",
-        "threads": "24",
+        "mem": "90g",
+        "threads": "36",
         "time": "2-00:00:00"
     },
     "fastqc": {
@@ -424,7 +424,7 @@
     },
     "gatk_recal": {
         "mem": "64g",
-        "threads": "32",
+        "threads": "16",
         "time": "5-00:00:00"
     },
     "gatk_rnaseqvar_haplotype_caller": {
@@ -880,11 +880,11 @@
         "time": "5-00:00:00"
     },
     "trim_pe": {
-        "mem": "24g",
+        "mem": "120g",
         "threads": "32"
     },
     "trim_se": {
-        "mem": "24g",
+        "mem": "120g",
         "threads": "32"
     },
     "trim_step4": {
