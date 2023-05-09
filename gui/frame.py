@@ -586,7 +586,7 @@ class PipelineFrame( Frame ) :
              'analyst': gi.eanalyst.get(), 
              'poc': gi.epoc.get(), 
              'pipeline': self.Pipeline.get(), 
-             'version':"4.0", 
+             'version':"4.0.6", 
              'annotation': gi.annotation.get(), 
              'datapath': self.datapath.get(), 
              'targetspath': self.targetspath.get(), 
@@ -816,7 +816,8 @@ class PipelineFrame( Frame ) :
                 json.dump(P, F, sort_keys = True, indent = 4, ensure_ascii=False)
             F.close()
             #showinfo("Project Json Write","Project Json file written.")
-        except:
+        except Exception as e:
+            print('Error occured while writing {}/project.json:\n{}'.format(USER_HOME, e))
             showerror("Error","Project Json file not written.")
 
     def workflow(self):

@@ -88,8 +88,8 @@ def get_colnames(infileList, filetypeList):
 def create_outfile_names(outroot):
     """ uses outroot to create the output file names """
     outTableFile = "jaccard.txt"
-    outPCAFile = "jaccard_PCA.png"
-    outHeatmapFile = "jaccard_heatmap.png"
+    outPCAFile = "jaccard_PCA.pdf"
+    outHeatmapFile = "jaccard_heatmap.pdf"
     if outroot != "":
         if outroot[-1] == "/":
             outTableFile= outroot + outTableFile
@@ -109,6 +109,8 @@ def pca_plot(out, filetypeList, snames, outPCAFile):
     PCAdata = pd.DataFrame(Y_sklearn,columns=["PC1","PC2"])
     PCAdata.insert(0,"sample name",snames)
     fig, ax =plt.subplots()
+    snames_pal = sns.hls_palette(len(set(snames)),s=.8)
+    sns.set_palette(snames_pal)
     if filetypeList != [""]:
         PCAdata.insert(1,"tool",filetypeList)
         ax = sns.scatterplot(x="PC1",y="PC2",hue="sample name",style="tool",data=PCAdata,s=100)
@@ -139,7 +141,7 @@ def plot_heatmap(out, outHeatmapFile, snames, filetypeList):
        for label in set(filetypeList):
             g.ax_col_dendrogram.bar(0, 0, color=tool_lut[label],
                             label=label, linewidth=0)
-       g.ax_col_dendrogram.legend(loc="center", ncol=4, 
+       g.ax_col_dendrogram.legend(loc="center", ncol=3, 
                                 bbox_to_anchor=(0.4, 0.8))
     else:
        g = sns.clustermap(out,cmap="YlGnBu",col_cluster=False,

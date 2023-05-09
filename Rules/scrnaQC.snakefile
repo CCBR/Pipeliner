@@ -19,6 +19,13 @@ citeseq = config['project']['CITESEQ']
 nAnchors = "2000"
 groups = "YES" #YES/NO
 
+filterType = ['nFeature','nCount','mitoPct']
+filtStatus = ['preFilter','postFilter']
+
+filtList = []
+for q in filterType:
+	for r in filtStatus:
+		filtList.append(str(q+"_"+r))
 
 contList = []
 contrasts = open("contrasts.tab")
@@ -27,6 +34,9 @@ for line in contrasts:
 #	print(re.sub('\t', '-',  line))
 	contList.append(re.sub('\t', '-',  line))
 
+print("{}".format(contList[0]))
+
+resList = resolution.split(",")
 
 intType = ["seurat_batch_corrected","merged"]
 
@@ -34,20 +44,44 @@ rule all:
 	params:
 		batch='--time=168:00:00',
 	input:
-		expand(join(workpath,"QC","{name}.RData"),name=samples),
+		# expand(join(workpath,"QC","{name}.RData"),name=samples),
+		#QC file outputs
 		expand(join(workpath,"filtered","{name}.rds"),name=samples),
 		expand(join(workpath,"flags","{name}.txt"),name=samples),
-		join(workpath,"QC","samples_QC.html"),		
+		expand(join(workpath,"filtered","{name}_doublets.rds"),name=samples),
+		#QC image outputs
+		expand(join(workpath,"QC","{name}","images","filterStats_{name}.png"),name=samples),
+		expand(join(workpath,"QC","{name}","images","cellsRemovedVenn_{name}.png"),name=samples),
+		expand(join(workpath,"QC","{name}","images","{filt}_{time}_{name}.pdf"),name=samples,filt=filterType,time=filtStatus),
+		expand(join(workpath,"QC","{name}","images","clusterResolution_{res}_{name}.pdf"),name=samples,res=resList),
+		expand(join(workpath,"QC","{name}","images","silhouetteResolution_{res}_{name}.pdf"),name=samples,res=resList),
+		expand(join(workpath,"QC","{name}","images","primaryAnnotation_{name}.pdf"),name=samples),
+		expand(join(workpath,"QC","{name}","images","doublets_{name}.pdf"),name=samples),
+		expand(join(workpath,"QC","{name}","images","cellCycle_{name}.pdf"),name=samples),
+
+		#join(workpath,"QC","samples_QC.html"),
+		expand(join(workpath,"QC","QC_Report_{name}.html"),name=samples),
 		expand(join(workpath,"integration","seurat_batch_corrected","{myGroups}","{myGroups}.rds"),myGroups=contList),
 		expand(join(workpath,"integration","merged","{myGroups}","{myGroups}.rds"),myGroups=contList),
+		expand(join(workpath,"integration","QC","{myGroups}","images"),myGroups=contList),
 		
 rule qc_scrna:
 	input: 
-		join(workpath,"{name}.h5")
+		join(workpath,"{name}.h5"),
 	output: 
 		rds=join(workpath,"filtered","{name}.rds"),
-		rdata=join(workpath,"QC","{name}.RData"),
+		#rdata=join(workpath,"QC","{name}.RData"),
 		qc = join(workpath,"flags","{name}.txt"),
+		doublets=join(workpath,"filtered","{name}_doublets.rds"),
+		filtStats=join(workpath,"QC","{name}","images","filterStats_{name}.png"),
+		venn=join(workpath,"QC","{name}","images","cellsRemovedVenn_{name}.png"),
+		filtVln=expand(join(workpath,"QC","{{name}}","images","{filt}_{{name}}.pdf"),filt=filtList),
+		clustUMAP=expand(join(workpath,"QC","{{name}}","images","clusterResolution_{res}_{{name}}.pdf"),res=resList),
+		clustSil=expand(join(workpath,"QC","{{name}}","images","silhouetteResolution_{res}_{{name}}.pdf"),res=resList),
+		annotUMAP=join(workpath,"QC","{name}","images","primaryAnnotation_{name}.pdf"),
+		doubletUMAP=join(workpath,"QC","{name}","images","doublets_{name}.pdf"),
+		cellCycleUMAP=join(workpath,"QC","{name}","images","cellCycle_{name}.pdf"),
+#		imageDir = join(workpath,"QC","{name}","images"),
 	params:
 		rname='pl:qc_scrna',
 		specie = specie, 
@@ -55,27 +89,33 @@ rule qc_scrna:
 		clustAlg = clustAlg,
 		annotDB = annotDB,
 		citeseq = citeseq,
-		outDir= join(workpath,"QC")
+		outDir= join(workpath,"QC"),
+		imageDir = join(workpath,"QC","{name}","images")
+
 	shell: """
 
 module load R/3.6.1;
-Rscript Scripts/scrnaQC.R {input} {output.rds} {output.rdata} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.citeseq};
+Rscript Scripts/scrnaQC.R {input} {output.rds} {params.imageDir} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.citeseq};
 touch {output.qc}
         """
+#Rscript Scripts/scrnaQC.R {input} {output.rds} {output.rdata} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.citeseq};
 
 rule qcReport_scrna:
 	input:
-		files = expand(join(workpath,"QC","{name}.RData"),name=samples),
-		path=join (workpath, "QC")
+		# files = expand(join(workpath,"QC","{name}.RData"),name=samples),
+		path=join(workpath,"QC","{name}","images"),
 	output:
-		join(workpath,"QC","samples_QC.html")
+		out=join(workpath,"QC","QC_Report_{name}.html"),
 	params:
 		rname='pl:qcReport_scrna',
+		resolution=resolution,
+		sample = "{name}",
+		outPath = join(workpath,"QC")
 	shell: """
 module load R/3.6.1;
-Rscript Scripts/scrnaQC_Reports.R {input.path};
-mv Scripts/samples_QC.html QC
+Rscript Scripts/scrnaQC_Reports.R {input.path} {params.outPath} {params.resolution} {params.sample};
 	"""
+# mv Scripts/samples_QC.html QC
 	
 rule integratedBatch:
 	input:
@@ -84,6 +124,7 @@ rule integratedBatch:
 	output:
 		rdsBatch=join(workpath,"integration","seurat_batch_corrected","{myGroups}","{myGroups}.rds"),
 		mergeRDS=join(workpath,"integration","merged","{myGroups}","{myGroups}.rds"),
+		jointImageDir=join(workpath,"integration","QC","{myGroups}","images")
 	params:
 		rname='pl:integratedBatch',
 		batch='--cpus-per-task=8 --mem=48g --time=24:00:00',
@@ -100,7 +141,8 @@ rule integratedBatch:
 		contrasts = "{myGroups}"
 	shell: """
 module load R/3.6.1;
-Rscript Scripts/integrateBatches.R {params.dir} {output.rdsBatch} {output.mergeRDS} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.nAnchors} {params.citeseq} {params.groups} {params.contrasts};
+if [ ! -d {output.jointImageDir} ]; then mkdir {output.jointImageDir}; fi
+Rscript Scripts/integrateBatches.R {params.dir} {output.rdsBatch} {output.mergeRDS} {output.jointImageDir} {params.specie} {params.resolution} {params.clustAlg} {params.annotDB} {params.nAnchors} {params.citeseq} {params.groups} {params.contrasts};
 	"""
 
 

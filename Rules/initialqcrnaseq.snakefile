@@ -45,6 +45,16 @@ for d in [trim_dir,kraken_dir,bams_dir,star_dir,log_dir,rseqc_dir,preseq_dir,deg
         os.mkdir(join(workpath,d))
 
 
+try:
+  FASTQ_SCREEN_CONFIG = config['references'][pfamily]['FASTQ_SCREEN_CONFIG']
+except KeyError:
+  FASTQ_SCREEN_CONFIG = config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG']
+
+try:
+  FASTQ_SCREEN_CONFIG2 = config['references'][pfamily]['FASTQ_SCREEN_CONFIG2']
+except KeyError:
+  FASTQ_SCREEN_CONFIG2 = config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2']
+
 if pe=="yes":
 
    rule all:
@@ -197,8 +207,8 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
         fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
         outdir = join(workpath,"FQscreen"),
         outdir2 = join(workpath,"FQscreen2"),
-        fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
-        fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
+        fastq_screen_config=FASTQ_SCREEN_CONFIG,
+        fastq_screen_config2=FASTQ_SCREEN_CONFIG2,
         perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
         bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
       threads: 24
@@ -491,8 +501,8 @@ python Scripts/get_read_length.py {output} > {output}/readlength.txt  2> {output
         fastq_screen=config['bin'][pfamily]['tool_versions']['FASTQ_SCREEN'],
         outdir = join(workpath,"FQscreen"),
         outdir2 = join(workpath,"FQscreen2"),
-        fastq_screen_config=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG'],
-        fastq_screen_config2=config['bin'][pfamily]['tool_parameters']['FASTQ_SCREEN_CONFIG2'],
+        fastq_screen_config=FASTQ_SCREEN_CONFIG,
+        fastq_screen_config2=FASTQ_SCREEN_CONFIG2,
         perlver=config['bin'][pfamily]['tool_versions']['PERLVER'],
         bowtie2ver=config['bin'][pfamily]['tool_versions']['BOWTIE2VER'],
       threads: 24
@@ -666,14 +676,14 @@ rule get_strandness:
     files=expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
   output: 
     outfile=join(workpath,log_dir,"strandness.txt"),
-    outdir=join(workpath,log_dir)
   params: 
+    outdir=join(workpath,log_dir),
     rname='pl:get_strandness',
     pythonver=config['bin'][pfamily]['tool_versions']['PYTHONVER'],
     pythonscript=join(workpath,"Scripts","get_strandness.py")
   run:
     import os
-    os.chdir(output.outdir)
+    os.chdir(params.outdir)
     check_readaccess(input.groupsfile)
     os.system("module load "+params.pythonver+";python "+params.pythonscript+" "+input.groupsfile+" > "+output.outfile)
     strandfile=open(output.outfile,'r')
@@ -703,8 +713,8 @@ rule picard:
     picardver=config['bin'][pfamily]['tool_versions']['PICARDVER'],
    shell: """
 module load {params.picardver};
-java -Xmx110g  -jar $PICARDJARPATH/picard.jar AddOrReplaceReadGroups I={input.file1} O=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam TMP_DIR=/lscratch/$SLURM_JOBID RGID=id RGLB=library RGPL=illumina RGPU=machine RGSM=sample; 
-java -Xmx110g -jar $PICARDJARPATH/picard.jar MarkDuplicates I=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam O=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3};
+java -Xmx110g  -XX:ParallelGCThreads=5 -jar $PICARDJARPATH/picard.jar AddOrReplaceReadGroups I={input.file1} O=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam TMP_DIR=/lscratch/$SLURM_JOBID RGID=id RGLB=library RGPL=illumina RGPU=machine RGSM=sample; 
+java -Xmx110g -XX:ParallelGCThreads=5 -jar $PICARDJARPATH/picard.jar MarkDuplicates I=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.bam O=/lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam TMP_DIR=/lscratch/$SLURM_JOBID CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.outstar3};
 mv /lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bam {output.outstar2};
 mv /lscratch/$SLURM_JOBID/{params.sampleName}.star_rg_added.sorted.dmark.bai {output.outstar2b};
 sed -i 's/MarkDuplicates/picard.sam.MarkDuplicates/g' {output.outstar3};

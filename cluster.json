@@ -52,6 +52,14 @@
         "mem": "64g",
         "threads": "32"
     },
+    "BWA_SE": {
+        "mem": "64g",
+        "threads": "32"
+    },
+    "BWA_PE": {
+        "mem": "64g",
+        "threads": "32"
+    },
     "bwa_mem": {
         "mem": "48g",
         "threads": "32",
@@ -163,6 +171,9 @@
         "threads": "8",
         "time": "10-00:00:00"
     },
+    "diffbind": {
+        "threads":"10"
+    },
     "diffbind_bed": {
         "mem": "4g",
         "threads":"1"
@@ -183,8 +194,8 @@
         "time": "1-00:00:00"
     },
     "fastq_screen": {
-        "mem": "24g",
-        "threads": "24",
+        "mem": "90g",
+        "threads": "36",
         "time": "2-00:00:00"
     },
     "fastqc": {
@@ -413,7 +424,7 @@
     },
     "gatk_recal": {
         "mem": "64g",
-        "threads": "32",
+        "threads": "16",
         "time": "5-00:00:00"
     },
     "gatk_rnaseqvar_haplotype_caller": {
@@ -596,7 +607,7 @@
     "novocraft_sort": {
         "mem": "120g",
         "threads": "8",
-	"gres": "lscratch:500",
+        "gres": "lscratch:500",
         "time": "2-00:00:00"
     },
     "oncofuse": {
@@ -610,8 +621,8 @@
     },
     "picard": {
         "gres": "lscratch:256",
-        "mem": "96g",
-        "threads": "2"
+        "mem": "110g",
+        "threads": "6"
     },
     "picard_dedup": {
         "gres": "lscratch:256",
@@ -869,11 +880,11 @@
         "time": "5-00:00:00"
     },
     "trim_pe": {
-        "mem": "24g",
+        "mem": "120g",
         "threads": "32"
     },
     "trim_se": {
-        "mem": "24g",
+        "mem": "120g",
         "threads": "32"
     },
     "trim_step4": {

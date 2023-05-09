@@ -2,7 +2,7 @@
 '''
 Author:		Skyler Kuhn
 Date created:	08/18/2018
-Last modified:	08/23/2018
+Last modified:	09/10/2019 by Tovah Markowitz markowitzte@nih.gov
 Email:		kuhnsa@nih.gov
 
 About: This program takes in a parsed data from Samtools flagstat, atac_nrf.py, ngsqc,
@@ -34,7 +34,7 @@ About: This program takes in a parsed data from Samtools flagstat, atac_nrf.py, 
 	  # awk '{print $(NF-2),$(NF-1),$(NF)}' H3k4me3_gran_1.sorted.Q5DD.ppqt | ./filterMetrics H3k4me3_gran_1 ppqt
 
 	10.) Find the Fragment Length
-	  # awk -F '\t' '{print $3}' H3k4me3_gran_1.sorted.Q5DD.ppqt | awk -F ',' '{print $1}' | ../Scripts/filterMetrics H3k4me3_gran_1 fragLen
+	  # awk -F '\t' '{print $3}' H3k4me3_gran_1.sorted.Q5DD.ppqt | sed -e 's/,/ /g' | ../Scripts/filterMetrics H3k4me3_gran_1 fragLen
 
 Python version(s):	2.7 or 3.X
 
@@ -65,11 +65,15 @@ def getmetadata(type):
 	elif type == 'unreads':
                 metadata = 'NUniqMappedReads'
 	elif type == 'fragLen':
-		metadata = ['FragmentLength']
+		metadata = 'FragmentLength'
 	return metadata
 	
 
 def filteredData(sample, ftype):
+	""" 
+	Data grabbed by the awk or grep commands in the above example cases becomes 
+	variable 'line' and gets split by space to make 'linelist'
+	"""
 	for line in sys.stdin:
 		linelist = line.strip().split()
 		if 'reads' in ftype:
@@ -80,7 +84,17 @@ def filteredData(sample, ftype):
 			else:
 				v1, v2 = linelist[0], linelist[1]
 				print("{}\t{}\t{}".format(sample, mtypes, add(v1,v2)))
-		elif ftype == 'ppqt' or ftype == 'ngsqc' or ftype == 'nrf' or ftype == 'fragLen':
+		elif ftype == 'fragLen':
+			mtypes = getmetadata(ftype)
+			extenders = []
+			for ppqt_value in linelist:
+				if int(ppqt_value) > 150:
+                            		extenders.append(ppqt_value)
+			if len(extenders) > 0:
+				print("{}\t{}\t{}".format(sample, mtypes, extenders[0]))
+			else:
+                        	print("{}\t{}\t{}".format(sample, mtypes, linelist[0]))
+		elif ftype == 'ppqt' or ftype == 'ngsqc' or ftype == 'nrf':
 			mtypes = getmetadata(ftype)
 			for i in range(len(linelist)):
 				print("{}\t{}\t{}".format(sample, mtypes[i], linelist[i]))

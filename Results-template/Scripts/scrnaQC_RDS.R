@@ -3,6 +3,9 @@
 .libPaths("/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.1_scRNA")
 print(.libPaths())
 
+#MODIFIED VERSION TO ACCEPT RDS FILES
+#IMMEDIATE ASSUMPTION OF NO ADDITIONAL QC PERFORMED YET, AS TYPICAL OUTPUT FROM POST-CELL HASHING
+
 args <- commandArgs(trailingOnly = TRUE)
 
 file <- as.character(args[1])
@@ -19,7 +22,6 @@ citeseq = as.character(args[8])
 outRDS.doublets=gsub("\\.rds","_doublets\\.rds",outRDS)
 matrix=file
 sample = gsub("\\.h5$","",sample)
-sample = gsub("\\.rds$","",sample)
 resolutionString = as.character(strsplit(gsub(",+",",",resolution),split=",")[[1]])
 resolution = as.numeric(strsplit(gsub(",+",",",resolution),split=",")[[1]]) #remove excess commas, split into numeric vector
 
@@ -133,21 +135,23 @@ convertHumanGeneList <- function(x){
   
   return(humanx)
 }
+#fileInput = Read10X_h5(matrix)
 
-fileInput = Read10X_h5(matrix)
+#if (citeseq=="Yes"){
+#	so_BC = CreateSeuratObject(fileInput[[1]])
+#	so_BC[['CITESeq']] = CreateAssayObject(counts=fileInput[[2]])
+#	so_BC = NormalizeData(so_BC,assay="CITESeq",normalization.method="CLR")
+#	so_BC = ScaleData(so_BC,assay="CITESeq")
+#}else{
+#	if (is.list(fileInput)==FALSE){
+#		so_BC = CreateSeuratObject(fileInput)
+#	}
+#	else{
+#		so_BC = CreateSeuratObject(fileInput[[1]])
+#	}
+#}
 
-if (citeseq=="Yes"){
-	so_BC = CreateSeuratObject(fileInput[[1]])
-	so_BC[['CITESeq']] = CreateAssayObject(counts=fileInput[[2]])
-	so_BC = NormalizeData(so_BC,assay="CITESeq",normalization.method="CLR")
-	so_BC = ScaleData(so_BC,assay="CITESeq")
-}else{
-	if (is.list(fileInput)==FALSE){
-		so_BC = CreateSeuratObject(fileInput)
-	}	else{
-		so_BC = CreateSeuratObject(fileInput[[1]])
-	}
-}
+so_BC=readRDS(matrix)
 
 if(species=="human"){so_BC[["percent.mt"]] <- PercentageFeatureSet(so_BC, pattern = "^MT-")}
 if(species=="mouse"){so_BC[["percent.mt"]] <- PercentageFeatureSet(so_BC, pattern = "^mt-")}
@@ -336,14 +340,12 @@ for (res in resolutionString){
 	pdf(paste0(outImageDir,"/silhouetteResolution_",res,"_",sample,".pdf"))
 
 	Idents(so_noDoublet)=paste0("SCT_snn_res.",resMod)
-	coord=Embeddings(so_noDoublet,reduction='pca')[,1:so_noDoublet@misc$npcs]
+	coord=Embeddings(so_noDoublet,reduction='pca')[,1:so@misc$npcs]
 	clusters=Idents(so_noDoublet)
 	d = dist(coord,method="euclidean")
 	sil=silhouette(as.numeric(as.character(clusters)),dist=d)
 	palette=alpha(colour=hue_pal()(length(unique(Idents(so_noDoublet)))),alpha=0.7)
-	print(plot(sil, col=palette[as.factor(clusters[order(clusters,decreasing=F)])],
-	main=paste0("Silhouette plot of clustering resolution ", res), lty=2,
-	sub=paste("Average silhouette width:",format(round(mean(sil[,3]), 4), nsmall = 4))))
+	print(plot(sil, col=palette[as.factor(clusters[order(clusters,decreasing=F)])], main=paste0("Silhouette plot of clustering resolution ", res), lty=2))
   
 	abline(v=mean(sil[,3]), col="red4", lty=2)
 	dev.off()
@@ -356,26 +358,7 @@ singleRPlot=DimPlot(so_noDoublet,group.by="annot",label=T,repel=T)
 print(singleRPlot + labs(title = paste0(sample," annotations by ",annotDB)))
 dev.off()
 
-pdf(paste0(outImageDir,"/primaryAnnotationCounts_",sample,".pdf"))
-library(gridExtra)
-df=data.frame(sort(table(so_noDoublet$annot),decreasing=T))
-nTypes=length(table(so_noDoublet$annot))
-names(df)=c("CellAnnot","Count")
-if (nTypes <= 15){
-	grid.table(df,rows=NULL)
-}else{
-	if ((nTypes%%2)==1){
-		addition = as.data.frame(matrix(ncol=2,nrow=1))
-		names(addition)=names(df)
-		addition[]=""
-		df = rbind(df,addition)
-	}
-	cutoff=nrow(df)/2
-	grid.table(cbind(df[1:cutoff,],df[(cutoff+1):nrow(df),]),rows=NULL)
-}
-dev.off()
-
-#All cell type annotations ####NEED TO FIGURE BEST WAY TO COUNT CELL TYPES-grid.table with modulus to max out at 4 columns between labels and counts
+#All cell type annotations ####NEED TO FIGURE BEST WAY TO COUNT CELL TYPES-two columns, paste_grid or something like that
 if(species == "human"){
 	annotList=c("HPCA","BP_encode","monaco","dice","Novershtern")
 	for (annot in annotList){
@@ -413,8 +396,6 @@ pdf(paste0(outImageDir,"/cellCycle_",sample,".pdf"))
 cellCyclePlot=DimPlot(so_noDoublet,group.by="Phase")
 print(cellCyclePlot+labs(title = paste0(sample," Cell Cycle")))
 dev.off()
-
-#CITESeq Ridge plots, if applicable #see integrateBatches for pseudocode
 
 
 #### FINAL OUTPUT FILES ####

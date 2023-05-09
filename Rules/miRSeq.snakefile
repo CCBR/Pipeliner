@@ -250,7 +250,9 @@ if se=="yes":
     input:
       join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
     output:
-      join(workpath,"fasta","{name}.trimfasta.done")
+      flag=join(workpath,"fasta","{name}.trimfasta.done"),
+      file = join(workpath,"fasta/trim/{name}.trim.fasta"),
+
     params:
       rname='pl:fastq2fasta',
       batch='--cpus-per-task=32 --mem=64g --time=24:00:00',
@@ -263,13 +265,12 @@ if se=="yes":
       module load {params.fastxtoolkitver};
       mkdir -p {params.outdir}
       zcat {input} | fastq_to_fasta -n -v -o {params.outfile}
-      sed -i -e 's/\s/|/g' {params.outfile}
-      touch {output}
+      sed -i -e 's/\s/|/g' {output.file}
+      touch {output.flag}
     """
 
   rule mirdeep2_mapper:
     input:
-      configFile=join(workpath,"mirdeep_config.txt"),
       # file1=expand(join(workpath,"fasta/trim/{name}.trim.fasta.gz"),name=samples)
       fileCatch=expand(join(workpath,"fasta","{name}.trimfasta.done"),name=samples)
       # fileCatch=join(workpath,"fasta/trim/{name}.trimfasta.done")
@@ -284,11 +285,18 @@ if se=="yes":
       bowtieindex = config['references'][pfamily]['BOWTIE_REF'],
       trimmedFolder = join(workpath,"fasta","trim"),
       out_tar = join(workpath,"fasta","trim.tar.gz"),
+      configFile=join(workpath,"mirdeep_config.txt"),
+
       # file1=expand(join(workpath,"fasta/trim/{name}.trim.fasta"),name=samples)   
     threads: 8
     shell: """
+      module load perl
       module load {params.mirdeepver}
-      mapper.pl {input.configFile} -d -c -j -l 18 -m -q -p {params.bowtieindex} -s {output.collapsedFile} -t {output.arfFile} -v -o 8 2>> logfiles/mapper.log
+      path='{params.trimmedFolder}'
+      num=$(ls {params.trimmedFolder}|wc|cut -f6 -d ' ')
+      paste <(ls {params.trimmedFolder}) <(echo {{A..Z}}{{A..Z}}{{A..Z}} |tr ' ' '\n'| head -n $num) > {params.configFile}
+      sed -i  "s~^~$path/~"  {params.configFile}
+      mapper.pl {params.configFile} -d -c -j -l 18 -m -q -p {params.bowtieindex} -s {output.collapsedFile} -t {output.arfFile} -v -o 8 2>> logfiles/mapper.log
       tar -czvf {params.out_tar} {params.trimmedFolder} --remove-files
     """
     
@@ -311,6 +319,7 @@ if se=="yes":
         
     threads: 2
     shell: """
+      module load perl
       module load {params.mirdeepver}
       mkdir -p /lscratch/$SLURM_JOBID
       mkdir -p {params.resultdir}
@@ -340,6 +349,7 @@ if se=="yes":
       resultdir=join(workpath,"mirdeep2_2p")   
     threads: 16
     shell: """
+      module load perl
       module load {params.mirdeepver}
       mkdir -p /lscratch/$SLURM_JOBID
       mkdir -p {params.resultdir}
@@ -370,7 +380,7 @@ if se=="yes":
   rule mirdeep2_single:
     input:
       collapsedFile = join(workpath,"fasta/collapsed_trim.fa"),
-      configFile=join(workpath,"mirdeep_config.txt"),
+      # configFile=join(workpath,"mirdeep_config.txt"),
     output:
       join(workpath,"mirdeep2_out","miRNAs_expressed_all_samples.txt")
     params:
@@ -380,6 +390,7 @@ if se=="yes":
       mirdeepver=config['bin'][pfamily]['tool_versions']['MIRDEEP2VER'],
       genomefasta = config['references'][pfamily]['FASTA_REF'],
       organism=config['references'][pfamily]['ORGANISM'],
+      configFile=join(workpath,"mirdeep_config.txt"),
       resultdir=join(workpath,"mirdeep2_out")
     threads:16
     shell: """
@@ -390,7 +401,7 @@ if se=="yes":
       #sed -e 's/\s.*$//g' {params.genomefasta} > /lscratch/$SLURM_JOBID/genome.fa #remove whitespace, per miRDeep2
       sed -e 's/Homo sapiens/Homo_sapiens/g' {params.maturefasta}| sed -e 's/\s/|/g' > /lscratch/$SLURM_JOBID/mature.fa
       sed -e 's/Homo sapiens/Homo_sapiens/g' {params.hairpinfasta}| sed -e 's/\s/|/g' > /lscratch/$SLURM_JOBID/hairpin.fa
-      quantifier.pl -c {input.configFile} -r {input.collapsedFile} -m /lscratch/$SLURM_JOBID/mature.fa -p /lscratch/$SLURM_JOBID/hairpin.fa -T 8 -t {params.organism} -P
+      quantifier.pl -c {params.configFile} -r {input.collapsedFile} -m /lscratch/$SLURM_JOBID/mature.fa -p /lscratch/$SLURM_JOBID/hairpin.fa -T 8 -t {params.organism} -P
       mv miRNAs_expressed_all*.csv {output}
     """
   
@@ -413,7 +424,15 @@ if se=="yes":
       while read FILE GROUP NAME; do sed -i "s/$FILE/$NAME/" {output.mirbaseCts}; done < {params.groupsFile}
       sed -i 's/^#//' {output.mirbaseCts}
     """
-    
+  # 
+  # rule differential_expression:
+  #   input:
+  #   
+  #   output:
+  #     
+  #   params:
+  #     rname="pl:differential_expression"
+  #   
   # 
     
 
@@ -432,6 +451,6 @@ if se=="yes":
 #align to precursor miRs (Bowtie1) - done
 #align to genome (Bowtie1/miRDeep2 pass1) - done
 #align to novel (Bowtie1/miRDeep2 pass2) - done
-#expand counts (miRDeep2)
-#ShortStack integration
+#expand counts (miRDeep2) -done
+#ShortStack integration -ignore 
 #Differential expression analysis (edgeR)

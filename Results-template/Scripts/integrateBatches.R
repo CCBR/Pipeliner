@@ -14,7 +14,8 @@ library(dplyr)
 library(Matrix) 
 library(tools)
 library(stringr)
-
+library(cluster)
+library(scales)
 
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -23,36 +24,42 @@ matrix <- as.character(args[1])
 #output = as.character(args[2])
 outDirSeurat = as.character(args[2])
 outDirMerge = as.character(args[3])
-specie = as.character(args[4])
-resolution = as.character(args[5])
-clusterAlg =  as.numeric(args[6])
-annotDB = as.character(args[7])
-nAnchors = as.numeric(args[8])
-citeseq = as.character(args[9])
-groups = as.character(args[10])
-contrasts = as.character(args[11])
+outImageDir=as.character(args[4])
+specie = as.character(args[5])
+resolution = as.character(args[6])
+clusterAlg =  as.numeric(args[7])
+annotDB = as.character(args[8])
+nAnchors = as.numeric(args[9])
+citeseq = as.character(args[10])
+groups = as.character(args[11])
+contrasts = as.character(args[12])
 
+resolutionString = as.character(strsplit(gsub(",+",",",resolution),split=",")[[1]])
 resolution = as.numeric(strsplit(gsub(",+",",",resolution),split=",")[[1]]) #remove excess commas, split into numeric vector
+
+print(resolutionString)
 
 file.names <- dir(path = matrix,pattern ="rds")
 
+file.names = grep("doublets",file.names,invert=T,value=T)
+
 if (groups == "YES") {   
-	groupFile = read.delim("groups.tab",header=F,stringsAsFactors = F)
-	groupFile=groupFile[groupFile$V2 %in% stringr::str_split_fixed(contrasts,pattern = "-",n = Inf)[1,],]
-	#groupFile = groupFile[groupFile$V2 == strsplit(contrasts,"-")[[1]][1] | groupFile$V2 == strsplit(contrasts,"-")[[1]][2] ,] 
-	
-	splitFiles = gsub(".rds","",file.names)#str_split_fixed(file.names,pattern = "[.rd]",n = 2) 
-	file.names=file.names[match(groupFile$V1,splitFiles,nomatch = F)]
-	print(groupFile$V1)
-	print(splitFiles)
-	print(file.names)
+   groupFile = read.delim("groups.tab",header=F,stringsAsFactors = F)
+   groupFile=groupFile[groupFile$V2 %in% stringr::str_split_fixed(contrasts,pattern = "-",n = Inf)[1,],]
+   #groupFile = groupFile[groupFile$V2 == strsplit(contrasts,"-")[[1]][1] | groupFile$V2 == strsplit(contrasts,"-")[[1]][2] ,] 
+   
+   splitFiles = gsub(".rds","",file.names)#str_split_fixed(file.names,pattern = "[.rd]",n = 2) 
+   file.names=file.names[match(groupFile$V1,splitFiles,nomatch = F)]
+   print(groupFile$V1)
+   print(splitFiles)
+   print(file.names)
 }
 
 readObj = list()
 for (obj in file.names) {
-	Name=strsplit(obj,".rds")[[1]][1]
-	assign(paste0("S_",Name),readRDS(paste0(matrix,"/",obj)))
-	readObj = append(readObj,paste0("S_",Name))  
+    Name=strsplit(obj,".rds")[[1]][1]
+    assign(paste0("S_",Name),readRDS(paste0(matrix,"/",obj)))
+    readObj = append(readObj,paste0("S_",Name))  
  }
 
 #for (obj in readObj) {
@@ -68,8 +75,8 @@ for (obj in file.names) {
 combinedObj.list=list()
 i=1
 for (p in readObj){
-	combinedObj.list[[p]] <- eval(parse(text = readObj[[i]]))
-	i <- i + 1
+    combinedObj.list[[p]] <- eval(parse(text = readObj[[i]]))
+    i <- i + 1
  }
 
 
@@ -77,7 +84,7 @@ reference.list <- combinedObj.list[unlist(readObj)]
 print(reference.list)
 for (i in 1:length(x = reference.list)) {
 #    reference.list[[i]] <- NormalizeData(object = reference.list[[i]], verbose = FALSE)
-	reference.list[[i]] <- FindVariableFeatures(object = reference.list[[i]], selection.method = "vst", nfeatures = nAnchors, verbose = FALSE)
+     reference.list[[i]] <- FindVariableFeatures(object = reference.list[[i]], selection.method = "vst", nfeatures = nAnchors, verbose = FALSE)
 }
 
 print(length(reference.list))
@@ -123,7 +130,8 @@ combinedObj.integratedRNA = FindVariableFeatures(combinedObj.integratedRNA,mean.
 combinedObj.integratedRNA <- ScaleData(object = combinedObj.integratedRNA, verbose = FALSE)
 
 if(ncol(combinedObj.integratedRNA)<50000){
-	mat1 <- t(as.matrix(FetchData(object = combinedObj.integratedRNA,slot = "counts",vars = rownames(combinedObj.integratedRNA))))
+#	mat1 <- t(as.matrix(FetchData(object = combinedObj.integratedRNA,slot = "counts",vars = rownames(combinedObj.integratedRNA))))
+	mat1 <- as.matrix(combinedObj.integratedRNA@assays$SCT@counts) #BUG FIX - NW_20200501
 	urdObj <- createURD(count.data = mat1, min.cells=3, min.counts=3)
 	varGenes_batch = VariableFeatures(combinedObj.integrated)[VariableFeatures(combinedObj.integrated) %in% rownames(urdObj@logupx.data)]
 	varGenes_merge = VariableFeatures(combinedObj.integratedRNA)[VariableFeatures(combinedObj.integratedRNA) %in% rownames(urdObj@logupx.data)]
@@ -143,38 +151,37 @@ if(ncol(combinedObj.integratedRNA)<50000){
 }
 
 runInt = function(obj,res,npcs){
-	if (citeseq=="Yes"){
-		obj = NormalizeData(obj,assay="CITESeq",normalization.method="CLR")
-		obj = ScaleData(obj,assay="CITESeq")
+ if (citeseq=="Yes"){
+ 	obj = NormalizeData(obj,assay="CITESeq",normalization.method="CLR")
+  obj = ScaleData(obj,assay="CITESeq")
 	}
-	obj <- RunPCA(object = obj, npcs = 50, verbose = FALSE)
+ obj <- RunPCA(object = obj, npcs = 50, verbose = FALSE)
 	obj <- FindNeighbors(obj,dims = 1:npcs)
 	for (i in 1:length(res)){
-		obj <- FindClusters(obj, reduction = "pca", dims = 1:npcs, save.SNN = T,resolution = res[i],algorithm = clusterAlg)
+  obj <- FindClusters(obj, reduction = "pca", dims = 1:npcs, save.SNN = T,resolution = res[i],algorithm = clusterAlg)
 	}
 	obj <- RunUMAP(object = obj, reduction = "pca",dims = 1:npcs,n.components = 3)
-	obj$groups = groupFile$V2[match(obj$Sample,  groupFile$V1,nomatch = F)]
-	
+ if (groups=="YES"){obj$groups = groupFile$V2[match(obj$Sample,  groupFile$V1,nomatch = F)]}
+		  
 	runSingleR = function(obj,refFile,fineORmain){ #SingleR function call as implemented below
 		avg = AverageExpression(obj,assays = "SCT")
 		avg = as.data.frame(avg)
 		ref = refFile
 		s = SingleR(test = as.matrix(avg),ref = ref,labels = ref[[fineORmain]])
-		
+
 		clustAnnot = s$labels
 		names(clustAnnot) = colnames(avg)
 		names(clustAnnot) = gsub("SCT.","",names(clustAnnot))
-		
+  
 		obj$clustAnnot = clustAnnot[match(obj$seurat_clusters,names(clustAnnot))]
 		return(obj$clustAnnot)
 	}
-
-	if(annotDB == "HPCA"){
+ if(annotDB == "HPCA"){
 		obj$clustAnnot <- runSingleR(obj,HumanPrimaryCellAtlasData(),"label.main")
 		obj$clustAnnotDetail <-  runSingleR(obj,HumanPrimaryCellAtlasData(),"label.fine")
 	}
 	if(annotDB == "BP_encode"){
-		obj$clustAnnot <-  runSingleR(obj,BlueprintEncodeData(),"label.main")
+	 obj$clustAnnot <-  runSingleR(obj,BlueprintEncodeData(),"label.main")
 		obj$clustAnnotDetail <-  runSingleR(obj,BlueprintEncodeData(),"label.fine")
 	}
 	if(annotDB == "monaco"){
@@ -185,9 +192,8 @@ runInt = function(obj,res,npcs){
 		obj$clustAnnot <-  runSingleR(obj,DatabaseImmuneCellExpressionData(),"label.main")
 		obj$clustAnnotDetail <- runSingleR(obj,DatabaseImmuneCellExpressionData(),"label.fine")
 	}
-	
 	if(annotDB == "immgen"){
-		obj$clustAnnot <-  runSingleR(obj,ImmGenData(),"label.main")
+  obj$clustAnnot <-  runSingleR(obj,ImmGenData(),"label.main")
 		obj$clustAnnotDetail <- runSingleR(obj,ImmGenData(),"label.fine")
 	}
 	if(annotDB == "mouseRNAseq"){
@@ -197,30 +203,108 @@ runInt = function(obj,res,npcs){
 	return(obj)
 }
 
-#combinedObj.integrated = runInt(combinedObj.integrated,0.3,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_0.3.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,0.6,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_0.6.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,0.8,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_0.8.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,1.0,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_1.0.rds"))
-#combinedObj.integrated = runInt(combinedObj.integrated,1.2,npcs_batch)
-#saveRDS(combinedObj.integrated, paste0(outDirSeurat,"_1.2.rds"))
-
 combinedObj.integrated=runInt(combinedObj.integrated,resolution,npcs_batch)
 saveRDS(combinedObj.integrated,outDirSeurat)
 
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,0.3,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_0.3.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,0.6,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_0.6.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,0.8,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_0.8.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,1.0,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_1.0.rds"))
-#combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,1.2,npcs_merge)
-#saveRDS(combinedObj.integratedRNA, paste0(outDirMerge,"_1.2.rds"))
 
 combinedObj.integratedRNA = runInt(combinedObj.integratedRNA,resolution,npcs_merge)
 saveRDS(combinedObj.integratedRNA,outDirMerge)
+
+
+#IMAGE OUTPUT
+### Sample output
+
+
+pdf(paste0(outImageDir,"/merged_sample.pdf"))
+DimPlot(combinedObj.integratedRNA,group.by="Sample")
+dev.off()
+
+pdf(paste0(outImageDir,"/integrated_sample.pdf"))
+DimPlot(combinedObj.integrated,group.by="Sample")
+dev.off()
+
+### Clusters and silhouettes
+for (res in resolutionString){
+	pdf(paste0(outImageDir,"/clusterResolution_",res,"_merged.pdf"))
+	resMod=as.numeric(gsub("\\.0$","",res))
+	clusterPlot=DimPlot(combinedObj.integratedRNA,group.by=paste0("SCT_snn_res.",resMod),label=T,repel=T)
+	print(clusterPlot + labs(title = paste0("Merged Samples at resolution ",res)))
+	dev.off()
+	
+ pdf(paste0(outImageDir,"/clusterResolution_",res,"_integrated.pdf"))
+	resMod=as.numeric(gsub("\\.0$","",res))
+	clusterPlot=DimPlot(combinedObj.integrated,group.by=paste0("SCT_snn_res.",resMod),label=T,repel=T)
+	print(clusterPlot + labs(title = paste0("Integrated Samples at resolution ",res)))
+	dev.off()
+ 
+ 
+	pdf(paste0(outImageDir,"/silhouetteResolution_",res,"_merged.pdf"))
+
+	Idents(combinedObj.integratedRNA)=paste0("SCT_snn_res.",resMod)
+	coord=Embeddings(combinedObj.integratedRNA,reduction='pca')[,1:30]
+	clusters=Idents(combinedObj.integratedRNA)
+	d = dist(coord,method="euclidean")
+	sil=silhouette(as.numeric(as.character(clusters)),dist=d)
+	palette=alpha(colour=hue_pal()(length(unique(Idents(combinedObj.integratedRNA)))),alpha=0.7)
+	print(plot(sil, col=palette[as.factor(clusters[order(clusters,decreasing=F)])],
+	main=paste0("Silhouette plot of clustering resolution ", res), lty=2,
+	sub=paste("Average silhouette width:",format(round(mean(sil[,3]), 4), nsmall = 4))))
+  
+	abline(v=mean(sil[,3]), col="red4", lty=2)
+	dev.off()
+
+ pdf(paste0(outImageDir,"/silhouetteResolution_",res,"_integrated.pdf"))
+
+	Idents(combinedObj.integrated)=paste0("SCT_snn_res.",resMod)
+	coord=Embeddings(combinedObj.integrated,reduction='pca')[,1:30]
+	clusters=Idents(combinedObj.integrated)
+	d = dist(coord,method="euclidean")
+	sil=silhouette(as.numeric(as.character(clusters)),dist=d)
+	palette=alpha(colour=hue_pal()(length(unique(Idents(combinedObj.integrated)))),alpha=0.7)
+	print(plot(sil, col=palette[as.factor(clusters[order(clusters,decreasing=F)])],
+	main=paste0("Silhouette plot of clustering resolution ", res), lty=2,
+	sub=paste("Average silhouette width:",format(round(mean(sil[,3]), 4), nsmall = 4))))
+  
+	abline(v=mean(sil[,3]), col="red4", lty=2)
+	dev.off()
+}
+
+#Primary cell type annotation
+pdf(paste0(outImageDir,"/primaryAnnotation_integrated.pdf"))
+singleRPlot=DimPlot(combinedObj.integrated,group.by="annot",label=T,repel=T)
+print(singleRPlot + labs(title = paste0(sample," annotations by ",annotDB)))
+dev.off()
+
+pdf(paste0(outImageDir,"/primaryAnnotation_merged.pdf"))
+singleRPlot=DimPlot(combinedObj.integratedRNA,group.by="annot",label=T,repel=T)
+print(singleRPlot + labs(title = paste0(sample," annotations by ",annotDB)))
+
+library(grid)
+library(gridExtra)
+mytheme = gridExtra::ttheme_default(core = list(fg_params=list(cex=0.6)),colhead = list(fg_params=list(cex=0.6)),rowhead = list(fg_params=list(cex=0.8)))
+tableWidth = length(unique(combinedObj.integrated$Sample))*1.3
+g = gridExtra::tableGrob(table(combinedObj.integrated$annot, combinedObj.integrated$Sample),theme=mytheme)
+pdf(paste0 (outImageDir,"/sampleCellTypeCounts.pdf"),width = tableWidth);grid.draw(g);dev.off()
+
+#CITESeq Ridge plots, if applicable
+#if(citeseq=="Yes"){
+# Figure out dynamic loop for this code
+#  plot1 = RidgePlot(so, features=rownames(so@assays$CITESeq)[1],group.by="Sample")
+
+# After all plots formed, Create following code
+# CombinePlots(list(plot1+scale_fill_manual(values=alpha(colour=hue_pal()(length(unique(so$groups))),alpha=0.5))+NoLegend(), plot2+scale_fill_manual(values=alpha(colour=hue_pal()(length(unique(so$groups))),alpha=0.5))+NoLegend()))
+# Likely have to create list of objects in the dynamic build.
+
+#  pseudo loop x 2: One for sample (guaranteed), one for groups
+#citeseqPlots = list()
+#for protein in rownames(so@assays$CITESeq){
+# basePlot = RidgePlot(so, features = protein)
+# plot = basePlot+scale_fill_manual(values=alpha(colour=hue_pal()(length(unique(Idents(so)))),alpha=0.5))+NoLegend()
+# citeseqPlots[[protein]] = plot
+#}
+#colNums=2
+#if(length(citeseqPlots)==1){colNums=1}
+#CombinePlots(citeseqPlots,ncol=colnums)
+#}
+
+###

@@ -1,44 +1,154 @@
 ---
+title: "Sample QC report"
+author: "CCBR_Pipeliner"
+date: '`r format(Sys.time(), "%a %b %d %Y - %X")`'
+output:
+  #pdf_document: default
+  html_document: default
 params:
-  dir: "path/to/count/matrix"
+  dir: "path/to/image/directory"
+  resolution: "csvListResolutions"
+  sample: "sample"
+geometry:
+  margins:0.25in
 ---
 
-```{r headers, include=FALSE, warning=FALSE, message=FALSE}
-dateandtime<-format(Sys.time(), "%a %b %d %Y - %X")
-dir<-params$dir
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+knitr::opts_knit$set(
+  root.dir=params$dir
+)
 ```
 
-
-
-```{r setup, echo=FALSE, warning=FALSE,message=FALSE,fig.keep='all'}
+```{r message=FALSE, warning=FALSE}
 .libPaths("/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.1_scRNA")
+library(magick)
+library(ggplot2)
+library(cowplot)
+
+
+library(BiocGenerics)
+library(Biobase)#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
+library(farver)#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
+library(S4Vectors)#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_3.6.0_scRNA")
 library("Seurat")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
-#opts_chunk$set(root.dir = dir)
+library("DoubletFinder")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+library(AnnotationDbi)
+library("modes")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+
+library(SingleR)
+library(scRNAseq)
+library(SingleCellExperiment)
+library("URD")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+library(Routliers)#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+library(dplyr)
+library(Matrix) 
+library(reshape2)
+library(tools)
+library("DoubletFinder")#,lib.loc="/data/CCBR_Pipeliner/db/PipeDB/scrna_lib/")
+library(VennDiagram)
+library(ggplot2)
+library(scales)
+library(cluster)
+
+```
+
+```{r message=FALSE, warning=FALSE}
+fileTitle=paste("Sample ID",params$sample)
+
+#NOTES/TO-DO
+# the y axis tick/label texts are tiny and hard to read (for the nFeature, nCount, and mito.pct)
+# suggestions: enlarge (bold) the y axis ticks and labels, and/or make them have the same range, for ease of visual comparions
+# add plot title to the nFeature, nCount and mito.pct plots - NW: addressed by enlarging image 
+# output every SingleR annotations - NW:Add new scrnaQC plot
+
+#Enlarge Venn Diagram title
+#Enlarge Violin titles and axis labels
+#Remove violin legend
+#tinker with silhouette score value image
+```
+
+## `r fileTitle` 
+
+
+```{r prelimStats, fig.width=15, fig.height=7}
+message(getwd())
+p1 <- ggdraw() + draw_image(list.files(pattern = "filterStats"), scale = 1.5,x = 0.2, y=-0.3)
+p2 <- ggdraw() + draw_image(list.files(pattern = "Venn.*png$"), scale = 1)
+
+plot_grid(p1, p2)
+
+```
+
+### Cell Filtering Criteria {.tabset}
+
+#### nFeature
+```{r nFeature,fig.width=15, fig.height=9}
+p1 <- ggdraw() + draw_image(list.files(pattern = "nFeature_preFilter"), scale = 1)
+p2 <- ggdraw() + draw_image(list.files(pattern = "nFeature_postFilter"), scale = 1)
+p3 <- ggdraw() + draw_image(list.files(pattern = "nCount_preFilter"), scale = 1)
+p4 <- ggdraw() + draw_image(list.files(pattern = "nCount_postFilter"), scale = 1)
+p5 <- ggdraw() + draw_image(list.files(pattern = "mitoPct_preFilter"), scale = 1)
+p6 <- ggdraw() + draw_image(list.files(pattern = "mitoPct_postFilter"), scale = 1)
+plot_grid(p1, p2,  ncol = 2)
+```
+
+#### nCount
+```{r nCount,fig.width=15, fig.height=9}
+plot_grid(p3, p4, ncol = 2)
+```
+
+#### mitoPCT
+```{r mitoPct, fig.width=15, fig.height=9}
+plot_grid(p5, p6, ncol = 2)
 ```
 
 
-```{r plots, echo=FALSE , warning=FALSE,fig.keep='all',results='asis'}
+#### Doublets 
+```{r Doublets, fig.width=6, fig.height=6}
+p1 <- ggdraw() + draw_image(list.files(pattern = "doublets"), scale = 1)
+plot_grid(p1)
+```
 
-setwd(dir)
-file.names <- dir(path = dir ,pattern =".RData")
+### Cell Annotation {.tabset}
 
-for (file in file.names){
-fullPath=paste0(dir,"/",file)
-load(file)
+#### Cell Cycle 
+```{r CellCycle, fig.width=6, fig.height=6}
+p1<- ggdraw() + draw_image(list.files(pattern = "cellCycle"), scale = 1)
+plot_grid(p1)
+```
 
-Name=strsplit(file,".RData")[[1]][1]
+#### SingleR
+```{r SingleR, fig.width=6, fig.height=6}
+p1 <- ggdraw() + draw_image(list.files(pattern = "primaryAnnotation"), scale = 1)
+plot_grid(p1)
+```
 
-print(Name)
 
-print(VlnPlot(so_BC, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)) #before
+### Clustering, Silhouette plots and silhouette scores
 
-print(VlnPlot(so_filt, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)) #after
-
-print(DimPlot(so,group.by = "annot")) #annot
- 
-print(DimPlot(so,group.by = "DF_hi.lo")) #double
-
+```{r clusterResults, fig.width=15,fig.height =9, echo=FALSE, results="asis"}
+resString=as.character(strsplit(gsub(",+",",",params$resolution),split=",")[[1]])
+for (res in resString){
+  resMod = gsub("\\.0$","",res)
+  #message(resMod)
+  p1 <- ggdraw() + draw_image(list.files(pattern = paste0("clusterResolution_",resMod)),scale=0.95)
+  p2 <- ggdraw() + draw_image(list.files(pattern = paste0("silhouetteResolution_",resMod)))
+  cat("  \n#### Clustering at Resolution ", res," \n")
+  print(plot_grid(p1,p2))
+  cat("  \n")
 }
 
-
 ```
+
+### session
+
+```{r}
+sessionInfo()
+```
+
