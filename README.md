@@ -1,3 +1,8 @@
+> [!WARNING]
+> This repository has been archived and is no longer maintained.  
+> The code is provided for historical reference and may contain unpatched or unknown vulnerabilities.  
+> It should not be used in production systems.  
+
 Welcome to **Pipeliner** - an open-source and scalable solution to NGS analysis powered by the NIH's [Biowulf](https://hpc.nih.gov/) cluster. 
 
 Pipeliner provides access to a set of best-practices NGS pipelines developed, tested, and benchmarked by experts at [CCBR](https://ccbr.ccr.cancer.gov/) and [NCBR](https://ncbr.ncifcrf.gov/). 
